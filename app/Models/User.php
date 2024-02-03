@@ -3,14 +3,18 @@
 namespace App\Models;
 
 use App\Models\V2\V2SystemUser;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable implements MustVerifyEmail, FilamentUser
 {
     use HasFactory, Notifiable;
 
@@ -22,7 +26,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'is_active' => 'boolean',
         'email' => 'string',
         'email_verified_at' => 'datetime',
-        'password' => 'hashed',
+        'password' => 'string',
 
         'password_changed_at' => 'datetime',
         'last_login_at' => 'datetime',
@@ -54,12 +58,26 @@ class User extends Authenticatable implements MustVerifyEmail
         'dietary_requirements' => 'string',
         'religion' => 'string',
         'features_flags' => 'object',
+        'updated_at' => 'datetime',
+        'created_at' => 'datetime',
     ];
 
     protected $hidden = [
         'password',
         'remember_token',
     ];
+
+    public function name(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->first_name . ' ' . $this->surname,
+        );
+    }
+
+    public function scopeActive(Builder $query): void
+    {
+        $query->where('is_active', 1);
+    }
 
     public function ssaRoles(): BelongsToMany
     {
@@ -111,5 +129,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function sdSystemUser(): HasOne
     {
         return $this->hasOne(V2SystemUser::class, 'id', 'sd_system_user_id');
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return true;
     }
 }

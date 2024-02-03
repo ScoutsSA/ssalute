@@ -8,11 +8,13 @@ class GroupTypes
     public const NGO = 'ngo';
     public const CHURCH = 'church';
     public const SCHOOL = 'school';
+    public const UNKNOWN = 'unknown';
 
     public const READ = [
         self::COMMUNITY => 'Community Group',
         self::NGO => 'NGO Group',
         self::CHURCH => 'Church Group',
         self::SCHOOL => 'School Group',
+        self::UNKNOWN => '!Unknown! Group',
     ];
 }

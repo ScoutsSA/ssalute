@@ -12,6 +12,7 @@ class SsaRole extends Model
         'sd_system_user_type_id' => 'integer',
         'name' => 'string',
         'description' => 'string',
+        'related_to' => 'string',
         'requires_warrant' => 'bool',
     ];
 

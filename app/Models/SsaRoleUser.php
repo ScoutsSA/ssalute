@@ -2,7 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class SsaRoleUser extends Pivot
@@ -16,17 +17,25 @@ class SsaRoleUser extends Pivot
         'user_id' => 'integer',
         'related_model' => 'string',
         'related_id' => 'integer',
+        'is_active' => 'boolean',
+        'creation_notes' => 'string',
+
         'warrant_id' => 'integer',
         'created_by' => 'integer',
     ];
 
-    public function ssaRoles(): HasMany
+    public function scopeActive(Builder $query): void
     {
-        return $this->hasMany(SsaRole::class);
+        $query->where('is_active', 1);
     }
 
-    public function users(): HasMany
+    public function ssaRole(): BelongsTo
     {
-        return $this->hasMany(User::class);
+        return $this->belongsTo(SsaRole::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 }

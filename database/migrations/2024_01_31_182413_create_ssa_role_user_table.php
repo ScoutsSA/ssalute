@@ -12,10 +12,19 @@ return new class extends Migration
             $table->id();
             $table->foreignId('ssa_role_id');
             $table->foreignId('user_id');
+            $table->boolean('is_active')->default(1);
+
             $table->string('related_type')->nullable();
             $table->foreignId('related_id')->nullable();
+
+            $table->foreignId('region_id')->nullable();
+            $table->foreignId('district_id')->nullable();
+            $table->foreignId('group_id')->nullable();
+            $table->foreignId('section_id')->nullable();
+
             $table->foreignId('warrant_id')->nullable();
             $table->foreignId('created_by')->nullable();
+
             $table->timestamps();
         });
     }

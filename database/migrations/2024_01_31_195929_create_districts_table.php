@@ -10,6 +10,12 @@ return new class extends Migration
     {
         Schema::create('districts', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('sd_district_id');
+            $table->foreignId('region_id');
+            $table->string('name');
+            $table->integer('is_active')->default(1);
+            $table->json('features_flags')->nullable();
+
             $table->timestamps();
         });
     }

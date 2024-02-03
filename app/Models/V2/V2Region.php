@@ -2,9 +2,11 @@
 
 namespace App\Models\V2;
 
+use App\Models\Region;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class V2Region extends Model
 {
@@ -30,12 +32,17 @@ class V2Region extends Model
         $query->where('active', 1);
     }
 
-    public function districts(): HasMany
+    public function newRegion(): HasOne
+    {
+        return $this->hasOne(Region::class, 'sd_region_id', 'id');
+    }
+
+    public function v2Districts(): HasMany
     {
         return $this->hasMany(V2District::class, 'regionID', 'id');
     }
 
-    public function groups(): HasMany
+    public function v2Groups(): HasMany
     {
         return $this->hasMany(V2Group::class, 'assoc_to_region', 'id');
     }

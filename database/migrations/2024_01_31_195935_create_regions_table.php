@@ -14,7 +14,7 @@ return new class extends Migration
             $table->unsignedInteger('display_order');
             $table->string('name');
             $table->string('short_code')->unique();
-            $table->boolean('active')->default(1);
+            $table->boolean('is_active')->default(1);
             $table->timestamps();
         });
     }

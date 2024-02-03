@@ -2,6 +2,12 @@
 
 return [
 
+    'scouts_digital' => [
+        'authentication' => [
+            'encryption_key' => env('SCOUTS_DIGITAL_AUTHENTICATION_ENCRYPTION_KEY'),
+        ],
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Authentication Defaults

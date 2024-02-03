@@ -5,6 +5,7 @@ namespace App\Models\V2;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class V2Group extends Model
 {
@@ -96,13 +97,18 @@ class V2Group extends Model
         // Where group type .name != Schools Group
     }
 
-    public function region(): BelongsTo
+    public function v2MultiSections(): HasMany
+    {
+        return $this->hasMany(V2GroupsMulti::class, 'groupID', 'id');
+    }
+
+    public function v2Region(): BelongsTo
     {
         return $this->belongsTo(V2Region::class, 'assoc_to_region', 'id');
     }
 
-    public function district(): BelongsTo
+    public function v2District(): BelongsTo
     {
-        return $this->belongsTo(V2Region::class, 'assoc_to_district', 'id');
+        return $this->belongsTo(V2District::class, 'assoc_to_district', 'id');
     }
 }
