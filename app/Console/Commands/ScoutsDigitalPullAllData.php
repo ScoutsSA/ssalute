@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
 
 class ScoutsDigitalPullAllData extends Command
@@ -14,13 +13,13 @@ class ScoutsDigitalPullAllData extends Command
     public function handle()
     {
         Log::info('ScoutsDigitalPullAllData - Pulling Data...');
-        Artisan::call(ScoutsDigitalPullRegions::class);
-        Artisan::call(ScoutsDigitalPullDistricts::class);
-        Artisan::call(ScoutsDigitalPullGroups::class);
-        //Artisan::call(ScoutsDigitalPullSections::class);
-        //Artisan::call(ScoutsDigitalPullRoles::class);
-        //Artisan::call(ScoutsDigitalPullUsers::class);
-        //Artisan::call(ScoutsDigitalPullUserRoles::class);
+        $this->call(ScoutsDigitalPullRegions::class);
+        $this->call(ScoutsDigitalPullDistricts::class);
+        $this->call(ScoutsDigitalPullGroups::class);
+        $this->call(ScoutsDigitalPullSections::class);
+        $this->call(ScoutsDigitalPullRoles::class);
+        $this->call(ScoutsDigitalPullUsers::class);
+        //$this->call(ScoutsDigitalPullUserRoles::class);
         Log::info('ScoutsDigitalPullAllData - Finished Pulling data!');
     }
 }

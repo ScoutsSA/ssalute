@@ -17,7 +17,11 @@ class ScoutsDigitalPullRegions extends Command
         Log::info('ScoutsDigitalPullRegions - Pulling Data...');
         $modelAddedCounter = 0;
         $modelUpdatedCounter = 0;
-        foreach (V2Region::get() as $v2Model) {
+        $v2Models = V2Region::get();
+        $this->info('Pulling Regions from Scouts Digital...');
+        $this->output->progressStart($v2Models->count());
+        foreach ($v2Models as $v2Model) {
+            $this->output->progressAdvance();
             $newModel = Region::where('sd_region_id', $v2Model->id)->first();
             if (! $newModel) {
                 $newModel = Region::create($this->getNewModelData($v2Model));
@@ -34,6 +38,7 @@ class ScoutsDigitalPullRegions extends Command
                 continue;
             }
         }
+        $this->output->progressFinish();
         Log::info('ScoutsDigitalPullRegions - Finished Pulling data!', ['models_added' => $modelAddedCounter, 'models_updated' => $modelUpdatedCounter]);
     }
 

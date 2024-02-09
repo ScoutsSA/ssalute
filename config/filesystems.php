@@ -44,6 +44,22 @@ return [
             'throw' => false,
         ],
 
+        'aam_id_document' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/aam_id_document'),
+            'url' => env('APP_URL') . '/storage/aam_id_document',
+            'visibility' => 'public',
+            'throw' => false,
+            // Adjust this to S3 and make it private
+        ],
+        'aam_criminal_record' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/aam_criminal_check'),
+            'url' => env('APP_URL') . '/storage/aam_criminal_check',
+            'visibility' => 'public',
+            'throw' => false,
+            // Adjust this to S3 and make it private
+        ],
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

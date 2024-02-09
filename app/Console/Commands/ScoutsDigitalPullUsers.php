@@ -20,20 +20,24 @@ class ScoutsDigitalPullUsers extends Command
         Log::info('ScoutsDigitalPullUsers - Pulling Data...');
         $modelAddedCounter = 0;
         $modelUpdatedCounter = 0;
-        foreach (V2SystemUser::select(['*'])->withPlainPassword()->get() as $v2Model) {
+        $v2Models = V2SystemUser::select(['*'])->withPlainPassword()->get();
+        $this->info('Pulling Users from Scouts Digital...');
+        $this->output->progressStart($v2Models->count());
+        foreach ($v2Models as $v2Model) {
+            $this->output->progressAdvance();
             $newModel = User::where('sd_system_user_id', $v2Model->id)->first();
             if (! $newModel) {
                 $duplicate = User::where('email', $v2Model->username)->exists();
                 if ($duplicate) {
                     Log::error('ScoutsDigitalPullUsers - Duplicate email found', ['email' => $v2Model->username]);
-                    $this->error('Users: Duplicate email found: ' . $v2Model->username);
+                    $this->line(string:'', verbosity:'v');
+                    $this->error('Users: Duplicate email found: ' . $v2Model->username, 'v');
 
                     continue;
                 }
                 $newModel = User::create($this->getNewModelData($v2Model));
                 $modelAddedCounter++;
                 Log::info('ScoutsDigitalPullUsers - Added new model', ['old_id' => $v2Model->getKey(), 'id' => $newModel->getKey(), 'name' => $newModel->name]);
-                $this->info("Users: Added New User: [{$newModel->getKey()}] {$newModel->name} ({$newModel->email})");
 
                 continue;
             }
@@ -41,12 +45,13 @@ class ScoutsDigitalPullUsers extends Command
                 $newModel->update($this->getNewModelData($v2Model));
                 $modelUpdatedCounter++;
                 Log::info('ScoutsDigitalPullUsers - Updated existing Model', ['old_id' => $v2Model->getKey(), 'id' => $newModel->getKey(), 'name' => $newModel->name]);
-                $this->info('Users: Updated User: ' . $newModel->name . ' (' . $newModel->email . ')');
 
                 continue;
             }
         }
+        $this->output->progressFinish();
         Log::info('ScoutsDigitalPullUsers - Finished Pulling data!', ['models_added' => $modelAddedCounter, 'models_updated' => $modelUpdatedCounter]);
+        $this->info("ScoutsDigitalPullUsers - Finished Pulling data! Added: {$modelAddedCounter} | Updated: {$modelUpdatedCounter}");
     }
 
     public function getNewModelData(V2SystemUser $v2Model): array

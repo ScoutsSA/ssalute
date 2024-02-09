@@ -2,7 +2,7 @@
 
 namespace App\Constants;
 
-class SystemUserConstants
+class UserConstants
 {
     public const TITLES =
         [

@@ -65,7 +65,7 @@ return [
         'redis' => [
             'driver' => 'redis',
             'connection' => 'default',
-            'queue' => env('REDIS_QUEUE', 'default'),
+            'queue' => \App\Providers\HorizonServiceProvider::FAST_QUEUE,
             'retry_after' => 90,
             'block_for' => null,
             'after_commit' => false,

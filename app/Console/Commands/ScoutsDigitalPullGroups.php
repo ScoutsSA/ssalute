@@ -19,7 +19,11 @@ class ScoutsDigitalPullGroups extends Command
         Log::info('ScoutsDigitalPullGroups - Pulling Data...');
         $modelAddedCounter = 0;
         $modelUpdatedCounter = 0;
-        foreach (V2Group::get() as $v2Model) {
+        $v2Models = V2Group::get();
+        $this->info('Pulling Groups from Scouts Digital...');
+        $this->output->progressStart($v2Models->count());
+        foreach ($v2Models as $v2Model) {
+            $this->output->progressAdvance();
             $newModel = Group::where('sd_group_id', $v2Model->id)->first();
             if (! $newModel) {
                 $data = $this->getNewModelData($v2Model);
@@ -40,6 +44,7 @@ class ScoutsDigitalPullGroups extends Command
                 continue;
             }
         }
+        $this->output->progressFinish();
         Log::info('ScoutsDigitalPullGroups - Finished Pulling data!', ['models_added' => $modelAddedCounter, 'models_updated' => $modelUpdatedCounter]);
     }
 

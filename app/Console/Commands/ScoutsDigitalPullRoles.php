@@ -17,13 +17,17 @@ class ScoutsDigitalPullRoles extends Command
         Log::info('ScoutsDigitalPullRoles - Pulling Data...');
         $modelAddedCounter = 0;
         $modelUpdatedCounter = 0;
-        foreach (V2SystemUserType::get() as $v2Model) {
+        $v2Models = V2SystemUserType::get();
+        $this->info('Pulling Roles from Scouts Digital...');
+        $this->output->progressStart($v2Models->count());
+        foreach ($v2Models as $v2Model) {
+            $this->output->progressAdvance();
             $newModel = SsaRole::where('sd_system_user_type_id', $v2Model->id)->first();
             if (! $newModel) {
                 $newModel = SsaRole::create($this->getNewModelData($v2Model));
                 $modelAddedCounter++;
                 Log::info('ScoutsDigitalPullRoles - Added new model', ['old_id' => $v2Model->getKey(), 'id' => $newModel->getKey(), 'name' => $newModel->name]);
-                $this->info("Users: Added New Role: [{$newModel->getKey()}] {$newModel->name}");
+                $this->info("Users: Added New Role: [{$newModel->getKey()}] {$newModel->name}", 'vvv');
 
                 // Handle Role Permissions here too
 
@@ -33,13 +37,14 @@ class ScoutsDigitalPullRoles extends Command
                 $newModel->update($this->getNewModelData($v2Model));
                 $modelUpdatedCounter++;
                 Log::info('ScoutsDigitalPullRoles - Updated existing Model', ['old_id' => $v2Model->getKey(), 'id' => $newModel->getKey(), 'name' => $newModel->name]);
-                $this->info("Users: Updated Role: [{$newModel->getKey()}] {$newModel->name}");
+                $this->info("Users: Updated Role: [{$newModel->getKey()}] {$newModel->name}", 'vvv');
 
                 // Handle Role Permissions here too
 
                 continue;
             }
         }
+        $this->output->progressFinish();
         Log::info('ScoutsDigitalPullRoles - Finished Pulling data!', ['models_added' => $modelAddedCounter, 'models_updated' => $modelUpdatedCounter]);
     }
 

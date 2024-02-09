@@ -18,7 +18,11 @@ class ScoutsDigitalPullDistricts extends Command
         Log::info('ScoutsDigitalPullDistricts - Pulling Data...');
         $modelAddedCounter = 0;
         $modelUpdatedCounter = 0;
-        foreach (V2District::get() as $v2Model) {
+        $v2Models = V2District::get();
+        $this->info('Pulling Districts from Scouts Digital...');
+        $this->output->progressStart($v2Models->count());
+        foreach ($v2Models as $v2Model) {
+            $this->output->progressAdvance();
             $newModel = District::where('sd_district_id', $v2Model->id)->first();
             if (! $newModel) {
                 $newModel = District::create($this->getNewModelData($v2Model));
@@ -35,6 +39,7 @@ class ScoutsDigitalPullDistricts extends Command
                 continue;
             }
         }
+        $this->output->progressFinish();
         Log::info('ScoutsDigitalPullDistricts - Finished Pulling data!', ['models_added' => $modelAddedCounter, 'models_updated' => $modelUpdatedCounter]);
     }
 
