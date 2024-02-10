@@ -3,8 +3,7 @@
 namespace App\Livewire\Aam;
 
 use App\Constants\UserConstants;
-use App\Mail\ApplicationAdultMembershipApplicantInitalEmail;
-use App\Mail\ApplicationAdultMembershipApproverInitialEmail;
+use App\Mail\Aam\ApplicationAdultMembershipApplicantInitalEmail;
 use App\Models\ApplicationAdultMembershipRequest;
 use App\Models\V2\V2District;
 use App\Models\V2\V2Group;
@@ -26,6 +25,7 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Notifications\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Blade;
@@ -403,35 +403,47 @@ be shared with.
             'sd_district_id' => $state['district'] ?? null,
             'sd_group_id' => $state['group'] ?? null,
         ]);
+        Notification::make()
+            ->title('Application Created!')
+            ->success()
+            ->send();
 
+        $nationalGlobalMailer = config('features.aam.aam_national_email_support');
         // Email applicant
-        Mail::to($aam->email)->queue(new ApplicationAdultMembershipApplicantInitalEmail($aam));
+        Mail::to($aam->email)->bcc($nationalGlobalMailer)->queue(new ApplicationAdultMembershipApplicantInitalEmail($aam));
 
         // Email NextInLine (Group/District/Region)
-        //Mail::to('')->queue(new ApplicationAdultMembershipApproverInitialEmail($aam));
+        if ($aam->sd_region_id === null) {
+            // National
+            Mail::to($nationalGlobalMailer)->queue(new ApplicationAdultMembershipApplicantInitalEmail($aam));
+
+            return;
+        }
+
+        if ($aam->sd_district_id === null) {
+            // Regional
+            // Users which have Adult Support (system_user_type=25)
+            return;
+        }
+
+        if ($aam->sd_group_id === null) {
+            // District
+            //  Users which have District Commissioner (system_user_type=3)
+            return;
+        }
+        // Group
+        // IsGroupSelfManaged => select * from groups where managedRegionally =1 and active = 1;
+
+        // SelfManaged
+        // * SelfManaged Group => Select * from system_user_types where canAdminGroupAdults = 1 and active = 1;
+
+        // Regionally Managed
+        // District/Region Managed Group => SGL / ASGL / Scouts Digital Group Manager
+        // Select * from system_user_types where (canAdminDistrictKids = 1 OR canAdminRegionKids = 1) and active = 1;
 
         // If group level and no approval in 5 days, email second in line and applicant
 
         // Weekly email on regional level giving a AAM application digest (Regional Administrator / Regional Administrator)
-
-        // SelfManagedGroup => SGL / ASGL / Scouts Digital Group Manager
-        // District/Region Managed Group => SGL / ASGL / Scouts Digital Group Manager
-
-        // District => District Commissioner / District Administrator
-        // Region =>
-
-        /*
-         * IsGroupSelfManaged => select * from groups where managedRegionally =1 and active = 1;
-         *
-         * NotSelfManagedGroup => Select * from system_user_types where (canAdminDistrictKids = 1 OR canAdminRegionKids = 1) and active = 1;
-         *
-         * SelfManaged Group => Select * from system_user_types where canAdminGroupAdults = 1 and active = 1;
-         * District => Select * from system_user_types where canAdminDistrict = 1 and active = 1;
-         * Regional => Select * from system_user_types where id = 25;
-         *
-         * */
-
-        // aam@scouts.org.za
     }
 
     public function render()

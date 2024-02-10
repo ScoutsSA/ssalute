@@ -4,6 +4,8 @@ namespace App\Livewire\Aam;
 
 use App\Constants\AamStatuses;
 use App\Constants\UserConstants;
+use App\Mail\Aam\ApplicationAdultMembershipApplicantApprovedEmail;
+use App\Mail\Aam\ApplicationAdultMembershipApplicantDeclinedEmail;
 use App\Models\ApplicationAdultMembershipRequest;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -21,6 +23,7 @@ use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Support\Colors\Color;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 
 class ViewAamForm extends Component implements HasForms, HasInfolists
@@ -253,7 +256,10 @@ class ViewAamForm extends Component implements HasForms, HasInfolists
                 ->title('Application Approved')
                 ->success()
                 ->send();
+
             // Send off some emails
+            Mail::to($this->aamRequest->email)->queue(new ApplicationAdultMembershipApplicantApprovedEmail($this->aamRequest));
+
             // create system_user and maybe a user on our end
         };
     }
@@ -272,7 +278,9 @@ class ViewAamForm extends Component implements HasForms, HasInfolists
                 ->title('The Application has been Declined!')
                 ->warning()
                 ->send();
+
             // Send off some emails
+            Mail::to($this->aamRequest->email)->queue(new ApplicationAdultMembershipApplicantDeclinedEmail($this->aamRequest));
         };
     }
 }

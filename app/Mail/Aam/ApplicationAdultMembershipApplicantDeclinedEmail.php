@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Mail;
+namespace App\Mail\Aam;
 
 use App\Models\ApplicationAdultMembershipRequest;
 use Illuminate\Bus\Queueable;
@@ -10,7 +10,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class ApplicationAdultMembershipApplicantInitalEmail extends Mailable implements ShouldQueue
+class ApplicationAdultMembershipApplicantDeclinedEmail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -25,7 +25,7 @@ class ApplicationAdultMembershipApplicantInitalEmail extends Mailable implements
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: '[ScoutsSA][Application Adult Membership] ' . $this->applicationAdultMembershipRequest->name,
+            subject: "[ScoutsSA][Application Adult Membership] {$this->applicationAdultMembershipRequest->name} - Declined",
         );
     }
 
@@ -35,7 +35,7 @@ class ApplicationAdultMembershipApplicantInitalEmail extends Mailable implements
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.aam.aam_applicant_initial',
+            markdown: 'emails.aam.aam_applicant_declined',
         );
     }
 

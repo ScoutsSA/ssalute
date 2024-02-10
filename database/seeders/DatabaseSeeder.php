@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\SsaRole;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -12,11 +13,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
+        $this->call(PermissionSeeder::class);
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        if (config('features.local.seeders.enabled')) {
+            $this->call(RegionSeeder::class);
+            $this->call(DistrictSeeder::class);
+            $this->call(GroupSeeder::class);
+            $this->call(SectionSeeder::class);
+            $this->call(SsaRole::class);
+        }
     }
 }

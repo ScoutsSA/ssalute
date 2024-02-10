@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Mail;
+namespace App\Mail\Aam;
 
 use App\Models\ApplicationAdultMembershipRequest;
 use Illuminate\Bus\Queueable;
@@ -25,7 +25,7 @@ class ApplicationAdultMembershipApproverInitialEmail extends Mailable implements
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: '[ScoutsSA][Application Adult Membership] ' . $this->applicationAdultMembershipRequest->name,
+            subject: "[ScoutsSA][Application Adult Membership] {$this->applicationAdultMembershipRequest->name} - Pending",
         );
     }
 

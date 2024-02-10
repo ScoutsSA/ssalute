@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('system_name');
             $table->string('display_name');
-            $table->string('description');
+            $table->string('description')->nullable();
             $table->timestamps();
         });
     }

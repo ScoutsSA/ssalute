@@ -10,11 +10,11 @@ return new class extends Migration
     {
         Schema::create('users', static function (Blueprint $table) {
             $table->id();
-            $table->foreignId('sd_system_user_id')->nullable();
-            $table->string('ssa_number', 32)->nullable();
+            $table->foreignId('sd_system_user_id')->nullable()->index();
+            $table->string('ssa_number', 32)->nullable()->index();
             $table->foreignId('active_user_ssa_role_id')->nullable();
-            $table->boolean('is_active')->default(1);
-            $table->string('email')->unique();
+            $table->boolean('is_active')->default(1)->index();
+            $table->string('email')->unique()->index();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
 
@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('phone_number', 32)->nullable();
             $table->string('photo')->nullable();
             $table->string('thumbnail')->nullable();
-            $table->string('id_number', 64)->nullable();
+            $table->string('id_number', 64)->nullable()->index();
             $table->string('id_verified_file')->nullable();
             $table->string('sex', 6)->nullable();
             $table->string('race', 10)->nullable();
