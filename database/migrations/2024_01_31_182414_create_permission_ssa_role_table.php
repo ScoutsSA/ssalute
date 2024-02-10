@@ -8,16 +8,18 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('ssa_role_permission', function (Blueprint $table) {
+        Schema::create('permission_ssa_role', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('ssa_role_id');
-            $table->foreignId('permission_id');
+            $table->foreignId('permission_id')->index();
+            $table->foreignId('ssa_role_id')->index();
             $table->timestamps();
+
+            $table->unique(['permission_id', 'ssa_role_id']);
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('ssa_role_permission');
+        Schema::dropIfExists('permission_ssa_role');
     }
 };

@@ -20,4 +20,9 @@ class SsaRole extends Model
     {
         return $this->belongsToMany(User::class)->using(SsaRoleUser::class)->withTimestamps();
     }
+
+    public function permissions(): BelongsToMany
+    {
+        return $this->belongsToMany(Permission::class)->withTimestamps();
+    }
 }
