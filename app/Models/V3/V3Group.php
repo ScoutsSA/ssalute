@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\V3;
 
 use App\Constants\SectionTypes;
 use App\Models\V2\V2Group;
@@ -10,10 +10,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class Group extends Model
+class V3Group extends Model
 {
     use HasFactory;
 
+    protected $connection = 'v3_core';
+    protected $table = 'groups';
     protected $guarded = [];
     protected $casts = [
         'id' => 'int',
@@ -51,26 +53,26 @@ class Group extends Model
 
     public function sections(): HasMany
     {
-        return $this->hasMany(Section::class);
+        return $this->hasMany(V3Section::class);
     }
 
     public function dens(): HasMany
     {
-        return $this->hasMany(Section::class)->where('sections.type', SectionTypes::DEN);
+        return $this->hasMany(V3Section::class)->where('sections.type', SectionTypes::DEN);
     }
 
     public function packs(): HasMany
     {
-        return $this->hasMany(Section::class)->where('sections.type', SectionTypes::PACK);
+        return $this->hasMany(V3Section::class)->where('sections.type', SectionTypes::PACK);
     }
 
     public function troops(): HasMany
     {
-        return $this->hasMany(Section::class)->where('sections.type', SectionTypes::TROOP);
+        return $this->hasMany(V3Section::class)->where('sections.type', SectionTypes::TROOP);
     }
 
     public function crews(): HasMany
     {
-        return $this->hasMany(Section::class)->where('sections.type', SectionTypes::CREW);
+        return $this->hasMany(V3Section::class)->where('sections.type', SectionTypes::CREW);
     }
 }

@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\Models\District;
-use App\Models\Region;
 use App\Models\V2\V2District;
+use App\Models\V3\V3Region;
+use App\Models\V3\V3District;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
@@ -23,9 +23,9 @@ class ScoutsDigitalPullDistricts extends Command
         $this->output->progressStart($v2Models->count());
         foreach ($v2Models as $v2Model) {
             $this->output->progressAdvance();
-            $newModel = District::where('sd_district_id', $v2Model->id)->first();
+            $newModel = V3District::where('sd_district_id', $v2Model->id)->first();
             if (! $newModel) {
-                $newModel = District::create($this->getNewModelData($v2Model));
+                $newModel = V3District::create($this->getNewModelData($v2Model));
                 $modelAddedCounter++;
                 Log::info('ScoutsDigitalPullDistricts - Added new model', ['old_id' => $v2Model->getKey(), 'id' => $newModel->getKey(), 'name' => $newModel->name]);
 
@@ -46,7 +46,7 @@ class ScoutsDigitalPullDistricts extends Command
     public function getNewModelData(V2District $v2Model): array
     {
         $v2Region = $v2Model->v2Region;
-        $newRegion = Region::where('sd_region_id', $v2Region->id)->first();
+        $newRegion = V3Region::where('sd_region_id', $v2Region->id)->first();
 
         return [
             'sd_district_id' => $v2Model->getKey(),

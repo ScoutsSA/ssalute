@@ -3,9 +3,9 @@
 namespace App\Console\Commands;
 
 use App\Constants\GroupTypes;
-use App\Models\District;
-use App\Models\Group;
 use App\Models\V2\V2Group;
+use App\Models\V3\V3District;
+use App\Models\V3\V3Group;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
@@ -24,13 +24,13 @@ class ScoutsDigitalPullGroups extends Command
         $this->output->progressStart($v2Models->count());
         foreach ($v2Models as $v2Model) {
             $this->output->progressAdvance();
-            $newModel = Group::where('sd_group_id', $v2Model->id)->first();
+            $newModel = V3Group::where('sd_group_id', $v2Model->id)->first();
             if (! $newModel) {
                 $data = $this->getNewModelData($v2Model);
                 if (empty($data)) {
                     continue;
                 }
-                $newModel = Group::create($data);
+                $newModel = V3Group::create($data);
                 $modelAddedCounter++;
                 Log::info('ScoutsDigitalPullGroups - Added new model', ['old_id' => $v2Model->getKey(), 'id' => $newModel->getKey(), 'name' => $newModel->name]);
 
@@ -62,11 +62,11 @@ class ScoutsDigitalPullGroups extends Command
 
         $v2District = $v2Model->v2District;
         if ($v2District === null) {
-            Log::error('ScoutsDigitalPullGroups - District not found', ['group_id' => $v2Model->getKey()]);
+            Log::error('ScoutsDigitalPullGroups - V3District not found', ['group_id' => $v2Model->getKey()]);
 
             return [];
         }
-        $newDistrict = District::where('sd_district_id', $v2District->id)->firstOrFail();
+        $newDistrict = V3District::where('sd_district_id', $v2District->id)->firstOrFail();
 
         return  [
             'sd_group_id' => $v2Model->id,

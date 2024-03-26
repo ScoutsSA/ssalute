@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Permission;
-use App\Models\SsaRole;
 use App\Models\V2\V2SystemUserType;
+use App\Models\V3\V3SsaRole;
+use App\Models\V3\V3Permission;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
@@ -23,9 +23,9 @@ class ScoutsDigitalPullRoles extends Command
         $this->output->progressStart($v2Models->count());
         foreach ($v2Models as $v2Model) {
             $this->output->progressAdvance();
-            $newModel = SsaRole::where('sd_system_user_type_id', $v2Model->id)->first();
+            $newModel = V3SsaRole::where('sd_system_user_type_id', $v2Model->id)->first();
             if (! $newModel) {
-                $newModel = SsaRole::create($this->getNewModelData($v2Model));
+                $newModel = V3SsaRole::create($this->getNewModelData($v2Model));
                 $this->updateRolePermissions($newModel, $v2Model);
                 $modelAddedCounter++;
                 Log::info('ScoutsDigitalPullRoles - Added new model', ['old_id' => $v2Model->getKey(), 'id' => $newModel->getKey(), 'name' => $newModel->name]);
@@ -65,37 +65,37 @@ class ScoutsDigitalPullRoles extends Command
         ];
     }
 
-    public function updateRolePermissions(SsaRole $ssaRole, V2SystemUserType $v2SystemUserType)
+    public function updateRolePermissions(V3SsaRole $ssaRole, V2SystemUserType $v2SystemUserType)
     {
         $permissions = array_filter([
-            Permission::LEGACY_CAN_ADMIN_ALUMNI => $v2SystemUserType->canAdminAlumni,
-            Permission::LEGACY_CAN_SEE_ALUMNI => $v2SystemUserType->canSeeAlumni,
-            Permission::LEGACY_CAN_ADMIN_NATIONAL => $v2SystemUserType->canAdminNational,
-            Permission::LEGACY_CAN_SEE_NATIONAL => $v2SystemUserType->canSeeNational,
-            Permission::LEGACY_CAN_ADMIN_REGION => $v2SystemUserType->canAdminRegion,
-            Permission::LEGACY_CAN_SEE_REGION => $v2SystemUserType->canSeeRegion,
-            Permission::LEGACY_CAN_ADMIN_REGION_KIDS => $v2SystemUserType->canAdminRegionKids,
-            Permission::LEGACY_CAN_ADMIN_REGION_TRAINING => $v2SystemUserType->canAdminRegionTraining,
-            Permission::LEGACY_CAN_ADMIN_SUPER_DISTRICT => $v2SystemUserType->canAdminSuperDistrict,
-            Permission::LEGACY_CAN_SEE_SUPER_DISTRICT => $v2SystemUserType->canSeeSuperDistrict,
-            Permission::LEGACY_CAN_ADMIN_DISTRICT => $v2SystemUserType->canAdminDistrict,
-            Permission::LEGACY_CAN_SEE_DISTRICT => $v2SystemUserType->canSeeDistrict,
-            Permission::LEGACY_CAN_ADMIN_DISTRICT_KIDS => $v2SystemUserType->canAdminDistrictKids,
-            Permission::LEGACY_CAN_ADMIN_GROUP => $v2SystemUserType->canAdminGroup,
-            Permission::LEGACY_CAN_SEE_GROUP => $v2SystemUserType->canSeeGroup,
-            Permission::LEGACY_CAN_ADMIN_GROUP_ADULTS => $v2SystemUserType->canAdminGroupAdults,
-            Permission::LEGACY_CAN_AWARD_GROUP_MEERKATS => $v2SystemUserType->canAwardGroupMeerkats,
-            Permission::LEGACY_CAN_AWARD_GROUP_CUBS => $v2SystemUserType->canAwardGroupCubs,
-            Permission::LEGACY_CAN_AWARD_GROUP_SCOUTS => $v2SystemUserType->canAwardGroupScouts,
-            Permission::LEGACY_CAN_AWARD_GROUP_ROVERS => $v2SystemUserType->canAwardGroupRovers,
-            Permission::LEGACY_CAN_SEE_SUPPORT => $v2SystemUserType->canSeeSupport,
-            Permission::LEGACY_CAN_ADMIN_SUPPORT => $v2SystemUserType->canAdminSupport,
-            Permission::LEGACY_CAN_ADD_WARRANTS => $v2SystemUserType->canAddWarrants,
-            Permission::LEGACY_CAN_ADMIN_PROPERTY => $v2SystemUserType->canAdminProperty,
-            Permission::LEGACY_CAN_SIGN_WARRANTS => $v2SystemUserType->canSignWarrants,
-            Permission::LEGACY_CAN_ADMIN_FORM29 => $v2SystemUserType->canAdminForm29,
-            Permission::LEGACY_CAN_ADMIN_POLICE_CLEARANCE => $v2SystemUserType->canAdminPoliceClearance,
+            V3Permission::LEGACY_CAN_ADMIN_ALUMNI => $v2SystemUserType->canAdminAlumni,
+            V3Permission::LEGACY_CAN_SEE_ALUMNI => $v2SystemUserType->canSeeAlumni,
+            V3Permission::LEGACY_CAN_ADMIN_NATIONAL => $v2SystemUserType->canAdminNational,
+            V3Permission::LEGACY_CAN_SEE_NATIONAL => $v2SystemUserType->canSeeNational,
+            V3Permission::LEGACY_CAN_ADMIN_REGION => $v2SystemUserType->canAdminRegion,
+            V3Permission::LEGACY_CAN_SEE_REGION => $v2SystemUserType->canSeeRegion,
+            V3Permission::LEGACY_CAN_ADMIN_REGION_KIDS => $v2SystemUserType->canAdminRegionKids,
+            V3Permission::LEGACY_CAN_ADMIN_REGION_TRAINING => $v2SystemUserType->canAdminRegionTraining,
+            V3Permission::LEGACY_CAN_ADMIN_SUPER_DISTRICT => $v2SystemUserType->canAdminSuperDistrict,
+            V3Permission::LEGACY_CAN_SEE_SUPER_DISTRICT => $v2SystemUserType->canSeeSuperDistrict,
+            V3Permission::LEGACY_CAN_ADMIN_DISTRICT => $v2SystemUserType->canAdminDistrict,
+            V3Permission::LEGACY_CAN_SEE_DISTRICT => $v2SystemUserType->canSeeDistrict,
+            V3Permission::LEGACY_CAN_ADMIN_DISTRICT_KIDS => $v2SystemUserType->canAdminDistrictKids,
+            V3Permission::LEGACY_CAN_ADMIN_GROUP => $v2SystemUserType->canAdminGroup,
+            V3Permission::LEGACY_CAN_SEE_GROUP => $v2SystemUserType->canSeeGroup,
+            V3Permission::LEGACY_CAN_ADMIN_GROUP_ADULTS => $v2SystemUserType->canAdminGroupAdults,
+            V3Permission::LEGACY_CAN_AWARD_GROUP_MEERKATS => $v2SystemUserType->canAwardGroupMeerkats,
+            V3Permission::LEGACY_CAN_AWARD_GROUP_CUBS => $v2SystemUserType->canAwardGroupCubs,
+            V3Permission::LEGACY_CAN_AWARD_GROUP_SCOUTS => $v2SystemUserType->canAwardGroupScouts,
+            V3Permission::LEGACY_CAN_AWARD_GROUP_ROVERS => $v2SystemUserType->canAwardGroupRovers,
+            V3Permission::LEGACY_CAN_SEE_SUPPORT => $v2SystemUserType->canSeeSupport,
+            V3Permission::LEGACY_CAN_ADMIN_SUPPORT => $v2SystemUserType->canAdminSupport,
+            V3Permission::LEGACY_CAN_ADD_WARRANTS => $v2SystemUserType->canAddWarrants,
+            V3Permission::LEGACY_CAN_ADMIN_PROPERTY => $v2SystemUserType->canAdminProperty,
+            V3Permission::LEGACY_CAN_SIGN_WARRANTS => $v2SystemUserType->canSignWarrants,
+            V3Permission::LEGACY_CAN_ADMIN_FORM29 => $v2SystemUserType->canAdminForm29,
+            V3Permission::LEGACY_CAN_ADMIN_POLICE_CLEARANCE => $v2SystemUserType->canAdminPoliceClearance,
         ]);
-        $ssaRole->permissions()->sync(Permission::whereIn('system_name', array_keys($permissions))->pluck('id')->toArray());
+        $ssaRole->permissions()->sync(V3Permission::whereIn('system_name', array_keys($permissions))->pluck('id')->toArray());
     }
 }

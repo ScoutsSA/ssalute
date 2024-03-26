@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\V3;
 
 use App\Constants\AamStatuses;
 use App\Models\V2\V2District;
@@ -11,9 +11,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 
-class ApplicationAdultMembershipRequest extends Model
+class V3ApplicationAdultMembershipRequest extends Model
 {
-    protected $connection = 'mysql';
+    protected $connection = 'v3_core';
+    protected $table = 'application_adult_membership_requests';
     protected $guarded = [];
 
     protected $casts = [
@@ -96,12 +97,12 @@ class ApplicationAdultMembershipRequest extends Model
 
     public function approvedBy(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'approved_by');
+        return $this->belongsTo(V3User::class, 'approved_by');
     }
 
     public function declinedBy(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'declined_by');
+        return $this->belongsTo(V3User::class, 'declined_by');
     }
 
     /*****************

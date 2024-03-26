@@ -13,7 +13,7 @@ class V2GroupsMulti extends Model
     public const TYPE_SCOUT = 'Scout';
     public const TYPE_ROVER = 'Rover';
 
-    protected $connection = 'sd_core';
+    protected $connection = 'sd_v2_core';
     protected $table = 'groups_multi';
     protected $guarded = [];
     protected $hidden = [];

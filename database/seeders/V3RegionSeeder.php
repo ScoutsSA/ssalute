@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 
-class SectionSeeder extends Seeder
+class V3RegionSeeder extends Seeder
 {
     /**
      * Run the database seeds.

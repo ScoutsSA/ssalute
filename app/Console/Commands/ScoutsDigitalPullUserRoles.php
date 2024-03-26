@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Models\User;
 use App\Models\V2\V2SystemUser;
+use App\Models\V3\V3User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
@@ -20,7 +20,7 @@ class ScoutsDigitalPullUserRoles extends Command
         Log::info('ScoutsDigitalPullUsers - Pulling Data...');
         $modelAddedCounter = 0;
         foreach (V2SystemUser::active()->inRandomOrder()->get() as $v2Model) {
-            $newModel = User::firstOrCreate([
+            $newModel = V3User::firstOrCreate([
                 'sd_system_user_id' => $v2Model->id, ],
                 [
                     'ssa_number' => $v2Model->SSANumber,

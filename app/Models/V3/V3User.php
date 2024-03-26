@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\V3;
 
 use App\Models\V2\V2SystemUser;
+use App\Models\Warrant;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -14,10 +15,13 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable implements MustVerifyEmail, FilamentUser
+class V3User extends Authenticatable implements MustVerifyEmail, FilamentUser
 {
     use HasFactory, Notifiable;
 
+
+    protected $connection = 'v3_core';
+    protected $table = 'users';
     protected $guarded = [];
     protected $casts = [
         'sd_system_user_id' => 'integer',
@@ -81,8 +85,8 @@ class User extends Authenticatable implements MustVerifyEmail, FilamentUser
 
     public function ssaRoles(): BelongsToMany
     {
-        return $this->belongsToMany(SsaRole::class)
-            ->using(SsaRoleUser::class)
+        return $this->belongsToMany(V3SsaRole::class)
+            ->using(V3SsaRoleUser::class)
             ->withTimestamps();
     }
 
@@ -90,39 +94,39 @@ class User extends Authenticatable implements MustVerifyEmail, FilamentUser
     {
         return $this->belongsToMany(Warrant::class, 'ssa_role_user', 'user_id', 'related_id')
             ->where('ssa_role_user.related_id', '=', 'Warrant')
-            ->using(SsaRoleUser::class)
+            ->using(V3SsaRoleUser::class)
             ->withTimestamps();
     }
 
     public function sections(): BelongsToMany
     {
-        return $this->belongsToMany(Section::class, 'ssa_role_user', 'user_id', 'related_id')
-            ->where('ssa_role_user.related_id', '=', 'Section')
-            ->using(SsaRoleUser::class)
+        return $this->belongsToMany(V3Section::class, 'ssa_role_user', 'user_id', 'related_id')
+            ->where('ssa_role_user.related_id', '=', 'V3Section')
+            ->using(V3SsaRoleUser::class)
             ->withTimestamps();
     }
 
     public function groups(): BelongsToMany
     {
-        return $this->belongsToMany(Group::class, 'ssa_role_user', 'user_id', 'related_id')
-            ->where('ssa_role_user.related_id', '=', 'Group')
-            ->using(SsaRoleUser::class)
+        return $this->belongsToMany(V3Group::class, 'ssa_role_user', 'user_id', 'related_id')
+            ->where('ssa_role_user.related_id', '=', 'V3Group')
+            ->using(V3SsaRoleUser::class)
             ->withTimestamps();
     }
 
     public function districts(): BelongsToMany
     {
-        return $this->belongsToMany(District::class, 'ssa_role_user', 'user_id', 'related_id')
-            ->where('ssa_role_user.related_id', '=', 'District')
-            ->using(SsaRoleUser::class)
+        return $this->belongsToMany(V3District::class, 'ssa_role_user', 'user_id', 'related_id')
+            ->where('ssa_role_user.related_id', '=', 'V3District')
+            ->using(V3SsaRoleUser::class)
             ->withTimestamps();
     }
 
     public function regions(): BelongsToMany
     {
-        return $this->belongsToMany(Region::class, 'ssa_role_user', 'user_id', 'related_id')
-            ->where('ssa_role_user.related_id', '=', 'Region')
-            ->using(SsaRoleUser::class)
+        return $this->belongsToMany(V3Region::class, 'ssa_role_user', 'user_id', 'related_id')
+            ->where('ssa_role_user.related_id', '=', 'V3Region')
+            ->using(V3SsaRoleUser::class)
             ->withTimestamps();
     }
 

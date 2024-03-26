@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'mysql'),
+    'default' => env('DB_CONNECTION', 'v3_core'),
 
     /*
     |--------------------------------------------------------------------------
@@ -63,15 +63,15 @@ return [
             ]) : [],
         ],
 
-        'sd_core' => [
+        'v3_core' => [
             'driver' => 'mysql',
-            'url' => env('SD_CORE_DATABASE_URL'),
-            'host' => env('SD_CORE_DB_HOST', '127.0.0.1'),
-            'port' => env('SD_CORE_DB_PORT', '3306'),
-            'database' => env('SD_CORE_DB_DATABASE', 'forge'),
-            'username' => env('SD_CORE_DB_USERNAME', 'forge'),
-            'password' => env('SD_CORE_DB_PASSWORD', ''),
-            'unix_socket' => env('SD_CORE_DB_SOCKET', ''),
+            'url' => env('DATABASE_URL'),
+            'host' => env('DB_HOST', '127.0.0.1'),
+            'port' => env('DB_PORT', '3306'),
+            'database' => env('DB_DATABASE', 'forge'),
+            'username' => env('DB_USERNAME', 'forge'),
+            'password' => env('DB_PASSWORD', ''),
+            'unix_socket' => env('DB_SOCKET', ''),
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
             'prefix' => '',
@@ -83,15 +83,35 @@ return [
             ]) : [],
         ],
 
-        'sd_logging' => [
+        'sd_v2_core' => [
             'driver' => 'mysql',
-            'url' => env('DATABASE_URL'),
-            'host' => env('SD_LOG_DB_HOST', '127.0.0.1'),
-            'port' => env('SD_LOG_DB_PORT', '3306'),
-            'database' => env('SD_LOG_DB_DATABASE', 'forge'),
-            'username' => env('SD_LOG_DB_USERNAME', 'forge'),
-            'password' => env('SD_LOG_DB_PASSWORD', ''),
-            'unix_socket' => env('SD_LOG_DB_SOCKET', ''),
+            'url' => ENV('SD_V2_CORE_DATABASE_URL'),
+            'host' => ENV('SD_V2_CORE_DB_HOST', '127.0.0.1'),
+            'port' => ENV('SD_V2_CORE_DB_PORT', '3306'),
+            'database' => ENV('SD_V2_CORE_DB_DATABASE', 'forge'),
+            'username' => ENV('SD_V2_CORE_DB_USERNAME', 'forge'),
+            'password' => ENV('SD_V2_CORE_DB_PASSWORD', ''),
+            'unix_socket' => ENV('SD_V2_CORE_DB_SOCKET', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
+
+        'sd_v2_logging' => [
+            'driver' => 'mysql',
+            'url' => env('SD_V2_LOG_DATABASE_URL'),
+            'host' => ENV('SD_V2_LOG_DB_HOST', '127.0.0.1'),
+            'port' => ENV('SD_V2_LOG_DB_PORT', '3306'),
+            'database' => ENV('SD_V2_LOG_DB_DATABASE', 'forge'),
+            'username' => ENV('SD_V2_LOG_DB_USERNAME', 'forge'),
+            'password' => ENV('SD_V2_LOG_DB_PASSWORD', ''),
+            'unix_socket' => ENV('SD_V2_LOG_DB_SOCKET', ''),
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
             'prefix' => '',

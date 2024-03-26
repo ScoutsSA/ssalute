@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 
 class V2SystemUser extends Model
 {
-    protected $connection = 'sd_core';
+    protected $connection = 'sd_v2_core';
     protected $table = 'system_users';
 
     protected $guarded = [];

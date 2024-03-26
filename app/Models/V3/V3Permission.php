@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\V3;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Permission extends Model
+class V3Permission extends Model
 {
     public const LEGACY_CAN_ADMIN_ALUMNI = 'CAN_ADMIN_ALUMNI';
     public const LEGACY_CAN_SEE_ALUMNI = 'CAN_SEE_ALUMNI';
@@ -34,6 +34,9 @@ class Permission extends Model
     public const LEGACY_CAN_ADMIN_FORM29 = 'CAN_ADMIN_FORM29';
     public const LEGACY_CAN_ADMIN_POLICE_CLEARANCE = 'CAN_ADMIN_POLICE_CLEARANCE';
 
+
+    protected $connection = 'v3_core';
+    protected $table = 'permissions';
     protected $guarded = [];
 
     protected $casts = [

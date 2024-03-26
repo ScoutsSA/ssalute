@@ -2,7 +2,7 @@
 
 namespace App\Models\V2;
 
-use App\Models\District;
+use App\Models\V3\V3District;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class V2District extends Model
 {
-    protected $connection = 'sd_core';
+    protected $connection = 'sd_v2_core';
     protected $table = 'districts';
     protected $guarded = [];
     protected $hidden = [];
@@ -38,9 +38,9 @@ class V2District extends Model
         $query->where('active', 1);
     }
 
-    public function newDistrict(): HasOne
+    public function v3District(): HasOne
     {
-        return $this->hasOne(District::class, 'sd_district_id', 'id');
+        return $this->hasOne(V3District::class, 'sd_district_id', 'id');
     }
 
     public function v2Region(): BelongsTo

@@ -4,10 +4,10 @@ namespace App\Livewire\Aam;
 
 use App\Constants\UserConstants;
 use App\Mail\Aam\ApplicationAdultMembershipApplicantInitalEmail;
-use App\Models\ApplicationAdultMembershipRequest;
 use App\Models\V2\V2District;
 use App\Models\V2\V2Group;
 use App\Models\V2\V2Region;
+use App\Models\V3\V3ApplicationAdultMembershipRequest;
 use App\Rules\ValidMsisdnRule;
 use Carbon\Carbon;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
@@ -375,7 +375,7 @@ be shared with.
 
         $state = $this->form->getState();
 
-        $aam = ApplicationAdultMembershipRequest::create([
+        $aam = V3ApplicationAdultMembershipRequest::create([
             'email' => $state['email'] ?? null,
             'first_name' => $state['first_name'] ?? null,
             'other_names' => $state['other_names'] ?? null,

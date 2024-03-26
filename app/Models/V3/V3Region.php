@@ -1,14 +1,17 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\V3;
 
 use App\Models\V2\V2Region;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class Region extends Model
+class V3Region extends Model
 {
+
+    protected $connection = 'v3_core';
+    protected $table = 'regions';
     protected $guarded = [];
     protected $casts = [
         'sd_region_id' => 'int',

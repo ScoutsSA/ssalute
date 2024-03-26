@@ -6,7 +6,7 @@ use App\Constants\AamStatuses;
 use App\Constants\UserConstants;
 use App\Mail\Aam\ApplicationAdultMembershipApplicantApprovedEmail;
 use App\Mail\Aam\ApplicationAdultMembershipApplicantDeclinedEmail;
-use App\Models\ApplicationAdultMembershipRequest;
+use App\Models\V3\V3ApplicationAdultMembershipRequest;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -31,9 +31,9 @@ class ViewAamForm extends Component implements HasForms, HasInfolists
     use InteractsWithInfolists;
     use InteractsWithForms;
 
-    public ApplicationAdultMembershipRequest $aamRequest;
+    public V3ApplicationAdultMembershipRequest $aamRequest;
 
-    public function mount(ApplicationAdultMembershipRequest $aamRequest = null)
+    public function mount(V3ApplicationAdultMembershipRequest $aamRequest = null)
     {
         $this->aamRequest = $aamRequest;
     }
@@ -49,7 +49,7 @@ class ViewAamForm extends Component implements HasForms, HasInfolists
             ->record($this->aamRequest)
             ->schema([
                 Section::make('Application')
-                    ->heading(fn (ApplicationAdultMembershipRequest $record) => 'Adult Application for Membership - ' . AamStatuses::STATUSES[$record->status] ?? $record->status)
+                    ->heading(fn (V3ApplicationAdultMembershipRequest $record) => 'Adult Application for Membership - ' . AamStatuses::STATUSES[$record->status] ?? $record->status)
                     ->columns(3)
                     ->schema([
                         Fieldset::make('Application Process')
@@ -175,7 +175,7 @@ class ViewAamForm extends Component implements HasForms, HasInfolists
                             ->schema([
                                 Fieldset::make('Passport Information')
                                     ->columns(3)
-                                    ->visible(fn (ApplicationAdultMembershipRequest $record) => $record->passport_country !== null)
+                                    ->visible(fn (V3ApplicationAdultMembershipRequest $record) => $record->passport_country !== null)
                                     ->schema([
                                         TextEntry::make('id_number')
                                             ->label('Passport Number'),
@@ -190,7 +190,7 @@ class ViewAamForm extends Component implements HasForms, HasInfolists
                                             ->columnSpan(3),
                                     ]),
                                 Fieldset::make('Passport Information')
-                                    ->visible(fn (ApplicationAdultMembershipRequest $record) => $record->passport_country === null)
+                                    ->visible(fn (V3ApplicationAdultMembershipRequest $record) => $record->passport_country === null)
                                     ->schema([
                                         TextEntry::make('id_number')
                                             ->label('ID Number'),

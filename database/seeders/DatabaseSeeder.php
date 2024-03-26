@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use App\Models\SsaRole;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -13,14 +12,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call(PermissionSeeder::class);
+        $this->call(V3PermissionSeeder::class);
 
         if (config('features.local.seeders.enabled')) {
-            $this->call(RegionSeeder::class);
-            $this->call(DistrictSeeder::class);
-            $this->call(GroupSeeder::class);
-            $this->call(SectionSeeder::class);
-            $this->call(SsaRole::class);
+            $this->call(V3RegionSeeder::class);
+            $this->call(V3DistrictSeeder::class);
+            $this->call(V3GroupSeeder::class);
+            $this->call(V3SectionSeeder::class);
+            $this->call(V3SsaRoleSeeder::class);
         }
     }
 }

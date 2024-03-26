@@ -1,16 +1,19 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\V3;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Section extends Model
+class V3Section extends Model
 {
     use HasFactory;
 
+
+    protected $connection = 'v3_core';
+    protected $table = 'sections';
     protected $guarded = [];
     protected $casts = [
         'id' => 'int',
@@ -33,6 +36,6 @@ class Section extends Model
 
     public function group(): BelongsTo
     {
-        return $this->belongsTo(Group::class);
+        return $this->belongsTo(V3Group::class);
     }
 }

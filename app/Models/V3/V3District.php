@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\V3;
 
 use App\Models\V2\V2District;
 use Illuminate\Database\Eloquent\Builder;
@@ -10,10 +10,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class District extends Model
+class V3District extends Model
 {
     use HasFactory;
 
+    protected $connection = 'v3_core';
+    protected $table = 'districts';
     protected $guarded = [];
     protected $casts = [
         'id' => 'int',
@@ -38,11 +40,11 @@ class District extends Model
 
     public function region(): BelongsTo
     {
-        return $this->belongsTo(Region::class);
+        return $this->belongsTo(V3Region::class);
     }
 
     public function groups(): HasMany
     {
-        return $this->hasMany(Group::class);
+        return $this->hasMany(V3Group::class);
     }
 }

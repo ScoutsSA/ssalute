@@ -11,10 +11,10 @@ class GroupTypes
     public const UNKNOWN = 'unknown';
 
     public const READ = [
-        self::COMMUNITY => 'Community Group',
-        self::NGO => 'NGO Group',
-        self::CHURCH => 'Church Group',
-        self::SCHOOL => 'School Group',
-        self::UNKNOWN => '!Unknown! Group',
+        self::COMMUNITY => 'Community V3Group',
+        self::NGO => 'NGO V3Group',
+        self::CHURCH => 'Church V3Group',
+        self::SCHOOL => 'School V3Group',
+        self::UNKNOWN => '!Unknown! V3Group',
     ];
 }

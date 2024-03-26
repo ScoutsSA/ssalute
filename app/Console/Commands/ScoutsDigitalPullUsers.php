@@ -2,11 +2,10 @@
 
 namespace App\Console\Commands;
 
-use App\Models\User;
 use App\Models\V2\V2SystemUser;
+use App\Models\V3\V3User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -25,9 +24,9 @@ class ScoutsDigitalPullUsers extends Command
         $this->output->progressStart($v2Models->count());
         foreach ($v2Models as $v2Model) {
             $this->output->progressAdvance();
-            $newModel = User::where('sd_system_user_id', $v2Model->id)->first();
+            $newModel = V3User::where('sd_system_user_id', $v2Model->id)->first();
             if (! $newModel) {
-                $duplicate = User::where('email', $v2Model->username)->exists();
+                $duplicate = V3User::where('email', $v2Model->username)->exists();
                 if ($duplicate) {
                     Log::error('ScoutsDigitalPullUsers - Duplicate email found', ['email' => $v2Model->username]);
                     $this->line(string:'', verbosity:'v');
@@ -35,7 +34,7 @@ class ScoutsDigitalPullUsers extends Command
 
                     continue;
                 }
-                $newModel = User::create($this->getNewModelData($v2Model));
+                $newModel = V3User::create($this->getNewModelData($v2Model));
                 $modelAddedCounter++;
                 Log::info('ScoutsDigitalPullUsers - Added new model', ['old_id' => $v2Model->getKey(), 'id' => $newModel->getKey(), 'name' => $newModel->name]);
 

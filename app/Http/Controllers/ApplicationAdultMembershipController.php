@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ApplicationAdultMembershipRequest;
+use App\Models\V3\V3ApplicationAdultMembershipRequest;
 use Illuminate\Http\Request;
 
 class ApplicationAdultMembershipController extends Controller
@@ -30,7 +30,7 @@ class ApplicationAdultMembershipController extends Controller
         if (config('features.aam.aam_form.enabled') !== true) {
             abort(404);
         }
-        $aamRequest = ApplicationAdultMembershipRequest::where('action_slug', $aam_actionable_slug)->firstOrFail();
+        $aamRequest = V3ApplicationAdultMembershipRequest::where('action_slug', $aam_actionable_slug)->firstOrFail();
 
         return view('aam.aam_approval', ['aamRequest' => $aamRequest]);
     }

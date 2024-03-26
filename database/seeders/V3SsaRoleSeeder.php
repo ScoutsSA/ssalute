@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 
-class SsaRoleSeeder extends Seeder
+class V3SsaRoleSeeder extends Seeder
 {
     /**
      * Run the database seeds.

@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Region;
 use App\Models\V2\V2Region;
+use App\Models\V3\V3Region;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
@@ -22,9 +22,9 @@ class ScoutsDigitalPullRegions extends Command
         $this->output->progressStart($v2Models->count());
         foreach ($v2Models as $v2Model) {
             $this->output->progressAdvance();
-            $newModel = Region::where('sd_region_id', $v2Model->id)->first();
+            $newModel = V3Region::where('sd_region_id', $v2Model->id)->first();
             if (! $newModel) {
-                $newModel = Region::create($this->getNewModelData($v2Model));
+                $newModel = V3Region::create($this->getNewModelData($v2Model));
                 $modelAddedCounter++;
                 Log::info('ScoutsDigitalPullRegions - Added new model', ['old_id' => $v2Model->getKey(), 'id' => $newModel->getKey(), 'name' => $newModel->name]);
 

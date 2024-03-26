@@ -14,9 +14,9 @@ class SsaRoleRelatedOptions
     public const READ = [
         self::NATIONAL => 'National',
         self::REGIONAL => 'Regional',
-        self::DISTRICT => 'District',
-        self::GROUP => 'Group',
-        self::SECTION => 'Section',
+        self::DISTRICT => 'V3District',
+        self::GROUP => 'V3Group',
+        self::SECTION => 'V3Section',
         self::NONE => 'General',
     ];
 }

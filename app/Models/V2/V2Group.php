@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class V2Group extends Model
 {
-    protected $connection = 'sd_core';
+    protected $connection = 'sd_v2_core';
     protected $table = 'groups';
     protected $guarded = [];
     protected $hidden = [];
@@ -94,7 +94,7 @@ class V2Group extends Model
     public function scopeNotScoutingInSchools(Builder $query): void
     {
         $query->where('', 1);
-        // Where group type .name != Schools Group
+        // Where group type .name != Schools V3Group
     }
 
     public function v2MultiSections(): HasMany

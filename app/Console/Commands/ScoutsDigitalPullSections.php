@@ -3,9 +3,9 @@
 namespace App\Console\Commands;
 
 use App\Constants\SectionTypes;
-use App\Models\Group;
 use App\Models\V2\V2Group;
 use App\Models\V2\V2GroupsMulti;
+use App\Models\V3\V3Group;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
@@ -27,11 +27,11 @@ class ScoutsDigitalPullSections extends Command
         $this->output->progressStart($v2Models->count());
         foreach ($v2Models as $v2Model) {
             $this->output->progressAdvance();
-            $newGroup = Group::where('sd_group_id', $v2Model->id)->first();
+            $newGroup = V3Group::where('sd_group_id', $v2Model->id)->first();
             if (! $newGroup) {
-                Log::error('ScoutsDigitalPullSections - Group not found', ['group_id' => $v2Model->getKey()]);
+                Log::error('ScoutsDigitalPullSections - V3Group not found', ['group_id' => $v2Model->getKey()]);
                 $this->line(string:'', verbosity:'v');
-                $this->error('Sections: Group not found: ' . $v2Model->name, 'v');
+                $this->error('Sections: V3Group not found: ' . $v2Model->name, 'v');
 
                 continue;
             }
@@ -49,7 +49,7 @@ class ScoutsDigitalPullSections extends Command
         ]);
     }
 
-    public function syncDens(Group $newGroup, V2Group $v2Model): int
+    public function syncDens(V3Group $newGroup, V2Group $v2Model): int
     {
         if ($v2Model->multiDen) {
             return $this->syncMultiDens($newGroup, $v2Model);
@@ -65,19 +65,19 @@ class ScoutsDigitalPullSections extends Command
         return 0;
     }
 
-    public function syncMultiDens(Group $newGroup, V2Group $v2Group): int
+    public function syncMultiDens(V3Group $newGroup, V2Group $v2Group): int
     {
         $multiGroups = $v2Group->v2MultiSections()->where('type', V2GroupsMulti::TYPE_MEERCAT)->get();
         if ($newGroup->dens()->count() !== $multiGroups->count()) {
             if ($newGroup->dens()->count() > 0) {
-                Log::error('ScoutsDigitalPullSections - Multi Den - Group already has dens, but not enough for the multi den', [
+                Log::error('ScoutsDigitalPullSections - Multi Den - V3Group already has dens, but not enough for the multi den', [
                     'group_id' => $newGroup->id,
                     'group_sd_id' => $newGroup->sd_group_id,
                     'group_dens_count' => $newGroup->dens()->count(),
                     'group_multi_dens_count' => $multiGroups->count(),
                 ]);
                 $this->line(string:'', verbosity:'v');
-                $this->error("Sections: Multi Den - Group already has dens, but not enough for the multi den: {$newGroup->name}", 'v');
+                $this->error("Sections: Multi Den - V3Group already has dens, but not enough for the multi den: {$newGroup->name}", 'v');
 
                 return 0;
             }
@@ -93,7 +93,7 @@ class ScoutsDigitalPullSections extends Command
         return 0;
     }
 
-    public function syncPacks(Group $newGroup, V2Group $v2Model): int
+    public function syncPacks(V3Group $newGroup, V2Group $v2Model): int
     {
         if ($v2Model->multiPack) {
             return $this->syncMultiPacks($newGroup, $v2Model);
@@ -109,19 +109,19 @@ class ScoutsDigitalPullSections extends Command
         return 0;
     }
 
-    public function syncMultiPacks(Group $newGroup, V2Group $v2Group): int
+    public function syncMultiPacks(V3Group $newGroup, V2Group $v2Group): int
     {
         $multiGroups = $v2Group->v2MultiSections()->where('type', V2GroupsMulti::TYPE_CUB)->get();
         if ($newGroup->packs()->count() !== $multiGroups->count()) {
             if ($newGroup->packs()->count() > 0) {
-                Log::error('ScoutsDigitalPullSections - Multi Pack - Group already has packs, but not enough for the multi pack', [
+                Log::error('ScoutsDigitalPullSections - Multi Pack - V3Group already has packs, but not enough for the multi pack', [
                     'group_id' => $newGroup->id,
                     'group_sd_id' => $newGroup->sd_group_id,
                     'group_packs_count' => $newGroup->packs()->count(),
                     'group_multi_packs_count' => $multiGroups->count(),
                 ]);
                 $this->line(string:'', verbosity:'v');
-                $this->error("Sections: Multi Pack - Group already has packs, but not enough for the multi pack: {$newGroup->name}", 'v');
+                $this->error("Sections: Multi Pack - V3Group already has packs, but not enough for the multi pack: {$newGroup->name}", 'v');
 
                 return 0;
             }
@@ -137,7 +137,7 @@ class ScoutsDigitalPullSections extends Command
         return 0;
     }
 
-    public function syncTroops(Group $newGroup, V2Group $v2Model): int
+    public function syncTroops(V3Group $newGroup, V2Group $v2Model): int
     {
         if ($v2Model->multiTroop) {
             return $this->syncMultiTroops($newGroup, $v2Model);
@@ -153,19 +153,19 @@ class ScoutsDigitalPullSections extends Command
         return 0;
     }
 
-    public function syncMultiTroops(Group $newGroup, V2Group $v2Group): int
+    public function syncMultiTroops(V3Group $newGroup, V2Group $v2Group): int
     {
         $multiGroups = $v2Group->v2MultiSections()->where('type', V2GroupsMulti::TYPE_SCOUT)->get();
         if ($newGroup->troops()->count() !== $multiGroups->count()) {
             if ($newGroup->troops()->count() > 0) {
-                Log::error('ScoutsDigitalPullSections - Multi Troop - Group already has troops, but not enough for the multi troop', [
+                Log::error('ScoutsDigitalPullSections - Multi Troop - V3Group already has troops, but not enough for the multi troop', [
                     'group_id' => $newGroup->id,
                     'group_sd_id' => $newGroup->sd_group_id,
                     'group_troops_count' => $newGroup->troops()->count(),
                     'group_multi_troops_count' => $multiGroups->count(),
                 ]);
                 $this->line(string:'', verbosity:'v');
-                $this->error("Sections: Multi Troop - Group already has troops, but not enough for the multi troop: {$newGroup->name}", 'v');
+                $this->error("Sections: Multi Troop - V3Group already has troops, but not enough for the multi troop: {$newGroup->name}", 'v');
 
                 return 0;
             }
@@ -181,7 +181,7 @@ class ScoutsDigitalPullSections extends Command
         return 0;
     }
 
-    public function syncCrews(Group $newGroup, V2Group $v2Model): int
+    public function syncCrews(V3Group $newGroup, V2Group $v2Model): int
     {
         if ($v2Model->multiCrew) {
             return $this->syncMultiCrews($newGroup, $v2Model);
@@ -197,19 +197,19 @@ class ScoutsDigitalPullSections extends Command
         return 0;
     }
 
-    public function syncMultiCrews(Group $newGroup, V2Group $v2Group): int
+    public function syncMultiCrews(V3Group $newGroup, V2Group $v2Group): int
     {
         $multiGroups = $v2Group->v2MultiSections()->where('type', V2GroupsMulti::TYPE_ROVER)->get();
         if ($newGroup->crews()->count() !== $multiGroups->count()) {
             if ($newGroup->crews()->count() > 0) {
-                Log::error('ScoutsDigitalPullSections - Multi Crew - Group already has crews, but not enough for the multi crew', [
+                Log::error('ScoutsDigitalPullSections - Multi Crew - V3Group already has crews, but not enough for the multi crew', [
                     'group_id' => $newGroup->id,
                     'group_sd_id' => $newGroup->sd_group_id,
                     'group_crews_count' => $newGroup->crews()->count(),
                     'group_multi_crews_count' => $multiGroups->count(),
                 ]);
                 $this->line(string:'', verbosity:'v');
-                $this->error("Sections: Multi Crew - Group already has crews, but not enough for the multi crew: {$newGroup->name}", 'v');
+                $this->error("Sections: Multi Crew - V3Group already has crews, but not enough for the multi crew: {$newGroup->name}", 'v');
 
                 return 0;
             }

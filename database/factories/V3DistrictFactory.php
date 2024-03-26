@@ -5,9 +5,9 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Group>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\V3\V3District>
  */
-class GroupFactory extends Factory
+class V3DistrictFactory extends Factory
 {
     /**
      * Define the model's default state.

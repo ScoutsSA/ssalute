@@ -2,7 +2,7 @@
 
 namespace App\Mail\Aam;
 
-use App\Models\ApplicationAdultMembershipRequest;
+use App\Models\V3\V3ApplicationAdultMembershipRequest;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -14,7 +14,7 @@ class ApplicationAdultMembershipApproverInitialEmail extends Mailable implements
 {
     use Queueable, SerializesModels;
 
-    public function __construct(public ApplicationAdultMembershipRequest $applicationAdultMembershipRequest)
+    public function __construct(public V3ApplicationAdultMembershipRequest $applicationAdultMembershipRequest)
     {
         //
     }

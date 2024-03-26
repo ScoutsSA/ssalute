@@ -1,13 +1,16 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\V3;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class SsaRoleUser extends Pivot
+class V3SsaRoleUser extends Pivot
 {
+
+    protected $connection = 'v3_core';
+    protected $table = 'ssa_role_user';
     public $incrementing = true;
 
     protected $guarded = [];
@@ -31,11 +34,11 @@ class SsaRoleUser extends Pivot
 
     public function ssaRole(): BelongsTo
     {
-        return $this->belongsTo(SsaRole::class);
+        return $this->belongsTo(V3SsaRole::class);
     }
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(V3User::class);
     }
 }

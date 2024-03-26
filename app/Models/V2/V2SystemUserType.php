@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class V2SystemUserType extends Model
 {
-    protected $connection = 'sd_core';
+    protected $connection = 'sd_v2_core';
     protected $table = 'system_user_types';
     protected $guarded = [];
     protected $hidden = [];

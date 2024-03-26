@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 
-class WarrantSeeder extends Seeder
+class V3SectionSeeder extends Seeder
 {
     /**
      * Run the database seeds.
