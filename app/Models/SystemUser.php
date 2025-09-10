@@ -3,11 +3,14 @@
 namespace App\Models;
 
 use App\Providers\AppServiceProvider;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasName;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\DB;
 
-class SystemUser extends User
+class SystemUser extends User implements FilamentUser, HasName
 {
     protected $connection = AppServiceProvider::DB_SD_CORE;
     protected $table = 'system_users';
@@ -193,5 +196,16 @@ class SystemUser extends User
     public function getScoutsDigitalPlainTextPassword()
     {
         return $this->newQuery()->where('id', $this->id)->selectRaw('CAST(AES_DECRYPT(passwordNew,"' . config('auth.scouts_digital.authentication.encryption_key') . '") AS CHAR(50)) as scouts_digital_plain_text_password')->first()->scouts_digital_plain_text_password;
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $this->username === "john.roux1@gmail.com"; // This should be changed out for a role check
+    }
+
+
+    public function getFilamentName(): string
+    {
+        return $this->first_name . ' ' . $this->surname;
     }
 }
