@@ -1,0 +1,96 @@
+<?php
+
+namespace App\Models;
+
+use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Model;
+
+class GroupEvent extends Model
+{
+    protected $connection = AppServiceProvider::DB_SD_CORE;
+    protected $table = 'group_events';
+
+    protected $guarded = [];
+
+    protected $casts = [
+        'id' => 'int',
+        'nationalEvent' => 'int',
+        'countryID' => 'int',
+        'assocToGroup' => 'int',
+        'assocToDistrict' => 'int',
+        'assocToRegion' => 'int',
+        'associatedToNationalEventID' => 'int',
+        'associatedToRegionEventID' => 'int',
+        'associatedToDistrictEventID' => 'int',
+        'eventFor' => 'int',
+        'eventFor2' => 'int',
+        'eventAway' => 'int',
+        'eventPatrolID' => 'int',
+        'multiID' => 'int',
+        'denID' => 'int',
+        'packID' => 'int',
+        'troopID' => 'int',
+        'crewID' => 'int',
+        'name' => 'string',
+        'description' => 'string',
+        'heldInDistrict' => 'int',
+        'uploadedDoc' => 'string',
+        'locationName' => 'string',
+        'locationAddress' => 'string',
+        'locationLat' => 'string',
+        'locationLon' => 'string',
+        'startDate' => 'date',
+        'startTime' => 'string',
+        'endDate' => 'date',
+        'endTime' => 'string',
+        'scouterResponsible' => 'int',
+        'created' => 'datetime',
+        'createdby' => 'int',
+        'modified' => 'datetime',
+        'modifiedby' => 'int',
+        'costPerPerson' => 'float',
+        'costPerPersonPer' => 'string',
+        'nightUnderCanvas' => 'int',
+        'kmHike' => 'float',
+        'eventTypeID' => 'int',
+        'permitDocLocation' => 'string',
+        'uniqueID' => 'string',
+        'eventPSPin' => 'int',
+        'eventTSPin' => 'int',
+        'eventSGLPin' => 'int',
+        'eventDCPin' => 'int',
+        'eventOtherDCPin' => 'int',
+        'active' => 'int',
+        'approved' => 'int',
+        'planningDoc' => 'string',
+        'marketingDoc' => 'string',
+        'competition' => 'int',
+        'competitionScoringFactor' => 'float',
+        'competitionScoringDefaultPage' => 'int',
+        'competitionScorePrecheck' => 'int',
+        'addedIn' => 'int',
+        'bookingPossible' => 'int',
+        'latestBookingDate' => 'date',
+        'maxNrOfBookings' => 'int',
+        'managementEmail' => 'string',
+        'depositRequired' => 'int',
+        'depositRequiredDate' => 'date',
+        'paymentInFullByDate' => 'date',
+        'travelArrangements' => 'string',
+        'bookingLive' => 'int',
+        'bankName' => 'string',
+        'bankAccountName' => 'string',
+        'bankBranch' => 'string',
+        'bankCode' => 'string',
+        'bankAccountNumber' => 'string',
+        'BAReferenceStart' => 'string',
+        'startAge' => 'int',
+        'endAge' => 'int',
+        'GPSTrackingRequired' => 'int',
+        'noCopy' => 'int',
+        'surveyURL' => 'string',
+        'leaderboardURL' => 'string',
+        'calendarURL' => 'string',
+    ];
+
+}

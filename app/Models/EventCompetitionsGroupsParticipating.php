@@ -1,0 +1,27 @@
+<?php
+
+namespace App\Models;
+
+use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Model;
+
+class EventCompetitionsGroupsParticipating extends Model
+{
+    protected $connection = AppServiceProvider::DB_SD_CORE;
+    protected $table = 'event_competitions_groups_participating';
+
+    protected $guarded = [];
+
+    protected $casts = [
+        'id' => 'int',
+        'eventID' => 'int',
+        'teamID' => 'int',
+        'internalCompetitionID' => 'int',
+        'active' => 'int',
+        'created' => 'datetime',
+        'createdby' => 'int',
+        'modified' => 'datetime',
+        'modifiedby' => 'int',
+    ];
+
+}

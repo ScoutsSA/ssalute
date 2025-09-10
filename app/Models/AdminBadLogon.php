@@ -1,0 +1,25 @@
+<?php
+
+namespace App\Models;
+
+use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Model;
+
+class AdminBadLogon extends Model
+{
+    protected $connection = AppServiceProvider::DB_SD_CORE;
+    protected $table = 'admin_bad_logons';
+
+    protected $guarded = [];
+
+    protected $casts = [
+        'id' => 'int',
+        'username' => 'string',
+        'password' => 'string',
+        'date' => 'datetime',
+        'ip' => 'string',
+        'userAgent' => 'string',
+        'usingMobile' => 'int',
+    ];
+
+}

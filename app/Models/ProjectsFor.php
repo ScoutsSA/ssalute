@@ -1,0 +1,22 @@
+<?php
+
+namespace App\Models;
+
+use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Model;
+
+class ProjectsFor extends Model
+{
+    protected $connection = AppServiceProvider::DB_SD_CORE;
+    protected $table = 'projects_for';
+
+    protected $guarded = [];
+
+    protected $casts = [
+        'id' => 'int',
+        'countryID' => 'int',
+        'name' => 'string',
+        'active' => 'int',
+    ];
+
+}

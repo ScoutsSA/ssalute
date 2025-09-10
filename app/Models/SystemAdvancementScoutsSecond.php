@@ -1,0 +1,33 @@
+<?php
+
+namespace App\Models;
+
+use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Model;
+
+class SystemAdvancementScoutsSecond extends Model
+{
+    protected $connection = AppServiceProvider::DB_SD_CORE;
+    protected $table = 'system_advancement_scouts_second';
+
+    protected $guarded = [];
+
+    protected $casts = [
+        'id' => 'int',
+        'scoutProgramTypeID' => 'int',
+        'programType' => 'int',
+        'countryID' => 'int',
+        'position' => 'int',
+        'advancmentID' => 'int',
+        'theme' => 'int',
+        'name' => 'string',
+        'description' => 'string',
+        'short' => 'string',
+        'campingTask' => 'int',
+        'badgeTask' => 'int',
+        'oldID' => 'string',
+        'active' => 'int',
+        'PGATask' => 'int',
+    ];
+
+}
