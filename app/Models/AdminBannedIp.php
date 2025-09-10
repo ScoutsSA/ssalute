@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
-use Illuminate\Database\Eloquent\Model;
 
-class AdminBannedIp extends Model
+class AdminBannedIp extends BaseModel
 {
     protected $connection = AppServiceProvider::DB_SD_CORE;
     protected $table = 'admin_banned_ips';

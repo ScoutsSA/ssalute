@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
-use Illuminate\Database\Eloquent\Model;
 
-class SystemBadgeScoutsFirst extends Model
+class SystemBadgeScoutsFirst extends BaseModel
 {
     protected $connection = AppServiceProvider::DB_SD_CORE;
     protected $table = 'system_badge_scouts_first';

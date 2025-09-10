@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
-use Illuminate\Database\Eloquent\Model;
 
-class ServicesPurchasedSpreadsheetsSent extends Model
+class ServicesPurchasedSpreadsheetsSent extends BaseModel
 {
     protected $connection = AppServiceProvider::DB_SD_CORE;
     protected $table = 'services_purchased_spreadsheets_sent';

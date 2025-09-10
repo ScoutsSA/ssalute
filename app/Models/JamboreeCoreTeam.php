@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
-use Illuminate\Database\Eloquent\Model;
 
-class JamboreeCoreTeam extends Model
+class JamboreeCoreTeam extends BaseModel
 {
     protected $connection = AppServiceProvider::DB_SD_CORE;
     protected $table = 'jamboree_core_team';

@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
-use Illuminate\Database\Eloquent\Model;
 
-class GroupFinancialAnnualInvoiceDiscount extends Model
+class GroupFinancialAnnualInvoiceDiscount extends BaseModel
 {
     protected $connection = AppServiceProvider::DB_SD_CORE;
     protected $table = 'group_financial_annual_invoice_discounts';

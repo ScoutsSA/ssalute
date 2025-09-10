@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
-use Illuminate\Database\Eloquent\Model;
 
-class AmsTrainingCoursesAnnualBookingsTracking extends Model
+class AmsTrainingCoursesAnnualBookingsTracking extends BaseModel
 {
     protected $connection = AppServiceProvider::DB_SD_CORE;
     protected $table = 'ams_training_courses_annual_bookings_tracking';

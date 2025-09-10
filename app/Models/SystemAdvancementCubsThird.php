@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
-use Illuminate\Database\Eloquent\Model;
 
-class SystemAdvancementCubsThird extends Model
+class SystemAdvancementCubsThird extends BaseModel
 {
+    public $timestamps = false;
+
     protected $connection = AppServiceProvider::DB_SD_CORE;
     protected $table = 'system_advancement_cubs_third';
 

@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class GroupsMulti extends Model
+class GroupsMulti extends BaseModel
 {
     public const TYPE_MEERCAT = 'Meerkat';
     public const TYPE_CUB = 'Cub';

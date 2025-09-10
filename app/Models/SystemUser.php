@@ -200,9 +200,8 @@ class SystemUser extends User implements FilamentUser, HasName
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->username === "john.roux1@gmail.com"; // This should be changed out for a role check
+        return $this->username === 'john.roux1@gmail.com'; // This should be changed out for a role check
     }
-
 
     public function getFilamentName(): string
     {

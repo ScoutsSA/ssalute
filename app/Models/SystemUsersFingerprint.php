@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
-use Illuminate\Database\Eloquent\Model;
 
-class SystemUsersFingerprint extends Model
+class SystemUsersFingerprint extends BaseModel
 {
+    public const UPDATED_AT = null;
+
     protected $connection = AppServiceProvider::DB_SD_CORE;
     protected $table = 'system_users_fingerprint';
 
