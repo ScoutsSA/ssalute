@@ -43,7 +43,7 @@ class SanitizeDatabase extends Command
         DB::connection(AppServiceProvider::DB_SD_CORE)->table('ams_training_courses')->update(['agendaPDFLocation' => '-', 'materialPDFLocation' => '-']);
         DB::connection(AppServiceProvider::DB_SD_CORE)->table('ams_training_courses_annual_bookings')->update(['invoiceLocation' => '-', 'POPLocation' => '-', 'userPIN' => null]);
 
-        DB::connection(AppServiceProvider::DB_SD_CORE)->table('ams_training_locations')->update(['contact' => 'san-name','tel' => null,'cell' => null,'email' => null,]);
+        DB::connection(AppServiceProvider::DB_SD_CORE)->table('ams_training_locations')->update(['contact' => 'san-name', 'tel' => null, 'cell' => null, 'email' => null]);
         DB::connection(AppServiceProvider::DB_SD_CORE)->table('ams_training_past')->update(['PDFLocation' => '-']);
         DB::connection(AppServiceProvider::DB_SD_CORE)->table('ams_warrant_applications')->update(['PDFLocation' => '-']);
         DB::connection(AppServiceProvider::DB_SD_CORE)->table('ams_warrant_extensions')->update(['PDFLocation' => '-']);
@@ -145,8 +145,6 @@ class SanitizeDatabase extends Command
 
         DB::connection(AppServiceProvider::DB_SD_CORE)->table('info_sharing')->update(['contactPerson' => '-', 'email' => null, 'tel' => null]);
 
-
-
         DB::connection(AppServiceProvider::DB_SD_CORE)->table('jamboree_activity_center_bases')->truncate();
         DB::connection(AppServiceProvider::DB_SD_CORE)->table('jamboree_activity_centers')->truncate();
         DB::connection(AppServiceProvider::DB_SD_CORE)->table('jamboree_adult_allocations')->truncate();
@@ -174,7 +172,6 @@ class SanitizeDatabase extends Command
         DB::connection(AppServiceProvider::DB_SD_CORE)->table('jamboree_sub_camps')->truncate();
         DB::connection(AppServiceProvider::DB_SD_CORE)->table('jamboree_troop_patrol_allocations')->truncate();
         DB::connection(AppServiceProvider::DB_SD_CORE)->table('jamboree_troops')->truncate();
-
 
         DB::connection(AppServiceProvider::DB_SD_CORE)->table('projects')->update(['document' => '-', 'contactPerson' => '-', 'contactEmail' => null, 'contactCell' => null]);
         DB::connection(AppServiceProvider::DB_SD_CORE)->table('scouter_reviews')->update(['review' => '-']);

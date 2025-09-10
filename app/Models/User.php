@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Providers\AppServiceProvider;
 use Illuminate\Database\Eloquent\Builder;
-
 use Illuminate\Support\Facades\DB;
 
 class User extends \Illuminate\Foundation\Auth\User
