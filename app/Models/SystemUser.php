@@ -4,8 +4,9 @@ namespace App\Models;
 
 use App\Providers\AppServiceProvider;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\DB;
-use \Illuminate\Foundation\Auth\User;
+
 class SystemUser extends User
 {
     protected $connection = AppServiceProvider::DB_SD_CORE;
@@ -15,7 +16,7 @@ class SystemUser extends User
 
     protected $hidden = [
         'passwordNew',
-        'uniquePIN'
+        'uniquePIN',
     ];
 
     protected $casts = [
@@ -178,7 +179,6 @@ class SystemUser extends User
         'DSDTownshipName' => 'string',
         'DSDDisabled' => 'int',
     ];
-
 
     public function scopeActive(Builder $query): void
     {

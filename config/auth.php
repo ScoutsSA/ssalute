@@ -67,7 +67,7 @@ return [
 
     'providers' => [
         'users' => [
-            'driver' => 'eloquent',
+            'driver' => 'scouts_digital',
             'model' => env('AUTH_MODEL', App\Models\SystemUser::class),
         ],
 
