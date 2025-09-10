@@ -1,0 +1,215 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('system_users', function (Blueprint $table) {
+            $table->integer('id', true);
+            $table->integer('oldID')->default(0);
+            $table->string('username', 128)->nullable()->index('username');
+            $table->binary('passwordNew')->nullable();
+            $table->dateTime('lastPasswordChange')->nullable();
+            $table->integer('passwordChangedBy')->nullable();
+            $table->dateTime('lastLoginDate')->nullable()->index('lastlogindate');
+            $table->date('startDate')->nullable();
+            $table->string('title', 32)->nullable();
+            $table->string('first_name', 128)->nullable();
+            $table->string('otherName', 128)->nullable();
+            $table->string('surname', 64)->nullable();
+            $table->string('previousSurname', 128)->nullable();
+            $table->string('knownName', 128)->nullable();
+            $table->string('scoutName', 64)->nullable();
+            $table->string('photo', 128)->nullable();
+            $table->string('thumb', 128)->nullable();
+            $table->string('idNumber', 13)->nullable();
+            $table->string('IDBookLocation', 2048)->nullable();
+            $table->string('passportNumber', 24)->nullable();
+            $table->integer('passportCountry')->nullable()->default(196);
+            $table->string('partnersFullName', 128)->nullable();
+            $table->string('sex', 6)->nullable();
+            $table->string('race', 10)->nullable();
+            $table->date('dob')->nullable();
+            $table->date('dateInvested')->nullable();
+            $table->integer('multiID')->default(0);
+            $table->integer('packID')->nullable()->default(0);
+            $table->integer('troopID')->nullable()->default(0);
+            $table->dateTime('dateToCubs')->nullable();
+            $table->dateTime('dateToScouts')->nullable();
+            $table->integer('scoutPatrolID')->nullable();
+            $table->integer('scoutPatrolTaskID')->nullable();
+            $table->dateTime('dateToRovers')->nullable();
+            $table->text('phys_address')->nullable();
+            $table->string('gpsLat', 25)->nullable();
+            $table->string('gpsLon', 25)->nullable();
+            $table->string('gpsAccuracy', 7)->nullable();
+            $table->integer('phys_country_id')->default(196);
+            $table->text('postal_address')->nullable();
+            $table->integer('postal_country_id')->nullable();
+            $table->dateTime('created');
+            $table->integer('createdby')->default(0);
+            $table->dateTime('modified')->nullable();
+            $table->integer('modifiedby')->nullable();
+            $table->integer('user_type')->nullable()->index('user_type');
+            $table->integer('parentType')->nullable();
+            $table->integer('active')->index('orphanedvulnerable')->comment('1 = active');
+            $table->dateTime('dateDeactivated')->nullable();
+            $table->integer('deactivatedBy')->nullable();
+            $table->integer('assoc_to_account');
+            $table->integer('assoc_to_group')->nullable();
+            $table->string('branch', 6)->nullable();
+            $table->integer('assoc_to_district')->nullable();
+            $table->integer('assoc_to_region')->nullable();
+            $table->string('trainingRegionName', 24)->nullable();
+            $table->string('trainingDistrictName', 64)->nullable();
+            $table->string('trainingGroupName', 64)->nullable();
+            $table->string('language', 5)->nullable();
+            $table->string('cellNr', 32)->nullable();
+            $table->string('officeNr', 32)->nullable();
+            $table->string('homeNr', 32)->nullable();
+            $table->string('faxNr', 64)->nullable();
+            $table->integer('responsible_for_payment')->nullable()->comment('1 = Yes');
+            $table->integer('mustChangePassword')->nullable()->comment('1 = Must change password');
+            $table->integer('canLogon')->comment('1 = Can Logon');
+            $table->string('medicalAidName', 128)->nullable();
+            $table->string('medicalAidNr', 128)->nullable();
+            $table->string('medicalAidPrincipalMember', 128)->nullable();
+            $table->string('doctorsName', 128)->nullable();
+            $table->string('doctorsPhone', 128)->nullable();
+            $table->string('allergies')->nullable();
+            $table->text('allergiesInstructions')->nullable();
+            $table->text('disabilities')->nullable();
+            $table->text('disabilitiesInstructions')->nullable();
+            $table->string('medicalConditions', 128)->nullable();
+            $table->text('medicalConditionsInstructions')->nullable();
+            $table->text('currentMedication')->nullable();
+            $table->string('emergencyContactName', 128)->nullable();
+            $table->string('emergencyContactCell', 128)->nullable();
+            $table->string('emergencyContactTel', 128)->nullable();
+            $table->string('emergencyContactRelationship', 64)->nullable();
+            $table->text('specialMealRequirements')->nullable();
+            $table->string('religiousAffilliation', 128)->nullable();
+            $table->string('school', 128)->nullable();
+            $table->string('religion', 128)->nullable();
+            $table->string('religiousAffiliation', 128)->nullable();
+            $table->text('hobbies')->nullable();
+            $table->text('sports')->nullable();
+            $table->text('interests')->nullable();
+            $table->integer('canAdmin')->default(0);
+            $table->string('100CharID', 100)->nullable()->index('100charid');
+            $table->integer('uniquePIN')->nullable();
+            $table->integer('weeklyEmailUnsubscribe')->default(0);
+            $table->text('weeklyEmailUnsubscribeText')->nullable();
+            $table->dateTime('weeklyEmailUnsubscribeDate')->nullable();
+            $table->integer('logonEmailSent')->nullable()->comment('1 = Yes');
+            $table->dateTime('LogonEmailDate')->nullable();
+            $table->integer('amsOnly')->default(0)->comment('1 = Only AMS');
+            $table->integer('amsRole')->default(0);
+            $table->integer('homeLanguage')->nullable();
+            $table->integer('otherLanguage')->nullable();
+            $table->text('otherLanguages')->nullable();
+            $table->integer('proficiencyInEnglish')->nullable()->default(0);
+            $table->string('religiousBelief', 32)->nullable();
+            $table->integer('highestEducation')->nullable();
+            $table->integer('nrOfChildrenBoys')->nullable();
+            $table->integer('nrOfChildrenGirls')->nullable();
+            $table->string('occupation', 64)->nullable();
+            $table->string('typeOfEmployment', 10)->nullable();
+            $table->string('employer', 128)->nullable();
+            $table->integer('maritalStatus')->nullable();
+            $table->string('ref1Name', 128)->nullable();
+            $table->text('ref1Address')->nullable();
+            $table->string('ref1Tel', 128)->nullable();
+            $table->string('ref2Name', 128)->nullable();
+            $table->text('ref2Address')->nullable();
+            $table->string('ref2Tel', 128)->nullable();
+            $table->integer('newsletterUnsubscribe')->nullable()->default(0);
+            $table->dateTime('newsletterUnsubscribeDate')->nullable();
+            $table->integer('reportView')->nullable()->default(10);
+            $table->integer('roverGroupID')->nullable()->default(0);
+            $table->integer('roverGroupRoleID')->nullable()->default(0);
+            $table->integer('roverGroupAccountID')->nullable()->default(0);
+            $table->integer('24WSJ')->nullable()->default(0);
+            $table->integer('24WSJRole')->nullable()->default(0);
+            $table->string('24wsjNotListedDistrict', 64)->nullable();
+            $table->string('24wsjNotListedGroup', 64)->nullable();
+            $table->integer('SANJamb2017')->default(0);
+            $table->string('SANJamb2017Role', 3)->default('0');
+            $table->string('sanJambNotListedRegion', 64)->nullable();
+            $table->string('sanJambNotListedDistrict', 64)->nullable();
+            $table->string('sanJambNotListedGroup', 64)->nullable();
+            $table->integer('infoRedacted')->default(0)->comment('0 = Not Redacted, 1 = Redacted on screen');
+            $table->string('SSANumber', 32)->nullable();
+            $table->integer('orphaned')->default(0);
+            $table->integer('vulnerable')->default(0);
+            $table->integer('sendAMSMail')->default(1);
+            $table->text('generalNotes')->nullable();
+            $table->integer('form29Generated')->default(0);
+            $table->integer('logonEmail')->default(0);
+            $table->integer('weeklyProgramEmail')->default(1);
+            $table->integer('profileChangesEmail')->default(1);
+            $table->integer('newsletterEmail')->default(1);
+            $table->integer('lowerStaffProfileChanges')->default(1);
+            $table->integer('loggedInTo20')->default(0);
+            $table->integer('canLogonTo20')->default(1);
+            $table->integer('adultRecruit')->default(0);
+            $table->integer('addedIn')->default(1);
+            $table->integer('canAdminElearning')->default(0);
+            $table->integer('canAdminElearningCourses')->default(0);
+            $table->integer('view')->default(1)->comment('1 = Line, 2 = Grid');
+            $table->integer('docsDeleted')->nullable();
+            $table->integer('takenSurvey')->nullable()->default(0);
+            $table->integer('ddValue')->default(25);
+            $table->string('DSDHostelName')->nullable();
+            $table->string('DSDTownshipName')->nullable();
+            $table->integer('DSDDisabled')->nullable()->default(0);
+
+            $table->index(['active', 'SANJamb2017', 'user_type', 'username', 'assoc_to_account'], 'active');
+            $table->index(['active', 'docsDeleted', 'dateDeactivated'], 'active_2');
+            $table->index(['assoc_to_account', 'assoc_to_group', 'active'], 'assoc_to_account');
+            $table->index(['assoc_to_account', 'user_type', 'active'], 'assoc_to_account_2');
+            $table->index(['assoc_to_account', 'parentType', 'active'], 'assoc_to_account_3');
+            $table->index(['assoc_to_district', 'user_type', 'dob', 'active'], 'assoc_to_district');
+            $table->index(['assoc_to_group', 'amsRole', 'active'], 'assoc_to_group');
+            $table->index(['assoc_to_group', 'user_type', 'active'], 'assoc_to_group_2');
+            $table->index(['assoc_to_group', 'dob', 'active'], 'assoc_to_group_3');
+            $table->index(['assoc_to_group', 'active', 'SANJamb2017Role'], 'assoc_to_group_4');
+            $table->index(['assoc_to_group', 'user_type', 'amsRole', 'active'], 'assoc_to_group_5');
+            $table->index(['assoc_to_group', 'user_type', 'title', 'active'], 'assoc_to_group_6');
+            $table->index(['assoc_to_group', 'user_type', 'created', 'active'], 'assoc_to_group_7');
+            $table->index(['assoc_to_group', 'user_type', 'scoutPatrolTaskID', 'active'], 'assoc_to_group_8');
+            $table->index(['assoc_to_region', 'amsRole', 'active', 'sendAMSMail'], 'assoc_to_region');
+            $table->index(['assoc_to_region', 'user_type', 'active', 'sendAMSMail'], 'assoc_to_region_2');
+            $table->index(['assoc_to_region', 'assoc_to_district', 'user_type', 'orphaned', 'vulnerable', 'active'], 'assoc_to_region_3');
+            $table->index(['assoc_to_region', 'user_type', 'orphaned', 'vulnerable', 'active'], 'assoc_to_region_4');
+            $table->index(['assoc_to_region', 'active', 'user_type', 'dateInvested'], 'assoc_to_region_5');
+            $table->index(['assoc_to_region', 'active', 'amsRole'], 'assoc_to_region_6');
+            $table->index(['active', 'form29Generated', 'IDBookLocation'], 'form29');
+            $table->index(['id', 'active', 'gpsLat', 'gpsLon'], 'gps');
+            $table->index(['id', 'assoc_to_account', 'active'], 'id');
+            $table->index(['id', 'assoc_to_region'], 'id_2');
+            $table->index(['id', 'assoc_to_group'], 'id_3');
+            $table->index(['id', 'active'], 'id_4');
+            $table->index(['username', 'passwordNew', 'active', 'canLogon', 'phys_country_id'], 'logon');
+            $table->index(['active', 'modified', 'addedIn'], 'move to 2.0');
+            $table->index(['phys_country_id', 'user_type', 'orphaned', 'vulnerable', 'active'], 'phys_country_id_2');
+            $table->index(['username', 'active', 'canLogon'], 'username_2');
+            $table->index(['active', 'generalNotes', 'startDate'], 'usingsdlite');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('system_users');
+    }
+};

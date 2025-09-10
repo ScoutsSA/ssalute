@@ -1,0 +1,45 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('advancement_photos', function (Blueprint $table) {
+            $table->integer('id', true);
+            $table->integer('programType')->default(1);
+            $table->integer('type')->default(17);
+            $table->integer('countryID')->default(196);
+            $table->integer('assocToGroup');
+            $table->integer('userID')->index('userid');
+            $table->text('description');
+            $table->string('PDFLocation', 1024);
+            $table->string('thumbLocation', 1024);
+            $table->dateTime('created');
+            $table->integer('createdby');
+            $table->dateTime('modified')->nullable();
+            $table->integer('modifiedby')->nullable();
+            $table->integer('advancementFirstID')->index('advancementfirstid');
+            $table->integer('advancementSecondID')->index('advancementsecondid');
+            $table->integer('advancementThirdID')->nullable()->index('advancementthirdid');
+            $table->integer('active')->default(1);
+
+            $table->index(['assocToGroup', 'userID', 'advancementFirstID', 'advancementSecondID', 'active'], 'assoctogroup');
+            $table->index(['type', 'userID', 'active'], 'type');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('advancement_photos');
+    }
+};

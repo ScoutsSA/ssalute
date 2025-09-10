@@ -1,0 +1,53 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('badges_cubs', function (Blueprint $table) {
+            $table->integer('id', true);
+            $table->integer('countryID')->default(196);
+            $table->integer('assocToRegion')->default(0);
+            $table->integer('assocToDistrict')->default(0);
+            $table->integer('assocToGroup');
+            $table->integer('cubID');
+            $table->integer('userID')->nullable();
+            $table->integer('firstID')->index('firstid');
+            $table->integer('secondID')->nullable();
+            $table->date('badgeDate');
+            $table->text('notes')->nullable();
+            $table->string('PDFLocation')->nullable();
+            $table->integer('latest')->default(0)->comment('1 = latest');
+            $table->string('instructorsName')->nullable();
+            $table->integer('active')->comment('1 = Active');
+            $table->dateTime('created');
+            $table->integer('createdby');
+            $table->dateTime('modified')->nullable();
+            $table->integer('modifiedby')->nullable();
+
+            $table->index(['assocToDistrict', 'firstID', 'active', 'latest'], 'assoctodistrict');
+            $table->index(['assocToGroup', 'firstID', 'active', 'latest'], 'assoctogroup');
+            $table->index(['assocToRegion', 'firstID', 'active', 'latest'], 'assoctoregion');
+            $table->index(['countryID', 'firstID', 'secondID'], 'countryid');
+            $table->index(['countryID', 'firstID', 'active', 'latest'], 'countryid_2');
+            $table->index(['cubID', 'active', 'secondID'], 'cubid');
+            $table->index(['cubID', 'firstID', 'secondID', 'active'], 'cubid_2');
+            $table->index(['userID', 'PDFLocation'], 'userid');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('badges_cubs');
+    }
+};
