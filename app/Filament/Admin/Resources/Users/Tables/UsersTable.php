@@ -18,7 +18,7 @@ class UsersTable
             ->columns([
                 TextColumn::make('id')
                     ->label('id')
-                    ->description(fn(SystemUser $model) => $model->ssa_id)
+                    ->description(fn (SystemUser $model) => $model->ssa_id)
                     ->toggleable()
                     ->numeric()
                     ->searchable()

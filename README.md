@@ -1,61 +1,101 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Ssalute — Scouts South Africa Member Management System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Ssalute is the new, modern member management system (MMS) being built by Scouts South Africa to progressively replace the legacy “Scouts Digital” platform. The goal is a secure, fast, and accessible system that the movement fully owns and can evolve.
 
-## About Laravel
+Ssalute is open source and MIT-licensed. Contributions are welcome!
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+We are heavily utilizing Laravel and Filament.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Contents
+- About the project
+- Tech stack
+- Requirements
+- Getting started (local development)
+- Testing
+- Coding standards
+- Contributing
+- Security vulnerabilities
+- License
+- Community & support
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
-## Learning Laravel
+## About the project
+We are rolling Ssalute out in phased modules over the next few years. During this migration, parts of the existing system will remain active while features and data are moved across. You can see the public “welcome” page in `resources/views/welcome.blade.php` for the latest messaging and links.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+If you’d like to help, pick an issue and open a PR — we’re friendly and happy to guide first-time contributors.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Tech stack
+- Laravel 12 (PHP 8.4)
+- Filament v4 (admin panel, tables, actions, forms)
+- Livewire v3
+- Tailwind CSS v4
+- PHPUnit v11
+- Vite (frontend bundling)
 
-## Laravel Sponsors
+Check `composer.json` and `package.json` for exact versions.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
 
-### Premium Partners
+## Requirements
+- PHP 8.4+
+- Composer 2.7+
+- Node.js 20+ and npm 10+
+- Mysql 8.0+ 
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+
+## Getting started (local development)
+Stock Standard Laravel app
+Personally we recommend PHPStorm + Valet for a native setup that closest matches production.
+But head over to laravel.com/docs/12.x for more info
+The "easiest" option is generally to use laravel's built in `serve` command.
+
+```
+cp .env.example .env
+php artisan key:generate
+php artisan migrate --seed
+php artisan storage:link
+npm run dev
+php artisan serve
+```
+
+## Testing
+- Run all tests: php artisan test
+- Filter a test: php artisan test --filter=SomeTestName
+
+Please add tests for new features where practical. Prefer Feature tests for UI flows (Filament/Livewire) and Unit tests for isolated logic.
+
+
+## Coding standards
+- Run Duster to format changed files: ./vendor/bin/duster fix --dirty
+- Follow existing conventions in sibling files (naming, structure, form requests, policies)
+- Prefer Eloquent models and relationships over raw queries
+- Add PHP return types and parameter types; use constructor property promotion
+
 
 ## Contributing
+We welcome contributions from developers, designers, testers, and documentation writers.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+How to contribute
+- Pick an issue (good first issues are labeled when available)
+- Create a feature branch from main
+- Keep PRs focused and small when possible
+- Add tests and update docs when needed
+- If you'd like a sanitized testing database, please reach out directly
 
-## Code of Conduct
+Local collaboration
+- Join our community chat: https://chat.whatsapp.com/HkGHDBHyVap6yC8gGLXCHC
+- Share ideas and proposals via GitHub Issues/Discussions
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
 
-## Security Vulnerabilities
+## Security vulnerabilities
+If you believe you have found a security vulnerability, please do not open a public issue. Email our National IT Chair: John Roux at john.roux@scouts.org.za. We will investigate promptly and coordinate a fix and disclosure if necessary.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
 ## License
+This project is open-sourced software licensed under the MIT License. See the LICENSE file if present, or the standard MIT terms at https://opensource.org/licenses/MIT.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## Community & support
+- Public site landing content: resources/views/welcome.blade.php
+- WhatsApp community: https://chat.whatsapp.com/HkGHDBHyVap6yC8gGLXCHC
+- Donate to Scouts South Africa: https://www.scoutfoundation.org.za/donate/#monthly-donation-options

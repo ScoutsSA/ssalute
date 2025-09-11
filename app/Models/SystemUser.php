@@ -3,11 +3,10 @@
 namespace App\Models;
 
 use App\Providers\AppServiceProvider;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Filament\Models\Contracts\FilamentUser;
-use Filament\Models\Contracts\HasName;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\DB;
 
@@ -204,7 +203,6 @@ class SystemUser extends User implements FilamentUser
         return $this->username === 'john.roux1@gmail.com'; // This should be changed out for a role check
     }
 
-
     public function name(): Attribute // Note this is used for the Filament Name as well
     {
         return Attribute::make(
@@ -215,8 +213,7 @@ class SystemUser extends User implements FilamentUser
     public function ssaId(): Attribute // Note this is used for the Filament Name as well
     {
         return Attribute::make(
-            get: fn () => "SSA ID-" . str_pad($this->id, 7, '0', STR_PAD_LEFT)
+            get: fn () => 'SSA ID-' . str_pad($this->id, 7, '0', STR_PAD_LEFT)
         );
     }
-
 }
