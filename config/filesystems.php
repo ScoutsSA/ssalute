@@ -60,6 +60,23 @@ return [
             'report' => false,
         ],
 
+        'forms_aam_id_document' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private/forms/aam/id_document'),
+            'serve' => true,
+            'visibility' => 'public',
+            'throw' => false,
+            'report' => false,
+        ],
+        'forms_aam_criminal_record' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private/forms/aam/_criminal_check'),
+            'serve' => true,
+            'visibility' => 'public',
+            'throw' => false,
+            'report' => false,
+        ],
+
     ],
 
     /*
