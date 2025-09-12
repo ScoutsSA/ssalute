@@ -21,7 +21,7 @@ class GroupResource extends Resource
 {
     protected static ?string $model = Group::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::Home;
 
     protected static ?string $recordTitleAttribute = 'name';
     protected static ?string $cluster = LocationHierarchyCluster::class;

@@ -21,7 +21,7 @@ class DistrictResource extends Resource
 {
     protected static ?string $model = District::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::Map;
 
     protected static ?string $recordTitleAttribute = 'name';
     protected static ?string $cluster = LocationHierarchyCluster::class;

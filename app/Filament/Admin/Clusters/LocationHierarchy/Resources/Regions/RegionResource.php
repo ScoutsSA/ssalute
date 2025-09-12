@@ -21,7 +21,7 @@ class RegionResource extends Resource
 {
     protected static ?string $model = Region::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::GlobeEuropeAfrica;
 
     protected static ?string $recordTitleAttribute = 'name';
     protected static ?string $cluster = LocationHierarchyCluster::class;
