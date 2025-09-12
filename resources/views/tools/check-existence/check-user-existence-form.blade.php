@@ -16,7 +16,7 @@
 
             <button type="submit" class="w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300">Check</button>
             @error('submit') <span class="text-red-500">{{ $message }}</span> @enderror
-            @if($exists === true)
+            @if ($exists === true)
                 <div class="mx-auto text-center">
                     <p class="text-green-500 my-4">
                         This account already exists on Scouts Digital!
@@ -25,7 +25,7 @@
                         Login to Scouts Digital <x-heroicon-s-arrow-top-right-on-square class="w-6 h-6 inline-block" />
                     </a>
                 </div>
-            @elseif($exists === false)
+            @elseif ($exists === false)
                 <div class="mx-auto text-center">
                     <p class="text-red-500  mt-4">
                         You don't have an account!
@@ -33,7 +33,7 @@
                     <p class="text-gray-600 mb-6">
                         Would you like to join as an Adult Member?
                     </p>
-                    <a href="{{route('forms.register.adult.aam', ['email' => $email])}}" class="w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300">
+                    <a href="{{ route('forms.register.adult.aam', ['email' => $email]) }}" class="w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300">
                         Apply as Adult Member
                     </a>
                 </div>

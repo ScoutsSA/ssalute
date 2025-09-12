@@ -1,5 +1,5 @@
 <div class="mt-6">
-    @if($this->successfullyCompletedForm === false)
+    @if ($this->successfullyCompletedForm === false)
         <form wire:submit="create">
             {{ $this->form }}
 

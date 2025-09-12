@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Filament\Admin\Pages;
+namespace App\Filament\Admin\Clusters\Settings\Pages;
 
+use App\Filament\Admin\Clusters\Settings\SettingsCluster;
 use App\Settings\FormSettings;
 use BackedEnum;
 use Filament\Forms\Components\TextInput;
@@ -13,11 +14,13 @@ use Filament\Support\Icons\Heroicon;
 
 class ManageFormSettings extends SettingsPage
 {
-    protected static string|null|BackedEnum $navigationIcon = Heroicon::Cog6Tooth;
+    protected static string|null|BackedEnum $navigationIcon = Heroicon::DocumentText;
 
     protected static string $settings = FormSettings::class;
 
+    protected static ?string $cluster = SettingsCluster::class;
     protected static ?string $navigationLabel = 'Form Settings';
+    protected static ?int $navigationSort = 1;
 
     public function form(Schema $schema): Schema
     {

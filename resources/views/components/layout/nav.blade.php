@@ -17,8 +17,8 @@
             <div
                 class="pointer-events-none absolute right-0 top-full w-56 rounded-md border border-[#e3e3e0] dark:border-[#3E3E3A] bg-white dark:bg-[#161615] shadow-lg p-1 opacity-0 translate-y-1 transition ease-out duration-150 group-hover/nav:pointer-events-auto group-hover/nav:opacity-100 group-hover/nav:translate-y-0 group-focus-within/nav:pointer-events-auto group-focus-within/nav:opacity-100 group-focus-within/nav:translate-y-0">
 
-                @if(resolve(\App\Settings\FormSettings::class)->aam_enabled)
-                    <a href="{{route('forms.register.adult.aam')}}" class="block rounded px-3 py-2 hover:bg-[#f5f5f4] dark:hover:bg-[#232322]">AAM</a>
+                @if (resolve(\App\Settings\FormSettings::class)->aam_enabled)
+                    <a href="{{ route('forms.register.adult.aam') }}" class="block rounded px-3 py-2 hover:bg-[#f5f5f4] dark:hover:bg-[#232322]">AAM</a>
                 @else
                     <a href="#" disabled class="block rounded px-3 py-2 hover:bg-[#f5f5f4] dark:hover:bg-[#232322]">AAM - Coming Soon!</a>
                 @endif

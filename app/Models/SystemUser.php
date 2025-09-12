@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Providers\AppServiceProvider;
+use App\Settings\GeneralSettings;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Builder;
@@ -200,7 +201,14 @@ class SystemUser extends User implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->username === 'john.roux1@gmail.com'; // This should be changed out for a role check
+        if ($this->username === config('ssalute.superuser_email')) {
+            return true;
+        }
+        if (in_array($this->id, resolve(GeneralSettings::class)->super_user_admin_list, false)) {
+            return true;
+        }
+
+        return false;
     }
 
     public function name(): Attribute // Note this is used for the Filament Name as well
