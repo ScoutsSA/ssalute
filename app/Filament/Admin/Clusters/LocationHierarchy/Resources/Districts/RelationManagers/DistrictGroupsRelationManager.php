@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Filament\Admin\Clusters\LocationHierarchy\Resources\Regions\RelationManagers;
+namespace App\Filament\Admin\Clusters\LocationHierarchy\Resources\Districts\RelationManagers;
 
 use App\Filament\Admin\Clusters\LocationHierarchy\Resources\Groups\GroupResource;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Table;
 
-class RegionGroupsRelationManager extends RelationManager
+class DistrictGroupsRelationManager extends RelationManager
 {
     protected static string $relationship = 'groups';
 

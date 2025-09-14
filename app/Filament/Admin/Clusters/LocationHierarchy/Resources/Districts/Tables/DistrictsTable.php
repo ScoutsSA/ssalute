@@ -3,10 +3,11 @@
 namespace App\Filament\Admin\Clusters\LocationHierarchy\Resources\Districts\Tables;
 
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 
 class DistrictsTable
@@ -14,51 +15,109 @@ class DistrictsTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->paginated(['10', '20', '50'])
+            ->groupingDirectionSettingHidden()
+            ->groupingSettingsInDropdownOnDesktop()
+            ->groups([
+                Group::make('region.name')
+                    ->label('Region')
+                    ->collapsible(),
+
+            ])
             ->columns([
-                TextColumn::make('regionID')
+                TextColumn::make('id')
+                    ->label('ID')
                     ->numeric()
-                    ->sortable(),
-                TextColumn::make('superDistrictID')
-                    ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
+                TextColumn::make('region.name')
+                    ->label('Region')
+                    ->sortable()
+                    ->toggleable(),
                 TextColumn::make('name')
-                    ->searchable(),
-                TextColumn::make('countryID')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('active')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('accountID')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('censusDone')
-                    ->numeric()
-                    ->sortable(),
+                    ->label('Name')
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(),
+                IconColumn::make('active')
+                    ->label('Active')
+                    ->boolean()
+                    ->sortable()
+                    ->toggleable(),
+                TextColumn::make('ownedAccount.accountName')
+                    ->label('Account')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                IconColumn::make('censusDone')
+                    ->boolean()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                TextColumn::make('groups_count')
+                    ->label('Groups')
+                    ->counts('groups')
+                    ->sortable()
+                    ->toggleable(),
+                TextColumn::make('community_groups_count')
+                    ->label('Community Groups')
+                    ->counts('communityGroups')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('ngo_groups_count')
+                    ->label('NGO Groups')
+                    ->counts('ngoGroups')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('church_groups_count')
+                    ->label('Church Groups')
+                    ->counts('churchGroups')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('school_groups_count')
+                    ->label('School Groups')
+                    ->counts('schoolGroups')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('dsd_groups_count')
+                    ->label('DSD Groups')
+                    ->counts('dsdGroups')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
                 TextColumn::make('created')
+                    ->label('Created At')
                     ->dateTime()
-                    ->sortable(),
-                TextColumn::make('createdby')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('createdBy.name')
+                    ->label('Created By')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->searchable(['first_name', 'surname'])
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('modified')
+                    ->label('Updated At')
                     ->dateTime()
-                    ->sortable(),
-                TextColumn::make('modifiedby')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('modifiedBy.name')
+                    ->label('Updated By')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->searchable(['first_name', 'surname'])
+                    ->toggleable(isToggledHiddenByDefault: true),
+
             ])
             ->filters([
-                //
+                SelectFilter::make('region')
+                    ->relationship('region', 'name', fn ($query) => $query->orderBy('position', 'asc')),
+
             ])
             ->recordActions([
                 ViewAction::make(),
-                EditAction::make(),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+                BulkActionGroup::make([]),
             ]);
     }
 }

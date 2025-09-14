@@ -2,7 +2,9 @@
 
 namespace App\Models\Concerns;
 
+use App\Models\SystemUser;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -35,5 +37,10 @@ trait MightHaveModifiedBy
     protected static function hasModifiedBy(Model $model): bool
     {
         return in_array('modifiedby', $model->fillable ?? [], true);
+    }
+
+    public function modifiedBy(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'modifiedby');
     }
 }

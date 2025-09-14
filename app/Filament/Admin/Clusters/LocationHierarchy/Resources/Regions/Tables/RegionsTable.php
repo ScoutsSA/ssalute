@@ -13,16 +13,12 @@ class RegionsTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->paginationPageOptions([50])
+            ->paginated([50])
             ->columns([
                 TextColumn::make('id')
                     ->label('ID')
                     ->numeric()
                     ->toggleable()
-                    ->sortable(),
-                TextColumn::make('position')
-                    ->numeric()
-                    ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
                 TextColumn::make('name')
                     ->sortable()
@@ -30,30 +26,13 @@ class RegionsTable
                 TextColumn::make('short')
                     ->sortable()
                     ->toggleable(),
-                TextColumn::make('description')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('phys_address')
-                    ->label('Physical Address')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
                 IconColumn::make('usingAMS')
                     ->label('Using AMS')
                     ->boolean()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('countryID')
-                    ->label('Country')
-                    ->numeric()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
                 IconColumn::make('active')
                     ->boolean()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('accountID')
-                    ->label('Account ID')
-                    ->numeric()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 IconColumn::make('censusDone')

@@ -35,7 +35,7 @@ class RegionInfolist
                             ->label('Short Name'),
                         IconEntry::make('usingAMS')
                             ->label('Using AMS')
-                            ->helperText('Deprecated - all regions should be using AMS')
+                            ->helperText('ShouldBeRemoved - all regions should be using AMS')
                             ->boolean(),
                         TextEntry::make('description')
                             ->label('Description'),
@@ -43,15 +43,15 @@ class RegionInfolist
                             ->label('Physical Address'),
                         TextEntry::make('countryID')
                             ->label('Country ID')
-                            ->helperText('Deprecated - no multi-country support')
+                            ->helperText('ShouldBeRemoved - no multi-country support')
                             ->numeric(),
                         IconEntry::make('active')
                             ->label('Active')
-                            ->helperText('Deprecated - all regions should be active')
+                            ->helperText('ShouldBeRemoved - all regions should be active')
                             ->boolean(),
                         TextEntry::make('accountID')
                             ->label('Account ID')
-                            ->helperText("Deprecated - Regions don't ever have accounts")
+                            ->helperText("ShouldBeRemoved - Regions don't ever have accounts")
                             ->numeric(),
                         IconEntry::make('censusDone')
                             ->label('Census Done')

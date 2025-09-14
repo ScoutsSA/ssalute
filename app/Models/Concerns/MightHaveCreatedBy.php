@@ -2,7 +2,9 @@
 
 namespace App\Models\Concerns;
 
+use App\Models\SystemUser;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -34,5 +36,10 @@ trait MightHaveCreatedBy
     protected static function hasCreatedBy(Model $model): bool
     {
         return in_array('createdby', $model->fillable ?? [], true);
+    }
+
+    public function createdBy(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'createdby');
     }
 }

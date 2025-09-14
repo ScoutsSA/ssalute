@@ -28,7 +28,7 @@ class AppServiceProvider extends ServiceProvider
     {
         // Register custom user provider for Scouts Digital AES-backed passwords
         Auth::provider('scouts_digital', function ($app, array $config) {
-            $model = $config['model'] ?? \App\Models\SystemUser::class;
+            $model = $config['model'] ?? SystemUser::class;
 
             return new ScoutsDigitalUserProvider($model);
         });

@@ -3,10 +3,9 @@
 namespace App\Filament\Admin\Clusters\LocationHierarchy\Resources\Districts;
 
 use App\Filament\Admin\Clusters\LocationHierarchy\LocationHierarchyCluster;
-use App\Filament\Admin\Clusters\LocationHierarchy\Resources\Districts\Pages\CreateDistrict;
-use App\Filament\Admin\Clusters\LocationHierarchy\Resources\Districts\Pages\EditDistrict;
 use App\Filament\Admin\Clusters\LocationHierarchy\Resources\Districts\Pages\ListDistricts;
 use App\Filament\Admin\Clusters\LocationHierarchy\Resources\Districts\Pages\ViewDistrict;
+use App\Filament\Admin\Clusters\LocationHierarchy\Resources\Districts\RelationManagers\DistrictGroupsRelationManager;
 use App\Filament\Admin\Clusters\LocationHierarchy\Resources\Districts\Schemas\DistrictForm;
 use App\Filament\Admin\Clusters\LocationHierarchy\Resources\Districts\Schemas\DistrictInfolist;
 use App\Filament\Admin\Clusters\LocationHierarchy\Resources\Districts\Tables\DistrictsTable;
@@ -45,7 +44,7 @@ class DistrictResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            DistrictGroupsRelationManager::make(),
         ];
     }
 
@@ -53,9 +52,7 @@ class DistrictResource extends Resource
     {
         return [
             'index' => ListDistricts::route('/'),
-            'create' => CreateDistrict::route('/create'),
             'view' => ViewDistrict::route('/{record}'),
-            'edit' => EditDistrict::route('/{record}/edit'),
         ];
     }
 }

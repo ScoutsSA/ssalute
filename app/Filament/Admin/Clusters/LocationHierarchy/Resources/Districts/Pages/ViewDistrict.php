@@ -3,7 +3,6 @@
 namespace App\Filament\Admin\Clusters\LocationHierarchy\Resources\Districts\Pages;
 
 use App\Filament\Admin\Clusters\LocationHierarchy\Resources\Districts\DistrictResource;
-use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewDistrict extends ViewRecord
@@ -12,8 +11,6 @@ class ViewDistrict extends ViewRecord
 
     protected function getHeaderActions(): array
     {
-        return [
-            EditAction::make(),
-        ];
+        return [];
     }
 }
