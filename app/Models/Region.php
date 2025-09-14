@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\GroupTypes;
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
 use Illuminate\Database\Eloquent\Builder;
@@ -38,5 +39,30 @@ class Region extends BaseModel
     public function groups(): HasMany
     {
         return $this->hasMany(Group::class, 'assoc_to_region', 'id');
+    }
+
+    public function communityGroups(): HasMany
+    {
+        return $this->hasMany(Group::class, 'assoc_to_region', 'id')->where('groups.groupTypeID', GroupTypes::COMMUNITY->value);
+    }
+
+    public function ngoGroups(): HasMany
+    {
+        return $this->hasMany(Group::class, 'assoc_to_region', 'id')->where('groups.groupTypeID', GroupTypes::NGO->value);
+    }
+
+    public function churchGroups(): HasMany
+    {
+        return $this->hasMany(Group::class, 'assoc_to_region', 'id')->where('groups.groupTypeID', GroupTypes::CHURCH->value);
+    }
+
+    public function schoolGroups(): HasMany
+    {
+        return $this->hasMany(Group::class, 'assoc_to_region', 'id')->where('groups.groupTypeID', GroupTypes::SCHOOL->value);
+    }
+
+    public function dsdGroups(): HasMany
+    {
+        return $this->hasMany(Group::class, 'assoc_to_region', 'id')->where('groups.groupTypeID', GroupTypes::DSD->value);
     }
 }

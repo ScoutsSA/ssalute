@@ -9,10 +9,11 @@ use Illuminate\Contracts\Support\Htmlable;
 enum GroupTypes: string implements HasLabel
 {
     use WithOptions;
-    case COMMUNITY = 'community';
-    case NGO = 'ngo';
-    case CHURCH = 'church';
-    case SCHOOL = 'school';
+    case COMMUNITY = '1';
+    case NGO = '2';
+    case CHURCH = '3';
+    case SCHOOL = '4';
+    case DSD = '5';
     case UNKNOWN = 'unknown';
 
     public function getLabel(): string|Htmlable|null
@@ -22,6 +23,7 @@ enum GroupTypes: string implements HasLabel
             self::NGO => 'NGO',
             self::CHURCH => 'Church',
             self::SCHOOL => 'School',
+            self::DSD => 'DSD',
             self::UNKNOWN => 'Unknown',
         };
     }

@@ -3,10 +3,10 @@
 namespace App\Filament\Admin\Clusters\LocationHierarchy\Resources\Regions;
 
 use App\Filament\Admin\Clusters\LocationHierarchy\LocationHierarchyCluster;
-use App\Filament\Admin\Clusters\LocationHierarchy\Resources\Regions\Pages\CreateRegion;
-use App\Filament\Admin\Clusters\LocationHierarchy\Resources\Regions\Pages\EditRegion;
 use App\Filament\Admin\Clusters\LocationHierarchy\Resources\Regions\Pages\ListRegions;
 use App\Filament\Admin\Clusters\LocationHierarchy\Resources\Regions\Pages\ViewRegion;
+use App\Filament\Admin\Clusters\LocationHierarchy\Resources\Regions\RelationManagers\RegionDistrictsRelationManager;
+use App\Filament\Admin\Clusters\LocationHierarchy\Resources\Regions\RelationManagers\RegionGroupsRelationManager;
 use App\Filament\Admin\Clusters\LocationHierarchy\Resources\Regions\Schemas\RegionForm;
 use App\Filament\Admin\Clusters\LocationHierarchy\Resources\Regions\Schemas\RegionInfolist;
 use App\Filament\Admin\Clusters\LocationHierarchy\Resources\Regions\Tables\RegionsTable;
@@ -45,7 +45,8 @@ class RegionResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RegionDistrictsRelationManager::make(),
+            RegionGroupsRelationManager::make(),
         ];
     }
 
@@ -53,9 +54,7 @@ class RegionResource extends Resource
     {
         return [
             'index' => ListRegions::route('/'),
-            'create' => CreateRegion::route('/create'),
             'view' => ViewRegion::route('/{record}'),
-            'edit' => EditRegion::route('/{record}/edit'),
         ];
     }
 }
