@@ -18,6 +18,8 @@ class RegionInfolist
                     ->description(fn (Region $record) => "Name: {$record->name}")
                     ->columns(['md' => 2, 'lg' => 4, 'xl' => 6])
                     ->collapsed()
+                    ->persistCollapsed()
+                    ->id('admin_region_details')
                     ->columnSpanFull()
                     ->schema([
                         TextEntry::make('id')
