@@ -43,6 +43,7 @@ class ManageGeneralSettings extends SettingsPage
                                         ->options([])
                                         ->getSearchResultsUsing(fn (string $search): array => SystemUser::query()
                                             ->where('username', 'like', "{$search}%")
+                                            ->orWhere('id', '=', $search)
                                             ->limit(50)
                                             ->get()
                                             ->mapWithKeys(fn ($user) => [
@@ -56,7 +57,7 @@ class ManageGeneralSettings extends SettingsPage
                                             ])
                                             ->toArray()
                                         )
-                                        ->helperText('List of emails for users who should have super admin access to the BackOffice panel.')
+                                        ->helperText('List of users who should have super admin access to the BackOffice panel. Search via username or ID.')
                                         ->columnSpanFull(),
                                 ]),
                         ]),

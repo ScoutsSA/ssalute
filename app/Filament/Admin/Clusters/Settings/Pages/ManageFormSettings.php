@@ -3,12 +3,14 @@
 namespace App\Filament\Admin\Clusters\Settings\Pages;
 
 use App\Filament\Admin\Clusters\Settings\SettingsCluster;
+use App\Models\SystemUser;
 use App\Settings\FormSettings;
 use BackedEnum;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Pages\SettingsPage;
 use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 
@@ -32,16 +34,34 @@ class ManageFormSettings extends SettingsPage
                     ->columnSpanFull()
                     ->schema(
                         [
-                            Tabs\Tab::make('AAM Form')
+                            Tab::make('AAM Form')
                                 ->schema([
                                     Toggle::make('aam_enabled')
                                         ->label('AAM Process Enabled')
                                         ->columnSpanFull(),
-                                    TextInput::make('aam_national_support_emails')
+                                    Select::make('aam_national_support_emails')
                                         ->label('National Support Emails')
-                                        ->helperText('A comma-separated list of national email addresses to receive support requests from the AAM form.')
-                                        ->columnSpanFull()
-                                        ->nullable(),
+                                        ->multiple()
+                                        ->searchable()
+                                        ->options([])
+                                        ->getSearchResultsUsing(fn (string $search): array => SystemUser::query()
+                                            ->where('username', 'like', "{$search}%")
+                                            ->orWhere('id', '=', $search)
+                                            ->limit(50)
+                                            ->get()
+                                            ->mapWithKeys(fn ($user) => [
+                                                $user->username => "{$user->username} [{$user->name} - {$user->id}]",
+                                            ])
+                                            ->toArray())
+                                        ->getOptionLabelsUsing(fn (array $values): array => SystemUser::whereIn('username', $values)
+                                            ->get()
+                                            ->mapWithKeys(fn ($user) => [
+                                                $user->username => "{$user->username} [{$user->name} - {$user->id}]",
+                                            ])
+                                            ->toArray()
+                                        )
+                                        ->helperText('List of national email addresses to receive support requests from the AAM form. Search via username or ID.')
+                                        ->columnSpanFull(),
                                 ]),
 
                         ]),

@@ -4,6 +4,7 @@ namespace App\Livewire\Forms\Aam;
 
 use App\Enums\UserSex;
 use App\Enums\UserTitle;
+use App\Mail\Forms\Aam\ApplicationAdultMembershipApplicantInitialEmail;
 use App\Models\District;
 use App\Models\Forms\ApplicationAdultMembershipRequest;
 use App\Models\Group;
@@ -24,6 +25,7 @@ use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Components\Wizard;
+use Filament\Schemas\Components\Wizard\Step;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
@@ -92,7 +94,7 @@ class ApplicationAdultMemberForm extends Component implements HasSchemas
             ->statePath('data')
             ->components([
                 Wizard::make([
-                    Wizard\Step::make('Contact Info')
+                    Step::make('Contact Info')
                         ->description(fn (Get $get) => $get('email'))
                         ->schema([
                             TextInput::make('email')
@@ -113,7 +115,7 @@ class ApplicationAdultMemberForm extends Component implements HasSchemas
                                 ->rule(resolve(ValidMsisdnRule::class))
                                 ->required(),
                         ]),
-                    Wizard\Step::make('Verification')
+                    Step::make('Verification')
                         ->description(fn (Get $get) => $get('has_south_african_id') ? 'South African ID' : 'Passport Number')
                         ->schema([
                             Toggle::make('has_south_african_id')
@@ -202,7 +204,7 @@ class ApplicationAdultMemberForm extends Component implements HasSchemas
                                 ]),
 
                         ]),
-                    Wizard\Step::make('Personal Info')
+                    Step::make('Personal Info')
                         ->description(fn (Get $get) => Arr::get(UserTitle::options(), $get('title') ?? '', null) . ' ' . $get('first_name') . ' ' . $get('surname'))
                         ->columns(2)
                         ->schema([
@@ -248,7 +250,7 @@ class ApplicationAdultMemberForm extends Component implements HasSchemas
                                 ->placeholder('1 Example Road, Suburb, City, Province, Postal Code')
                                 ->required(),
                         ]),
-                    Wizard\Step::make('Medical Information')
+                    Step::make('Medical Information')
                         ->schema([
                             Textarea::make('medical_conditions')
                                 ->label('Medical Conditions / Allergies')
@@ -271,7 +273,7 @@ class ApplicationAdultMemberForm extends Component implements HasSchemas
                                         ->maxLength(255),
                                 ]),
                         ]),
-                    Wizard\Step::make('Emergency & Privacy')
+                    Step::make('Emergency & Privacy')
                         ->schema([
                             Fieldset::make('Emergency Contact')
                                 ->schema([
@@ -302,7 +304,7 @@ class ApplicationAdultMemberForm extends Component implements HasSchemas
 
                         ]),
 
-                    Wizard\Step::make('Consent')
+                    Step::make('Consent')
                         ->schema([
                             Toggle::make('scouting_consent')
                                 ->label('I accept the below')
@@ -332,7 +334,7 @@ be shared with.
 <li>17. I have watched the <a class='font-medium text-blue-600 underline dark:text-blue-500 hover:no-underline' href='https://www.youtube.com/watch?v=5lNyx8JmZK8'>WOSM introductory Safe from Harm video</a>. See more: https://www.scout.org/safefromharm</li></ol>")),
 
                         ]),
-                    Wizard\Step::make('Group Details')
+                    Step::make('Group Details')
                         ->schema([
                             TextEntry::make('Who should we notify for your request?')
                                 ->state('Please enter the region/district/group which is most accurate for you. This is so that we can notify the correct people of your request.'),
@@ -424,14 +426,13 @@ be shared with.
             ->success()
             ->send();
 
-        $nationalGlobalMailer = $formSettings->aam_national_support_emails;
         // Email applicant
-        Mail::to($aam->email)->bcc($nationalGlobalMailer)->queue(new ApplicationAdultMembershipApplicantInitalEmail($aam));
+        Mail::to($aam->email)->bcc($formSettings->aam_national_support_emails)->queue(new ApplicationAdultMembershipApplicantInitialEmail($aam));
 
         // Email NextInLine (Group/District/Region)
         if ($aam->region_id === null) {
             // National
-            Mail::to($nationalGlobalMailer)->queue(new ApplicationAdultMembershipApplicantInitalEmail($aam));
+            Mail::to($formSettings->aam_national_support_emails)->queue(new ApplicationAdultMembershipApplicantInitialEmail($aam));
 
             return;
         }
