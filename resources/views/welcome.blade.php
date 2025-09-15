@@ -7,12 +7,10 @@
             <h1 class="text-2xl lg:text-3xl font-semibold text-center">Ssalute — Scouts Digital Revamped</h1>
             <p class="mt-3 text-[#706f6c] dark:text-[#A1A09A]">
                 Ssalute is the new, modern member management system being built by Scouts South Africa to replace the
-                existing
-                <span class="font-medium text-[#1b1b18] dark:text-[#EDEDEC]">Scouts Digital</span> platform.
+                existing <span class="font-medium text-[#1b1b18] dark:text-[#EDEDEC]">Scouts Digital</span> platform.
             </p>
             <p class="mt-2 text-[#706f6c] dark:text-[#A1A09A]">
-                Ssalute is fully open source and owned by <span class="font-medium text-[#1b1b18] dark:text-[#EDEDEC]">Scouts South Africa</span>,
-                as opposed to being outside our control and licensed.
+                Ssalute is fully open source (MIT) and owned by <span class="font-medium text-[#1b1b18] dark:text-[#EDEDEC]">Scouts South Africa</span>,
             </p>
             <p class="mt-2 text-[#706f6c] dark:text-[#A1A09A]">
                 We will roll out Ssalute in phases over the next three years. During this migration, parts of the
@@ -25,12 +23,12 @@
             <div class="rounded-md p-5 border border-[#e3e3e0] dark:border-[#3E3E3A] bg-[#FDFDFC] dark:bg-[#0f0f0e]">
                 <h2 class="font-semibold text-lg">Contribute Your Time</h2>
                 <p class="mt-2 text-[#706f6c] dark:text-[#A1A09A]">
-                    We welcome contributions from developers, designers, testers, and documentation writers. If you’d
-                    like to help:
+                    We welcome contributions from anyone! Mainly we're looking for people to help break down features and processes.
+                    If you’d like to help:
                 </p>
                 <ul class="mt-3 space-y-1 text-[13px] leading-5 list-disc pl-5 text-[#4a4946] dark:text-[#C8C7C1]">
-                    <li>Review the repository’s README for local setup and conventions.</li>
-                    <li>Pick an issue to work on and open a pull request when ready.</li>
+                    <li>Pop a message in the  WhatsApp Community Group</li>
+                    <li>Have a look at our github when we make it publicly available</li>
                     <li>Share ideas and improvements via issues or discussions.</li>
                 </ul>
                 <div class="mt-4">
@@ -46,6 +44,9 @@
                 <p class="mt-2 text-[#706f6c] dark:text-[#A1A09A]">
                     Financial support helps us cover infrastructure, security, and accessibility investments that
                     benefit our youth and volunteers nationwide.
+                </p>
+                <p class="mt-2 text-[#706f6c] dark:text-[#A1A09A]">
+                    If you'd like to donate specifically to the Ssalute project, please reach out directly to John Roux
                 </p>
                 <div class="mt-4">
                     <a href="https://www.scoutfoundation.org.za/donate/#monthly-donation-options" target="_blank"

@@ -1,5 +1,6 @@
 <?php
 
+use App\Providers\AppServiceProvider;
 use Illuminate\Support\Str;
 
 return [
@@ -16,7 +17,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', \App\Providers\AppServiceProvider::DB_SD_CORE),
+    'default' => env('DB_CONNECTION', AppServiceProvider::DB_SD_CORE),
 
     /*
     |--------------------------------------------------------------------------
@@ -31,7 +32,7 @@ return [
 
     'connections' => [
 
-        \App\Providers\AppServiceProvider::DB_SD_CORE => [
+        AppServiceProvider::DB_SD_CORE => [
             'driver' => 'mysql',
             'url' => env('DB_URL'),
             'host' => env('DB_HOST', '127.0.0.1'),

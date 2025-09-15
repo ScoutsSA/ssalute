@@ -2,7 +2,7 @@
 
 [![Laravel Forge Site Deployment Status](https://img.shields.io/endpoint?url=https%3A%2F%2Fforge.laravel.com%2Fsite-badges%2F82acbd78-6c12-4233-8ecb-b532c3256ff8&style=plastic)](https://forge.laravel.com/john-roux/scouts-digital/2850417)
 
-Ssalute is the new, modern member management system (MMS) being built by Scouts South Africa to progressively replace the legacy “Scouts Digital” platform. The goal is a secure, fast, and accessible system that the movement fully owns and can evolve.
+Ssalute is the new, modern member management system (MMS) being built by Scouts South Africa to progressively replace the existing “Scouts Digital” platform. The goal is a secure, fast, and accessible system that our NSO fully owns and can evolve.
 
 Ssalute is open source and MIT-licensed. Contributions are welcome!
 
@@ -22,7 +22,7 @@ We are heavily utilizing Laravel and Filament.
 
 
 ## About the project
-We are rolling Ssalute out in phased modules over the next few years. During this migration, parts of the existing system will remain active while features and data are moved across. You can see the public “welcome” page in `resources/views/welcome.blade.php` for the latest messaging and links.
+We are rolling Ssalute out in phased modules over the next few years. During this migration, parts of the existing system will remain active while features and data are moved across. You can see the public “welcome” page at [ssalute.scouts.org.za](https://ssalute.scouts.org.za) for the latest messaging and links.
 
 If you’d like to help, pick an issue and open a PR — we’re friendly and happy to guide first-time contributors.
 
