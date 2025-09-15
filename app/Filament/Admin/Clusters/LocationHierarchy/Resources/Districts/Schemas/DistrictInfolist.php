@@ -40,7 +40,8 @@ class DistrictInfolist
                             ->label('Description')
                             ->placeholder('-'),
                         TextEntry::make('phys_address')
-                            ->label('Physical Address'),
+                            ->label('Physical Address')
+                            ->placeholder('-'),
                         TextEntry::make('countryID')
                             ->label('Country ID')
                             ->helperText('ShouldBeRemoved - no multi-country support')

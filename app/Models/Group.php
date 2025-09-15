@@ -2,9 +2,15 @@
 
 namespace App\Models;
 
+use App\Enums\GroupTypes;
+use App\Enums\ProgramTypes\ProgramCubsType;
+use App\Enums\ProgramTypes\ProgramMeerkatsType;
+use App\Enums\ProgramTypes\ProgramRoversType;
+use App\Enums\ProgramTypes\ProgramScoutsType;
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -28,28 +34,28 @@ class Group extends BaseModel
         'multiPack' => 'bool',
         'multiTroop' => 'bool',
         'multiCrew' => 'bool',
-        'meerkatProgramType' => 'int',
-        'cubProgramType' => 'int',
-        'scoutProgramType' => 'int',
-        'roverProgramType' => 'int',
-        'amsOnly' => 'bool',
+        'meerkatProgramType' => 'int', // This should be set on the section level
+        'cubProgramType' => 'int', // This should be set on the section level
+        'scoutProgramType' => 'int', // This should be set on the section level
+        'roverProgramType' => 'int', // This should be set on the section level
+        'amsOnly' => 'bool', // This is hardcoded to always be zero in SD
         'hasMeerkats' => 'bool',
         'hasCubs' => 'bool',
         'hasScouts' => 'bool',
         'hasRovers' => 'bool',
-        'hasBranch1' => 'bool',
-        'hasBranch2' => 'bool',
-        'hasBranch3' => 'bool',
-        'hasBranch4' => 'bool',
-        'hasBranch5' => 'bool',
-        'sendWeeklyMails' => 'bool',
+        'hasBranch1' => 'bool', // Can be removed - No impact to SD
+        'hasBranch2' => 'bool', // Can be removed - No impact to SD
+        'hasBranch3' => 'bool', // Can be removed - No impact to SD
+        'hasBranch4' => 'bool', // Can be removed - No impact to SD
+        'hasBranch5' => 'bool', // Can be removed - No impact to SD
+        'sendWeeklyMails' => 'bool', // Can be removed - No impact to SD
         'assoc_to_district' => 'int',
         'assoc_to_region' => 'int',
-        'roverAssocToGroup' => 'bool',
+        'roverAssocToGroup' => 'bool',  // Can be removed - No impact to SD
         'phys_address' => 'string',
         'postalAddress' => 'string',
-        'postalCountryID' => 'int',
-        'phys_country_id' => 'int',
+        'postalCountryID' => 'int', // Deprecated - No Multi-country support
+        'phys_country_id' => 'int', // Deprecated - No Multi-country support
         'bankingDetails' => 'string',
         'bankAccountName' => 'string',
         'bankName' => 'string',
@@ -78,12 +84,12 @@ class Group extends BaseModel
         'weatherID' => 'string',
         'weatherLocationName' => 'string',
         'managedRegionally' => 'bool',
-        'canMoveToEntsha' => 'bool',
-        'using20' => 'bool',
+        'canMoveToEntsha' => 'bool', // Deprecated - Entcha was 2019
+        'using20' => 'bool', // Unknown - Seems to only be pulled in reports, but always true
         'groupRegNr' => 'string',
         'censusDone' => 'bool',
-        'groupLastUpdated' => 'datetime',
-        'groupLastUpdatedBy' => 'int',
+        'groupLastUpdated' => 'datetime', // This seems like a secondary modified date, for when child records are updated
+        'groupLastUpdatedBy' => 'int', // This seems like a secondary modified date, for when child records are updated
     ];
 
     public function scopeActive(Builder $query): void
@@ -110,5 +116,47 @@ class Group extends BaseModel
     public function district(): BelongsTo
     {
         return $this->belongsTo(District::class, 'assoc_to_district', 'id');
+    }
+
+    public function groupTypeLabel(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => GroupTypes::tryFrom($this->groupTypeID)?->getLabel()
+        );
+    }
+
+    public function meerkatProgramTypeLabel(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => ProgramMeerkatsType::tryFrom($this->meerkatProgramType)?->getLabel()
+        );
+    }
+
+    public function cubProgramTypeLabel(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => ProgramCubsType::tryFrom($this->cubProgramType)?->getLabel()
+        );
+    }
+
+    public function scoutProgramTypeLabel(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => ProgramScoutsType::tryFrom($this->scoutProgramType)?->getLabel()
+        );
+    }
+
+    public function roverProgramTypeLabel(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => ProgramRoversType::tryFrom($this->roverProgramType)?->getLabel()
+        );
+    }
+
+    public function bankInfoShort(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->bankName ? ($this->bankName . ' - ' . $this->bankAccountNumber) : 'Missing Details'
+        );
     }
 }

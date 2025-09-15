@@ -2,10 +2,11 @@
 
 namespace App\Filament\Admin\Clusters\LocationHierarchy\Resources\Groups\Tables;
 
+use App\Models\Group;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -15,188 +16,120 @@ class GroupsTable
     {
         return $table
             ->columns([
+                TextColumn::make('id')
+                    ->label('ID')
+                    ->numeric()
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(),
                 TextColumn::make('name')
-                    ->searchable(),
-                TextColumn::make('sdLiteOnly')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('usesGoScan')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('usesShop')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('usesPayFees')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('groupAccountID')
-                    ->numeric()
-                    ->sortable(),
+                    ->description(fn (Group $record) => $record->region?->name . ' - ' . $record->district?->name)
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(),
+                IconColumn::make('active')
+                    ->boolean()
+                    ->sortable()
+                    ->toggleable(),
+                IconColumn::make('sdLiteOnly')
+                    ->label('SD Lite')
+                    ->boolean()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('scarf')
-                    ->searchable(),
-                TextColumn::make('groupTypeID')
-                    ->numeric()
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('groupTypeLabel')
+                    ->label('Group Type')
+                    ->sortable(['groupTypeID'])
+                    ->toggleable(),
+                IconColumn::make('managedRegionally')
+                    ->label('Managed Regionally')
+                    ->boolean()
+                    ->toggleable()
                     ->sortable(),
-                TextColumn::make('multiDen')
-                    ->numeric()
+                IconColumn::make('hasMeerkats')
+                    ->label('Has Meerkats')
+                    ->boolean()
+                    ->toggleable()
                     ->sortable(),
-                TextColumn::make('multiPack')
-                    ->numeric()
+                IconColumn::make('multiDen')
+                    ->label('Multi Den')
+                    ->boolean()
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
-                TextColumn::make('multiTroop')
-                    ->numeric()
+                IconColumn::make('hasCubs')
+                    ->label('Has Cubs')
+                    ->boolean()
+                    ->toggleable()
                     ->sortable(),
-                TextColumn::make('multiCrew')
-                    ->numeric()
+                IconColumn::make('multiPack')
+                    ->label('Multi Pack')
+                    ->boolean()
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
-                TextColumn::make('meerkatProgramType')
-                    ->numeric()
+                IconColumn::make('hasScouts')
+                    ->label('Has Scouts')
+                    ->boolean()
+                    ->toggleable()
                     ->sortable(),
-                TextColumn::make('cubProgramType')
-                    ->numeric()
+                IconColumn::make('multiTroop')
+                    ->label('Multi Troop')
+                    ->boolean()
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
-                TextColumn::make('scoutProgramType')
-                    ->numeric()
+                IconColumn::make('hasRovers')
+                    ->label('Has Rovers')
+                    ->boolean()
+                    ->toggleable()
                     ->sortable(),
-                TextColumn::make('roverProgramType')
-                    ->numeric()
+                IconColumn::make('multiCrew')
+                    ->label('Multi Crew')
+                    ->boolean()
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
-                TextColumn::make('amsOnly')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('hasMeerkats')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('hasCubs')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('hasScouts')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('hasRovers')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('hasBranch1')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('hasBranch2')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('hasBranch3')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('hasBranch4')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('hasBranch5')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('sendWeeklyMails')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('assoc_to_district')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('assoc_to_region')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('roverAssocToGroup')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('postalCountryID')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('phys_country_id')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('bankAccountName')
-                    ->searchable(),
-                TextColumn::make('bankName')
-                    ->searchable(),
-                TextColumn::make('branchName')
-                    ->searchable(),
-                TextColumn::make('branchCode')
-                    ->searchable(),
-                TextColumn::make('bankAccountNumber')
-                    ->searchable(),
-                TextColumn::make('facebook')
-                    ->searchable(),
-                TextColumn::make('twitter')
-                    ->searchable(),
+
+                // Maybe have a "Has Banking info" column that checks if bankAccountName, bankName, branchName, branchCode, bankAccountNumber are filled in?
                 TextColumn::make('website')
+                    ->sortable()
+                    ->toggleable()
                     ->searchable(),
                 TextColumn::make('email')
-                    ->label('Email address')
+                    ->label('Group Email Address')
+                    ->sortable()
+                    ->toggleable()
                     ->searchable(),
-                TextColumn::make('googleplus')
-                    ->searchable(),
-                TextColumn::make('instagram')
-                    ->searchable(),
-                TextColumn::make('linkedin')
-                    ->searchable(),
-                TextColumn::make('pintrest')
-                    ->searchable(),
-                TextColumn::make('youtube')
-                    ->searchable(),
-                TextColumn::make('tumblr')
-                    ->searchable(),
-                TextColumn::make('googleMaps')
-                    ->searchable(),
-                TextColumn::make('gpsLat')
-                    ->searchable(),
-                TextColumn::make('gpsLon')
-                    ->searchable(),
-                TextColumn::make('created')
-                    ->dateTime()
-                    ->sortable(),
-                TextColumn::make('createdby')
-                    ->numeric()
+
+                IconColumn::make('censusDone')
+                    ->label('Census Done')
+                    ->boolean()
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
                 TextColumn::make('modified')
+                    ->label('Modified At')
                     ->dateTime()
+                    ->toggleable()
                     ->sortable(),
-                TextColumn::make('modifiedby')
+                TextColumn::make('modifiedBy.name')
+                    ->label('Modified By')
                     ->numeric()
-                    ->sortable(),
-                TextColumn::make('active')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('weatherID')
-                    ->searchable(),
-                TextColumn::make('weatherLocationName')
-                    ->searchable(),
-                TextColumn::make('managedRegionally')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('canMoveToEntsha')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('using20')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('groupRegNr')
-                    ->searchable(),
-                TextColumn::make('censusDone')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('groupLastUpdated')
-                    ->dateTime()
-                    ->sortable(),
-                TextColumn::make('groupLastUpdatedBy')
-                    ->numeric()
+                    ->toggleable()
                     ->sortable(),
             ])
             ->filters([
-                //
+                // Group Type Filter
+                // Region Filter
+                // District Filter
+                // Active Filter
+
             ])
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+                BulkActionGroup::make([]),
             ]);
     }
 }

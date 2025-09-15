@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Clusters\LocationHierarchy\Resources\Districts\Tables;
 
+use App\Models\District;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
@@ -22,7 +23,6 @@ class DistrictsTable
                 Group::make('region.name')
                     ->label('Region')
                     ->collapsible(),
-
             ])
             ->columns([
                 TextColumn::make('id')
@@ -30,12 +30,9 @@ class DistrictsTable
                     ->numeric()
                     ->sortable()
                     ->toggleable(),
-                TextColumn::make('region.name')
-                    ->label('Region')
-                    ->sortable()
-                    ->toggleable(),
                 TextColumn::make('name')
                     ->label('Name')
+                    ->description(fn (District $record) => $record->region?->name)
                     ->sortable()
                     ->searchable()
                     ->toggleable(),

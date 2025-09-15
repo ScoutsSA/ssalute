@@ -380,7 +380,7 @@ be shared with.
                         ]),
                 ])
                     ->submitAction(new HtmlString(Blade::render('<x-filament::button type="submit" size="sm">Submit</x-filament::button>')))
-                    ->skippable(false),
+                    ->skippable(true),
             ]);
     }
 
@@ -437,29 +437,35 @@ be shared with.
             return;
         }
 
-        if ($aam->district_id === null) {
-            // Regional
-            // Users which have Adult Support (system_user_type=25)
-            return;
-        }
+        /*        if ($aam->district_id === null) {
+                    // Regional
+                    // Users which have Adult Support (system_user_type=25)
+                   # $adultSupportMembers = ^^;
+                    if(!$adultSupportMembers)
+                    {
+                        // Regional Commissioner
+                    }
 
-        if ($aam->group_id === null) {
-            // District
-            //  Users which have District Commissioner (system_user_type=3)
-            return;
-        }
-        // Group
-        // IsGroupSelfManaged => select * from groups where managedRegionally =1 and active = 1;
+                    Mail::cc($formSettings->aam_national_support_emails)->to($users)->queue(new ApplicationAdultMembershipApplicantInitialEmail($aam));
+                    return;
+                }
 
-        // SelfManaged
-        // * SelfManaged Group => Select * from system_user_types where canAdminGroupAdults = 1 and active = 1;
+                if ($aam->group_id === null) {
+                    // District
+                    //  Users which have District Commissioner (system_user_type=3)
+                    // cc in in Adult Support/RegionalCommissioner
+                    Mail::cc($formSettings->aam_national_support_emails)->to($users)->queue(new ApplicationAdultMembershipApplicantInitialEmail($aam));
+                    return;
+                }
 
-        // Regionally Managed
-        // District/Region Managed Group => SGL / ASGL / Scouts Digital Group Manager
-        // Select * from system_user_types where (canAdminDistrictKids = 1 OR canAdminRegionKids = 1) and active = 1;
+                // Group
+                //  Users which have SGL Commissioner
+                // cc in District Commissioner & Adult Support/RegionalCommissioner
+                Mail::cc($formSettings->aam_national_support_emails)->to($users)->queue(new ApplicationAdultMembershipApplicantInitialEmail($aam));
+                return;*/
 
-        // If group level and no approval in 5 days, email second in line and applicant
-
-        // Weekly email on regional level giving a AAM application digest (Regional Administrator / Regional Administrator)
+        /**
+         * ToDo - Handle Approval
+         */
     }
 }

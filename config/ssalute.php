@@ -14,5 +14,5 @@ return [
     */
 
     'superuser_email' => env('SSALUTE_SUPERUSER_EMAIL'),
-
+    'scouts_digital_url' => env('SSALUTE_SCOUTS_DIGITAL_URL', 'https://ssa.scouts.digital'),
 ];

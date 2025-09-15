@@ -3,12 +3,16 @@
 namespace App\Filament\Admin\Resources\Users\Tables;
 
 use App\Models\SystemUser;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Livewire\Component;
 
 class UsersTable
 {
@@ -661,6 +665,48 @@ class UsersTable
                 //
             ])
             ->recordActions([
+                Action::make('SD_Login')
+                    ->label('Impersonate on SD')
+                    ->action(function (SystemUser $record, Component $livewire) {
+                        // This is a bit hacky
+                        Log::info('Impersonate on SD action initiated', ['user_id' => Auth::id(), 'impersonating_username' => $record->username]);
+                        $username = addslashes($record->username);
+                        $password = addslashes($record->getScoutsDigitalPlainTextPassword());
+                        $url = config('ssalute.scouts_digital_url') . '/includes/logon-action.php';
+
+                        return $livewire->js("
+                            const form = document.createElement('form');
+                            form.method = 'POST';
+                            form.action = '{$url}';
+                            form.target = '_blank';
+
+                            const usernameField = document.createElement('input');
+                            usernameField.type = 'hidden';
+                            usernameField.name = 'username';
+                            usernameField.value = '{$username}';
+                            form.appendChild(usernameField);
+
+                            const passwordField = document.createElement('input');
+                            passwordField.type = 'hidden';
+                            passwordField.name = 'password';
+                            passwordField.value = '{$password}';
+                            form.appendChild(passwordField);
+
+                            const termsField = document.createElement('input');
+                            termsField.type = 'hidden';
+                            termsField.name = 'agree';
+                            termsField.value = '1';
+                            form.appendChild(termsField);
+
+                            document.body.appendChild(form);
+                            form.submit();
+                            setTimeout(() => {
+                                if (document.body.contains(form)) {
+                                    document.body.removeChild(form);
+                                }
+                            }, 100);
+                        ");
+                    }),
                 ViewAction::make(),
                 EditAction::make(),
             ])
