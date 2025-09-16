@@ -79,7 +79,7 @@ return [
             'via' => App\Logging\CreateCloudWatchLogger::class,
             'region' => env('AWS_DEFAULT_REGION', 'af-south-1'),
             'group' => env('CLOUDWATCH_LOG_GROUP', env('APP_NAME')),
-            'stream' => env('CLOUDWATCH_LOG_STREAM', 'LaravelLogs'),
+            'stream' => env('CLOUDWATCH_LOG_STREAM', env('APP_ENV')),
             'retention' => env('CLOUDWATCH_LOG_RETENTION', null), // Never Expire
             'batch_size' => env('CLOUDWATCH_LOG_BATCH_SIZE', 1),
             'level' => env('LOG_LEVEL', 'info'),
