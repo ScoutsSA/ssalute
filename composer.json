@@ -20,7 +20,8 @@
         "laravel/tinker": "^2.10.1",
         "phpnexus/cwh": "^3",
         "sentry/sentry-laravel": "^4.16",
-        "spatie/laravel-settings": "^3.4"
+        "spatie/laravel-settings": "^3.4",
+        "spatie/laravel-slack-alerts": "^1.7"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.6",
