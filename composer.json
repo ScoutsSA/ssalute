@@ -19,6 +19,7 @@
         "laravel/nightwatch": "^1.13",
         "laravel/tinker": "^2.10.1",
         "phpnexus/cwh": "^3",
+        "sentry/sentry-laravel": "^4.16",
         "spatie/laravel-settings": "^3.4"
     },
     "require-dev": {

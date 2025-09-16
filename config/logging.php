@@ -75,18 +75,18 @@ return [
 
         'cloudwatch' => [
             'driver' => 'custom',
-            'name'   => 'cloudwatch',
-            'via'    => App\Logging\CreateCloudWatchLogger::class,
+            'name' => 'cloudwatch',
+            'via' => App\Logging\CreateCloudWatchLogger::class,
             'region' => env('AWS_DEFAULT_REGION', 'af-south-1'),
-            'group'  => env('CLOUDWATCH_LOG_GROUP', env('APP_NAME')),
+            'group' => env('CLOUDWATCH_LOG_GROUP', env('APP_NAME')),
             'stream' => env('CLOUDWATCH_LOG_STREAM', 'LaravelLogs'),
-            'retention'  => env('CLOUDWATCH_LOG_RETENTION', null), // Never Expire
+            'retention' => env('CLOUDWATCH_LOG_RETENTION', null), // Never Expire
             'batch_size' => env('CLOUDWATCH_LOG_BATCH_SIZE', 1),
-            'level'      => env('LOG_LEVEL', 'info'),
-            'key'    => env('CLOUDWATCH_ACCESS_KEY_ID', env('AWS_ACCESS_KEY_ID')),
-            'secret' => env('CLOUDWATCH_SECRET_KEY',env('AWS_SECRET_ACCESS_KEY')),
+            'level' => env('LOG_LEVEL', 'info'),
+            'key' => env('CLOUDWATCH_ACCESS_KEY_ID', env('AWS_ACCESS_KEY_ID')),
+            'secret' => env('CLOUDWATCH_SECRET_KEY', env('AWS_SECRET_ACCESS_KEY')),
             'bubble' => true,
-            'tags'   => [],
+            'tags' => [],
         ],
 
         'slack' => [

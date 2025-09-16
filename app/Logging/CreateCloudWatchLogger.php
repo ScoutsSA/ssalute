@@ -3,25 +3,25 @@
 namespace App\Logging;
 
 use Aws\CloudWatchLogs\CloudWatchLogsClient;
-use PhpNexus\Cwh\Handler\CloudWatch;
 use Monolog\Formatter\JsonFormatter;
 use Monolog\Level;
 use Monolog\Logger;
+use PhpNexus\Cwh\Handler\CloudWatch;
 
 class CreateCloudWatchLogger
 {
     public function __invoke(array $config): Logger
     {
         $client = new CloudWatchLogsClient([
-            'region'      => $config['region'],
-            'version'     => 'latest',
+            'region' => $config['region'],
+            'version' => 'latest',
             'credentials' => [
-                'key'    => $config['key'] ?? null,
+                'key' => $config['key'] ?? null,
                 'secret' => $config['secret'] ?? null,
             ],
         ]);
 
-        $group  = $config['group'];               // e.g. /app/laravel/prod
+        $group = $config['group'];               // e.g. /app/laravel/prod
         $stream = $config['stream'];              // e.g. web-{{hostname}}
         $retention = $config['retention'] ?? null;  // days; 1095 = ~3 years
         $tags = $config['tags'] ?? [];            // optional key/value tags
@@ -38,7 +38,7 @@ class CreateCloudWatchLogger
         );
 
         // JSON logs = easier searching in CloudWatch Logs Insights
-        $handler->setFormatter(new JsonFormatter());
+        $handler->setFormatter(new JsonFormatter);
 
         $logger = new Logger($config['name'] ?? 'cloudwatch');
         $logger->pushHandler($handler);
