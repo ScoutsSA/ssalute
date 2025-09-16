@@ -201,6 +201,13 @@ class SystemUser extends User implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
+        return match (true) {
+            $panel->getId() === 'admin' => $this->isSuperAdmin(),
+        };
+    }
+
+    public function isSuperAdmin(): bool
+    {
         if ($this->username === config('ssalute.superuser_email')) {
             return true;
         }

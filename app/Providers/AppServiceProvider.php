@@ -3,8 +3,10 @@
 namespace App\Providers;
 
 use App\Auth\ScoutsDigitalUserProvider;
+use App\Models\CustomDatabaseNotification;
 use App\Models\SystemUser;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -34,6 +36,10 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Schema::defaultStringLength(255);
+
+        DatabaseNotification::resolveRelationUsing('databaseNotifications', function () {
+            return new CustomDatabaseNotification;
+        });
 
         if (config('app.sql_log')) {
             DB::listen(function ($query) {

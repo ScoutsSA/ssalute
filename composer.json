@@ -15,6 +15,7 @@
         "filament/spatie-laravel-settings-plugin": "^4.0",
         "giggsey/libphonenumber-for-php": "^9.0",
         "laravel/framework": "^12.28.1",
+        "laravel/horizon": "^5.33",
         "laravel/nightwatch": "^1.13",
         "laravel/tinker": "^2.10.1",
         "spatie/laravel-settings": "^3.4"

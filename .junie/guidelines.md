@@ -11,6 +11,7 @@ This application is a Laravel application and its main Laravel ecosystems packag
 - php - 8.4.12
 - filament/filament (FILAMENT) - v4
 - laravel/framework (LARAVEL) - v12
+- laravel/horizon (HORIZON) - v5
 - laravel/nightwatch (NIGHTWATCH) - v1
 - laravel/prompts (PROMPTS) - v0
 - livewire/livewire (LIVEWIRE) - v3
