@@ -22,7 +22,7 @@
                         This account already exists on Scouts Digital!
                     </p>
                     <a href="https://ssa.scouts.digital/login" class="w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300">
-                        Login to Scouts Digital <x-heroicon-s-arrow-top-right-on-square class="w-6 h-6 inline-block" />
+                        Login to Scouts Digital <x-filament::icon icon="heroicon-s-arrow-top-right-on-square" class="w-6 h-6 inline-block" />
                     </a>
                 </div>
             @elseif ($exists === false)
