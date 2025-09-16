@@ -4,6 +4,7 @@ use Illuminate\Support\Str;
 
 return [
 
+    'slack_webhook_url' => env('HORIZON_SLACK_WEBHOOK_URL', env('LOG_SLACK_WEBHOOK_URL')),
     /*
     |--------------------------------------------------------------------------
     | Horizon Domain
@@ -70,7 +71,7 @@ return [
     |
     */
 
-    'middleware' => ['web', 'auth:web'],
+    'middleware' => ['web'],
 
     /*
     |--------------------------------------------------------------------------
