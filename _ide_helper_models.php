@@ -2448,6 +2448,36 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * @property string $id
+ * @property string $type
+ * @property string $notifiable_type
+ * @property int $notifiable_id
+ * @property array<array-key, mixed> $data
+ * @property \Illuminate\Support\Carbon|null $read_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Model $notifiable
+ * @method static \Illuminate\Notifications\DatabaseNotificationCollection<int, static> all($columns = ['*'])
+ * @method static \Illuminate\Notifications\DatabaseNotificationCollection<int, static> get($columns = ['*'])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomDatabaseNotification newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomDatabaseNotification newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomDatabaseNotification query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomDatabaseNotification read()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomDatabaseNotification unread()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomDatabaseNotification whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomDatabaseNotification whereData($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomDatabaseNotification whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomDatabaseNotification whereNotifiableId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomDatabaseNotification whereNotifiableType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomDatabaseNotification whereReadAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomDatabaseNotification whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CustomDatabaseNotification whereUpdatedAt($value)
+ */
+	class CustomDatabaseNotification extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * @property int $id
  * @property string $companyName
  * @property int $countryID
