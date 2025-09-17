@@ -1,0 +1,37 @@
+{
+    "name": "Ssalute - Scouts South Africa",
+    "short_name": "Ssalute",
+    "start_url": "/",
+    "id": "/",
+    "scope": "/",
+    "display": "standalone",
+    "orientation": "portrait",
+    "background_color": "#E7E1D1",
+    "theme_color": "#E7E1D1",
+    "icons": [
+        {
+            "src": "/icons/manifest-icon-192.maskable.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/icons/manifest-icon-192.maskable.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "/icons/manifest-icon-512.maskable.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/icons/manifest-icon-512.maskable.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ]
+}

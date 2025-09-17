@@ -28,6 +28,8 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->id('admin')
             ->path('backoffice')
+            ->default()
+            ->favicon(asset('images/logo.png'))
             ->login()
             ->sidebarCollapsibleOnDesktop()
             ->colors([

@@ -13,6 +13,7 @@ use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
+use STS\FilamentImpersonate\Actions\Impersonate;
 
 class UsersTable
 {
@@ -665,6 +666,8 @@ class UsersTable
                 //
             ])
             ->recordActions([
+                Impersonate::make()
+                    ->redirectTo(route('home')),
                 Action::make('SD_Login')
                     ->label('Impersonate on SD')
                     ->action(function (SystemUser $record, Component $livewire) {

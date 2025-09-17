@@ -70,7 +70,7 @@ return [
         ],
         'forms_aam_criminal_record' => [
             'driver' => 'local',
-            'root' => storage_path('app/private/forms/aam/_criminal_check'),
+            'root' => storage_path('app/private/forms/aam/criminal_check'),
             'serve' => true,
             'visibility' => 'public',
             'throw' => false,

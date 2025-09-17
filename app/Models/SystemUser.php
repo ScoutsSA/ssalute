@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class SystemUser extends User implements FilamentUser
 {
@@ -218,6 +219,16 @@ class SystemUser extends User implements FilamentUser
         return false;
     }
 
+    public function canImpersonate()
+    {
+        return $this->isSuperAdmin();
+    }
+
+    public function canBeImpersonated()
+    {
+        return ! $this->isSuperAdmin();
+    }
+
     public function name(): Attribute // Note this is used for the Filament Name as well
     {
         return Attribute::make(
@@ -230,5 +241,25 @@ class SystemUser extends User implements FilamentUser
         return Attribute::make(
             get: fn () => 'SSA ID-' . str_pad($this->id, 7, '0', STR_PAD_LEFT)
         );
+    }
+
+    public function initials(): string
+    {
+        return Str::of($this->name)
+            ->explode(' ')
+            ->take(2)
+            ->map(fn ($word) => Str::substr($word, 0, 1))
+            ->implode('');
+    }
+
+    public function setEncryptedPassword(string $plain): void
+    {
+        $key = config('auth.scouts_digital.authentication.encryption_key');
+
+        DB::table($this->getTable())
+            ->where($this->getKeyName(), $this->getKey())
+            ->update([
+                'passwordNew' => DB::raw("AES_ENCRYPT('{$plain}', '{$key}')"),
+            ]);
     }
 }

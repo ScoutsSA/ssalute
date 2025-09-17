@@ -81,8 +81,20 @@ class ScoutsDigitalUserProvider implements UserProviderContract
 
     public function validateCredentials(AuthenticatableContract $user, array $credentials): bool
     {
-        // retrieveByCredentials already performed the encrypted password match at the DB level.
-        // As a safety net, ensure a password was provided.
-        return isset($credentials['password']);
+        $plain = (string) ($credentials['password'] ?? '');
+        if ($plain === '') {
+            return false;
+        }
+
+        $key = config('auth.scouts_digital.authentication.encryption_key');
+
+        /** @var SystemUser $model */
+        $model = new $this->model;
+
+        // Check the currently-authenticated user's row:
+        return $model->newQuery()
+            ->whereKey($user->getAuthIdentifier())
+            ->whereRaw('passwordNew = AES_ENCRYPT(?, ?)', [$plain, $key])
+            ->exists();
     }
 }

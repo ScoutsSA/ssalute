@@ -2450,6 +2450,33 @@ namespace Illuminate\Support\Facades {
         }
 
         /**
+         * Log a user into the application without firing the Login event.
+         *
+         * @param \Illuminate\Contracts\Auth\Authenticatable $user
+         * @return void
+         * @static
+         */
+        public static function quietLogin($user)
+        {
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
+            $instance->quietLogin($user);
+        }
+
+        /**
+         * Logout the user without updating remember_token
+         * and without firing the Logout event.
+         *
+         * @param void
+         * @return void
+         * @static
+         */
+        public static function quietLogout()
+        {
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
+            $instance->quietLogout();
+        }
+
+        /**
          * Get the currently authenticated user.
          *
          * @return \App\Models\SystemUser|null
@@ -2457,7 +2484,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function user()
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->user();
         }
 
@@ -2469,7 +2497,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function id()
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->id();
         }
 
@@ -2482,7 +2511,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function once($credentials = [])
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->once($credentials);
         }
 
@@ -2495,7 +2525,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function onceUsingId($id)
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->onceUsingId($id);
         }
 
@@ -2508,7 +2539,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function validate($credentials = [])
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->validate($credentials);
         }
 
@@ -2523,7 +2555,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function basic($field = 'email', $extraConditions = [])
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->basic($field, $extraConditions);
         }
 
@@ -2538,7 +2571,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function onceBasic($field = 'email', $extraConditions = [])
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->onceBasic($field, $extraConditions);
         }
 
@@ -2552,7 +2586,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function attempt($credentials = [], $remember = false)
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->attempt($credentials, $remember);
         }
 
@@ -2567,7 +2602,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function attemptWhen($credentials = [], $callbacks = null, $remember = false)
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->attemptWhen($credentials, $callbacks, $remember);
         }
 
@@ -2581,7 +2617,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function loginUsingId($id, $remember = false)
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->loginUsingId($id, $remember);
         }
 
@@ -2595,7 +2632,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function login($user, $remember = false)
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             $instance->login($user, $remember);
         }
 
@@ -2607,7 +2645,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function logout()
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             $instance->logout();
         }
 
@@ -2621,7 +2660,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function logoutCurrentDevice()
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             $instance->logoutCurrentDevice();
         }
 
@@ -2637,7 +2677,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function logoutOtherDevices($password)
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->logoutOtherDevices($password);
         }
 
@@ -2650,7 +2691,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function attempting($callback)
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             $instance->attempting($callback);
         }
 
@@ -2662,7 +2704,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function getLastAttempted()
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->getLastAttempted();
         }
 
@@ -2674,7 +2717,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function getName()
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->getName();
         }
 
@@ -2686,7 +2730,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function getRecallerName()
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->getRecallerName();
         }
 
@@ -2698,7 +2743,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function viaRemember()
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->viaRemember();
         }
 
@@ -2706,12 +2752,13 @@ namespace Illuminate\Support\Facades {
          * Set the number of minutes the remember me cookie should be valid for.
          *
          * @param int $minutes
-         * @return \Illuminate\Auth\SessionGuard
+         * @return \Lab404\Impersonate\Guard\SessionGuard
          * @static
          */
         public static function setRememberDuration($minutes)
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->setRememberDuration($minutes);
         }
 
@@ -2724,7 +2771,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function getCookieJar()
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->getCookieJar();
         }
 
@@ -2737,7 +2785,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function setCookieJar($cookie)
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             $instance->setCookieJar($cookie);
         }
 
@@ -2749,7 +2798,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function getDispatcher()
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->getDispatcher();
         }
 
@@ -2762,7 +2812,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function setDispatcher($events)
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             $instance->setDispatcher($events);
         }
 
@@ -2774,7 +2825,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function getSession()
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->getSession();
         }
 
@@ -2786,7 +2838,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function getUser()
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->getUser();
         }
 
@@ -2794,12 +2847,13 @@ namespace Illuminate\Support\Facades {
          * Set the current user.
          *
          * @param \Illuminate\Contracts\Auth\Authenticatable $user
-         * @return \Illuminate\Auth\SessionGuard
+         * @return \Lab404\Impersonate\Guard\SessionGuard
          * @static
          */
         public static function setUser($user)
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->setUser($user);
         }
 
@@ -2811,7 +2865,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function getRequest()
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->getRequest();
         }
 
@@ -2819,12 +2874,13 @@ namespace Illuminate\Support\Facades {
          * Set the current request instance.
          *
          * @param \Symfony\Component\HttpFoundation\Request $request
-         * @return \Illuminate\Auth\SessionGuard
+         * @return \Lab404\Impersonate\Guard\SessionGuard
          * @static
          */
         public static function setRequest($request)
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->setRequest($request);
         }
 
@@ -2836,7 +2892,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function getTimebox()
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->getTimebox();
         }
 
@@ -2849,7 +2906,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function authenticate()
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->authenticate();
         }
 
@@ -2861,7 +2919,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function hasUser()
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->hasUser();
         }
 
@@ -2873,7 +2932,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function check()
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->check();
         }
 
@@ -2885,19 +2945,21 @@ namespace Illuminate\Support\Facades {
          */
         public static function guest()
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->guest();
         }
 
         /**
          * Forget the current user.
          *
-         * @return \Illuminate\Auth\SessionGuard
+         * @return \Lab404\Impersonate\Guard\SessionGuard
          * @static
          */
         public static function forgetUser()
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->forgetUser();
         }
 
@@ -2909,7 +2971,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function getProvider()
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             return $instance->getProvider();
         }
 
@@ -2922,7 +2985,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function setProvider($provider)
         {
-            /** @var \Illuminate\Auth\SessionGuard $instance */
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            /** @var \Lab404\Impersonate\Guard\SessionGuard $instance */
             $instance->setProvider($provider);
         }
 
@@ -2937,7 +3001,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function macro($name, $macro)
         {
-            \Illuminate\Auth\SessionGuard::macro($name, $macro);
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            \Lab404\Impersonate\Guard\SessionGuard::macro($name, $macro);
         }
 
         /**
@@ -2951,7 +3016,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function mixin($mixin, $replace = true)
         {
-            \Illuminate\Auth\SessionGuard::mixin($mixin, $replace);
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            \Lab404\Impersonate\Guard\SessionGuard::mixin($mixin, $replace);
         }
 
         /**
@@ -2963,7 +3029,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function hasMacro($name)
         {
-            return \Illuminate\Auth\SessionGuard::hasMacro($name);
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            return \Lab404\Impersonate\Guard\SessionGuard::hasMacro($name);
         }
 
         /**
@@ -2974,7 +3041,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function flushMacros()
         {
-            \Illuminate\Auth\SessionGuard::flushMacros();
+            //Method inherited from \Illuminate\Auth\SessionGuard 
+            \Lab404\Impersonate\Guard\SessionGuard::flushMacros();
         }
 
             }
@@ -17874,6 +17942,15 @@ namespace Illuminate\Support\Facades {
             return $instance->tap($callback);
         }
 
+        /**
+         * @see \Lab404\Impersonate\ImpersonateServiceProvider::registerRoutesMacro()
+         * @static
+         */
+        public static function impersonate()
+        {
+            return \Illuminate\Routing\Router::impersonate();
+        }
+
             }
     /**
      * @method static \Illuminate\Console\Scheduling\PendingEventAttributes withoutOverlapping(int $expiresAt = 1440)
@@ -22568,6 +22645,15 @@ namespace Illuminate\Support\Facades {
             return $instance->renderTranslation();
         }
 
+        /**
+         * @see \Flux\FluxServiceProvider::bootMacros()
+         * @static
+         */
+        public static function getCurrentComponentData()
+        {
+            return \Illuminate\View\Factory::getCurrentComponentData();
+        }
+
             }
     /**
      * @see \Illuminate\Foundation\Vite
@@ -23042,6 +23128,203 @@ namespace Laravel\Mcp\Server\Facades {
             }
     }
 
+namespace Flux {
+    /**
+     * @see \Flux\FluxManager
+     */
+    class Flux {
+        /**
+         * @static
+         */
+        public static function boot()
+        {
+            /** @var \Flux\FluxManager $instance */
+            return $instance->boot();
+        }
+
+        /**
+         * @static
+         */
+        public static function ensurePro()
+        {
+            /** @var \Flux\FluxManager $instance */
+            return $instance->ensurePro();
+        }
+
+        /**
+         * @static
+         */
+        public static function pro()
+        {
+            /** @var \Flux\FluxManager $instance */
+            return $instance->pro();
+        }
+
+        /**
+         * @static
+         */
+        public static function markAssetsRendered()
+        {
+            /** @var \Flux\FluxManager $instance */
+            return $instance->markAssetsRendered();
+        }
+
+        /**
+         * @static
+         */
+        public static function scripts($options = [])
+        {
+            /** @var \Flux\FluxManager $instance */
+            return $instance->scripts($options);
+        }
+
+        /**
+         * @static
+         */
+        public static function fluxAppearance($options = [])
+        {
+            /** @var \Flux\FluxManager $instance */
+            return $instance->fluxAppearance($options);
+        }
+
+        /**
+         * @static
+         */
+        public static function editorStyles()
+        {
+            /** @var \Flux\FluxManager $instance */
+            return $instance->editorStyles();
+        }
+
+        /**
+         * @static
+         */
+        public static function editorScripts()
+        {
+            /** @var \Flux\FluxManager $instance */
+            return $instance->editorScripts();
+        }
+
+        /**
+         * @static
+         */
+        public static function classes($styles = null)
+        {
+            /** @var \Flux\FluxManager $instance */
+            return $instance->classes($styles);
+        }
+
+        /**
+         * @static
+         */
+        public static function disallowWireModel($attributes, $componentName)
+        {
+            /** @var \Flux\FluxManager $instance */
+            return $instance->disallowWireModel($attributes, $componentName);
+        }
+
+        /**
+         * @static
+         */
+        public static function splitAttributes($attributes, $by = [], $strict = false)
+        {
+            /** @var \Flux\FluxManager $instance */
+            return $instance->splitAttributes($attributes, $by, $strict);
+        }
+
+        /**
+         * @static
+         */
+        public static function restorePassThroughProps($attributes, $passThroughProps)
+        {
+            /** @var \Flux\FluxManager $instance */
+            return $instance->restorePassThroughProps($attributes, $passThroughProps);
+        }
+
+        /**
+         * @static
+         */
+        public static function forwardedAttributes($attributes, $propKeys)
+        {
+            /** @var \Flux\FluxManager $instance */
+            return $instance->forwardedAttributes($attributes, $propKeys);
+        }
+
+        /**
+         * @static
+         */
+        public static function attributesAfter($prefix, $attributes, $default = [])
+        {
+            /** @var \Flux\FluxManager $instance */
+            return $instance->attributesAfter($prefix, $attributes, $default);
+        }
+
+        /**
+         * @static
+         */
+        public static function applyInset($inset, $top, $right, $bottom, $left)
+        {
+            /** @var \Flux\FluxManager $instance */
+            return $instance->applyInset($inset, $top, $right, $bottom, $left);
+        }
+
+        /**
+         * @static
+         */
+        public static function componentExists($name)
+        {
+            /** @var \Flux\FluxManager $instance */
+            return $instance->componentExists($name);
+        }
+
+        /**
+         * @static
+         */
+        public static function bootComponents()
+        {
+            /** @var \Flux\FluxManager $instance */
+            return $instance->bootComponents();
+        }
+
+        /**
+         * @static
+         */
+        public static function bootModal()
+        {
+            /** @var \Flux\FluxManager $instance */
+            return $instance->bootModal();
+        }
+
+        /**
+         * @static
+         */
+        public static function modal($name)
+        {
+            /** @var \Flux\FluxManager $instance */
+            return $instance->modal($name);
+        }
+
+        /**
+         * @static
+         */
+        public static function modals()
+        {
+            /** @var \Flux\FluxManager $instance */
+            return $instance->modals();
+        }
+
+        /**
+         * @static
+         */
+        public static function toast($text, $heading = null, $duration = 5000, $variant = null, $position = null)
+        {
+            /** @var \Flux\FluxManager $instance */
+            return $instance->toast($text, $heading, $duration, $variant, $position);
+        }
+
+            }
+    }
+
 namespace Livewire {
     /**
      * @see \Livewire\LivewireManager
@@ -23426,6 +23709,20 @@ namespace Livewire {
         }
 
             }
+    /**
+     */
+    class Component {
+        /**
+         * @see \Flux\FluxManager::bootModal()
+         * @param mixed $name
+         * @static
+         */
+        public static function modal($name)
+        {
+            return \Livewire\Component::modal($name);
+        }
+
+            }
     }
 
 namespace Sentry\Laravel {
@@ -23792,6 +24089,37 @@ namespace Illuminate\Http {
             }
     }
 
+namespace Illuminate\Routing {
+    /**
+     * @mixin \Illuminate\Routing\RouteRegistrar
+     */
+    class Router {
+        /**
+         * @see \Lab404\Impersonate\ImpersonateServiceProvider::registerRoutesMacro()
+         * @static
+         */
+        public static function impersonate()
+        {
+            return \Illuminate\Routing\Router::impersonate();
+        }
+
+            }
+    /**
+     */
+    class Route {
+        /**
+         * @see \Livewire\Features\SupportLazyLoading\SupportLazyLoading::registerRouteMacro()
+         * @param mixed $enabled
+         * @static
+         */
+        public static function lazy($enabled = true)
+        {
+            return \Illuminate\Routing\Route::lazy($enabled);
+        }
+
+            }
+    }
+
 namespace Illuminate\Database\Query {
     /**
      */
@@ -24075,23 +24403,6 @@ namespace Illuminate\Console\Scheduling {
         public static function sentryMonitor($monitorSlug = null, $checkInMargin = null, $maxRuntime = null, $updateMonitorConfig = true, $failureIssueThreshold = null, $recoveryThreshold = null)
         {
             return \Illuminate\Console\Scheduling\Event::sentryMonitor($monitorSlug, $checkInMargin, $maxRuntime, $updateMonitorConfig, $failureIssueThreshold, $recoveryThreshold);
-        }
-
-            }
-    }
-
-namespace Illuminate\Routing {
-    /**
-     */
-    class Route {
-        /**
-         * @see \Livewire\Features\SupportLazyLoading\SupportLazyLoading::registerRouteMacro()
-         * @param mixed $enabled
-         * @static
-         */
-        public static function lazy($enabled = true)
-        {
-            return \Illuminate\Routing\Route::lazy($enabled);
         }
 
             }
@@ -26662,6 +26973,241 @@ namespace Livewire\Features\SupportTesting {
             }
     }
 
+namespace App\Filament\Admin\Resources\Users\Pages {
+    /**
+     */
+    class CreateUser extends \Filament\Resources\Pages\CreateRecord {
+            }
+    /**
+     */
+    class EditUser extends \Filament\Resources\Pages\EditRecord {
+            }
+    /**
+     */
+    class ListUsers extends \Filament\Resources\Pages\ListRecords {
+            }
+    /**
+     */
+    class ViewUser extends \Filament\Resources\Pages\ViewRecord {
+            }
+    }
+
+namespace Filament\Resources\Pages {
+    /**
+     * @property-read Schema $form
+     */
+    class CreateRecord extends \Filament\Resources\Pages\Page {
+            }
+    /**
+     */
+    class Page extends \Filament\Pages\Page {
+            }
+    /**
+     * @property-read Schema $form
+     */
+    class EditRecord extends \Filament\Resources\Pages\Page {
+            }
+    /**
+     */
+    class ListRecords extends \Filament\Resources\Pages\Page {
+            }
+    /**
+     * @property-read Schema $form
+     */
+    class ViewRecord extends \Filament\Resources\Pages\Page {
+            }
+    }
+
+namespace Filament\Pages {
+    /**
+     */
+    class Page extends \Filament\Pages\BasePage {
+            }
+    /**
+     */
+    class BasePage extends \Livewire\Component {
+            }
+    /**
+     * @property-read Schema $form
+     */
+    class SettingsPage extends \Filament\Pages\Page {
+            }
+    /**
+     */
+    class Dashboard extends \Filament\Pages\Page {
+            }
+    /**
+     */
+    class SimplePage extends \Filament\Pages\BasePage {
+            }
+    }
+
+namespace App\Filament\Admin\Clusters\LocationHierarchy {
+    /**
+     */
+    class LocationHierarchyCluster extends \Filament\Clusters\Cluster {
+            }
+    }
+
+namespace Filament\Clusters {
+    /**
+     */
+    class Cluster extends \Filament\Pages\Page {
+            }
+    }
+
+namespace App\Filament\Admin\Clusters\LocationHierarchy\Resources\Districts\Pages {
+    /**
+     */
+    class ListDistricts extends \Filament\Resources\Pages\ListRecords {
+            }
+    /**
+     */
+    class ViewDistrict extends \Filament\Resources\Pages\ViewRecord {
+            }
+    }
+
+namespace App\Filament\Admin\Clusters\LocationHierarchy\Resources\Districts\RelationManagers {
+    /**
+     */
+    class DistrictGroupsRelationManager extends \Filament\Resources\RelationManagers\RelationManager {
+            }
+    }
+
+namespace Filament\Resources\RelationManagers {
+    /**
+     */
+    class RelationManager extends \Livewire\Component {
+            }
+    }
+
+namespace App\Filament\Admin\Clusters\LocationHierarchy\Resources\Groups\Pages {
+    /**
+     */
+    class CreateGroup extends \Filament\Resources\Pages\CreateRecord {
+            }
+    /**
+     */
+    class EditGroup extends \Filament\Resources\Pages\EditRecord {
+            }
+    /**
+     */
+    class ListGroups extends \Filament\Resources\Pages\ListRecords {
+            }
+    /**
+     */
+    class ViewGroup extends \Filament\Resources\Pages\ViewRecord {
+            }
+    }
+
+namespace App\Filament\Admin\Clusters\LocationHierarchy\Resources\Regions\Pages {
+    /**
+     */
+    class ListRegions extends \Filament\Resources\Pages\ListRecords {
+            }
+    /**
+     */
+    class ViewRegion extends \Filament\Resources\Pages\ViewRecord {
+            }
+    }
+
+namespace App\Filament\Admin\Clusters\LocationHierarchy\Resources\Regions\RelationManagers {
+    /**
+     */
+    class RegionDistrictsRelationManager extends \Filament\Resources\RelationManagers\RelationManager {
+            }
+    /**
+     */
+    class RegionGroupsRelationManager extends \Filament\Resources\RelationManagers\RelationManager {
+            }
+    }
+
+namespace App\Filament\Admin\Clusters\Settings\Pages {
+    /**
+     */
+    class ManageFormSettings extends \Filament\Pages\SettingsPage {
+            }
+    /**
+     */
+    class ManageGeneralSettings extends \Filament\Pages\SettingsPage {
+            }
+    }
+
+namespace App\Filament\Admin\Clusters\Settings {
+    /**
+     */
+    class SettingsCluster extends \Filament\Clusters\Cluster {
+            }
+    }
+
+namespace Filament\Widgets {
+    /**
+     */
+    class AccountWidget extends \Filament\Widgets\Widget {
+            }
+    /**
+     */
+    class Widget extends \Livewire\Component {
+            }
+    /**
+     */
+    class FilamentInfoWidget extends \Filament\Widgets\Widget {
+            }
+    }
+
+namespace Filament\Livewire {
+    /**
+     */
+    class DatabaseNotifications extends \Filament\Notifications\Livewire\DatabaseNotifications {
+            }
+    /**
+     */
+    class GlobalSearch extends \Livewire\Component {
+            }
+    /**
+     */
+    class Notifications extends \Filament\Notifications\Livewire\Notifications {
+            }
+    /**
+     */
+    class Sidebar extends \Livewire\Component {
+            }
+    /**
+     */
+    class SimpleUserMenu extends \Livewire\Component {
+            }
+    /**
+     */
+    class Topbar extends \Livewire\Component {
+            }
+    }
+
+namespace Filament\Notifications\Livewire {
+    /**
+     */
+    class DatabaseNotifications extends \Livewire\Component {
+            }
+    /**
+     */
+    class Notifications extends \Livewire\Component {
+            }
+    }
+
+namespace Filament\Auth\Pages {
+    /**
+     * @property-read Schema $form
+     */
+    class EditProfile extends \Filament\Pages\Page {
+            }
+    /**
+     * @property-read Action $registerAction
+     * @property-read Schema $form
+     * @property-read Schema $multiFactorChallengeForm
+     */
+    class Login extends \Filament\Pages\SimplePage {
+            }
+    }
+
 namespace Illuminate\View {
     /**
      */
@@ -26705,6 +27251,17 @@ namespace Illuminate\View {
         }
 
         /**
+         * @see \Flux\FluxServiceProvider::bootMacros()
+         * @param mixed $key
+         * @param mixed $default
+         * @static
+         */
+        public static function pluck($key, $default = null)
+        {
+            return \Illuminate\View\ComponentAttributeBag::pluck($key, $default);
+        }
+
+        /**
          * @see \Livewire\Features\SupportBladeAttributes\SupportBladeAttributes::provide()
          * @param mixed $name
          * @static
@@ -26712,6 +27269,19 @@ namespace Illuminate\View {
         public static function wire($name)
         {
             return \Illuminate\View\ComponentAttributeBag::wire($name);
+        }
+
+            }
+    /**
+     */
+    class Factory {
+        /**
+         * @see \Flux\FluxServiceProvider::bootMacros()
+         * @static
+         */
+        public static function getCurrentComponentData()
+        {
+            return \Illuminate\View\Factory::getCurrentComponentData();
         }
 
             }
@@ -26790,6 +27360,54 @@ namespace Illuminate\View {
             return \Illuminate\View\View::response($callback);
         }
 
+            }
+    }
+
+namespace App\Livewire\Tools {
+    /**
+     */
+    class CheckUserExistenceForm extends \Livewire\Component {
+            }
+    }
+
+namespace App\Livewire\Auth {
+    /**
+     */
+    class Login extends \Livewire\Component {
+            }
+    /**
+     */
+    class ConfirmPassword extends \Livewire\Component {
+            }
+    }
+
+namespace App\Livewire\Settings {
+    /**
+     */
+    class Profile extends \Livewire\Component {
+            }
+    /**
+     */
+    class Password extends \Livewire\Component {
+            }
+    /**
+     */
+    class Appearance extends \Livewire\Component {
+            }
+    }
+
+namespace App\Livewire\Forms\Aam {
+    /**
+     */
+    class AamRequestForm extends \Livewire\Component {
+            }
+    /**
+     */
+    class AamRequestView extends \Livewire\Component {
+            }
+    /**
+     */
+    class AamRequestAction extends \Livewire\Component {
             }
     }
 
@@ -32080,16 +32698,12 @@ namespace  {
     class EloquentSerialize extends \AnourValar\EloquentSerialize\Facades\EloquentSerializeFacade {}
     class Horizon extends \Laravel\Horizon\Horizon {}
     class Mcp extends \Laravel\Mcp\Server\Facades\Mcp {}
+    class Flux extends \Flux\Flux {}
     class Livewire extends \Livewire\Livewire {}
     class Sentry extends \Sentry\Laravel\Facade {}
 }
 
 
-namespace Facades\Livewire\Features\SupportFileUploads {
-    /**
-     * @mixin \Livewire\Features\SupportFileUploads\GenerateSignedUploadUrl     */
-    class GenerateSignedUploadUrl extends \Livewire\Features\SupportFileUploads\GenerateSignedUploadUrl {}
-}
 
 
 

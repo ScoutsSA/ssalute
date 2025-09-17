@@ -8,8 +8,8 @@ use Filament\Support\Contracts\HasLabel;
 enum UserSex: string implements HasLabel
 {
     use WithOptions;
-    case Female = 'f';
-    case Male = 'm';
+    case Female = 'Female';
+    case Male = 'Male';
     case Other = 'other';
 
     public function getLabel(): string

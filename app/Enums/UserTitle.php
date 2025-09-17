@@ -9,23 +9,26 @@ enum UserTitle: string implements HasLabel
 {
     use WithOptions;
 
-    case Mr = 'mr';
-    case Mrs = 'mrs';
-    case Ms = 'ms';
-    case Miss = 'miss';
-    case Dr = 'dr';
-    case Prof = 'prof';
-    case Rev = 'rev';
-    case Hon = 'hon';
+    case Master = 'Master';
+    case Miss = 'Miss';
+
+    case Mr = 'Mr';
+    case Mrs = 'Mrs';
+    case Ms = 'Ms';
+    case Dr = 'Dr';
+    case Prof = 'Prof';
+    case Rev = 'Rev';
+    case Hon = 'Hon';
     case Other = 'other';
 
     public function getLabel(): string
     {
         return match ($this) {
+            self::Master => 'Master',
+            self::Miss => 'Miss',
             self::Mr => 'Mr',
             self::Mrs => 'Mrs',
             self::Ms => 'Ms',
-            self::Miss => 'Miss',
             self::Dr => 'Dr',
             self::Prof => 'Prof',
             self::Rev => 'Rev',

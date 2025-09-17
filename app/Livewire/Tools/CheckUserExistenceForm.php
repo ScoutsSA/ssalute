@@ -6,8 +6,10 @@ use App\Models\SystemUser;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
 use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 
+#[Layout('components.layouts.app')]
 class CheckUserExistenceForm extends Component
 {
     use WithRateLimiting;
@@ -19,9 +21,8 @@ class CheckUserExistenceForm extends Component
     public function render()
     {
         return view('tools.check-existence.check-user-existence-form')
-            ->layout('layouts.livewire')
             ->layoutData([
-                'title' => 'Ssalute - Check User Existence',
+                'title' => 'Check User Existence - Ssalute',
             ]);
     }
 

@@ -1,6 +1,6 @@
 # Ssalute — Scouts South Africa Member Management System
 
-[![Laravel Forge Site Deployment Status](https://img.shields.io/endpoint?url=https%3A%2F%2Fforge.laravel.com%2Fsite-badges%2F82acbd78-6c12-4233-8ecb-b532c3256ff8&style=plastic)](https://forge.laravel.com/john-roux/scouts-digital/2850417)
+[![Laravel Forge Site Deployment Status](https://img.shields.io/endpoint?url=https%3A%2F%2Fforge.laravel.com%2Fsite-badges%2F82acbd78-6c12-4233-8ecb-b532c3256ff8%3Fdate%3D1%26label%3D1&style=for-the-badge)](https://forge.laravel.com/john-roux/scouts-digital/2850417)
 
 Ssalute is the new, modern member management system (MMS) being built by Scouts South Africa to progressively replace the existing “Scouts Digital” platform. The goal is a secure, fast, and accessible system that our NSO fully owns and can evolve.
 
@@ -33,7 +33,17 @@ If you’d like to help, pick an issue and open a PR — we’re friendly and ha
 - Livewire v3
 - Tailwind CSS v4
 - PHPUnit v11
-- Vite (frontend bundling)
+- Vite 
+- Horizon
+- MySQL 8.4+
+
+### External Services Stack
+- Sentry
+- Nightwatch
+- Slack
+- SES
+- Cloudwatch
+
 
 Check `composer.json` and `package.json` for exact versions.
 
@@ -48,7 +58,8 @@ Check `composer.json` and `package.json` for exact versions.
 ## Getting started (local development)
 Stock Standard Laravel app
 Personally we recommend PHPStorm + Valet for a native setup that closest matches production.
-But head over to laravel.com/docs/12.x for more info
+
+But head over to [laravel.com/docs/12.x](https://laravel.com/docs/12.x) for more info
 The "easiest" option is generally to use laravel's built in `serve` command.
 
 ```
@@ -56,6 +67,7 @@ cp .env.example .env
 php artisan key:generate
 php artisan migrate --seed
 php artisan storage:link
+npm install
 npm run dev
 php artisan serve
 ```

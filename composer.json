@@ -10,6 +10,7 @@
         "ext-imagick": "*",
         "ext-mbstring": "*",
         "ext-pdo": "*",
+        "aws/aws-sdk-php": "^3.356",
         "danharrin/livewire-rate-limiting": "^2.1",
         "filament/filament": "^4.0",
         "filament/spatie-laravel-settings-plugin": "^4.0",
@@ -18,10 +19,12 @@
         "laravel/horizon": "^5.33",
         "laravel/nightwatch": "^1.13",
         "laravel/tinker": "^2.10.1",
+        "livewire/flux": "^2.4",
         "phpnexus/cwh": "^3",
         "sentry/sentry-laravel": "^4.16",
         "spatie/laravel-settings": "^3.4",
-        "spatie/laravel-slack-alerts": "^1.7"
+        "spatie/laravel-slack-alerts": "^1.7",
+        "stechstudio/filament-impersonate": "^4.0"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.6",

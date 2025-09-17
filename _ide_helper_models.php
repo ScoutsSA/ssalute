@@ -3805,13 +3805,13 @@ namespace App\Models\Forms{
  * @property int|null $region_id
  * @property int|null $district_id
  * @property int|null $group_id
- * @property string $status
+ * @property \App\Enums\Forms\Aam\AamStatuses $status
  * @property string|null $first_name
  * @property string|null $other_names
  * @property string|null $surname
  * @property string|null $nickname
- * @property string $title
- * @property string $sex
+ * @property \App\Enums\UserTitle $title
+ * @property \App\Enums\UserSex $sex
  * @property bool $has_south_african_id
  * @property string $id_number
  * @property string $id_document
@@ -3830,16 +3830,13 @@ namespace App\Models\Forms{
  * @property string|null $emergency_contact_phone_number
  * @property bool $has_given_public_media_consent
  * @property string $action_slug
- * @property bool $has_group_been_notified
- * @property bool $has_district_been_notified
- * @property bool $has_regional_been_notified
- * @property bool $has_national_been_notified
+ * @property string $view_slug
  * @property \Illuminate\Support\Carbon|null $approved_at
  * @property int|null $approved_by
  * @property \Illuminate\Support\Carbon|null $declined_at
  * @property int|null $declined_by
  * @property string|null $declined_notes_internal
- * @property string|null $declined_reason
+ * @property string|null $declined_reason_external
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read mixed $actionable_link
@@ -3849,6 +3846,7 @@ namespace App\Models\Forms{
  * @property-read \App\Models\Group|null $group
  * @property-read mixed $name
  * @property-read \App\Models\Region|null $region
+ * @method static \Database\Factories\Forms\ApplicationAdultMembershipRequestFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest query()
@@ -3861,18 +3859,14 @@ namespace App\Models\Forms{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest whereDeclinedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest whereDeclinedBy($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest whereDeclinedNotesInternal($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest whereDeclinedReason($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest whereDeclinedReasonExternal($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest whereDistrictId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest whereEmail($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest whereEmergencyContactName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest whereEmergencyContactPhoneNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest whereFirstName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest whereGroupId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest whereHasDistrictBeenNotified($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest whereHasGivenPublicMediaConsent($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest whereHasGroupBeenNotified($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest whereHasNationalBeenNotified($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest whereHasRegionalBeenNotified($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest whereHasSouthAfricanId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest whereIdDocument($value)
@@ -3893,6 +3887,7 @@ namespace App\Models\Forms{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest whereSurname($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest whereViewSlug($value)
  */
 	class ApplicationAdultMembershipRequest extends \Eloquent {}
 }
