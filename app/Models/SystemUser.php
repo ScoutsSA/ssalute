@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\MightHaveCreatedBy;
+use App\Models\Concerns\MightHaveModifiedBy;
 use App\Providers\AppServiceProvider;
 use App\Settings\GeneralSettings;
 use Filament\Models\Contracts\FilamentUser;
@@ -14,6 +16,12 @@ use Illuminate\Support\Str;
 
 class SystemUser extends User implements FilamentUser
 {
+    use MightHaveCreatedBy;
+    use MightHaveModifiedBy;
+
+    const CREATED_AT = 'created';
+    const UPDATED_AT = 'modified';
+
     protected $connection = AppServiceProvider::DB_SD_CORE;
     protected $table = 'system_users';
 

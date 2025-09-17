@@ -4,19 +4,20 @@ namespace App\Livewire\Settings;
 
 use App\Models\SystemUser;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 
 class Profile extends Component
 {
-    public string $email = '';
+    public string $username = '';
 
     /**
      * Mount the component.
      */
     public function mount(): void
     {
-        $this->email = Auth::user()->username;
+        $this->username = Auth::user()->username;
     }
 
     /**
@@ -37,9 +38,13 @@ class Profile extends Component
             ],
         ]);
 
-        $user->fill($validated);
+        $user->username = $validated['username'];
 
         $user->save();
+
+        if ($user->wasChanged()) {
+            Log::info('User Profile Updated', ['user_id' => $user->id, 'new_username' => $user->username, 'previous' => $user->getPrevious()]);
+        }
 
         $this->dispatch('profile-updated', name: $user->name);
     }
