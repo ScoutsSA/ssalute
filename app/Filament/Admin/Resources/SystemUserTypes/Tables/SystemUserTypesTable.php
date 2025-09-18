@@ -4,7 +4,9 @@ namespace App\Filament\Admin\Resources\SystemUserTypes\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\ViewAction;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 
 class SystemUserTypesTable
@@ -12,171 +14,109 @@ class SystemUserTypesTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->reorderable('position')
+            ->defaultSort('position')
+            ->modifyQueryUsing(fn ($query) => $query->withCount(['users', 'activeUsers', 'pastUsers']))
             ->columns([
-                TextColumn::make('countryID')
-                    ->numeric()
-                    ->sortable(),
+                TextColumn::make('id')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
                 TextColumn::make('name')
-                    ->searchable(),
-                TextColumn::make('sysAdmin')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('nationalRole')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('regionalRole')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('superDistrictRole')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('districtRole')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('groupRole')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('denRole')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('packRole')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('troopRole')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('crewRole')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('adultLeaderRole')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('parentHelperRole')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('alumniRole')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('warrantedRole')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('appointmentRole')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('requiresCriminalClearance')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('signsLeft')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('signsRight')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('chargeRole')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('active')
-                    ->numeric()
-                    ->sortable(),
+                    ->tooltip(fn ($record) => $record->description)
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
+                TextColumn::make('roleTypeName')
+                    ->label('Role Type')
+                    ->toggleable(),
+                IconColumn::make('active')
+                    ->boolean()
+                    ->sortable()
+                    ->toggleable(),
+                TextColumn::make('users_count')
+                    ->label('User Roles')
+                    ->counts('users')
+                    ->description(fn ($record) => ("Active: {$record->active_users_count} | Past: {$record->past_users_count}"))
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('position')
                     ->numeric()
-                    ->sortable(),
-                TextColumn::make('canAdminAlumni')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('superDistrictRole')
                     ->numeric()
-                    ->sortable(),
-                TextColumn::make('canSeeAlumni')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('adultLeaderRole')
                     ->numeric()
-                    ->sortable(),
-                TextColumn::make('canAdminNational')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('parentHelperRole')
                     ->numeric()
-                    ->sortable(),
-                TextColumn::make('canSeeNational')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('alumniRole')
                     ->numeric()
-                    ->sortable(),
-                TextColumn::make('canAdminRegion')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                IconColumn::make('warrantedRole')
+                    ->boolean()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                IconColumn::make('appointmentRole')
+                    ->boolean()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                IconColumn::make('requiresCriminalClearance')
+                    ->boolean()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('signsLeft')
                     ->numeric()
-                    ->sortable(),
-                TextColumn::make('canSeeRegion')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('signsRight')
                     ->numeric()
-                    ->sortable(),
-                TextColumn::make('canAdminRegionKids')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('chargeRole')
                     ->numeric()
-                    ->sortable(),
-                TextColumn::make('canAdminRegionTraining')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('canAdminSuperDistrict')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('canSeeSuperDistrict')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('canAdminDistrict')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('canSeeDistrict')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('canAdminDistrictKids')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('canAdminGroup')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('canSeeGroup')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('canAdminGroupAdults')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('canAwardGroupMeerkats')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('canAwardGroupCubs')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('canAwardGroupScouts')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('canAwardGroupRovers')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('canSeeSupport')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('canAdminSupport')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('canAddWarrants')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('canAdminProperty')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('canSignWarrants')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('canAdminForm29')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('canAdminPoliceClearance')
-                    ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('created')
                     ->dateTime()
-                    ->sortable(),
-                TextColumn::make('createdby')
-                    ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('createdBy.name')
+                    ->label('Created By')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('modified')
                     ->dateTime()
-                    ->sortable(),
-                TextColumn::make('modifiedby')
-                    ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('modifiedBy.name')
+                    ->label('Modified By')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                TextColumn::make('active_users_count')
+                    ->label('Active User Roles')
+                    ->counts('activeUsers')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                TextColumn::make('past_users_count')
+                    ->label('Past User Roles')
+                    ->counts('pastUsers')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
             ])
             ->filters([
-                //
+                TernaryFilter::make('active')
+                    ->default(),
             ])
             ->recordActions([
                 ViewAction::make(),

@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class SystemUserType extends BaseModel
 {
@@ -72,6 +73,59 @@ class SystemUserType extends BaseModel
         'modifiedby' => 'int',
     ];
 
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(SystemUser::class, 'system_users_other_roles', 'roleID', 'userID', 'id', 'id')
+            ->using(SystemUsersOtherRole::class)
+            ->withPivot(
+                [
+                    'id',
+                    'regionID',
+                    'superDistrictID',
+                    'districtID',
+                    'groupID',
+                    'roleID',
+                    'defaultRole',
+                    'active',
+                    'creationNotes',
+                    'actionCountryID',
+                    'actionRegionID',
+                    'actionSuperDistrictID',
+                    'actionDistrictID',
+                    'actionGroupID',
+                    'retired',
+                    'resigned',
+                    'suspended',
+                    'multiID',
+                    'created',
+                    'createdby',
+                    'modified',
+                    'modifiedby',
+                ]);
+    }
+
+    public function activeUsers(): BelongsToMany
+    {
+        return $this->users()
+            ->wherePivot('active', 1);
+        /* There seems to be a lot of bad data here, the below query SHOULD be correct but it filters out too many records
+        ->wherePivot('retired', 0)
+        ->wherePivot('resigned', 0)
+        ->wherePivot('suspended', 0)*/
+    }
+
+    public function pastUsers()
+    {
+        return $this->users()
+            ->wherePivot('active', 0);
+        /* There seems to be a lot of bad data here, the below query SHOULD be correct but it filters out too many records
+         ->where(function ($query) {
+            $query->where('system_users_other_roles.retired', 1)
+                ->orWhere('system_users_other_roles.resigned', 1)
+                ->orWhere('system_users_other_roles.suspended', 1);
+        })*/
+    }
+
     public function roleTypeName(): Attribute
     {
         return Attribute::make(
@@ -92,31 +146,6 @@ class SystemUserType extends BaseModel
                     $this->alumniRole === 1 => 'Alumni',
                     default => 'Unknown',
                 };
-            }
-        );
-    }
-
-    // This is only usable when eager loading the pivot relationship
-    public function roleTypePivot(): Attribute
-    {
-        return Attribute::make(
-            get: function () {
-                return match (true) {
-                    $this->regionalRole === 1 => $this->pivot->region,
-                    $this->districtRole === 1 => $this->pivot->district,
-                    $this->groupRole === 1 => $this->pivot->group,
-                    default => null,
-                };
-            }
-        );
-    }
-
-    // This is only usable when eager loading the pivot relationship
-    public function roleTypePivotName(): Attribute
-    {
-        return Attribute::make(
-            get: function () {
-                return $this->roleTypeName . (is_null($this->roleTypePivot) ? '' : (': ' . $this->roleTypePivot->name));
             }
         );
     }

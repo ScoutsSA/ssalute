@@ -66,6 +66,8 @@ class ApplicationAdultMembershipRequestFactory extends Factory
                 'status' => AamStatuses::APPROVED,
                 'actioned_at' => $this->faker->dateTimeBetween(startDate: $attributes['created_at'] ?? now(), endDate: now()),
                 'actioned_by' => SystemUser::inRandomOrder()->first()->id,
+                'actioned_notes_internal' => $this->faker->sentence(),
+                'actioned_reason_external' => $this->faker->sentence(),
             ];
         });
     }

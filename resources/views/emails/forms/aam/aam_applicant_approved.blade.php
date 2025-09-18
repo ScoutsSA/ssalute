@@ -2,7 +2,7 @@
 
 Hi {{ $applicationAdultMembershipRequest->name }},
 
-*Your application has been approved by {{ $applicationAdultMembershipRequest->actionedBy->name }}*.
+**Your application has been approved by {{ $applicationAdultMembershipRequest->actionedBy->name }}.**
 
 
 {{ $applicationAdultMembershipRequest->actioned_reason_external }}

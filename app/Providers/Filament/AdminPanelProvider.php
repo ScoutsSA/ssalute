@@ -12,6 +12,7 @@ use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -48,13 +49,18 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->navigationGroups([
                 NavigationGroup::make()
-                    ->label('Utilities')
-                    ->icon('heroicon-o-lifebuoy'),
+                    ->label('Users')
+                    ->icon(Heroicon::User),
+                NavigationGroup::make()
+                    ->label('System')
+                    ->icon(Heroicon::Lifebuoy),
             ])
             ->navigationItems([
                 NavigationItem::make('Horizon')
                     ->url('/horizon', shouldOpenInNewTab: true)
-                    ->group('Utilities'),
+                    ->sort(2)
+                    ->icon(Heroicon::QueueList)
+                    ->group('System'),
             ])
             ->middleware([
                 EncryptCookies::class,

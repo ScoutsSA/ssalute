@@ -11,8 +11,6 @@ class SystemUserTypeInfolist
     {
         return $schema
             ->components([
-                TextEntry::make('countryID')
-                    ->numeric(),
                 TextEntry::make('name'),
                 TextEntry::make('description')
                     ->columnSpanFull(),
@@ -116,12 +114,12 @@ class SystemUserTypeInfolist
                     ->numeric(),
                 TextEntry::make('created')
                     ->dateTime(),
-                TextEntry::make('createdby')
+                TextEntry::make('createdBy.name')
                     ->numeric(),
                 TextEntry::make('modified')
                     ->dateTime()
                     ->placeholder('-'),
-                TextEntry::make('modifiedby')
+                TextEntry::make('modifiedBy.name')
                     ->numeric()
                     ->placeholder('-'),
             ]);

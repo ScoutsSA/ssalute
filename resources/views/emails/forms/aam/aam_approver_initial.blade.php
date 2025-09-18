@@ -1,6 +1,6 @@
 <x-mail::message>
 
-Hi {{ $applicationAdultMembershipRequest->nextInLineScouter()->name }},
+Hi {{ $applicationAdultMembershipRequest->nextInLineScouter->name }},
 
 Someone has just filled in an AAM form and you're our first point of contact for them!
 

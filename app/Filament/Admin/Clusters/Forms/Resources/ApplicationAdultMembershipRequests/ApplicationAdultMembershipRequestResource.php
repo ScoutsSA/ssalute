@@ -5,7 +5,6 @@ namespace App\Filament\Admin\Clusters\Forms\Resources\ApplicationAdultMembership
 use App\Filament\Admin\Clusters\Forms\FormsCluster;
 use App\Filament\Admin\Clusters\Forms\Resources\ApplicationAdultMembershipRequests\Pages\EditApplicationAdultMembershipRequest;
 use App\Filament\Admin\Clusters\Forms\Resources\ApplicationAdultMembershipRequests\Pages\ListApplicationAdultMembershipRequests;
-use App\Filament\Admin\Clusters\Forms\Resources\ApplicationAdultMembershipRequests\Pages\ViewApplicationAdultMembershipRequest;
 use App\Filament\Admin\Clusters\Forms\Resources\ApplicationAdultMembershipRequests\Schemas\ApplicationAdultMembershipRequestForm;
 use App\Filament\Admin\Clusters\Forms\Resources\ApplicationAdultMembershipRequests\Schemas\ApplicationAdultMembershipRequestInfolist;
 use App\Filament\Admin\Clusters\Forms\Resources\ApplicationAdultMembershipRequests\Tables\ApplicationAdultMembershipRequestsTable;
@@ -20,7 +19,7 @@ class ApplicationAdultMembershipRequestResource extends Resource
 {
     protected static ?string $model = ApplicationAdultMembershipRequest::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::Identification;
     protected static ?string $label = 'AAM Requests';
 
     protected static ?string $cluster = FormsCluster::class;
@@ -51,7 +50,6 @@ class ApplicationAdultMembershipRequestResource extends Resource
     {
         return [
             'index' => ListApplicationAdultMembershipRequests::route('/'),
-            'view' => ViewApplicationAdultMembershipRequest::route('/{record}'),
             'edit' => EditApplicationAdultMembershipRequest::route('/{record}/edit'),
         ];
     }

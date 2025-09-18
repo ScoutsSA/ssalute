@@ -23,8 +23,6 @@ class UserRolesRelationManager extends RelationManager
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('system_users_other_roles.active', true)),
             'inactive' => Tab::make()
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('system_users_other_roles.active', false)),
-
-
         ];
     }
 

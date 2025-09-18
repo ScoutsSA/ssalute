@@ -3,8 +3,6 @@
 namespace App\Livewire\Forms\Aam;
 
 use App\Enums\Forms\Aam\AamStatuses;
-use App\Mail\Forms\Aam\ApplicationAdultMembershipApplicantApprovedEmail;
-use App\Mail\Forms\Aam\ApplicationAdultMembershipApplicantDeclinedEmail;
 use App\Models\Forms\ApplicationAdultMembershipRequest;
 use App\Settings\FormSettings;
 use Filament\Actions\Action;
@@ -24,8 +22,9 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -60,22 +59,17 @@ class AamRequestAction extends Component implements HasActions, HasSchemas
                             TextEntry::make('actionedBy.name')
                                 ->label('Actioned By')
                                 ->visible(fn ($record) => $record->status !== AamStatuses::PENDING),
-                            TextEntry::make('approved_at')
+                            TextEntry::make('actioned_at')
                                 ->label('Actioned At')
                                 ->dateTime()
                                 ->visible(fn ($record) => $record->status !== AamStatuses::PENDING),
-                            TextEntry::make('declinedBy.name')
-                                ->visible(fn ($record) => $record->status !== AamStatuses::PENDING),
-                            TextEntry::make('declined_at')
-                                ->label('Declined At')
-                                ->dateTime()
-                                ->visible(fn ($record) => $record->status !== AamStatuses::PENDING),
-                            TextEntry::make('actioned_reason_external')
-                                ->label('Reasoning')
-                                ->visible(fn ($record) => $record->status !== AamStatuses::PENDING),
-                            TextEntry::make('actioned_reason_external')
-                                ->label('Reasoning')
+                            TextEntry::make('actioned_notes_internal')
+                                ->label('Notes (Internal)')
                                 ->visible(fn ($record) => ($record->status !== AamStatuses::PENDING) && $withInternalReason === true),
+                            TextEntry::make('actioned_reason_external')
+                                ->label('Reasoning (External)')
+                                ->visible(fn ($record) => $record->status !== AamStatuses::PENDING),
+
                         ]),
                 ]),
 
@@ -113,7 +107,7 @@ class AamRequestAction extends Component implements HasActions, HasSchemas
                                     ->schema([
                                         Fieldset::make('Passport Information')
                                             ->columns(['sm' => 2, 'md' => 3, 'lg' => 3])
-                                            ->visible(fn (ApplicationAdultMembershipRequest $record) => $record->passport_country !== null)
+                                            ->visible(fn (ApplicationAdultMembershipRequest $record) => $record->has_south_african_id === false)
                                             ->schema([
                                                 TextEntry::make('id_number')
                                                     ->label('Passport Number'),
@@ -123,14 +117,13 @@ class AamRequestAction extends Component implements HasActions, HasSchemas
                                                     ->date(),
                                             ]),
                                         Fieldset::make('ID Information')
-                                            ->visible(fn (ApplicationAdultMembershipRequest $record) => $record->passport_country === null)
-
+                                            ->visible(fn (ApplicationAdultMembershipRequest $record) => $record->has_south_african_id === true)
                                             ->schema([
                                                 TextEntry::make('id_number')
                                                     ->label('ID Number'),
                                             ]),
                                         ImageEntry::make('id_document')
-                                            ->label(fn (ApplicationAdultMembershipRequest $record) => $record->passport_country === null ? 'ID Document' : 'Passport Document')
+                                            ->label(fn (ApplicationAdultMembershipRequest $record) => $record->has_south_african_id ? 'ID Document' : 'Passport Document')
                                             ->disk('forms_aam_id_document')
                                             ->columnSpan(1),
                                     ]),
@@ -182,7 +175,7 @@ class AamRequestAction extends Component implements HasActions, HasSchemas
     {
         return [
             Action::make('decline')
-                ->action(fn (AamRequestAction $livewire) => $livewire->declineAction())
+                ->action(fn (AamRequestAction $livewire, array $data) => $livewire->declineAction($data))
                 ->visible(fn ($record) => $record->status === AamStatuses::PENDING)
                 ->requiresConfirmation()
                 ->modalHeading('Decline Application?')
@@ -191,14 +184,15 @@ class AamRequestAction extends Component implements HasActions, HasSchemas
                 ->color(Color::Red)
                 ->schema([
                     Textarea::make('actioned_notes_internal')
-                        ->label('Internal Reason/notes'),
+                        ->label('Internal notes'),
                     Textarea::make('actioned_reason_external')
                         ->label('External Reason')
+                        ->placeholder('Unfortunately we are unable to accept your application at this time due to your background checks.')
                         ->required()
                         ->helperText('This WILL be shared with the person!'),
                 ]),
             Action::make('Approve')
-                ->action(fn (AamRequestAction $livewire) => $livewire->approveAction())
+                ->action(fn (AamRequestAction $livewire, array $data) => $livewire->approveAction($data))
                 ->visible(fn ($record) => $record->status === AamStatuses::PENDING)
                 ->requiresConfirmation()
                 ->modalHeading('Approve Application?')
@@ -207,11 +201,12 @@ class AamRequestAction extends Component implements HasActions, HasSchemas
                 ->color(Color::Green)
                 ->schema([
                     Textarea::make('actioned_notes_internal')
-                        ->label('Internal Reason/notes'),
+
+                        ->label('Internal notes'),
                     Textarea::make('actioned_reason_external')
-                        ->label('External Reason')
-                        ->required()
-                        ->helperText('This WILL be shared with the person!'),
+                        ->label('External Reason/Note')
+                        ->placeholder('Welcome to the Scouting family!')
+                        ->helperText('Do you want to share a note or anything with the new Adult?'),
                 ])
                 ->modalIcon('heroicon-o-check-badge')
                 ->modalIconColor(Color::Green),
@@ -224,6 +219,13 @@ class AamRequestAction extends Component implements HasActions, HasSchemas
         if (! resolve(FormSettings::class)->aam_enabled) {
             abort(404);
         }
+
+        // This authorization check should probably move to a policy or gate
+        /** @var Collection $aamRequest->scoutersWhoCanApprove */
+        if ($aamRequest->scoutersWhoCanApprove->doesntContain('id', Auth::id()) && ! Auth::user()->isSuperAdmin()) {
+            abort(403, 'You do not have permission to view this AAM form');
+        }
+
         $this->aamRequest = $aamRequest;
     }
 
@@ -242,44 +244,33 @@ class AamRequestAction extends Component implements HasActions, HasSchemas
             ->schema(self::getAamRequestSchema(withInternalReason: true, withActions: true));
     }
 
-    public function approveAction()
+    public function approveAction(array $data)
     {
-        return function () {
-            Log::info('ViewAamForm - Approve Action', ['aamRequest' => $this->aamRequest->id, 'user' => auth()->id()]);
-            $this->aamRequest->update([
-                'actioned_by' => auth()->id(),
-                'actioned_at' => now(),
-                'status' => AamStatuses::APPROVED,
-            ]);
-            Notification::make()
-                ->title('Application Approved')
-                ->success()
-                ->send();
+        Log::info('ViewAamForm - Approve Action', ['aamRequest' => $this->aamRequest->id, 'user' => auth()->id()]);
 
-            // Send off some emails
-            Mail::to($this->aamRequest->email)->queue(new ApplicationAdultMembershipApplicantApprovedEmail($this->aamRequest));
+        $this->aamRequest->approve(
+            actionedBy: auth()->user(),
+            externalReason: $data['actioned_reason_external'],
+            internalNotes: $data['actioned_notes_internal'],
+        );
+        Notification::make()
+            ->title('Application Approved')
+            ->success()
+            ->send();
 
-            // ToDo - create system_user and maybe a user on our end
-        };
     }
 
-    public function declineAction()
+    public function declineAction(array $data)
     {
-        return function (array $data) {
-            $this->aamRequest->update([
-                'actioned_by' => auth()->id(),
-                'actioned_at' => now(),
-                'actioned_notes_internal' => $data['actioned_notes_internal'],
-                'actioned_reason_external' => $data['actioned_reason_external'],
-                'status' => AamStatuses::DECLINED,
-            ]);
-            Notification::make()
-                ->title('The Application has been Declined!')
-                ->warning()
-                ->send();
-
-            // Send off some emails
-            Mail::to($this->aamRequest->email)->queue(new ApplicationAdultMembershipApplicantDeclinedEmail($this->aamRequest));
-        };
+        Log::info('ViewAamForm - Decline Action', ['aamRequest' => $this->aamRequest->id, 'user' => auth()->id()]);
+        $this->aamRequest->decline(
+            actionedBy: auth()->user(),
+            externalReason: $data['actioned_reason_external'],
+            internalNotes: $data['actioned_notes_internal'],
+        );
+        Notification::make()
+            ->title('The Application has been Declined!')
+            ->danger()
+            ->send();
     }
 }

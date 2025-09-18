@@ -4,7 +4,7 @@ namespace App\Filament\Admin\Resources\Users;
 
 use App\Filament\Admin\Resources\Users\Pages\ListUsers;
 use App\Filament\Admin\Resources\Users\Pages\ViewUser;
-use App\Filament\Admin\Resources\Users\RelationManagers\UserRolesRelationManager;
+use App\Filament\Admin\Resources\Users\RelationManagers\UserRoleAttachmentsRelationManager;
 use App\Filament\Admin\Resources\Users\Schemas\UserForm;
 use App\Filament\Admin\Resources\Users\Schemas\UserInfolist;
 use App\Filament\Admin\Resources\Users\Tables\UsersTable;
@@ -14,15 +14,18 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class UserResource extends Resource
 {
     protected static ?string $model = SystemUser::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::Users;
 
     protected static ?string $recordTitleAttribute = 'username';
     protected static ?string $pluralLabel = 'Users';
+    protected static string|UnitEnum|null $navigationGroup = 'Users';
+    protected static ?int $navigationSort = 2;
 
     public static function form(Schema $schema): Schema
     {
@@ -42,7 +45,7 @@ class UserResource extends Resource
     public static function getRelations(): array
     {
         return [
-            UserRolesRelationManager::class,
+            UserRoleAttachmentsRelationManager::class,
         ];
     }
 

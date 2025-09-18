@@ -4,8 +4,6 @@ namespace App\Livewire\Forms\Aam;
 
 use App\Enums\UserSex;
 use App\Enums\UserTitle;
-use App\Mail\Forms\Aam\ApplicationAdultMembershipApplicantInitialEmail;
-use App\Mail\Forms\Aam\ApplicationAdultMembershipApproverInitialEmail;
 use App\Models\District;
 use App\Models\Forms\ApplicationAdultMembershipRequest;
 use App\Models\Group;
@@ -33,7 +31,6 @@ use Filament\Schemas\Schema;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\HtmlString;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -235,8 +232,7 @@ class AamRequestForm extends Component implements HasSchemas
                             TextInput::make('nickname')
                                 ->helperText('What would you like to be called?')
                                 ->placeholder('Janey')
-                                ->maxLength(255)
-                                ->required(),
+                                ->maxLength(255),
                             Select::make('sex')
                                 ->helperText('As per your ID/Passport')
                                 ->options(UserSex::options())
@@ -389,7 +385,6 @@ be shared with.
     public function create(): void
     {
         $this->validate();
-        $formSettings = resolve(FormSettings::class);
 
         $this->successfullyCompletedForm = true;
 
@@ -429,17 +424,6 @@ be shared with.
             ->send();
 
         // Email applicant
-        Mail::to($aamRequest->email)->bcc($formSettings->aam_national_support_emails)->queue(new ApplicationAdultMembershipApplicantInitialEmail($aamRequest));
-
-        // Email NextInLine (Group/District/Region)
-        if ($aamRequest->region_id === null) {
-            // National
-            Mail::to($aamRequest->nextInLineScouter->username)
-                ->cc($aamRequest->scoutersWhoCanApprove)
-                ->bcc($formSettings->aam_national_support_emails)
-                ->queue(new ApplicationAdultMembershipApproverInitialEmail($aamRequest));
-
-            return;
-        }
+        $aamRequest->sendEmailsInitial();
     }
 }

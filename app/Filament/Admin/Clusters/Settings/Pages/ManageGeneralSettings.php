@@ -19,8 +19,9 @@ class ManageGeneralSettings extends SettingsPage
 
     protected static string $settings = GeneralSettings::class;
 
-    protected static ?string $cluster = SettingsCluster::class;
     protected static ?string $navigationLabel = 'General Settings';
+
+    protected static ?string $cluster = SettingsCluster::class;
 
     protected static ?int $navigationSort = 2;
 

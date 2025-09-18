@@ -11,6 +11,7 @@ use Filament\Panel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -232,21 +233,28 @@ class SystemUser extends User implements FilamentUser
     public function activeRoles(): BelongsToMany
     {
         return $this->roles()
-            ->wherePivot('active', 1)
-            ->wherePivot('retired', 0)
-            ->wherePivot('resigned', 0)
-            ->wherePivot('suspended', 0);
+            ->wherePivot('active', 1);
+        /* There seems to be a lot of bad data here, the below query SHOULD be correct but it filters out too many records
+        ->wherePivot('retired', 0)
+        ->wherePivot('resigned', 0)
+        ->wherePivot('suspended', 0)*/
     }
 
     public function pastRoles()
     {
         return $this->roles()
-            ->wherePivot('active', 0)
-            ->where(function ($query) {
-                $query->where('system_users_other_roles.retired', 1)
-                    ->orWhere('system_users_other_roles.resigned', 1)
-                    ->orWhere('system_users_other_roles.suspended', 1);
-            });
+            ->wherePivot('active', 0);
+        /* There seems to be a lot of bad data here, the below query SHOULD be correct but it filters out too many records
+         ->where(function ($query) {
+            $query->where('system_users_other_roles.retired', 1)
+                ->orWhere('system_users_other_roles.resigned', 1)
+                ->orWhere('system_users_other_roles.suspended', 1);
+        })*/
+    }
+
+    public function roleAttachments(): HasMany
+    {
+        return $this->hasMany(SystemUsersOtherRole::class, 'userID', 'id');
     }
 
     /*******************
@@ -268,7 +276,7 @@ class SystemUser extends User implements FilamentUser
     public function name(): Attribute // Note this is used for the Filament Name as well
     {
         return Attribute::make(
-            get: fn () => $this->first_name . ' ' . $this->surname,
+            get: fn () => (! blank($this->knownName) ? $this->knownName : $this->first_name) . ' ' . $this->surname,
         );
     }
 
