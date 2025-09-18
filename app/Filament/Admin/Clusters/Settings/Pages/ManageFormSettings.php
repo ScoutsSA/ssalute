@@ -5,7 +5,7 @@ namespace App\Filament\Admin\Clusters\Settings\Pages;
 use App\Filament\Admin\Clusters\Settings\SettingsCluster;
 use App\Settings\FormSettings;
 use BackedEnum;
-use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Pages\SettingsPage;
 use Filament\Schemas\Components\Tabs;
@@ -39,16 +39,11 @@ class ManageFormSettings extends SettingsPage
                                     Toggle::make('aam_enabled')
                                         ->label('AAM Process Enabled')
                                         ->columnSpanFull(),
-                                    TagsInput::make('aam_national_support_emails')
+                                    TextInput::make('aam_national_support_emails')
                                         ->label('National Support Emails')
-                                        ->separator(',')
-                                        ->helperText('List of email addresses to receive support requests from the AAM form.')
-                                        ->reorderable()
+                                        ->helperText('Comma seperated list of email addresses to receive support requests from the AAM form.')
                                         ->trim()
-                                        ->columnSpanFull()
-                                        ->nestedRecursiveRules([
-                                            'email',
-                                        ]),
+                                        ->columnSpanFull(),
                                 ]),
 
                         ]),
