@@ -2,9 +2,10 @@
 
 Hi {{ $applicationAdultMembershipRequest->name }},
 
-*Your application has been approved!*
+*Your application has been approved by {{ $applicationAdultMembershipRequest->actionedBy->name }}*.
 
-Your next steps are likely to attend an IAL course and then apply for a Warrant!
+
+{{ $applicationAdultMembershipRequest->actioned_reason_external }}
 
 
 Yours in Scouting,

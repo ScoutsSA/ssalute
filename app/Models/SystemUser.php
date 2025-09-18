@@ -10,6 +10,7 @@ use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -193,6 +194,64 @@ class SystemUser extends User implements FilamentUser
         'DSDDisabled' => 'int',
     ];
 
+    /*******************
+     * Relationships
+     *******************/
+
+    public function roles(): BelongsToMany
+    {
+        return $this->belongsToMany(SystemUserType::class, 'system_users_other_roles', 'userID', 'roleID', 'id', 'id')
+            ->using(SystemUsersOtherRole::class)
+            ->withPivot(
+                [
+                    'id',
+                    'regionID',
+                    'superDistrictID',
+                    'districtID',
+                    'groupID',
+                    'roleID',
+                    'defaultRole',
+                    'active',
+                    'creationNotes',
+                    'actionCountryID',
+                    'actionRegionID',
+                    'actionSuperDistrictID',
+                    'actionDistrictID',
+                    'actionGroupID',
+                    'retired',
+                    'resigned',
+                    'suspended',
+                    'multiID',
+                    'created',
+                    'createdby',
+                    'modified',
+                    'modifiedby',
+                ]);
+    }
+
+    public function activeRoles(): BelongsToMany
+    {
+        return $this->roles()
+            ->wherePivot('active', 1)
+            ->wherePivot('retired', 0)
+            ->wherePivot('resigned', 0)
+            ->wherePivot('suspended', 0);
+    }
+
+    public function pastRoles()
+    {
+        return $this->roles()
+            ->wherePivot('active', 0)
+            ->where(function ($query) {
+                $query->where('system_users_other_roles.retired', 1)
+                    ->orWhere('system_users_other_roles.resigned', 1)
+                    ->orWhere('system_users_other_roles.suspended', 1);
+            });
+    }
+
+    /*******************
+     * Scopes
+     *******************/
     public function scopeActive(Builder $query): void
     {
         $query->where('active', 1);
@@ -203,6 +262,26 @@ class SystemUser extends User implements FilamentUser
         $query->addSelect(DB::raw('CAST(AES_DECRYPT(passwordNew,"' . config('auth.scouts_digital.authentication.encryption_key') . '") AS CHAR(50)) as scouts_digital_plain_text_password'));
     }
 
+    /*******************
+     * Attributes
+     *******************/
+    public function name(): Attribute // Note this is used for the Filament Name as well
+    {
+        return Attribute::make(
+            get: fn () => $this->first_name . ' ' . $this->surname,
+        );
+    }
+
+    public function ssaId(): Attribute // Note this is used for the Filament Name as well
+    {
+        return Attribute::make(
+            get: fn () => 'SSA ID-' . str_pad($this->id, 7, '0', STR_PAD_LEFT)
+        );
+    }
+
+    /*******************
+     * Functions
+     *******************/
     public function getScoutsDigitalPlainTextPassword()
     {
         return $this->newQuery()->where('id', $this->id)->selectRaw('CAST(AES_DECRYPT(passwordNew,"' . config('auth.scouts_digital.authentication.encryption_key') . '") AS CHAR(50)) as scouts_digital_plain_text_password')->first()->scouts_digital_plain_text_password;
@@ -235,20 +314,6 @@ class SystemUser extends User implements FilamentUser
     public function canBeImpersonated()
     {
         return ! $this->isSuperAdmin();
-    }
-
-    public function name(): Attribute // Note this is used for the Filament Name as well
-    {
-        return Attribute::make(
-            get: fn () => $this->first_name . ' ' . $this->surname,
-        );
-    }
-
-    public function ssaId(): Attribute // Note this is used for the Filament Name as well
-    {
-        return Attribute::make(
-            get: fn () => 'SSA ID-' . str_pad($this->id, 7, '0', STR_PAD_LEFT)
-        );
     }
 
     public function initials(): string

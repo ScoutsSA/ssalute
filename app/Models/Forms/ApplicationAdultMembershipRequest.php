@@ -58,13 +58,11 @@ class ApplicationAdultMembershipRequest extends Model
         'action_slug' => 'string',
         'view_slug' => 'string',
 
-        'approved_at' => 'datetime',
-        'approved_by' => 'int',
+        'actioned_at' => 'datetime',
+        'actioned_by' => 'int',
+        'actioned_notes_internal' => 'string',
+        'actioned_reason_external' => 'string',
 
-        'declined_at' => 'datetime',
-        'declined_by' => 'int',
-        'declined_notes_internal' => 'string',
-        'declined_reason_external' => 'string',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
 
@@ -77,7 +75,7 @@ class ApplicationAdultMembershipRequest extends Model
         static::creating(static function (ApplicationAdultMembershipRequest $applicationAdultMembershipRequest) {
             $applicationAdultMembershipRequest->action_slug = Str::uuid();
             $applicationAdultMembershipRequest->view_slug = Str::uuid();
-            $applicationAdultMembershipRequest->status = $query->status ?? AamStatuses::PENDING->value;
+            $applicationAdultMembershipRequest->status ??= AamStatuses::PENDING->value;
             $applicationAdultMembershipRequest->medical_conditions ??= 'None';
         });
     }
@@ -101,14 +99,9 @@ class ApplicationAdultMembershipRequest extends Model
         return $this->belongsTo(Group::class, 'group_id');
     }
 
-    public function approvedBy(): BelongsTo
+    public function actionedBy(): BelongsTo
     {
-        return $this->belongsTo(SystemUser::class, 'approved_by');
-    }
-
-    public function declinedBy(): BelongsTo
-    {
-        return $this->belongsTo(SystemUser::class, 'declined_by');
+        return $this->belongsTo(SystemUser::class, 'actioned_by');
     }
 
     /*****************
@@ -116,15 +109,48 @@ class ApplicationAdultMembershipRequest extends Model
      *****************/
     public function name(): Attribute
     {
-        return Attribute::make(function () {
-            return $this->first_name . ' ' . $this->surname;
-        });
+        return Attribute::make(
+            get: fn () => ($this->title->value . ' ' . $this->first_name . ' ' . $this->surname)
+        );
+    }
+
+    public function locationName(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => (($this->region?->name ?? 'No Region') . ' | ' . ($this->district?->name ?? 'No District') . ' | ' . ($this->group?->name ?? 'No Group'))
+        );
     }
 
     public function actionableLink(): Attribute
     {
-        return Attribute::make(function () {
-            return route('forms.register.adult.aam.view', ['aam_actionable_slug' => $this->action_slug]);
-        });
+        return Attribute::make(
+            get: fn () => route('forms.aam.action', ['aamRequest' => $this->action_slug]),
+        );
+    }
+
+    public function viewableLink(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => route('forms.aam.view', ['aamRequest' => $this->view_slug]),
+        );
+    }
+
+    public function nextInLineScouter(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+
+                // National => National Adult Support Chair
+                if ($this->region_id === null && $this->district_id === null && $this->group_id === null) {
+                    return SystemUser::whereHas('role', 'like', '%national%')
+                        ->first();
+                }
+                // Regional => Regional Adult Support
+                // District => District Commissioner
+                // Group => Group Scouter
+
+                return SystemUser::inRandomOrder()->first();
+            },
+        );
     }
 }

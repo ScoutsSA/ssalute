@@ -5,6 +5,7 @@ namespace App\Livewire\Forms\Aam;
 use App\Enums\UserSex;
 use App\Enums\UserTitle;
 use App\Mail\Forms\Aam\ApplicationAdultMembershipApplicantInitialEmail;
+use App\Mail\Forms\Aam\ApplicationAdultMembershipApproverInitialEmail;
 use App\Models\District;
 use App\Models\Forms\ApplicationAdultMembershipRequest;
 use App\Models\Group;
@@ -394,7 +395,7 @@ be shared with.
 
         $state = $this->form->getState();
 
-        $aam = ApplicationAdultMembershipRequest::create([
+        $aamRequest = ApplicationAdultMembershipRequest::create([
             'email' => $state['email'] ?? null,
             'first_name' => $state['first_name'] ?? null,
             'other_names' => $state['other_names'] ?? null,
@@ -428,45 +429,17 @@ be shared with.
             ->send();
 
         // Email applicant
-        Mail::to($aam->email)->bcc($formSettings->aam_national_support_emails)->queue(new ApplicationAdultMembershipApplicantInitialEmail($aam));
+        Mail::to($aamRequest->email)->bcc($formSettings->aam_national_support_emails)->queue(new ApplicationAdultMembershipApplicantInitialEmail($aamRequest));
 
         // Email NextInLine (Group/District/Region)
-        if ($aam->region_id === null) {
+        if ($aamRequest->region_id === null) {
             // National
-            Mail::to($formSettings->aam_national_support_emails)->queue(new ApplicationAdultMembershipApplicantInitialEmail($aam));
+            Mail::to($aamRequest->nextInLineScouter->username)
+                ->cc($aamRequest->scoutersWhoCanApprove)
+                ->bcc($formSettings->aam_national_support_emails)
+                ->queue(new ApplicationAdultMembershipApproverInitialEmail($aamRequest));
 
             return;
         }
-
-        /*        if ($aam->district_id === null) {
-                    // Regional
-                    // Users which have Adult Support (system_user_type=25)
-                   # $adultSupportMembers = ^^;
-                    if(!$adultSupportMembers)
-                    {
-                        // Regional Commissioner
-                    }
-
-                    Mail::cc($formSettings->aam_national_support_emails)->to($users)->queue(new ApplicationAdultMembershipApplicantInitialEmail($aam));
-                    return;
-                }
-
-                if ($aam->group_id === null) {
-                    // District
-                    //  Users which have District Commissioner (system_user_type=3)
-                    // cc in in Adult Support/RegionalCommissioner
-                    Mail::cc($formSettings->aam_national_support_emails)->to($users)->queue(new ApplicationAdultMembershipApplicantInitialEmail($aam));
-                    return;
-                }
-
-                // Group
-                //  Users which have SGL Commissioner
-                // cc in District Commissioner & Adult Support/RegionalCommissioner
-                Mail::cc($formSettings->aam_national_support_emails)->to($users)->queue(new ApplicationAdultMembershipApplicantInitialEmail($aam));
-                return;*/
-
-        /**
-         * ToDo - Handle Approval
-         */
     }
 }

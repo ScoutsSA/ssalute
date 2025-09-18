@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class SystemUserType extends BaseModel
 {
@@ -71,4 +72,52 @@ class SystemUserType extends BaseModel
         'modifiedby' => 'int',
     ];
 
+    public function roleTypeName(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                return match (true) {
+                    $this->sysAdmin === 1 => 'System Administrator',
+                    $this->nationalRole === 1 => 'National',
+                    $this->regionalRole === 1 => 'Regional',
+                    $this->superDistrictRole === 1 => 'Super District',
+                    $this->districtRole === 1 => 'District',
+                    $this->groupRole === 1 => 'Group',
+                    $this->denRole === 1 => 'Den',
+                    $this->packRole === 1 => 'Pack',
+                    $this->troopRole === 1 => 'Troop',
+                    $this->crewRole === 1 => 'Crew',
+                    $this->adultLeaderRole === 1 => 'Adult Leader',
+                    $this->parentHelperRole === 1 => 'Parent Helper',
+                    $this->alumniRole === 1 => 'Alumni',
+                    default => 'Unknown',
+                };
+            }
+        );
+    }
+
+    // This is only usable when eager loading the pivot relationship
+    public function roleTypePivot(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                return match (true) {
+                    $this->regionalRole === 1 => $this->pivot->region,
+                    $this->districtRole === 1 => $this->pivot->district,
+                    $this->groupRole === 1 => $this->pivot->group,
+                    default => null,
+                };
+            }
+        );
+    }
+
+    // This is only usable when eager loading the pivot relationship
+    public function roleTypePivotName(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                return $this->roleTypeName . (is_null($this->roleTypePivot) ? '' : (': ' . $this->roleTypePivot->name));
+            }
+        );
+    }
 }

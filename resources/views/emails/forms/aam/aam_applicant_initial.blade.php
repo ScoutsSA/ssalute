@@ -14,6 +14,13 @@ Though you are more than welcome to send a message to your relevant Scouter to s
 We are looking forward to having you as part of our team!
 
 
+You can track the status of your application by clicking the button below:
+
+<x-mail::button :url="$applicationAdultMembershipRequest->viewableLink">
+View Application
+</x-mail::button>
+
+
 Yours in Scouting,
 
 Ssalute Administration

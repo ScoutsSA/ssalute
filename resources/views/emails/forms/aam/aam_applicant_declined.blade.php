@@ -2,9 +2,9 @@
 
 Hi {{ $applicationAdultMembershipRequest->name }},
 
-Unfortunately your application has been declined.
+Unfortunately your application has been declined by {{ $applicationAdultMembershipRequest->actionedBy->name }}.
 
-Reason: {{ $applicationAdultMembershipRequest->decline_reason }}
+Reason: {{ $applicationAdultMembershipRequest->actioned_reason_external }}
 
 If you'd like to query this, please contact your next in-line Scouter.
 
