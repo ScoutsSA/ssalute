@@ -42,14 +42,14 @@ class ApplicationAdultMembershipRequestsTable
                 TextColumn::make('nextInLineScouter')
                     ->label('Next in line Scouter')
                     ->state(fn (ApplicationAdultMembershipRequest $record) => $record->nextInLineScouter->name ?? 'N/A')
-                    ->tooltip('This is determined from the relevant SGL->DC->RTC-AS->NationalChair-AS')
+                    ->tooltip('This is determined by your AAM form settings')
                     ->visible(fn (ListRecords $livewire) => in_array($livewire->activeTab, ['pending', 'all']))
                     ->toggleable(),
                 TextColumn::make('scoutersWhoCanApprove')
                     ->label('Approval Scouters')
                     ->badge()
                     ->state(fn (ApplicationAdultMembershipRequest $record) => $record->scoutersWhoCanApprove->pluck('name')->toArray() ?? ['N/A'])
-                    ->tooltip('This is the full "teams" of scouters in the chain SGL->[DC,DCGM,DCM]->[RTC-AS,RAS-TM, RAS-TMG]->NationalChair-AS')
+                    ->tooltip('This is determined by your AAM form settings')
                     ->listWithLineBreaks()
                     ->visible(fn (ListRecords $livewire) => in_array($livewire->activeTab, ['pending', 'all']))
                     ->toggleable(),

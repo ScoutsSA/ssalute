@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Admin\Resources\SystemUserTypes\Tables;
+namespace App\Filament\Admin\Resources\Roles\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\ViewAction;
@@ -9,14 +9,14 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 
-class SystemUserTypesTable
+class RoleTable
 {
     public static function configure(Table $table): Table
     {
         return $table
             ->reorderable('position')
             ->defaultSort('position')
-            ->modifyQueryUsing(fn ($query) => $query->withCount(['users', 'activeUsers', 'pastUsers']))
+            ->modifyQueryUsing(fn ($query) => $query->withCount(['users', 'activeUsers', 'pastUsers'])) // This is for description text
             ->columns([
                 TextColumn::make('id')
                     ->searchable()

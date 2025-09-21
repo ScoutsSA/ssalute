@@ -10,7 +10,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class ApplicationAdultMembershipApproverInitialEmail extends Mailable implements ShouldQueue
+class ApplicationAdultMembershipApproverActionedEmail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -35,7 +35,7 @@ class ApplicationAdultMembershipApproverInitialEmail extends Mailable implements
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.forms.aam.aam_approver_initial',
+            markdown: 'emails.forms.aam.aam_approver_actioned',
         );
     }
 

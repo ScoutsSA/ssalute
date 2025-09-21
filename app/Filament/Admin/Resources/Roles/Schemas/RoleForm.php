@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Filament\Admin\Resources\SystemUserTypes\Schemas;
+namespace App\Filament\Admin\Resources\Roles\Schemas;
 
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
-class SystemUserTypeForm
+class RoleForm
 {
     public static function configure(Schema $schema): Schema
     {

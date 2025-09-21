@@ -386,6 +386,8 @@ be shared with.
     {
         $this->validate();
 
+        $this->rateLimit(5);
+
         $this->successfullyCompletedForm = true;
 
         $state = $this->form->getState();

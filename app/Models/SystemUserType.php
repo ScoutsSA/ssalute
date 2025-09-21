@@ -4,8 +4,10 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class SystemUserType extends BaseModel
 {
@@ -16,7 +18,7 @@ class SystemUserType extends BaseModel
 
     protected $casts = [
         'id' => 'int',
-        'countryID' => 'int',
+        'countryID' => 'int', // Deprecated - No Multi-country support
         'name' => 'string',
         'description' => 'string',
         'sysAdmin' => 'int',
@@ -114,7 +116,7 @@ class SystemUserType extends BaseModel
         ->wherePivot('suspended', 0)*/
     }
 
-    public function pastUsers()
+    public function pastUsers(): BelongsToMany
     {
         return $this->users()
             ->wherePivot('active', 0);
@@ -124,6 +126,21 @@ class SystemUserType extends BaseModel
                 ->orWhere('system_users_other_roles.resigned', 1)
                 ->orWhere('system_users_other_roles.suspended', 1);
         })*/
+    }
+
+    public function roleAttachments(): HasMany
+    {
+        return $this->hasMany(SystemUsersOtherRole::class, 'roleID', 'id');
+    }
+
+    public function scopeActive(Builder $query): void
+    {
+        $query->where('active', 1);
+    }
+
+    public function scopeInactive(Builder $query): void
+    {
+        $query->where('active', 0);
     }
 
     public function roleTypeName(): Attribute

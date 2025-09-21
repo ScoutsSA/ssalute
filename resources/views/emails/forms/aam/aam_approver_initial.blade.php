@@ -18,4 +18,4 @@ Yours in Scouting,
 
 Ssalute Administration
 
-</x-mail::message>>
+</x-mail::message>

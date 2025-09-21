@@ -10,14 +10,14 @@ enum UserSex: string implements HasLabel
     use WithOptions;
     case Female = 'Female';
     case Male = 'Male';
-    case Other = 'other';
+    case Other = '';
 
     public function getLabel(): string
     {
         return match ($this) {
             self::Female => 'Female',
             self::Male => 'Male',
-            self::Other => 'Other',
+            self::Other => 'Other / Prefer not to say',
         };
     }
 }

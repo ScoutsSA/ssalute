@@ -1,15 +1,9 @@
 <?php
 
-namespace App\Filament\Admin\Resources\Users\RelationManagers;
+namespace App\Filament\Admin\Resources\Roles\RelationManagers;
 
-use Filament\Actions\AssociateAction;
+use App\Filament\Admin\Resources\Users\UserResource;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\DissociateAction;
-use Filament\Actions\DissociateBulkAction;
-use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
@@ -21,7 +15,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
-class UserRoleAttachmentsRelationManager extends RelationManager
+class RoleRoleAttachmentsRelationManager extends RelationManager
 {
     protected static string $relationship = 'roleAttachments';
 
@@ -62,11 +56,11 @@ class UserRoleAttachmentsRelationManager extends RelationManager
                     ->label('Attachment ID')
                     ->searchable()
                     ->toggleable(),
-                TextColumn::make('role.id')
-                    ->label('Role ID')
+                TextColumn::make('user.id')
+                    ->label('User ID')
                     ->searchable()
                     ->toggleable(),
-                TextColumn::make('role.name')
+                TextColumn::make('user.name')
                     ->description(fn ($record) => $record->defaultRole ? 'Primary Role' : '')
                     ->searchable()
                     ->toggleable(),
@@ -78,8 +72,8 @@ class UserRoleAttachmentsRelationManager extends RelationManager
                 TextColumn::make('roleAttachmentScopedLabel')
                     ->label('Role Scoped To')
                     ->toggleable(),
-                IconColumn::make('role.active')
-                    ->label('Role is Active')
+                IconColumn::make('user.active')
+                    ->label('User is Active')
                     ->boolean()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -111,21 +105,15 @@ class UserRoleAttachmentsRelationManager extends RelationManager
             ->filters([
                 //
             ])
-            ->headerActions([
-                CreateAction::make(),
-                AssociateAction::make(),
-            ])
+            ->headerActions([])
             ->recordActions([
                 ViewAction::make(),
-                EditAction::make(),
-                DissociateAction::make(),
-                DeleteAction::make(),
+                ViewAction::make('View User')
+                    ->label('View User')
+                    ->url(fn ($record) => UserResource::getUrl('view', ['record' => $record->userID])),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DissociateBulkAction::make(),
-                    DeleteBulkAction::make(),
-                ]),
+                BulkActionGroup::make([]),
             ]);
     }
 }

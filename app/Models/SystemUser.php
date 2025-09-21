@@ -2,6 +2,10 @@
 
 namespace App\Models;
 
+use App\Enums\UserBranchTypes;
+use App\Enums\UserRace;
+use App\Enums\UserSex;
+use App\Enums\UserTitle;
 use App\Models\Concerns\MightHaveCreatedBy;
 use App\Models\Concerns\MightHaveModifiedBy;
 use App\Providers\AppServiceProvider;
@@ -36,14 +40,14 @@ class SystemUser extends User implements FilamentUser
 
     protected $casts = [
         'id' => 'int',
-        'oldID' => 'int',
+        'oldID' => 'int', // This was from pre-entsha
         'username' => 'string',
-        'passwordNew' => 'string',
+        'passwordNew' => 'string', // This needs to be swapped to a hashed password
         'lastPasswordChange' => 'datetime',
         'passwordChangedBy' => 'int',
         'lastLoginDate' => 'datetime',
         'startDate' => 'date',
-        'title' => 'string',
+        'title' => UserTitle::class, // Probably should be removed
         'first_name' => 'string',
         'otherName' => 'string',
         'surname' => 'string',
@@ -57,8 +61,8 @@ class SystemUser extends User implements FilamentUser
         'passportNumber' => 'string',
         'passportCountry' => 'int',
         'partnersFullName' => 'string',
-        'sex' => 'string',
-        'race' => 'string',
+        'sex' => UserSex::class,
+        'race' => UserRace::class,
         'dob' => 'date',
         'dateInvested' => 'date',
         'multiID' => 'int',
@@ -70,35 +74,35 @@ class SystemUser extends User implements FilamentUser
         'scoutPatrolTaskID' => 'int',
         'dateToRovers' => 'datetime',
         'phys_address' => 'string',
-        'gpsLat' => 'string',
-        'gpsLon' => 'string',
-        'gpsAccuracy' => 'string',
-        'phys_country_id' => 'int',
+        'gpsLat' => 'string', // Can be removed - No impact to SD
+        'gpsLon' => 'string', // Can be removed - No impact to SD
+        'gpsAccuracy' => 'string', // Can be removed - No impact to SD
+        'phys_country_id' => 'int', // Deprecated - No Multi-country support
         'postal_address' => 'string',
-        'postal_country_id' => 'int',
+        'postal_country_id' => 'int', // Deprecated - No Multi-country support
         'created' => 'datetime',
         'createdby' => 'int',
         'modified' => 'datetime',
         'modifiedby' => 'int',
-        'user_type' => 'int',
-        'parentType' => 'int',
+        'user_type' => 'int', // Deprecated version of Primary Role
+        'parentType' => 'int', // system_parent_types.id
         'active' => 'int',
         'dateDeactivated' => 'datetime',
         'deactivatedBy' => 'int',
         'assoc_to_account' => 'int',
-        'assoc_to_group' => 'int',
-        'branch' => 'string',
+        'assoc_to_group' => 'int', // Primary Group?
+        'branch' => UserBranchTypes::class, // This should be attached to the GROUP or SECTION, not the user
         'assoc_to_district' => 'int',
         'assoc_to_region' => 'int',
-        'trainingRegionName' => 'string',
-        'trainingDistrictName' => 'string',
-        'trainingGroupName' => 'string',
-        'language' => 'string',
+        'trainingRegionName' => 'string', // Can be removed - No impact to SD
+        'trainingDistrictName' => 'string', // Can be removed - No impact to SD
+        'trainingGroupName' => 'string', // Can be removed - No impact to SD
+        'language' => 'string', // Deprecated - This is added but never used
         'cellNr' => 'string',
         'officeNr' => 'string',
         'homeNr' => 'string',
-        'faxNr' => 'string',
-        'responsible_for_payment' => 'int',
+        'faxNr' => 'string', // In 2025?
+        'responsible_for_payment' => 'int', // This should probably be config on a parent role?
         'mustChangePassword' => 'int',
         'canLogon' => 'int',
         'medicalAidName' => 'string',
@@ -118,23 +122,23 @@ class SystemUser extends User implements FilamentUser
         'emergencyContactTel' => 'string',
         'emergencyContactRelationship' => 'string',
         'specialMealRequirements' => 'string',
-        'religiousAffilliation' => 'string',
+        'religiousAffilliation' => 'string', // Should be merged with religion, religiousAffiliation and religiousBelief
         'school' => 'string',
-        'religion' => 'string',
-        'religiousAffiliation' => 'string',
+        'religion' => 'string', // Should be merged with religiousAffilliation, religiousAffiliation and religiousBelief
+        'religiousAffiliation' => 'string', // Should be merged with religion, religiousAffilliation and religiousBelief
         'hobbies' => 'string',
         'sports' => 'string',
         'interests' => 'string',
-        'canAdmin' => 'int',
-        '100CharID' => 'string',
-        'uniquePIN' => 'int',
-        'weeklyEmailUnsubscribe' => 'int',
-        'weeklyEmailUnsubscribeText' => 'string',
-        'weeklyEmailUnsubscribeDate' => 'datetime',
-        'logonEmailSent' => 'int',
-        'LogonEmailDate' => 'datetime',
-        'amsOnly' => 'int',
-        'amsRole' => 'int',
+        'canAdmin' => 'int', // Can be removed - No impact to SD
+        '100CharID' => 'string', // This is used as a type of remember_me cookie. If it's not set, things still work. A proper remember_me token should be used here
+        'uniquePIN' => 'int', // Deprecated - This is added but never used
+        'weeklyEmailUnsubscribe' => 'int', // Can be removed - No impact to SD
+        'weeklyEmailUnsubscribeText' => 'string', // Can be removed - No impact to SD
+        'weeklyEmailUnsubscribeDate' => 'datetime', // Can be removed - No impact to SD
+        'logonEmailSent' => 'int', // Can be removed - No impact to SD
+        'LogonEmailDate' => 'datetime', // Can be removed - No impact to SD
+        'amsOnly' => 'int', // Deprecated - This is added but never used
+        'amsRole' => 'int', // Deprecated - This seems to be a legacy of the old role system
         'homeLanguage' => 'int',
         'otherLanguage' => 'int',
         'otherLanguages' => 'string',
@@ -147,49 +151,49 @@ class SystemUser extends User implements FilamentUser
         'typeOfEmployment' => 'string',
         'employer' => 'string',
         'maritalStatus' => 'int',
-        'ref1Name' => 'string',
-        'ref1Address' => 'string',
-        'ref1Tel' => 'string',
-        'ref2Name' => 'string',
-        'ref2Address' => 'string',
-        'ref2Tel' => 'string',
-        'newsletterUnsubscribe' => 'int',
-        'newsletterUnsubscribeDate' => 'datetime',
-        'reportView' => 'int',
-        'roverGroupID' => 'int',
-        'roverGroupRoleID' => 'int',
-        'roverGroupAccountID' => 'int',
-        '24WSJ' => 'int',
-        '24WSJRole' => 'int',
-        '24wsjNotListedDistrict' => 'string',
-        '24wsjNotListedGroup' => 'string',
-        'SANJamb2017' => 'int',
-        'SANJamb2017Role' => 'string',
-        'sanJambNotListedRegion' => 'string',
-        'sanJambNotListedDistrict' => 'string',
-        'sanJambNotListedGroup' => 'string',
+        'ref1Name' => 'string', // Can be removed - No impact to SD
+        'ref1Address' => 'string', // Can be removed - No impact to SD
+        'ref1Tel' => 'string', // Can be removed - No impact to SD
+        'ref2Name' => 'string', // Can be removed - No impact to SD
+        'ref2Address' => 'string', // Can be removed - No impact to SD
+        'ref2Tel' => 'string', // Can be removed - No impact to SD
+        'newsletterUnsubscribe' => 'int', // Can be removed - No impact to SD
+        'newsletterUnsubscribeDate' => 'datetime', // Can be removed - No impact to SD
+        'reportView' => 'int', // Can be removed - No impact to SD
+        'roverGroupID' => 'int', // Can be removed - No impact to SD
+        'roverGroupRoleID' => 'int', // Can be removed - No impact to SD
+        'roverGroupAccountID' => 'int', // Can be removed - No impact to SD
+        '24WSJ' => 'int', // Deprecated - World Scout Jamboree 2024
+        '24WSJRole' => 'int', // Deprecated - World Scout Jamboree 2024
+        '24wsjNotListedDistrict' => 'string', // Deprecated - World Scout Jamboree 2024
+        '24wsjNotListedGroup' => 'string', // Deprecated - World Scout Jamboree 2024
+        'SANJamb2017' => 'int', // Deprecated - South African National Jamboree 2017
+        'SANJamb2017Role' => 'string', // Deprecated - South African National Jamboree 2017
+        'sanJambNotListedRegion' => 'string', // Deprecated - South African National Jamboree 2017
+        'sanJambNotListedDistrict' => 'string', // Deprecated - South African National Jamboree 2017
+        'sanJambNotListedGroup' => 'string', // Deprecated - South African National Jamboree 2017
         'infoRedacted' => 'int',
-        'SSANumber' => 'string',
+        'SSANumber' => 'string', // Deprecated? Seems to be referenced as InternalNumber,
         'orphaned' => 'int',
         'vulnerable' => 'int',
-        'sendAMSMail' => 'int',
+        'sendAMSMail' => 'int', // Can be removed - No impact to SD
         'generalNotes' => 'string',
         'form29Generated' => 'int',
-        'logonEmail' => 'int',
+        'logonEmail' => 'int', // Feature Flag for if we should send an email when the user logs in
         'weeklyProgramEmail' => 'int',
         'profileChangesEmail' => 'int',
         'newsletterEmail' => 'int',
         'lowerStaffProfileChanges' => 'int',
-        'loggedInTo20' => 'int',
-        'canLogonTo20' => 'int',
-        'adultRecruit' => 'int',
-        'addedIn' => 'int',
-        'canAdminElearning' => 'int',
-        'canAdminElearningCourses' => 'int',
-        'view' => 'int',
-        'docsDeleted' => 'int',
-        'takenSurvey' => 'int',
-        'ddValue' => 'int',
+        'loggedInTo20' => 'int', // Can be removed - No impact to SD
+        'canLogonTo20' => 'int', // This is set in a few places but never seems to be used
+        'adultRecruit' => 'int', // Deprecated - This seems to be a flag to send the user to a page where they must enter their AAM details
+        'addedIn' => 'int', // Deprecated - This seems to have been a legacy flag, currently it's always hardcoded to 2 and the value is never read
+        'canAdminElearning' => 'int', // Deprecated
+        'canAdminElearningCourses' => 'int', // Deprecated
+        'view' => 'int', // Unknown - searching for this is rather difficult
+        'docsDeleted' => 'int', // If a user isn't active and has a dateDeactivated in the past, AdvancementPhotos and AdvancementDocuments are deleted permanently and this flag tracks if that's happened
+        'takenSurvey' => 'int', // Deprecated
+        'ddValue' => 'int', // This appears to be a per_page store, only used in a few ams adult management places
         'DSDHostelName' => 'string',
         'DSDTownshipName' => 'string',
         'DSDDisabled' => 'int',
@@ -263,6 +267,11 @@ class SystemUser extends User implements FilamentUser
     public function scopeActive(Builder $query): void
     {
         $query->where('active', 1);
+    }
+
+    public function scopeInactive(Builder $query): void
+    {
+        $query->where('active', 0);
     }
 
     public function scopeWithPlainPassword(Builder $query): void

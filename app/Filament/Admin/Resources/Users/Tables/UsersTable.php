@@ -7,6 +7,7 @@ use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -20,19 +21,18 @@ class UsersTable
         return $table
             ->columns([
                 TextColumn::make('id')
-                    ->label('id')
+                    ->label('ID')
                     ->description(fn (SystemUser $model) => $model->ssa_id)
                     ->toggleable()
                     ->numeric()
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('oldID')
-                    ->label('oldID')
-                    ->toggleable(isToggledHiddenByDefault: true)
-                    ->numeric()
-                    ->sortable(),
                 TextColumn::make('username')
-                    ->label('username')
+                    ->label('Username/Email')
+                    ->toggleable()
+                    ->searchable(),
+                TextColumn::make('name')
+                    ->label('Name')
                     ->toggleable()
                     ->searchable(),
                 TextColumn::make('lastPasswordChange')
@@ -109,10 +109,12 @@ class UsersTable
                 TextColumn::make('sex')
                     ->label('sex')
                     ->toggleable(isToggledHiddenByDefault: true)
+                    ->sortable()
                     ->searchable(),
                 TextColumn::make('race')
                     ->label('race')
                     ->toggleable(isToggledHiddenByDefault: true)
+                    ->sortable()
                     ->searchable(),
                 TextColumn::make('dob')
                     ->label('dob')
@@ -364,15 +366,6 @@ class UsersTable
                     ->searchable(),
                 TextColumn::make('canAdmin')
                     ->label('canAdmin')
-                    ->toggleable(isToggledHiddenByDefault: true)
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('100CharID')
-                    ->label('100CharID')
-                    ->toggleable(isToggledHiddenByDefault: true)
-                    ->searchable(),
-                TextColumn::make('uniquePIN')
-                    ->label('uniquePIN')
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->numeric()
                     ->sortable(),
@@ -661,7 +654,8 @@ class UsersTable
                     ->sortable(),
             ])
             ->filters([
-                //
+                TernaryFilter::make('active')
+                    ->default(),
             ])
             ->recordActions([
                 Impersonate::make()

@@ -46,6 +46,13 @@ class UserResource extends Resource
     {
         return [
             UserRoleAttachmentsRelationManager::class,
+            // Warrants
+            // Activity Licences
+            // Awards
+            // Past Training
+            // Past Service
+            // All Documents
+            // Police Clearances
         ];
     }
 
