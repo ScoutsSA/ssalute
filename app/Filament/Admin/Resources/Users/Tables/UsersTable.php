@@ -34,7 +34,7 @@ class UsersTable
                 TextColumn::make('name')
                     ->label('Name')
                     ->toggleable()
-                    ->searchable(),
+                    ->searchable(['first_name', 'surname']),
                 TextColumn::make('lastPasswordChange')
                     ->label('lastPasswordChange')
                     ->toggleable(isToggledHiddenByDefault: true)
