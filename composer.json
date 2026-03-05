@@ -12,8 +12,8 @@
         "ext-pdo": "*",
         "aws/aws-sdk-php": "^3.356",
         "danharrin/livewire-rate-limiting": "^2.1",
-        "filament/filament": "^4.0",
-        "filament/spatie-laravel-settings-plugin": "^4.0",
+        "filament/filament": "^5.0",
+        "filament/spatie-laravel-settings-plugin": "^5.0",
         "giggsey/libphonenumber-for-php": "^9.0",
         "laravel/framework": "^12.28.1",
         "laravel/horizon": "^5.33",
@@ -24,18 +24,19 @@
         "sentry/sentry-laravel": "^4.16",
         "spatie/laravel-settings": "^3.4",
         "spatie/laravel-slack-alerts": "^1.7",
-        "stechstudio/filament-impersonate": "^4.0"
+        "stechstudio/filament-impersonate": "^5.0"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.6",
         "fakerphp/faker": "^1.24.1",
-        "laravel/boost": "^1.1",
+        "filament/upgrade": "^5.0",
+        "laravel/boost": "^2.0",
         "laravel/pail": "^1.2.3",
         "laravel/pint": "^1.24",
         "laravel/sail": "^1.45",
         "mockery/mockery": "^1.6.12",
         "nunomaduro/collision": "^8.8.2",
-        "phpunit/phpunit": "^11.5.36",
+        "phpunit/phpunit": "^13.0",
         "roave/security-advisories": "dev-latest",
         "tightenco/duster": "^3.2.0"
     },

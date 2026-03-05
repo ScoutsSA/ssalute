@@ -3831,35 +3831,34 @@ namespace App\Models\Forms{
  * @property bool $has_given_public_media_consent
  * @property string $action_slug
  * @property string $view_slug
- * @property \Illuminate\Support\Carbon|null $approved_at
- * @property int|null $approved_by
- * @property \Illuminate\Support\Carbon|null $declined_at
- * @property int|null $declined_by
- * @property string|null $declined_notes_internal
- * @property string|null $declined_reason_external
+ * @property \Illuminate\Support\Carbon|null $actioned_at
+ * @property int|null $actioned_by
+ * @property string|null $actioned_notes_internal
+ * @property string|null $actioned_reason_external
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read mixed $actionable_link
- * @property-read \App\Models\SystemUser|null $approvedBy
- * @property-read \App\Models\SystemUser|null $declinedBy
+ * @property-read \App\Models\SystemUser|null $actionedBy
  * @property-read \App\Models\District|null $district
  * @property-read \App\Models\Group|null $group
+ * @property-read mixed $location_name
  * @property-read mixed $name
+ * @property-read mixed $next_in_line_scouter
  * @property-read \App\Models\Region|null $region
+ * @property-read mixed $scouters_who_can_approve
+ * @property-read mixed $viewable_link
  * @method static \Database\Factories\Forms\ApplicationAdultMembershipRequestFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest whereActionSlug($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest whereApprovedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest whereApprovedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest whereActionedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest whereActionedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest whereActionedNotesInternal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest whereActionedReasonExternal($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest whereCriminalRecord($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest whereDateOfBirth($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest whereDeclinedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest whereDeclinedBy($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest whereDeclinedNotesInternal($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest whereDeclinedReasonExternal($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest whereDistrictId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest whereEmail($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApplicationAdultMembershipRequest whereEmergencyContactName($value)
@@ -9751,7 +9750,7 @@ namespace App\Models{
  * @property int|null $passwordChangedBy
  * @property \Illuminate\Support\Carbon|null $lastLoginDate
  * @property \Illuminate\Support\Carbon|null $startDate
- * @property string|null $title
+ * @property \App\Enums\UserTitle|null $title
  * @property string|null $first_name
  * @property string|null $otherName
  * @property string|null $surname
@@ -9765,8 +9764,8 @@ namespace App\Models{
  * @property string|null $passportNumber
  * @property int|null $passportCountry
  * @property string|null $partnersFullName
- * @property string|null $sex
- * @property string|null $race
+ * @property \App\Enums\UserSex|null $sex
+ * @property \App\Enums\UserRace|null $race
  * @property \Illuminate\Support\Carbon|null $dob
  * @property \Illuminate\Support\Carbon|null $dateInvested
  * @property int $multiID
@@ -9795,7 +9794,7 @@ namespace App\Models{
  * @property int|null $deactivatedBy
  * @property int $assoc_to_account
  * @property int|null $assoc_to_group
- * @property string|null $branch
+ * @property \App\Enums\UserBranchTypes|null $branch
  * @property int|null $assoc_to_district
  * @property int|null $assoc_to_region
  * @property string|null $trainingRegionName
@@ -9901,9 +9900,19 @@ namespace App\Models{
  * @property string|null $DSDHostelName
  * @property string|null $DSDTownshipName
  * @property int|null $DSDDisabled
+ * @property-read \App\Models\SystemUsersOtherRole|null $pivot
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\SystemUserType> $activeRoles
+ * @property-read int|null $active_roles_count
+ * @property-read SystemUser|null $createdBy
+ * @property-read SystemUser|null $modifiedBy
  * @property-read mixed $name
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\SystemUsersOtherRole> $roleAttachments
+ * @property-read int|null $role_attachments_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\SystemUserType> $roles
+ * @property-read int|null $roles_count
  * @property-read mixed $ssa_id
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUser active()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUser inactive()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUser newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUser newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUser query()
@@ -10067,7 +10076,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUser whereWeeklyProgramEmail($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUser withPlainPassword()
  */
-	class SystemUser extends \Eloquent implements \Filament\Models\Contracts\FilamentUser {}
+	class SystemUser extends \Eloquent implements \Filament\Models\Contracts\FilamentUser, \Filament\Models\Contracts\HasTenants, \Filament\Models\Contracts\HasDefaultTenant {}
 }
 
 namespace App\Models{
@@ -10161,8 +10170,20 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \App\Models\SystemUsersOtherRole|null $pivot
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\SystemUser> $activeUsers
+ * @property-read int|null $active_users_count
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\SystemUser> $pastUsers
+ * @property-read int|null $past_users_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\SystemUsersOtherRole> $roleAttachments
+ * @property-read int|null $role_attachments_count
+ * @property-read mixed $role_type_name
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\SystemUser> $users
+ * @property-read int|null $users_count
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUserType active()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUserType inactive()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUserType newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUserType newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUserType query()
@@ -10426,7 +10447,16 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\SystemUserType|null $role
+ * @property-read mixed $role_attachment_scoped_label
+ * @property-read mixed $role_scoped_label
+ * @property-read mixed $role_scoped_model
+ * @property-read mixed $role_type_name
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUsersOtherRole newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUsersOtherRole newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUsersOtherRole query()
@@ -10455,7 +10485,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUsersOtherRole whereSuspended($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUsersOtherRole whereUserID($value)
  */
-	class SystemUsersOtherRole extends \Eloquent {}
+	class SystemUsersOtherRole extends \Eloquent implements \Filament\Models\Contracts\HasName, \Filament\Models\Contracts\HasCurrentTenantLabel {}
 }
 
 namespace App\Models{

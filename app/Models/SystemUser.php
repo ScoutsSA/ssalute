@@ -11,17 +11,23 @@ use App\Models\Concerns\MightHaveModifiedBy;
 use App\Providers\AppServiceProvider;
 use App\Settings\GeneralSettings;
 use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasDefaultTenant;
+use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
-class SystemUser extends User implements FilamentUser
+class SystemUser extends User implements FilamentUser, HasDefaultTenant, HasTenants
 {
+    use HasFactory;
     use MightHaveCreatedBy;
     use MightHaveModifiedBy;
 
@@ -306,9 +312,55 @@ class SystemUser extends User implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return match (true) {
-            $panel->getId() === 'admin' => $this->isSuperAdmin(),
+        return match ($panel->getId()) {
+            'admin' => $this->isSuperAdmin(),
+            'general' => $this->hasAnyActiveRole(),
+            default => false,
         };
+    }
+
+    public function hasManagementRole(): bool
+    {
+        return $this->roleAttachments()
+            ->where('active', 1)
+            ->whereHas('role', fn ($q) => $q
+                ->where('nationalRole', 1)
+                ->orWhere('regionalRole', 1)
+                ->orWhere('superDistrictRole', 1)
+                ->orWhere('districtRole', 1)
+            )
+            ->exists();
+    }
+
+    public function hasAnyActiveRole(): bool
+    {
+        return $this->roleAttachments()
+            ->where('active', 1)
+            ->exists();
+    }
+
+    public function getTenants(Panel $panel): Collection
+    {
+        return match ($panel->getId()) {
+            'general' => $this->roleAttachments()
+                ->where('active', 1)
+                ->with(['role', 'region', 'district', 'group'])
+                ->get(),
+            default => collect(),
+        };
+    }
+
+    public function canAccessTenant(Model $tenant): bool
+    {
+        return $this->roleAttachments()
+            ->where('id', $tenant->getKey())
+            ->where('active', 1)
+            ->exists();
+    }
+
+    public function getDefaultTenant(Panel $panel): ?Model
+    {
+        return $this->getTenants($panel)->first();
     }
 
     public function isSuperAdmin(): bool
