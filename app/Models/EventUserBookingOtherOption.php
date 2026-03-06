@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class EventUserBookingOtherOption extends BaseModel
 {
@@ -24,4 +25,8 @@ class EventUserBookingOtherOption extends BaseModel
         'modifiedby' => 'int',
     ];
 
+    public function event(): BelongsTo
+    {
+        return $this->belongsTo(GroupEvent::class, 'eventID');
+    }
 }

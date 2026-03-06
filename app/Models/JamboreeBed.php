@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class JamboreeBed extends BaseModel
 {
@@ -20,4 +21,8 @@ class JamboreeBed extends BaseModel
         'nrBeds' => 'int',
     ];
 
+    public function subCamp(): BelongsTo
+    {
+        return $this->belongsTo(JamboreeSubCamp::class, 'subcampID');
+    }
 }

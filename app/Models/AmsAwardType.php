@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class AmsAwardType extends BaseModel
 {
@@ -26,4 +28,18 @@ class AmsAwardType extends BaseModel
         'modifiedby' => 'int',
     ];
 
+    public function heading(): BelongsTo
+    {
+        return $this->belongsTo(AmsAwardHeading::class, 'headingID');
+    }
+
+    public function awards(): HasMany
+    {
+        return $this->hasMany(AmsAwardInfo::class, 'awardTypeID');
+    }
+
+    public function applications(): HasMany
+    {
+        return $this->hasMany(AmsAwardApplication::class, 'awardTypeID');
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class AmsAwardHeading extends BaseModel
 {
@@ -18,4 +19,18 @@ class AmsAwardHeading extends BaseModel
         'reason' => 'string',
     ];
 
+    public function awardTypes(): HasMany
+    {
+        return $this->hasMany(AmsAwardType::class, 'headingID');
+    }
+
+    public function awards(): HasMany
+    {
+        return $this->hasMany(AmsAwardInfo::class, 'awardHeadingID');
+    }
+
+    public function applications(): HasMany
+    {
+        return $this->hasMany(AmsAwardApplication::class, 'awardHeadingID');
+    }
 }

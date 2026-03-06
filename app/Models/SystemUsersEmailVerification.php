@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SystemUsersEmailVerification extends BaseModel
 {
@@ -30,4 +31,8 @@ class SystemUsersEmailVerification extends BaseModel
         'created' => 'datetime',
     ];
 
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'userID');
+    }
 }

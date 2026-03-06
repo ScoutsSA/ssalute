@@ -108,6 +108,101 @@ class Group extends BaseModel
         return $this->hasMany(GroupsMulti::class, 'groupID', 'id');
     }
 
+    public function cubPacks(): HasMany
+    {
+        return $this->hasMany(GroupCubPack::class, 'assocToGroup', 'id');
+    }
+
+    public function scoutTroops(): HasMany
+    {
+        return $this->hasMany(GroupScoutTroop::class, 'assocToGroup', 'id');
+    }
+
+    public function roverCrews(): HasMany
+    {
+        return $this->hasMany(GroupRoverCrew::class, 'assocToGroup', 'id');
+    }
+
+    public function meerkatDens(): HasMany
+    {
+        return $this->hasMany(GroupMeerkatDen::class, 'assocToGroup', 'id');
+    }
+
+    public function committees(): HasMany
+    {
+        return $this->hasMany(GroupCommittee::class, 'assocToGroup', 'id');
+    }
+
+    public function council(): HasMany
+    {
+        return $this->hasMany(GroupCouncil::class, 'assocToGroup', 'id');
+    }
+
+    public function programs(): HasMany
+    {
+        return $this->hasMany(GroupProgram::class, 'assocToGroup', 'id');
+    }
+
+    public function events(): HasMany
+    {
+        return $this->hasMany(GroupEvent::class, 'assocToGroup', 'id');
+    }
+
+    public function attendance(): HasMany
+    {
+        return $this->hasMany(GroupAttendance::class, 'assocToGroup', 'id');
+    }
+
+    public function newsletters(): HasMany
+    {
+        return $this->hasMany(GroupNewsletter::class, 'assocToGroup', 'id');
+    }
+
+    public function documents(): HasMany
+    {
+        return $this->hasMany(GroupDocument::class, 'assocToGroup', 'id');
+    }
+
+    public function accounts(): HasMany
+    {
+        return $this->hasMany(GroupAccount::class, 'assocToGroup', 'id');
+    }
+
+    public function financialYears(): HasMany
+    {
+        return $this->hasMany(GroupFinancialYear::class, 'assocToGroup', 'id');
+    }
+
+    public function youthCharges(): HasMany
+    {
+        return $this->hasMany(GroupYouthCharge::class, 'assocToGroup', 'id');
+    }
+
+    public function scoutCharges(): HasMany
+    {
+        return $this->hasMany(GroupScoutsCharge::class, 'assocToGroup', 'id');
+    }
+
+    public function starAwards(): HasMany
+    {
+        return $this->hasMany(GroupStarAward::class, 'groupID', 'id');
+    }
+
+    public function districtReports(): HasMany
+    {
+        return $this->hasMany(GroupDistrictReport::class, 'assocToGroup', 'id');
+    }
+
+    public function equipment(): HasMany
+    {
+        return $this->hasMany(GroupEquipment::class, 'assocToGroup', 'id');
+    }
+
+    public function equipmentStores(): HasMany
+    {
+        return $this->hasMany(GroupEquipmentStore::class, 'assocToGroup', 'id');
+    }
+
     public function region(): BelongsTo
     {
         return $this->belongsTo(Region::class, 'assoc_to_region', 'id');
@@ -116,6 +211,16 @@ class Group extends BaseModel
     public function district(): BelongsTo
     {
         return $this->belongsTo(District::class, 'assoc_to_district', 'id');
+    }
+
+    public function groupAccount(): BelongsTo
+    {
+        return $this->belongsTo(GroupAccount::class, 'groupAccountID');
+    }
+
+    public function groupType(): BelongsTo
+    {
+        return $this->belongsTo(GroupsType::class, 'groupTypeID');
     }
 
     public function groupTypeLabel(): Attribute

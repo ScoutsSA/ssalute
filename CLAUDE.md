@@ -225,12 +225,15 @@ protected function isAccessible(User $user, ?string $path = null): bool
 - Use `<flux:*>` components when available; they are the recommended way to build Livewire interfaces.
 - IMPORTANT: Activate `fluxui-development` when working with Flux UI components.
 
-=== pint/core rules ===
+=== duster rules ===
 
-# Laravel Pint Code Formatter
+# Duster Code Formatter
 
-- If you have modified any PHP files, you must run `vendor/bin/pint --dirty --format agent` before finalizing changes to ensure your code matches the project's expected style.
-- Do not run `vendor/bin/pint --test --format agent`, simply run `vendor/bin/pint --format agent` to fix any formatting issues.
+- This project uses **Duster** (not Pint) as its code formatter. Always use Duster — never run Pint directly.
+- If you have modified any PHP files, you must run `./vendor/bin/duster fix --dirty` before finalizing changes to ensure your code matches the project's expected style.
+- Do not run `vendor/bin/pint` directly — Duster runs Pint (and PHP CS Fixer) internally as part of its pipeline.
+- To fix all files (not just dirty): `./vendor/bin/duster fix`
+- To lint without fixing: `./vendor/bin/duster lint --dirty`
 
 === phpunit/core rules ===
 

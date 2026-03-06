@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class AmsTrainingCourse extends BaseModel
 {
@@ -30,4 +32,18 @@ class AmsTrainingCourse extends BaseModel
         'modifiedby' => 'int',
     ];
 
+    public function courseType(): BelongsTo
+    {
+        return $this->belongsTo(AmsTrainingCoursesType::class, 'courseType');
+    }
+
+    public function region(): BelongsTo
+    {
+        return $this->belongsTo(Region::class, 'assocToRegion');
+    }
+
+    public function annualCourses(): HasMany
+    {
+        return $this->hasMany(AmsTrainingCoursesAnnual::class, 'courseID');
+    }
 }

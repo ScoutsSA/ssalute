@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class GroupStarAward extends BaseModel
 {
@@ -30,4 +31,23 @@ class GroupStarAward extends BaseModel
         'modifiedby' => 'int',
     ];
 
+    public function region(): BelongsTo
+    {
+        return $this->belongsTo(Region::class, 'regionID');
+    }
+
+    public function district(): BelongsTo
+    {
+        return $this->belongsTo(District::class, 'districtID');
+    }
+
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(Group::class, 'groupID');
+    }
+
+    public function award(): BelongsTo
+    {
+        return $this->belongsTo(SystemStarAwardType::class, 'awardID');
+    }
 }

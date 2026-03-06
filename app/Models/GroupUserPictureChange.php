@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class GroupUserPictureChange extends BaseModel
 {
@@ -20,4 +21,8 @@ class GroupUserPictureChange extends BaseModel
         'createdby' => 'int',
     ];
 
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'userID');
+    }
 }

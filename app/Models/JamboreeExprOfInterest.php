@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class JamboreeExprOfInterest extends BaseModel
 {
@@ -36,4 +37,33 @@ class JamboreeExprOfInterest extends BaseModel
         'declinedReason' => 'string',
     ];
 
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'userID');
+    }
+
+    public function region(): BelongsTo
+    {
+        return $this->belongsTo(Region::class, 'regionID');
+    }
+
+    public function district(): BelongsTo
+    {
+        return $this->belongsTo(District::class, 'districtID');
+    }
+
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(Group::class, 'groupID');
+    }
+
+    public function offeredPositionByUser(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'offeredPositionBy');
+    }
+
+    public function declinedPositionByUser(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'declinedPositionBy');
+    }
 }

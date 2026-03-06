@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class InfoSharingLike extends BaseModel
 {
@@ -20,4 +21,8 @@ class InfoSharingLike extends BaseModel
         'createdby' => 'int',
     ];
 
+    public function info(): BelongsTo
+    {
+        return $this->belongsTo(InfoSharing::class, 'infoID');
+    }
 }

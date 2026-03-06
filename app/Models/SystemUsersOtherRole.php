@@ -82,6 +82,31 @@ class SystemUsersOtherRole extends Pivot implements HasAvatar, HasCurrentTenantL
         return $this->belongsTo(Group::class, 'groupID');
     }
 
+    public function superDistrict(): BelongsTo
+    {
+        return $this->belongsTo(DistrictsSuper::class, 'superDistrictID');
+    }
+
+    public function actionRegion(): BelongsTo
+    {
+        return $this->belongsTo(Region::class, 'actionRegionID');
+    }
+
+    public function actionSuperDistrict(): BelongsTo
+    {
+        return $this->belongsTo(DistrictsSuper::class, 'actionSuperDistrictID');
+    }
+
+    public function actionDistrict(): BelongsTo
+    {
+        return $this->belongsTo(District::class, 'actionDistrictID');
+    }
+
+    public function actionGroup(): BelongsTo
+    {
+        return $this->belongsTo(Group::class, 'actionGroupID');
+    }
+
     public function roleTypeName(): Attribute
     {
         return Attribute::make(

@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class GroupAccountsTransfer extends BaseModel
 {
@@ -45,4 +47,58 @@ class GroupAccountsTransfer extends BaseModel
         'modifiedby' => 'int',
     ];
 
+    public function fromGroup(): BelongsTo
+    {
+        return $this->belongsTo(Group::class, 'fromGroupID');
+    }
+
+    public function toGroup(): BelongsTo
+    {
+        return $this->belongsTo(Group::class, 'toGroupID');
+    }
+
+    public function fromRegion(): BelongsTo
+    {
+        return $this->belongsTo(Region::class, 'fromRegionID');
+    }
+
+    public function toRegion(): BelongsTo
+    {
+        return $this->belongsTo(Region::class, 'toRegionID');
+    }
+
+    public function fromDistrict(): BelongsTo
+    {
+        return $this->belongsTo(District::class, 'fromDistrictID');
+    }
+
+    public function toDistrict(): BelongsTo
+    {
+        return $this->belongsTo(District::class, 'toDistrictID');
+    }
+
+    public function account(): BelongsTo
+    {
+        return $this->belongsTo(GroupAccount::class, 'accountID');
+    }
+
+    public function fromSgl(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'fromSGLID');
+    }
+
+    public function fromTreasurer(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'fromTreasurerID');
+    }
+
+    public function toSgl(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'toSGLID');
+    }
+
+    public function notes(): HasMany
+    {
+        return $this->hasMany(GroupAccountTransfersNote::class, 'transferID');
+    }
 }

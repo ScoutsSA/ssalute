@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class GroupWeeklyEmailsEmailed extends BaseModel
 {
@@ -26,4 +27,23 @@ class GroupWeeklyEmailsEmailed extends BaseModel
         'mailType' => 'string',
     ];
 
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(Group::class, 'assocToGroup');
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'userID');
+    }
+
+    public function account(): BelongsTo
+    {
+        return $this->belongsTo(GroupAccount::class, 'accountID');
+    }
+
+    public function program(): BelongsTo
+    {
+        return $this->belongsTo(GroupProgram::class, 'programID');
+    }
 }

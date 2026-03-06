@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class GroupProgram extends BaseModel
 {
@@ -49,4 +51,83 @@ class GroupProgram extends BaseModel
         'onlineEndDate' => 'date',
     ];
 
+    public function region(): BelongsTo
+    {
+        return $this->belongsTo(Region::class, 'assocToRegion');
+    }
+
+    public function district(): BelongsTo
+    {
+        return $this->belongsTo(District::class, 'assocToDistrict');
+    }
+
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(Group::class, 'assocToGroup');
+    }
+
+    public function responsibleScouter(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'responsibleScouter');
+    }
+
+    public function sharedBy(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'sharedby');
+    }
+
+    public function den(): BelongsTo
+    {
+        return $this->belongsTo(GroupMeerkatDen::class, 'denID');
+    }
+
+    public function pack(): BelongsTo
+    {
+        return $this->belongsTo(GroupCubPack::class, 'packID');
+    }
+
+    public function troop(): BelongsTo
+    {
+        return $this->belongsTo(GroupScoutTroop::class, 'troopID');
+    }
+
+    public function crew(): BelongsTo
+    {
+        return $this->belongsTo(GroupRoverCrew::class, 'crewID');
+    }
+
+    public function meerkatProgramType(): BelongsTo
+    {
+        return $this->belongsTo(SystemProgramTypesMeerkat::class, 'meerkatProgramTypeID');
+    }
+
+    public function cubProgramType(): BelongsTo
+    {
+        return $this->belongsTo(SystemProgramTypesCub::class, 'cubProgramTypeID');
+    }
+
+    public function scoutProgramType(): BelongsTo
+    {
+        return $this->belongsTo(SystemProgramTypesScout::class, 'scoutProgramTypeID');
+    }
+
+    public function roverProgramType(): BelongsTo
+    {
+        return $this->belongsTo(SystemProgramTypesRover::class, 'roverProgramTypeID');
+    }
+
+    public function attendance(): HasMany
+    {
+        return $this->hasMany(GroupAttendance::class, 'programId', 'id');
+    }
+
+    public function onlineTasks(): HasMany
+    {
+        return $this->hasMany(GroupProgramsOnlineTask::class, 'programID', 'id');
+    }
+
+    public function documents(): HasMany
+    {
+        return $this->hasMany(GroupProgramsDocument::class, 'programID', 'id');
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ScouterReviewsLike extends BaseModel
 {
@@ -20,4 +21,8 @@ class ScouterReviewsLike extends BaseModel
         'createdby' => 'int',
     ];
 
+    public function review(): BelongsTo
+    {
+        return $this->belongsTo(ScouterReview::class, 'reviewID');
+    }
 }

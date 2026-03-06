@@ -92,7 +92,11 @@ return new class extends Migration
             $table->string('knownName', 128)->nullable();
             $table->string('scoutName', 128)->nullable();
             $table->string('sex', 6)->nullable();
+            $table->string('race')->nullable();
             $table->date('dob')->nullable();
+            $table->date('dateInvested')->nullable();
+            $table->string('idNumber', 64)->nullable();
+            $table->string('passportNumber', 64)->nullable();
             $table->integer('active')->default(1);
             $table->integer('assoc_to_account')->default(1);
             $table->integer('assoc_to_group')->nullable();
@@ -109,6 +113,26 @@ return new class extends Migration
             $table->string('emergencyContactCell', 128)->nullable();
             $table->string('emergencyContactTel', 32)->nullable();
             $table->string('emergencyContactRelationship', 64)->nullable();
+            $table->string('occupation', 128)->nullable();
+            $table->string('typeOfEmployment', 128)->nullable();
+            $table->string('employer', 128)->nullable();
+            $table->string('religiousBelief', 128)->nullable();
+            $table->text('hobbies')->nullable();
+            $table->text('sports')->nullable();
+            $table->text('interests')->nullable();
+            $table->string('medicalAidName', 128)->nullable();
+            $table->string('medicalAidNr', 64)->nullable();
+            $table->string('medicalAidPrincipalMember', 128)->nullable();
+            $table->string('doctorsName', 128)->nullable();
+            $table->string('doctorsPhone', 32)->nullable();
+            $table->text('allergies')->nullable();
+            $table->text('allergiesInstructions')->nullable();
+            $table->text('disabilities')->nullable();
+            $table->text('disabilitiesInstructions')->nullable();
+            $table->text('medicalConditions')->nullable();
+            $table->text('medicalConditionsInstructions')->nullable();
+            $table->text('currentMedication')->nullable();
+            $table->text('specialMealRequirements')->nullable();
             $table->integer('infoRedacted')->default(0);
             $table->dateTime('created');
             $table->integer('createdby')->default(1);
@@ -159,6 +183,184 @@ return new class extends Migration
             $table->dateTime('modified')->nullable();
             $table->integer('modifiedby')->nullable();
         });
+
+        Schema::create('ams_warrant_types', function (Blueprint $table) {
+            $table->integer('id', true);
+            $table->string('name');
+            $table->string('shortName')->default('');
+            $table->integer('countryID')->default(196);
+            $table->integer('position')->default(0);
+            $table->text('description')->default('');
+        });
+
+        Schema::create('ams_warrant_info', function (Blueprint $table) {
+            $table->integer('id', true);
+            $table->integer('countryID')->default(196);
+            $table->integer('assocToRegion')->default(0);
+            $table->integer('assocToDistrict')->default(0);
+            $table->integer('assocToGroup')->default(0);
+            $table->integer('userID');
+            $table->integer('roleID')->nullable();
+            $table->integer('warrantTypeID')->nullable();
+            $table->string('warrantNr')->default('');
+            $table->string('warrantName')->nullable();
+            $table->integer('limited')->default(0);
+            $table->integer('appointment')->default(0);
+            $table->string('PDFLocation', 1024)->nullable();
+            $table->date('issueDate');
+            $table->date('expireDate');
+            $table->integer('cancellationTypeID')->nullable();
+            $table->text('cancelationNotes')->nullable();
+            $table->integer('expireEmailCount')->default(0);
+            $table->integer('active');
+            $table->dateTime('created');
+            $table->integer('createdby');
+            $table->dateTime('modified')->nullable();
+            $table->integer('modifiedby')->nullable();
+        });
+
+        Schema::create('ams_document_types', function (Blueprint $table) {
+            $table->integer('id', true);
+            $table->integer('countryID')->default(196);
+            $table->string('name');
+            $table->text('description')->default('');
+            $table->integer('aamForm')->default(0);
+            $table->integer('active')->default(1);
+        });
+
+        Schema::create('ams_documents', function (Blueprint $table) {
+            $table->integer('id', true);
+            $table->integer('countryID')->default(196);
+            $table->integer('userID');
+            $table->integer('assocToRegion')->default(0);
+            $table->integer('assocToGroup')->default(0);
+            $table->integer('assocToDistrict')->default(0);
+            $table->integer('documentTypeID');
+            $table->string('description')->default('');
+            $table->string('PDFLocation', 1024)->default('');
+            $table->integer('active')->default(1);
+            $table->dateTime('created');
+            $table->integer('createdby');
+            $table->dateTime('modified')->nullable();
+            $table->integer('modifiedby')->nullable();
+        });
+
+        Schema::create('ams_training_past_types', function (Blueprint $table) {
+            $table->integer('id', true);
+            $table->integer('countryID')->default(196);
+            $table->string('name');
+            $table->string('shortName')->default('');
+            $table->integer('code')->nullable();
+            $table->text('description')->default('');
+            $table->integer('active')->default(1);
+            $table->dateTime('created')->useCurrent();
+            $table->integer('createdby')->default(1);
+            $table->dateTime('modified')->nullable();
+            $table->integer('modifiedby')->nullable();
+        });
+
+        Schema::create('ams_training_past', function (Blueprint $table) {
+            $table->integer('id', true);
+            $table->integer('countryID')->default(196);
+            $table->integer('assocToRegion')->nullable();
+            $table->integer('assocToDistrict')->nullable();
+            $table->integer('assocToGroup')->nullable();
+            $table->integer('userID');
+            $table->integer('trainingTypeID')->nullable();
+            $table->text('courseName')->nullable();
+            $table->string('courseNumber')->default('');
+            $table->date('completionDate');
+            $table->string('PDFLocation', 1024)->nullable();
+            $table->integer('active')->default(1);
+            $table->dateTime('created');
+            $table->integer('createdby');
+            $table->dateTime('modified')->nullable();
+            $table->integer('modifiedby')->nullable();
+            $table->integer('validated')->default(0);
+            $table->dateTime('validatedDate')->nullable();
+            $table->integer('validatedby')->nullable();
+        });
+
+        Schema::create('ams_award_headings', function (Blueprint $table) {
+            $table->integer('id', true);
+            $table->integer('countryID')->default(196);
+            $table->string('reason');
+        });
+
+        Schema::create('ams_award_types', function (Blueprint $table) {
+            $table->integer('id', true);
+            $table->integer('headingID');
+            $table->integer('position')->default(0);
+            $table->string('name');
+            $table->string('shortName')->default('');
+            $table->text('description')->default('');
+            $table->integer('active')->default(1);
+            $table->dateTime('created');
+            $table->integer('createdby');
+            $table->dateTime('modified')->nullable();
+            $table->integer('modifiedby')->nullable();
+        });
+
+        Schema::create('ams_award_info', function (Blueprint $table) {
+            $table->integer('id', true);
+            $table->integer('countryID')->default(196);
+            $table->integer('assocToRegion')->default(0);
+            $table->integer('assocToDistrict')->nullable();
+            $table->integer('assocToGroup')->nullable();
+            $table->integer('userID');
+            $table->integer('awardHeadingID');
+            $table->integer('awardTypeID');
+            $table->date('awardDate');
+            $table->string('PDFLocation', 1024)->nullable();
+            $table->integer('active');
+            $table->dateTime('created');
+            $table->integer('createdby');
+            $table->dateTime('modified')->nullable();
+            $table->integer('modifiedby')->nullable();
+        });
+
+        Schema::create('ams_police_clearance', function (Blueprint $table) {
+            $table->integer('id', true);
+            $table->integer('userID');
+            $table->text('result');
+            $table->string('documentLocation', 1024)->nullable();
+            $table->date('dateDone');
+            $table->integer('active');
+            $table->dateTime('created');
+            $table->integer('createdby');
+            $table->dateTime('modified')->nullable();
+            $table->integer('modifiedby')->nullable();
+        });
+
+        Schema::create('ams_past_service_type', function (Blueprint $table) {
+            $table->integer('id', true);
+            $table->integer('countryID')->default(196);
+            $table->integer('position')->default(0);
+            $table->string('name');
+            $table->integer('newID')->nullable();
+        });
+
+        Schema::create('ams_past_service_info', function (Blueprint $table) {
+            $table->integer('id', true);
+            $table->integer('countryID')->default(196);
+            $table->integer('assocToRegion')->nullable();
+            $table->integer('assocToDistrict')->nullable();
+            $table->integer('assocToGroup')->nullable();
+            $table->integer('userID');
+            $table->integer('pastServiceType')->nullable();
+            $table->date('startDate')->nullable();
+            $table->date('endDate')->nullable();
+            $table->string('otherRegionName')->nullable();
+            $table->string('otherDistrictName')->nullable();
+            $table->string('otherGroupName')->nullable();
+            $table->string('PDFLocation', 1024)->nullable();
+            $table->integer('active')->default(1);
+            $table->dateTime('created');
+            $table->integer('createdby');
+            $table->dateTime('modified')->nullable();
+            $table->integer('modifiedby')->nullable();
+            $table->integer('toBeFixed')->default(0);
+        });
     }
 
     public function down(): void
@@ -167,6 +369,18 @@ return new class extends Migration
             return;
         }
 
+        Schema::dropIfExists('ams_past_service_info');
+        Schema::dropIfExists('ams_past_service_type');
+        Schema::dropIfExists('ams_police_clearance');
+        Schema::dropIfExists('ams_award_info');
+        Schema::dropIfExists('ams_award_types');
+        Schema::dropIfExists('ams_award_headings');
+        Schema::dropIfExists('ams_training_past');
+        Schema::dropIfExists('ams_training_past_types');
+        Schema::dropIfExists('ams_documents');
+        Schema::dropIfExists('ams_document_types');
+        Schema::dropIfExists('ams_warrant_info');
+        Schema::dropIfExists('ams_warrant_types');
         Schema::dropIfExists('system_users_other_roles');
         Schema::dropIfExists('system_users');
         Schema::dropIfExists('system_user_types');

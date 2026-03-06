@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class AmsTrainingPastType extends BaseModel
 {
@@ -27,4 +28,8 @@ class AmsTrainingPastType extends BaseModel
         'modifiedby' => 'int',
     ];
 
+    public function trainingHistories(): HasMany
+    {
+        return $this->hasMany(AmsTrainingPast::class, 'trainingTypeID');
+    }
 }

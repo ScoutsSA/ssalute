@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class JamboreeGeneratedPdf extends BaseModel
 {
@@ -25,4 +26,23 @@ class JamboreeGeneratedPdf extends BaseModel
         'createdby' => 'int',
     ];
 
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'userID');
+    }
+
+    public function troop(): BelongsTo
+    {
+        return $this->belongsTo(JamboreeTroop::class, 'troopID');
+    }
+
+    public function bus(): BelongsTo
+    {
+        return $this->belongsTo(JamboreeBusInfo::class, 'busID');
+    }
+
+    public function subCamp(): BelongsTo
+    {
+        return $this->belongsTo(JamboreeSubCamp::class, 'subCampID');
+    }
 }

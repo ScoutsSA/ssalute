@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class AmsPastServiceType extends BaseModel
 {
@@ -20,4 +21,8 @@ class AmsPastServiceType extends BaseModel
         'newID' => 'int',
     ];
 
+    public function pastServices(): HasMany
+    {
+        return $this->hasMany(AmsPastServiceInfo::class, 'pastServiceType');
+    }
 }

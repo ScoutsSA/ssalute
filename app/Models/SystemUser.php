@@ -18,8 +18,10 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -265,6 +267,167 @@ class SystemUser extends User implements FilamentUser, HasDefaultTenant, HasTena
     public function roleAttachments(): HasMany
     {
         return $this->hasMany(SystemUsersOtherRole::class, 'userID', 'id');
+    }
+
+    public function activeRoleAttachments(): HasMany
+    {
+        return $this->roleAttachments()->where('active', 1);
+    }
+
+    public function inactiveRoleAttachments(): HasMany
+    {
+        return $this->roleAttachments()->where('active', 0);
+    }
+
+    public function warrants(): HasMany
+    {
+        return $this->hasMany(AmsWarrantInfo::class, 'userID', 'id');
+    }
+
+    public function activeWarrants(): HasMany
+    {
+        return $this->warrants()->where('active', 1);
+    }
+
+    public function documents(): HasMany
+    {
+        return $this->hasMany(AmsDocument::class, 'userID', 'id');
+    }
+
+    public function trainingHistory(): HasMany
+    {
+        return $this->hasMany(AmsTrainingPast::class, 'userID', 'id');
+    }
+
+    public function awards(): HasMany
+    {
+        return $this->hasMany(AmsAwardInfo::class, 'userID', 'id');
+    }
+
+    public function policeClearances(): HasMany
+    {
+        return $this->hasMany(AmsPoliceClearance::class, 'userID', 'id');
+    }
+
+    public function pastService(): HasMany
+    {
+        return $this->hasMany(AmsPastServiceInfo::class, 'userID', 'id');
+    }
+
+    public function latestPoliceClearance(): HasOne
+    {
+        return $this->hasOne(AmsPoliceClearance::class, 'userID', 'id')
+            ->latestOfMany('dateDone');
+    }
+
+    public function chargeInfos(): HasMany
+    {
+        return $this->hasMany(AmsChargeInfo::class, 'userID', 'id');
+    }
+
+    public function disciplinaryInfos(): HasMany
+    {
+        return $this->hasMany(AmsDisciplinaryInfo::class, 'userID', 'id');
+    }
+
+    public function criminalChecks(): HasMany
+    {
+        return $this->hasMany(AmsCriminalCheck::class, 'userID', 'id');
+    }
+
+    public function awardApplications(): HasMany
+    {
+        return $this->hasMany(AmsAwardApplication::class, 'userID', 'id');
+    }
+
+    public function warrantApplications(): HasMany
+    {
+        return $this->hasMany(AmsWarrantApplication::class, 'userID', 'id');
+    }
+
+    public function warrantExtensions(): HasMany
+    {
+        return $this->hasMany(AmsWarrantExtension::class, 'userID', 'id');
+    }
+
+    public function resignals(): HasMany
+    {
+        return $this->hasMany(AmsResignLeader::class, 'userID', 'id');
+    }
+
+    public function retirements(): HasMany
+    {
+        return $this->hasMany(AmsRetireLeader::class, 'userID', 'id');
+    }
+
+    public function suspensions(): HasMany
+    {
+        return $this->hasMany(AmsSuspendLeader::class, 'userID', 'id');
+    }
+
+    public function terminations(): HasMany
+    {
+        return $this->hasMany(AmsTerminateLeader::class, 'userID', 'id');
+    }
+
+    public function adultLeaderMoves(): HasMany
+    {
+        return $this->hasMany(AmsAdultLeaderMove::class, 'userID', 'id');
+    }
+
+    public function attendance(): HasMany
+    {
+        return $this->hasMany(GroupAttendance::class, 'userId', 'id');
+    }
+
+    public function responsiblePrograms(): HasMany
+    {
+        return $this->hasMany(GroupProgram::class, 'responsibleScouter', 'id');
+    }
+
+    public function notifications(): HasMany
+    {
+        return $this->hasMany(Notification::class, 'userID', 'id');
+    }
+
+    public function supportChats(): HasMany
+    {
+        return $this->hasMany(SupportChat::class, 'userID', 'id');
+    }
+
+    public function supportTickets(): HasMany
+    {
+        return $this->hasMany(SupportChatsStart::class, 'userID', 'id');
+    }
+
+    public function logging(): HasMany
+    {
+        return $this->hasMany(SystemUserLogging::class, 'userID', 'id');
+    }
+
+    public function pictureChanges(): HasMany
+    {
+        return $this->hasMany(GroupUserPictureChange::class, 'userID', 'id');
+    }
+
+    public function emergencyContacts(): HasMany
+    {
+        return $this->hasMany(SystemUsersEmergencyContact::class, 'userID', 'id');
+    }
+
+    public function pack(): BelongsTo
+    {
+        return $this->belongsTo(GroupCubPack::class, 'packID');
+    }
+
+    public function troop(): BelongsTo
+    {
+        return $this->belongsTo(GroupScoutTroop::class, 'troopID');
+    }
+
+    public function scoutPatrol(): BelongsTo
+    {
+        return $this->belongsTo(GroupScoutsPatrolName::class, 'scoutPatrolID');
     }
 
     /*******************

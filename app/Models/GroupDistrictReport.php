@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class GroupDistrictReport extends BaseModel
 {
@@ -24,4 +25,18 @@ class GroupDistrictReport extends BaseModel
         'girls' => 'int',
     ];
 
+    public function region(): BelongsTo
+    {
+        return $this->belongsTo(Region::class, 'assocToRegion');
+    }
+
+    public function district(): BelongsTo
+    {
+        return $this->belongsTo(District::class, 'assocToDistrict');
+    }
+
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(Group::class, 'assocToGroup');
+    }
 }

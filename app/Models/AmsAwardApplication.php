@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AmsAwardApplication extends BaseModel
 {
@@ -33,4 +34,33 @@ class AmsAwardApplication extends BaseModel
         'awardDescription' => 'string',
     ];
 
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'userID');
+    }
+
+    public function region(): BelongsTo
+    {
+        return $this->belongsTo(Region::class, 'assocToRegion');
+    }
+
+    public function awardHeading(): BelongsTo
+    {
+        return $this->belongsTo(AmsAwardHeading::class, 'awardHeadingID');
+    }
+
+    public function awardType(): BelongsTo
+    {
+        return $this->belongsTo(AmsAwardType::class, 'awardTypeID');
+    }
+
+    public function awardedBy(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'awardedBy');
+    }
+
+    public function declinedBy(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'declinedBy');
+    }
 }

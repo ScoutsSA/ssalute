@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class EventCompetitionsScoring extends BaseModel
 {
@@ -28,4 +29,33 @@ class EventCompetitionsScoring extends BaseModel
         'notes' => 'string',
     ];
 
+    public function scoringArea(): BelongsTo
+    {
+        return $this->belongsTo(EventCompetitionsScoringArea::class, 'scoringAreaID');
+    }
+
+    public function scoringSheet(): BelongsTo
+    {
+        return $this->belongsTo(EventCompetitionsScoringSheet::class, 'scoringSheetID');
+    }
+
+    public function question(): BelongsTo
+    {
+        return $this->belongsTo(EventCompetitionsQuestion::class, 'questionID');
+    }
+
+    public function answer(): BelongsTo
+    {
+        return $this->belongsTo(EventCompetitionsAnswer::class, 'answerID');
+    }
+
+    public function event(): BelongsTo
+    {
+        return $this->belongsTo(GroupEvent::class, 'eventID');
+    }
+
+    public function team(): BelongsTo
+    {
+        return $this->belongsTo(EventCompetitionsGroupsAttending::class, 'teamID');
+    }
 }

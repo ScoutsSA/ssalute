@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class GroupDistrictReportsScoutsAttendance extends BaseModel
 {
@@ -24,4 +25,8 @@ class GroupDistrictReportsScoutsAttendance extends BaseModel
         'comments' => 'string',
     ];
 
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(Group::class, 'assocToGroup');
+    }
 }

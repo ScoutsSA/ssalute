@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SystemBadgeScoutsToBadge extends BaseModel
 {
@@ -19,4 +20,13 @@ class SystemBadgeScoutsToBadge extends BaseModel
         'active' => 'int',
     ];
 
+    public function badge(): BelongsTo
+    {
+        return $this->belongsTo(SystemBadgeScoutsFirst::class, 'badgeID');
+    }
+
+    public function toBadgeTask(): BelongsTo
+    {
+        return $this->belongsTo(SystemBadgeScoutsSecond::class, 'toBadgeTaskID');
+    }
 }

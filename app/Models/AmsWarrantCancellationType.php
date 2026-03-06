@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class AmsWarrantCancellationType extends BaseModel
 {
@@ -18,4 +19,8 @@ class AmsWarrantCancellationType extends BaseModel
         'active' => 'int',
     ];
 
+    public function warrants(): HasMany
+    {
+        return $this->hasMany(AmsWarrantInfo::class, 'cancellationTypeID');
+    }
 }

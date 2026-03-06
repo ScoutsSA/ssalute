@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class BadgesCub extends BaseModel
 {
@@ -34,4 +35,38 @@ class BadgesCub extends BaseModel
         'modifiedby' => 'int',
     ];
 
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'userID');
+    }
+
+    public function cub(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'cubID');
+    }
+
+    public function region(): BelongsTo
+    {
+        return $this->belongsTo(Region::class, 'assocToRegion');
+    }
+
+    public function district(): BelongsTo
+    {
+        return $this->belongsTo(District::class, 'assocToDistrict');
+    }
+
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(Group::class, 'assocToGroup');
+    }
+
+    public function badgeFirst(): BelongsTo
+    {
+        return $this->belongsTo(SystemBadgeCubsFirst::class, 'firstID');
+    }
+
+    public function badgeSecond(): BelongsTo
+    {
+        return $this->belongsTo(SystemBadgeCubsSecond::class, 'secondID');
+    }
 }

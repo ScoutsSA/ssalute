@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class GroupAccount extends BaseModel
 {
@@ -31,4 +33,33 @@ class GroupAccount extends BaseModel
         'modifiedby' => 'int',
     ];
 
+    public function region(): BelongsTo
+    {
+        return $this->belongsTo(Region::class, 'assocToRegion');
+    }
+
+    public function district(): BelongsTo
+    {
+        return $this->belongsTo(District::class, 'assocToDistrict');
+    }
+
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(Group::class, 'assocToGroup');
+    }
+
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(GroupFinancialInvoice::class, 'accountID', 'id');
+    }
+
+    public function creditNotes(): HasMany
+    {
+        return $this->hasMany(GroupFinancialCreditNote::class, 'accountID', 'id');
+    }
+
+    public function paymentsMade(): HasMany
+    {
+        return $this->hasMany(GroupFinancialPaymentsMade::class, 'accountID', 'id');
+    }
 }

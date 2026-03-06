@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class JamboreeBusInfo extends BaseModel
 {
@@ -34,4 +35,8 @@ class JamboreeBusInfo extends BaseModel
         'modifiedby' => 'int',
     ];
 
+    public function region(): BelongsTo
+    {
+        return $this->belongsTo(Region::class, 'regionID');
+    }
 }

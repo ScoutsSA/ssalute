@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SystemAdvancementMeerkatsSecond extends BaseModel
 {
@@ -27,4 +28,8 @@ class SystemAdvancementMeerkatsSecond extends BaseModel
         'active' => 'int',
     ];
 
+    public function advancement(): BelongsTo
+    {
+        return $this->belongsTo(SystemAdvancementMeerkatsLevel::class, 'advancmentID');
+    }
 }

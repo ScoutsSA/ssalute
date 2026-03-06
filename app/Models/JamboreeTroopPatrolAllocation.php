@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class JamboreeTroopPatrolAllocation extends BaseModel
 {
@@ -26,4 +27,23 @@ class JamboreeTroopPatrolAllocation extends BaseModel
         'modifiedby' => 'int',
     ];
 
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'userID');
+    }
+
+    public function troop(): BelongsTo
+    {
+        return $this->belongsTo(JamboreeTroop::class, 'troopID');
+    }
+
+    public function patrol(): BelongsTo
+    {
+        return $this->belongsTo(JamboreePatrol::class, 'patrolID');
+    }
+
+    public function role(): BelongsTo
+    {
+        return $this->belongsTo(JamboreeAdultRole::class, 'roleID');
+    }
 }

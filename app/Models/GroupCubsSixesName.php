@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class GroupCubsSixesName extends BaseModel
 {
@@ -23,4 +24,13 @@ class GroupCubsSixesName extends BaseModel
         'createdby' => 'int',
     ];
 
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(Group::class, 'assocToGroup');
+    }
+
+    public function pack(): BelongsTo
+    {
+        return $this->belongsTo(GroupCubPack::class, 'packID');
+    }
 }

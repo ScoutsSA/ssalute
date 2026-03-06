@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class NotificationsArchive extends BaseModel
 {
@@ -33,4 +34,23 @@ class NotificationsArchive extends BaseModel
         'dismissDate' => 'datetime',
     ];
 
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'userID');
+    }
+
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(Group::class, 'groupID');
+    }
+
+    public function district(): BelongsTo
+    {
+        return $this->belongsTo(District::class, 'districtID');
+    }
+
+    public function region(): BelongsTo
+    {
+        return $this->belongsTo(Region::class, 'regionID');
+    }
 }

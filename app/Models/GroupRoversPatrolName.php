@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class GroupRoversPatrolName extends BaseModel
 {
@@ -23,4 +24,13 @@ class GroupRoversPatrolName extends BaseModel
         'createdby' => 'int',
     ];
 
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(Group::class, 'assocToGroup');
+    }
+
+    public function crew(): BelongsTo
+    {
+        return $this->belongsTo(GroupRoverCrew::class, 'crewID');
+    }
 }
