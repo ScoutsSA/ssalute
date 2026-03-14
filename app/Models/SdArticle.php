@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SdArticle extends BaseModel
 {
@@ -26,4 +27,13 @@ class SdArticle extends BaseModel
         'views' => 'int',
     ];
 
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(SdArticleCat::class, 'catID');
+    }
+
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(Group::class, 'groupID');
+    }
 }

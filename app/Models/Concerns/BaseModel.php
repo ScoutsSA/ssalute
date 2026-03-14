@@ -2,6 +2,7 @@
 
 namespace App\Models\Concerns;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -12,8 +13,18 @@ use Illuminate\Database\Eloquent\Model;
  */
 abstract class BaseModel extends Model
 {
+    use HasFactory;
     use MightHaveCreatedBy;
     use MightHaveModifiedBy;
+
+    public function setAttribute($key, $value): static
+    {
+        if (is_null($value) && $this->hasCast($key, ['string'])) {
+            $value = '';
+        }
+
+        return parent::setAttribute($key, $value);
+    }
 
     public function getCreatedAtColumn(): ?string
     {

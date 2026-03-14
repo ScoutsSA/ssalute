@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class JamboreeInvoicesItem extends BaseModel
 {
@@ -27,4 +28,13 @@ class JamboreeInvoicesItem extends BaseModel
         'modifiedby' => 'int',
     ];
 
+    public function invoice(): BelongsTo
+    {
+        return $this->belongsTo(JamboreeInvoice::class, 'invoiceID');
+    }
+
+    public function applicant(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'applicantID');
+    }
 }

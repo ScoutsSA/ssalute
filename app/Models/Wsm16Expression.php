@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Wsm16Expression extends BaseModel
 {
@@ -31,4 +32,33 @@ class Wsm16Expression extends BaseModel
         'modifiedby' => 'int',
     ];
 
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'userID');
+    }
+
+    public function role(): BelongsTo
+    {
+        return $this->belongsTo(SystemUserType::class, 'roleID');
+    }
+
+    public function region(): BelongsTo
+    {
+        return $this->belongsTo(Region::class, 'regionID');
+    }
+
+    public function district(): BelongsTo
+    {
+        return $this->belongsTo(District::class, 'districtID');
+    }
+
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(Group::class, 'groupID');
+    }
+
+    public function applyRole(): BelongsTo
+    {
+        return $this->belongsTo(SystemUserType::class, 'applyRoleID');
+    }
 }

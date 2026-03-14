@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SystemAdvancementCubsThird extends BaseModel
 {
@@ -32,4 +33,13 @@ class SystemAdvancementCubsThird extends BaseModel
         'active' => 'int',
     ];
 
+    public function advancement(): BelongsTo
+    {
+        return $this->belongsTo(SystemAdvancementCubsLevel::class, 'advancmentID');
+    }
+
+    public function advancementSecond(): BelongsTo
+    {
+        return $this->belongsTo(SystemAdvancementCubsSecond::class, 'secondID');
+    }
 }

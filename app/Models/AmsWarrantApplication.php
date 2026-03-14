@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AmsWarrantApplication extends BaseModel
 {
@@ -34,4 +35,38 @@ class AmsWarrantApplication extends BaseModel
         'awardDescription' => 'string',
     ];
 
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'userID');
+    }
+
+    public function region(): BelongsTo
+    {
+        return $this->belongsTo(Region::class, 'assocToRegion');
+    }
+
+    public function district(): BelongsTo
+    {
+        return $this->belongsTo(District::class, 'assocToDistrict');
+    }
+
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(Group::class, 'assocToGroup');
+    }
+
+    public function warrantType(): BelongsTo
+    {
+        return $this->belongsTo(AmsWarrantType::class, 'warrantTypeID');
+    }
+
+    public function awardedBy(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'awardedBy');
+    }
+
+    public function declinedBy(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'declinedBy');
+    }
 }

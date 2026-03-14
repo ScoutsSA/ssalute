@@ -8,9 +8,8 @@ class ExampleTest extends TestCase
 {
     /**
      * A basic test example.
-     *
-     * @test
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function that_true_is_true(): void
     {
         $this->assertTrue(true);

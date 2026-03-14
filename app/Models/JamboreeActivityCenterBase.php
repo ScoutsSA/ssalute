@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class JamboreeActivityCenterBase extends BaseModel
 {
@@ -22,4 +23,8 @@ class JamboreeActivityCenterBase extends BaseModel
         'slots' => 'int',
     ];
 
+    public function center(): BelongsTo
+    {
+        return $this->belongsTo(JamboreeActivityCenter::class, 'centerID');
+    }
 }

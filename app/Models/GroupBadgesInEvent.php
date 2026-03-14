@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class GroupBadgesInEvent extends BaseModel
 {
@@ -28,4 +29,18 @@ class GroupBadgesInEvent extends BaseModel
         'modifiedby' => 'int',
     ];
 
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(Group::class, 'assocToGroup');
+    }
+
+    public function event(): BelongsTo
+    {
+        return $this->belongsTo(GroupEvent::class, 'eventID');
+    }
+
+    public function scoutProgramType(): BelongsTo
+    {
+        return $this->belongsTo(SystemProgramTypesScout::class, 'scoutProgramTypeID');
+    }
 }

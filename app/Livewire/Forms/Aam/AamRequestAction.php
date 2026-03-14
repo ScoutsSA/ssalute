@@ -22,8 +22,6 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -176,7 +174,7 @@ class AamRequestAction extends Component implements HasActions, HasSchemas
         return [
             Action::make('decline')
                 ->action(fn (AamRequestAction $livewire, array $data) => $livewire->declineAction($data))
-                ->visible(fn ($record) => $record->status === AamStatuses::PENDING)
+                ->visible(fn (AamRequestAction $livewire) => $livewire->aamRequest->status === AamStatuses::PENDING)
                 ->requiresConfirmation()
                 ->modalHeading('Decline Application?')
                 ->modalDescription('To decline an application you need to give a reason!')
@@ -193,7 +191,7 @@ class AamRequestAction extends Component implements HasActions, HasSchemas
                 ]),
             Action::make('Approve')
                 ->action(fn (AamRequestAction $livewire, array $data) => $livewire->approveAction($data))
-                ->visible(fn ($record) => $record->status === AamStatuses::PENDING)
+                ->visible(fn (AamRequestAction $livewire) => $livewire->aamRequest->status === AamStatuses::PENDING)
                 ->requiresConfirmation()
                 ->modalHeading('Approve Application?')
                 ->modalDescription('Have you verified their information?')
@@ -220,11 +218,7 @@ class AamRequestAction extends Component implements HasActions, HasSchemas
             abort(404);
         }
 
-        // This authorization check should probably move to a policy or gate
-        /** @var Collection $aamRequest->scoutersWhoCanApprove */
-        if ($aamRequest->scoutersWhoCanApprove->doesntContain('id', Auth::id()) && ! Auth::user()->isSuperAdmin()) {
-            abort(403, 'You do not have permission to view this AAM form');
-        }
+        $this->authorize('view', $aamRequest);
 
         $this->aamRequest = $aamRequest;
     }
@@ -246,6 +240,7 @@ class AamRequestAction extends Component implements HasActions, HasSchemas
 
     public function approveAction(array $data)
     {
+        $this->authorize('approve', $this->aamRequest);
         Log::info('ViewAamForm - Approve Action', ['aamRequest' => $this->aamRequest->id, 'user' => auth()->id()]);
 
         $this->aamRequest->approve(
@@ -262,6 +257,7 @@ class AamRequestAction extends Component implements HasActions, HasSchemas
 
     public function declineAction(array $data)
     {
+        $this->authorize('decline', $this->aamRequest);
         Log::info('ViewAamForm - Decline Action', ['aamRequest' => $this->aamRequest->id, 'user' => auth()->id()]);
         $this->aamRequest->decline(
             actionedBy: auth()->user(),

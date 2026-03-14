@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class GroupFinancialFee extends BaseModel
 {
@@ -28,4 +29,28 @@ class GroupFinancialFee extends BaseModel
         'modifiedby' => 'int',
     ];
 
+    public function region(): BelongsTo
+    {
+        return $this->belongsTo(Region::class, 'assocToRegion');
+    }
+
+    public function district(): BelongsTo
+    {
+        return $this->belongsTo(District::class, 'assocToDistrict');
+    }
+
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(Group::class, 'assocToGroup');
+    }
+
+    public function financialYear(): BelongsTo
+    {
+        return $this->belongsTo(GroupFinancialYear::class, 'financialYearID');
+    }
+
+    public function feeType(): BelongsTo
+    {
+        return $this->belongsTo(GroupFinancialFeeType::class, 'feeTypeID');
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class EventCompetitionsScoringDnp extends BaseModel
 {
@@ -24,4 +25,18 @@ class EventCompetitionsScoringDnp extends BaseModel
         'modifiedby' => 'int',
     ];
 
+    public function scoringSheet(): BelongsTo
+    {
+        return $this->belongsTo(EventCompetitionsScoringSheet::class, 'scoringSheetID');
+    }
+
+    public function event(): BelongsTo
+    {
+        return $this->belongsTo(GroupEvent::class, 'eventID');
+    }
+
+    public function team(): BelongsTo
+    {
+        return $this->belongsTo(EventCompetitionsGroupsAttending::class, 'teamID');
+    }
 }

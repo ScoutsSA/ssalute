@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class JamboreeInvoice extends BaseModel
 {
@@ -28,4 +30,13 @@ class JamboreeInvoice extends BaseModel
         'modifiedby' => 'int',
     ];
 
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'userID');
+    }
+
+    public function items(): HasMany
+    {
+        return $this->hasMany(JamboreeInvoicesItem::class, 'invoiceID');
+    }
 }

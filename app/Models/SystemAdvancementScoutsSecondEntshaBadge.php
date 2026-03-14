@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SystemAdvancementScoutsSecondEntshaBadge extends BaseModel
 {
@@ -23,4 +24,13 @@ class SystemAdvancementScoutsSecondEntshaBadge extends BaseModel
         'modifiedby' => 'int',
     ];
 
+    public function task(): BelongsTo
+    {
+        return $this->belongsTo(SystemAdvancementScoutsSecond::class, 'taskID');
+    }
+
+    public function badge(): BelongsTo
+    {
+        return $this->belongsTo(SystemBadgeScoutsFirst::class, 'badgeID');
+    }
 }

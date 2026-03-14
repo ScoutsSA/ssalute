@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class AmsWarrantType extends BaseModel
 {
@@ -29,4 +30,13 @@ class AmsWarrantType extends BaseModel
         'modifiedby' => 'int',
     ];
 
+    public function warrants(): HasMany
+    {
+        return $this->hasMany(AmsWarrantInfo::class, 'warrantTypeID');
+    }
+
+    public function applications(): HasMany
+    {
+        return $this->hasMany(AmsWarrantApplication::class, 'warrantTypeID');
+    }
 }

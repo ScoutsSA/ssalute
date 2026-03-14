@@ -21,7 +21,7 @@ class GroupsTable
                     ->numeric()
                     ->sortable()
                     ->searchable()
-                    ->toggleable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('name')
                     ->description(fn (Group $record) => $record->region?->name . ' - ' . $record->district?->name)
                     ->sortable()
@@ -90,7 +90,6 @@ class GroupsTable
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
 
-                // Maybe have a "Has Banking info" column that checks if bankAccountName, bankName, branchName, branchCode, bankAccountNumber are filled in?
                 TextColumn::make('website')
                     ->sortable()
                     ->toggleable()

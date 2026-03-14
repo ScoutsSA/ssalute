@@ -61,43 +61,6 @@ class ManageFormSettings extends SettingsPage
                                                         ->columnSpanFull(),
                                                 ]),
 
-                                            Tab::make('Next In line')
-                                                ->schema([
-                                                    TextEntry::make('next_in_line_info')
-                                                        ->hiddenLabel()
-                                                        ->state('These options are the "TO" for the emails we send. Based on the user\'s selection we will pick the most relevant Group/District/Regional grouping be used, if it is not set or there is no user with that role then the National Roles will be used in the order they are listed below.')
-                                                        ->columnSpanFull(),
-                                                    TextEntry::make('next_in_line_note')
-                                                        ->hiddenLabel()
-                                                        ->state('This should ideally be an individual, not a group of members. This is the first person who will be directly contacted to assist the user with their AAM request.')
-                                                        ->columnSpanFull(),
-                                                    Select::make('aam_next_in_line_role_national')
-                                                        ->label('National Role (and Catch All)')
-                                                        ->options($roles)
-                                                        ->helperText("We'd recommend your National Chair for Adult Support")
-                                                        ->required()
-                                                        ->searchable()
-                                                        ->columnSpanFull(),
-                                                    Select::make('aam_next_in_line_role_regional')
-                                                        ->label('Regional Role')
-                                                        ->options($roles)
-                                                        ->helperText("We'd recommend your Regional Team Coordinator: Adult Support")
-                                                        ->searchable()
-                                                        ->columnSpanFull(),
-                                                    Select::make('aam_next_in_line_role_district')
-                                                        ->label('District Role')
-                                                        ->options($roles)
-                                                        ->helperText("We'd recommend your District Commissioner")
-                                                        ->searchable()
-                                                        ->columnSpanFull(),
-                                                    Select::make('aam_next_in_line_role_group')
-                                                        ->label('Group Role')
-                                                        ->options($roles)
-                                                        ->helperText("We'd recommend your Scout Group Leader")
-                                                        ->searchable()
-                                                        ->columnSpanFull(),
-                                                ]),
-
                                             Tab::make('Approval')
                                                 ->schema([
                                                     TextEntry::make('approval_info')

@@ -18,6 +18,7 @@ class RoleTable
             ->defaultSort('position')
             ->modifyQueryUsing(fn ($query) => $query->withCount(['users', 'activeUsers', 'pastUsers'])) // This is for description text
             ->columns([
+                TextColumn::make('id')->label('ID')->sortable()->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('id')
                     ->searchable()
                     ->sortable()

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ApiKey extends BaseModel
 {
@@ -21,4 +22,8 @@ class ApiKey extends BaseModel
         'created' => 'datetime',
     ];
 
+    public function issuedToUser(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'issuedToUserID');
+    }
 }

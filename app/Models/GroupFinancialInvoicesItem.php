@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class GroupFinancialInvoicesItem extends BaseModel
 {
@@ -29,4 +30,23 @@ class GroupFinancialInvoicesItem extends BaseModel
         'modifiedby' => 'int',
     ];
 
+    public function invoice(): BelongsTo
+    {
+        return $this->belongsTo(GroupFinancialInvoice::class, 'invoiceID');
+    }
+
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(Group::class, 'assocToGroup');
+    }
+
+    public function account(): BelongsTo
+    {
+        return $this->belongsTo(GroupAccount::class, 'accountID');
+    }
+
+    public function financialYear(): BelongsTo
+    {
+        return $this->belongsTo(GroupFinancialYear::class, 'financialYearID');
+    }
 }

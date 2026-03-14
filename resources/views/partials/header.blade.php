@@ -117,7 +117,9 @@
                         @if (auth()->user()->isSuperAdmin())
                             <flux:menu.item :href="\Filament\Pages\Dashboard::getUrl(panel: 'admin')" icon="cog">{{ __('Backoffice Admin Panel') }}</flux:menu.item>
                         @endif
-                        <flux:menu.item :href="route('settings.profile')" icon="cog" wire:navigate>{{ __('Settings') }}</flux:menu.item>
+                        @if (auth()->user()->hasAnyActiveRole())
+                            <flux:menu.item :href="\Filament\Pages\Dashboard::getUrl(panel: 'general', tenant: auth()->user()->getDefaultTenant(\Filament\Facades\Filament::getPanel('general')))" icon="chart-bar">{{ __('Management Panel') }}</flux:menu.item>
+                        @endif
                     </flux:menu.radio.group>
 
                     <flux:menu.separator />

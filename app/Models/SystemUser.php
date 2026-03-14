@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\UserBranchTypes;
+use App\Enums\UserEnglishProficiency;
 use App\Enums\UserRace;
 use App\Enums\UserSex;
 use App\Enums\UserTitle;
@@ -11,17 +12,25 @@ use App\Models\Concerns\MightHaveModifiedBy;
 use App\Providers\AppServiceProvider;
 use App\Settings\GeneralSettings;
 use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasDefaultTenant;
+use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
-class SystemUser extends User implements FilamentUser
+class SystemUser extends User implements FilamentUser, HasDefaultTenant, HasTenants
 {
+    use HasFactory;
     use MightHaveCreatedBy;
     use MightHaveModifiedBy;
 
@@ -142,7 +151,7 @@ class SystemUser extends User implements FilamentUser
         'homeLanguage' => 'int',
         'otherLanguage' => 'int',
         'otherLanguages' => 'string',
-        'proficiencyInEnglish' => 'int',
+        'proficiencyInEnglish' => UserEnglishProficiency::class,
         'religiousBelief' => 'string',
         'highestEducation' => 'int',
         'nrOfChildrenBoys' => 'int',
@@ -244,7 +253,7 @@ class SystemUser extends User implements FilamentUser
         ->wherePivot('suspended', 0)*/
     }
 
-    public function pastRoles()
+    public function pastRoles(): BelongsToMany
     {
         return $this->roles()
             ->wherePivot('active', 0);
@@ -259,6 +268,187 @@ class SystemUser extends User implements FilamentUser
     public function roleAttachments(): HasMany
     {
         return $this->hasMany(SystemUsersOtherRole::class, 'userID', 'id');
+    }
+
+    public function activeRoleAttachments(): HasMany
+    {
+        return $this->roleAttachments()->where('active', 1);
+    }
+
+    public function inactiveRoleAttachments(): HasMany
+    {
+        return $this->roleAttachments()->where('active', 0);
+    }
+
+    public function warrants(): HasMany
+    {
+        return $this->hasMany(AmsWarrantInfo::class, 'userID', 'id');
+    }
+
+    public function activeWarrants(): HasMany
+    {
+        return $this->warrants()->where('active', 1);
+    }
+
+    public function documents(): HasMany
+    {
+        return $this->hasMany(AmsDocument::class, 'userID', 'id');
+    }
+
+    public function trainingHistory(): HasMany
+    {
+        return $this->hasMany(AmsTrainingPast::class, 'userID', 'id');
+    }
+
+    public function awards(): HasMany
+    {
+        return $this->hasMany(AmsAwardInfo::class, 'userID', 'id');
+    }
+
+    public function policeClearances(): HasMany
+    {
+        return $this->hasMany(AmsPoliceClearance::class, 'userID', 'id');
+    }
+
+    public function pastService(): HasMany
+    {
+        return $this->hasMany(AmsPastServiceInfo::class, 'userID', 'id');
+    }
+
+    public function latestPoliceClearance(): HasOne
+    {
+        return $this->hasOne(AmsPoliceClearance::class, 'userID', 'id')
+            ->latestOfMany('dateDone');
+    }
+
+    public function chargeInfos(): HasMany
+    {
+        return $this->hasMany(AmsChargeInfo::class, 'userID', 'id');
+    }
+
+    public function disciplinaryInfos(): HasMany
+    {
+        return $this->hasMany(AmsDisciplinaryInfo::class, 'userID', 'id');
+    }
+
+    public function criminalChecks(): HasMany
+    {
+        return $this->hasMany(AmsCriminalCheck::class, 'userID', 'id');
+    }
+
+    public function awardApplications(): HasMany
+    {
+        return $this->hasMany(AmsAwardApplication::class, 'userID', 'id');
+    }
+
+    public function warrantApplications(): HasMany
+    {
+        return $this->hasMany(AmsWarrantApplication::class, 'userID', 'id');
+    }
+
+    public function warrantExtensions(): HasMany
+    {
+        return $this->hasMany(AmsWarrantExtension::class, 'userID', 'id');
+    }
+
+    public function resignals(): HasMany
+    {
+        return $this->hasMany(AmsResignLeader::class, 'userID', 'id');
+    }
+
+    public function retirements(): HasMany
+    {
+        return $this->hasMany(AmsRetireLeader::class, 'userID', 'id');
+    }
+
+    public function suspensions(): HasMany
+    {
+        return $this->hasMany(AmsSuspendLeader::class, 'userID', 'id');
+    }
+
+    public function terminations(): HasMany
+    {
+        return $this->hasMany(AmsTerminateLeader::class, 'userID', 'id');
+    }
+
+    public function adultLeaderMoves(): HasMany
+    {
+        return $this->hasMany(AmsAdultLeaderMove::class, 'userID', 'id');
+    }
+
+    public function attendance(): HasMany
+    {
+        return $this->hasMany(GroupAttendance::class, 'userId', 'id');
+    }
+
+    public function responsiblePrograms(): HasMany
+    {
+        return $this->hasMany(GroupProgram::class, 'responsibleScouter', 'id');
+    }
+
+    public function notifications(): HasMany
+    {
+        return $this->hasMany(Notification::class, 'userID', 'id');
+    }
+
+    public function supportChats(): HasMany
+    {
+        return $this->hasMany(SupportChat::class, 'userID', 'id');
+    }
+
+    public function supportTickets(): HasMany
+    {
+        return $this->hasMany(SupportChatsStart::class, 'userID', 'id');
+    }
+
+    public function logging(): HasMany
+    {
+        return $this->hasMany(SystemUserLogging::class, 'userID', 'id');
+    }
+
+    public function pictureChanges(): HasMany
+    {
+        return $this->hasMany(GroupUserPictureChange::class, 'userID', 'id');
+    }
+
+    public function emergencyContacts(): HasMany
+    {
+        return $this->hasMany(SystemUsersEmergencyContact::class, 'userID', 'id');
+    }
+
+    public function maritalStatusInfo(): BelongsTo
+    {
+        return $this->belongsTo(AmsMaritalStatus::class, 'maritalStatus');
+    }
+
+    public function highestEducationInfo(): BelongsTo
+    {
+        return $this->belongsTo(AmsHighestEducation::class, 'highestEducation');
+    }
+
+    public function homeLanguageInfo(): BelongsTo
+    {
+        return $this->belongsTo(AmsLanguage::class, 'homeLanguage');
+    }
+
+    public function otherLanguageInfo(): BelongsTo
+    {
+        return $this->belongsTo(AmsLanguage::class, 'otherLanguage');
+    }
+
+    public function pack(): BelongsTo
+    {
+        return $this->belongsTo(GroupCubPack::class, 'packID');
+    }
+
+    public function troop(): BelongsTo
+    {
+        return $this->belongsTo(GroupScoutTroop::class, 'troopID');
+    }
+
+    public function scoutPatrol(): BelongsTo
+    {
+        return $this->belongsTo(GroupScoutsPatrolName::class, 'scoutPatrolID');
     }
 
     /*******************
@@ -299,16 +489,64 @@ class SystemUser extends User implements FilamentUser
     /*******************
      * Functions
      *******************/
-    public function getScoutsDigitalPlainTextPassword()
+    public function getScoutsDigitalPlainTextPassword(): string
     {
         return $this->newQuery()->where('id', $this->id)->selectRaw('CAST(AES_DECRYPT(passwordNew,"' . config('auth.scouts_digital.authentication.encryption_key') . '") AS CHAR(50)) as scouts_digital_plain_text_password')->first()->scouts_digital_plain_text_password;
     }
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return match (true) {
-            $panel->getId() === 'admin' => $this->isSuperAdmin(),
+        return match ($panel->getId()) {
+            'admin' => $this->isSuperAdmin(),
+            'general' => $this->hasAnyActiveRole(),
+            default => false,
         };
+    }
+
+    public function hasManagementRole(): bool
+    {
+        return $this->roleAttachments()
+            ->where('active', 1)
+            ->whereHas('role', fn ($q) => $q
+                ->where('nationalRole', 1)
+                ->orWhere('regionalRole', 1)
+                ->orWhere('superDistrictRole', 1)
+                ->orWhere('districtRole', 1)
+            )
+            ->exists();
+    }
+
+    public function hasAnyActiveRole(): bool
+    {
+        return $this->roleAttachments()
+            ->where('active', 1)
+            ->exists();
+    }
+
+    public function getTenants(Panel $panel): Collection
+    {
+        return match ($panel->getId()) {
+            'general' => $this->roleAttachments()
+                ->where('active', 1)
+                ->with(['role', 'region', 'district', 'group'])
+                ->get(),
+            default => collect(),
+        };
+    }
+
+    public function canAccessTenant(Model $tenant): bool
+    {
+        return $this->roleAttachments()
+            ->where('id', $tenant->getKey())
+            ->where('active', 1)
+            ->exists();
+    }
+
+    public function getDefaultTenant(Panel $panel): ?Model
+    {
+        $tenants = $this->getTenants($panel);
+
+        return $tenants->firstWhere('defaultRole', 1) ?? $tenants->first();
     }
 
     public function isSuperAdmin(): bool

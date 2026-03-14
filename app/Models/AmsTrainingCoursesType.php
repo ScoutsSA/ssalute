@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class AmsTrainingCoursesType extends BaseModel
 {
@@ -20,4 +21,8 @@ class AmsTrainingCoursesType extends BaseModel
         'active' => 'int',
     ];
 
+    public function trainingCourses(): HasMany
+    {
+        return $this->hasMany(AmsTrainingCourse::class, 'courseType');
+    }
 }

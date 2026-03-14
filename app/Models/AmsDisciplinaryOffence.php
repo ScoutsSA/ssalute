@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AmsDisciplinaryOffence extends BaseModel
 {
@@ -20,4 +21,8 @@ class AmsDisciplinaryOffence extends BaseModel
         'active' => 'int',
     ];
 
+    public function heading(): BelongsTo
+    {
+        return $this->belongsTo(AmsDisciplinaryHeading::class, 'headingID');
+    }
 }

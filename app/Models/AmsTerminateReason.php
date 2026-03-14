@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class AmsTerminateReason extends BaseModel
 {
@@ -18,4 +19,8 @@ class AmsTerminateReason extends BaseModel
         'reason' => 'string',
     ];
 
+    public function terminations(): HasMany
+    {
+        return $this->hasMany(AmsTerminateLeader::class, 'terminateReasonID');
+    }
 }

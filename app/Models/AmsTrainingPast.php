@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AmsTrainingPast extends BaseModel
 {
@@ -34,4 +35,33 @@ class AmsTrainingPast extends BaseModel
         'validatedby' => 'int',
     ];
 
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'userID');
+    }
+
+    public function region(): BelongsTo
+    {
+        return $this->belongsTo(Region::class, 'assocToRegion');
+    }
+
+    public function district(): BelongsTo
+    {
+        return $this->belongsTo(District::class, 'assocToDistrict');
+    }
+
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(Group::class, 'assocToGroup');
+    }
+
+    public function trainingType(): BelongsTo
+    {
+        return $this->belongsTo(AmsTrainingPastType::class, 'trainingTypeID');
+    }
+
+    public function validatedByUser(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'validatedby');
+    }
 }

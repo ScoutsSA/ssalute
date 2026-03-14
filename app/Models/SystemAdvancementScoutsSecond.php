@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SystemAdvancementScoutsSecond extends BaseModel
 {
@@ -30,4 +31,13 @@ class SystemAdvancementScoutsSecond extends BaseModel
         'PGATask' => 'int',
     ];
 
+    public function advancement(): BelongsTo
+    {
+        return $this->belongsTo(SystemAdvancementScoutsLevel::class, 'advancmentID');
+    }
+
+    public function scoutProgramType(): BelongsTo
+    {
+        return $this->belongsTo(SystemProgramTypesScout::class, 'scoutProgramTypeID');
+    }
 }

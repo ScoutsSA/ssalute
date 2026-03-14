@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Project extends BaseModel
 {
@@ -45,4 +46,33 @@ class Project extends BaseModel
         'modifiedby' => 'int',
     ];
 
+    public function region(): BelongsTo
+    {
+        return $this->belongsTo(Region::class, 'regionID');
+    }
+
+    public function district(): BelongsTo
+    {
+        return $this->belongsTo(District::class, 'districtID');
+    }
+
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(Group::class, 'groupID');
+    }
+
+    public function projectFor(): BelongsTo
+    {
+        return $this->belongsTo(ProjectsFor::class, 'projectForID');
+    }
+
+    public function approvedBy(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'approvedby');
+    }
+
+    public function declinedBy(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'declinedby');
+    }
 }

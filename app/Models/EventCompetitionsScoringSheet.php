@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class EventCompetitionsScoringSheet extends BaseModel
 {
@@ -33,4 +35,23 @@ class EventCompetitionsScoringSheet extends BaseModel
         'seaWorthynessScore' => 'int',
     ];
 
+    public function internalCompetition(): BelongsTo
+    {
+        return $this->belongsTo(EventCompetitionsInternalCompetition::class, 'internalCompetitionID');
+    }
+
+    public function headings(): HasMany
+    {
+        return $this->hasMany(EventCompetitionsScoringSheetsHeading::class, 'scoringSheetID');
+    }
+
+    public function questions(): HasMany
+    {
+        return $this->hasMany(EventCompetitionsQuestion::class, 'scoringSheetID');
+    }
+
+    public function event(): BelongsTo
+    {
+        return $this->belongsTo(GroupEvent::class, 'eventID');
+    }
 }

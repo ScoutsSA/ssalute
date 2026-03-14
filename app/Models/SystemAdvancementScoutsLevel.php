@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SystemAdvancementScoutsLevel extends BaseModel
 {
@@ -27,4 +28,8 @@ class SystemAdvancementScoutsLevel extends BaseModel
         'active' => 'int',
     ];
 
+    public function scoutProgramType(): BelongsTo
+    {
+        return $this->belongsTo(SystemProgramTypesScout::class, 'scoutProgramTypeID');
+    }
 }

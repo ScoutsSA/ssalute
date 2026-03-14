@@ -22,6 +22,7 @@ class ApplicationAdultMembershipRequestsTable
             ->deferColumnManager(false)
             ->defaultSort('updated_at', 'desc')
             ->columns([
+                TextColumn::make('id')->label('ID')->sortable()->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('id')
                     ->sortable()
                     ->searchable()
@@ -69,7 +70,7 @@ class ApplicationAdultMembershipRequestsTable
                     ->visible(fn (ListRecords $livewire) => $livewire->activeTab !== 'pending')
                     ->toggleable(),
                 TextColumn::make('actioned_reason_external')
-                    ->label('Actioned reasoned (external)')
+                    ->label('Actioned reason (external)')
                     ->visible(fn (ListRecords $livewire) => $livewire->activeTab !== 'pending')
                     ->toggleable(),
 

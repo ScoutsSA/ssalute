@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class GroupEvent extends BaseModel
 {
@@ -93,4 +95,73 @@ class GroupEvent extends BaseModel
         'calendarURL' => 'string',
     ];
 
+    public function region(): BelongsTo
+    {
+        return $this->belongsTo(Region::class, 'assocToRegion');
+    }
+
+    public function district(): BelongsTo
+    {
+        return $this->belongsTo(District::class, 'assocToDistrict');
+    }
+
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(Group::class, 'assocToGroup');
+    }
+
+    public function scouterResponsible(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'scouterResponsible');
+    }
+
+    public function eventType(): BelongsTo
+    {
+        return $this->belongsTo(SystemGroupEventType::class, 'eventTypeID');
+    }
+
+    public function associatedNationalEvent(): BelongsTo
+    {
+        return $this->belongsTo(self::class, 'associatedToNationalEventID');
+    }
+
+    public function associatedRegionEvent(): BelongsTo
+    {
+        return $this->belongsTo(self::class, 'associatedToRegionEventID');
+    }
+
+    public function associatedDistrictEvent(): BelongsTo
+    {
+        return $this->belongsTo(self::class, 'associatedToDistrictEventID');
+    }
+
+    public function den(): BelongsTo
+    {
+        return $this->belongsTo(GroupMeerkatDen::class, 'denID');
+    }
+
+    public function pack(): BelongsTo
+    {
+        return $this->belongsTo(GroupCubPack::class, 'packID');
+    }
+
+    public function troop(): BelongsTo
+    {
+        return $this->belongsTo(GroupScoutTroop::class, 'troopID');
+    }
+
+    public function crew(): BelongsTo
+    {
+        return $this->belongsTo(GroupRoverCrew::class, 'crewID');
+    }
+
+    public function documents(): HasMany
+    {
+        return $this->hasMany(GroupEventDocument::class, 'eventID', 'id');
+    }
+
+    public function attendees(): HasMany
+    {
+        return $this->hasMany(GroupEventsAttending::class, 'groupID', 'id');
+    }
 }

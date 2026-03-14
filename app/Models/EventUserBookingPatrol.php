@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class EventUserBookingPatrol extends BaseModel
 {
@@ -23,4 +25,13 @@ class EventUserBookingPatrol extends BaseModel
         'modifiedby' => 'int',
     ];
 
+    public function members(): HasMany
+    {
+        return $this->hasMany(EventUserBookingPatrolAllocation::class, 'patrolID');
+    }
+
+    public function event(): BelongsTo
+    {
+        return $this->belongsTo(GroupEvent::class, 'eventID');
+    }
 }

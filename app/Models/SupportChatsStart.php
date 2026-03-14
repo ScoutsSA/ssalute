@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SupportChatsStart extends BaseModel
 {
@@ -26,4 +27,18 @@ class SupportChatsStart extends BaseModel
         'closedBy' => 'int',
     ];
 
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'userID');
+    }
+
+    public function closedByUser(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'closedBy');
+    }
+
+    public function region(): BelongsTo
+    {
+        return $this->belongsTo(Region::class, 'regionID');
+    }
 }

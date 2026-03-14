@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class JamboreeApplication extends BaseModel
 {
@@ -68,4 +69,23 @@ class JamboreeApplication extends BaseModel
         'modifiedby' => 'int',
     ];
 
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'userID');
+    }
+
+    public function approvedBy(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'applicationApprovedBy');
+    }
+
+    public function declinedPositionBy(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'declinedPositionBy');
+    }
+
+    public function busRegion(): BelongsTo
+    {
+        return $this->belongsTo(Region::class, 'busRegionID');
+    }
 }

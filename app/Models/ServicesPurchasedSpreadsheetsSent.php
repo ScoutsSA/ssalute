@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ServicesPurchasedSpreadsheetsSent extends BaseModel
 {
@@ -20,4 +21,13 @@ class ServicesPurchasedSpreadsheetsSent extends BaseModel
         'active' => 'int',
     ];
 
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(Group::class, 'groupID');
+    }
+
+    public function sentByUser(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'sentBy');
+    }
 }

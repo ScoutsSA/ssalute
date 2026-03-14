@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SystemFaq extends BaseModel
 {
@@ -22,4 +23,8 @@ class SystemFaq extends BaseModel
         'position' => 'int',
     ];
 
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(SystemFaqCat::class, 'catID');
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class EventUserBookingRole extends BaseModel
 {
@@ -23,4 +24,13 @@ class EventUserBookingRole extends BaseModel
         'modifiedby' => 'int',
     ];
 
+    public function role(): BelongsTo
+    {
+        return $this->belongsTo(SystemUserType::class, 'roleID');
+    }
+
+    public function event(): BelongsTo
+    {
+        return $this->belongsTo(GroupEvent::class, 'eventID');
+    }
 }

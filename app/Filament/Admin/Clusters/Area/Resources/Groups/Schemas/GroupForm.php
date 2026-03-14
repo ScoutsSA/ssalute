@@ -2,9 +2,16 @@
 
 namespace App\Filament\Admin\Clusters\Area\Resources\Groups\Schemas;
 
-use Filament\Forms\Components\DateTimePicker;
+use App\Models\District;
+use App\Models\GroupsType;
+use App\Models\Region;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
 
 class GroupForm
@@ -13,181 +20,136 @@ class GroupForm
     {
         return $schema
             ->components([
-                TextInput::make('name')
-                    ->required(),
-                TextInput::make('sdLiteOnly')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('usesGoScan')
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('usesShop')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('usesPayFees')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('groupAccountID')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('scarf'),
-                TextInput::make('groupTypeID')
-                    ->required()
-                    ->numeric(),
-                Textarea::make('description')
-                    ->columnSpanFull(),
-                TextInput::make('multiDen')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('multiPack')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('multiTroop')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('multiCrew')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('meerkatProgramType')
-                    ->required()
-                    ->numeric()
-                    ->default(1),
-                TextInput::make('cubProgramType')
-                    ->required()
-                    ->numeric()
-                    ->default(1),
-                TextInput::make('scoutProgramType')
-                    ->required()
-                    ->numeric()
-                    ->default(2),
-                TextInput::make('roverProgramType')
-                    ->required()
-                    ->numeric()
-                    ->default(1),
-                TextInput::make('amsOnly')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('hasMeerkats')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('hasCubs')
-                    ->numeric()
-                    ->default(1),
-                TextInput::make('hasScouts')
-                    ->numeric()
-                    ->default(1),
-                TextInput::make('hasRovers')
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('hasBranch1')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('hasBranch2')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('hasBranch3')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('hasBranch4')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('hasBranch5')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('sendWeeklyMails')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('assoc_to_district')
-                    ->required()
-                    ->numeric(),
-                TextInput::make('assoc_to_region')
-                    ->required()
-                    ->numeric(),
-                TextInput::make('roverAssocToGroup')
-                    ->numeric()
-                    ->default(0),
-                Textarea::make('phys_address')
-                    ->columnSpanFull(),
-                Textarea::make('postalAddress')
-                    ->columnSpanFull(),
-                TextInput::make('postalCountryID')
-                    ->numeric()
-                    ->default(196),
-                TextInput::make('phys_country_id')
-                    ->numeric()
-                    ->default(196),
-                Textarea::make('bankingDetails')
-                    ->columnSpanFull(),
-                TextInput::make('bankAccountName'),
-                TextInput::make('bankName'),
-                TextInput::make('branchName'),
-                TextInput::make('branchCode'),
-                TextInput::make('bankAccountNumber'),
-                Textarea::make('invoiceNotes')
-                    ->columnSpanFull(),
-                TextInput::make('facebook'),
-                TextInput::make('twitter'),
-                TextInput::make('website')
-                    ->url(),
-                TextInput::make('email')
-                    ->label('Email address')
-                    ->email(),
-                TextInput::make('googleplus'),
-                TextInput::make('instagram'),
-                TextInput::make('linkedin'),
-                TextInput::make('pintrest'),
-                TextInput::make('youtube'),
-                TextInput::make('tumblr'),
-                TextInput::make('googleMaps'),
-                TextInput::make('gpsLat'),
-                TextInput::make('gpsLon'),
-                DateTimePicker::make('created')
-                    ->required(),
-                TextInput::make('createdby')
-                    ->required()
-                    ->numeric(),
-                DateTimePicker::make('modified'),
-                TextInput::make('modifiedby')
-                    ->numeric(),
-                TextInput::make('active')
-                    ->required()
-                    ->numeric(),
-                TextInput::make('weatherID'),
-                TextInput::make('weatherLocationName'),
-                TextInput::make('managedRegionally')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('canMoveToEntsha')
-                    ->required()
-                    ->numeric()
-                    ->default(1),
-                TextInput::make('using20')
-                    ->required()
-                    ->numeric()
-                    ->default(1),
-                TextInput::make('groupRegNr'),
-                TextInput::make('censusDone')
-                    ->numeric(),
-                DateTimePicker::make('groupLastUpdated'),
-                TextInput::make('groupLastUpdatedBy')
-                    ->numeric(),
+                Tabs::make()
+                    ->columnSpanFull()
+                    ->tabs([
+                        Tab::make('Details')
+                            ->schema([
+                                Section::make('General')
+                                    ->columns(2)
+                                    ->schema([
+                                        TextInput::make('name')
+                                            ->required(),
+                                        TextInput::make('groupRegNr')
+                                            ->label('Group Registration Number'),
+                                        TextInput::make('scarf')
+                                            ->label('Scarf Colour'),
+                                        Select::make('groupTypeID')
+                                            ->label('Group Type')
+                                            ->options(fn () => GroupsType::query()->orderBy('name')->pluck('name', 'id'))
+                                            ->required(),
+                                        Toggle::make('active')
+                                            ->default(true)
+                                            ->inline(false),
+                                        Toggle::make('managedRegionally')
+                                            ->label('Managed Regionally')
+                                            ->default(false)
+                                            ->inline(false),
+                                        Textarea::make('description')
+                                            ->columnSpanFull(),
+                                    ]),
+                                Section::make('Location')
+                                    ->columns(2)
+                                    ->schema([
+                                        Select::make('assoc_to_region')
+                                            ->label('Region')
+                                            ->options(fn () => Region::query()->orderBy('name')->pluck('name', 'id'))
+                                            ->searchable()
+                                            ->required(),
+                                        Select::make('assoc_to_district')
+                                            ->label('District')
+                                            ->options(fn () => District::query()->orderBy('name')->pluck('name', 'id'))
+                                            ->searchable()
+                                            ->required(),
+                                        Textarea::make('phys_address')
+                                            ->label('Physical Address')
+                                            ->columnSpanFull(),
+                                        Textarea::make('postalAddress')
+                                            ->label('Postal Address')
+                                            ->columnSpanFull(),
+                                    ]),
+                            ]),
+                        Tab::make('Sections')
+                            ->schema([
+                                Section::make('Active Sections')
+                                    ->columns(4)
+                                    ->schema([
+                                        Toggle::make('hasMeerkats')->label('Meerkats')->default(false)->inline(false),
+                                        Toggle::make('hasCubs')->label('Cubs')->default(true)->inline(false),
+                                        Toggle::make('hasScouts')->label('Scouts')->default(true)->inline(false),
+                                        Toggle::make('hasRovers')->label('Rovers')->default(false)->inline(false),
+                                    ]),
+                                Section::make('Multi-Section')
+                                    ->description('Allow multiple dens/packs/troops/crews per group')
+                                    ->columns(4)
+                                    ->schema([
+                                        Toggle::make('multiDen')->label('Multi Den')->default(false)->inline(false),
+                                        Toggle::make('multiPack')->label('Multi Pack')->default(false)->inline(false),
+                                        Toggle::make('multiTroop')->label('Multi Troop')->default(false)->inline(false),
+                                        Toggle::make('multiCrew')->label('Multi Crew')->default(false)->inline(false),
+                                    ]),
+                            ]),
+                        Tab::make('Contact & Social')
+                            ->schema([
+                                Section::make('Contact')
+                                    ->columns(2)
+                                    ->schema([
+                                        TextInput::make('email')
+                                            ->label('Email Address')
+                                            ->email(),
+                                        TextInput::make('website')
+                                            ->url(),
+                                    ]),
+                                Section::make('Social Media')
+                                    ->columns(2)
+                                    ->collapsed()
+                                    ->schema([
+                                        TextInput::make('facebook'),
+                                        TextInput::make('twitter'),
+                                        TextInput::make('instagram'),
+                                        TextInput::make('linkedin'),
+                                        TextInput::make('youtube'),
+                                        TextInput::make('pintrest')->label('Pinterest'),
+                                        TextInput::make('tumblr'),
+                                        TextInput::make('googleplus')->label('Google+'),
+                                    ]),
+                                Section::make('GPS')
+                                    ->columns(3)
+                                    ->collapsed()
+                                    ->schema([
+                                        TextInput::make('gpsLat')->label('Latitude'),
+                                        TextInput::make('gpsLon')->label('Longitude'),
+                                        TextInput::make('googleMaps')->label('Google Maps Link'),
+                                    ]),
+                            ]),
+                        Tab::make('Banking')
+                            ->schema([
+                                Section::make('Bank Account')
+                                    ->columns(2)
+                                    ->schema([
+                                        TextInput::make('bankAccountName')->label('Account Name'),
+                                        TextInput::make('bankName')->label('Bank Name'),
+                                        TextInput::make('branchName')->label('Branch Name'),
+                                        TextInput::make('branchCode')->label('Branch Code'),
+                                        TextInput::make('bankAccountNumber')->label('Account Number'),
+                                        Textarea::make('invoiceNotes')->label('Invoice Notes')->columnSpanFull(),
+                                    ]),
+                            ]),
+                        Tab::make('System')
+                            ->schema([
+                                Section::make('Features')
+                                    ->columns(3)
+                                    ->schema([
+                                        Toggle::make('sdLiteOnly')->label('SD Lite Only')->default(false)->inline(false),
+                                        Toggle::make('usesShop')->label('Uses Shop')->default(false)->inline(false),
+                                        Toggle::make('usesPayFees')->label('Uses Pay Fees')->default(false)->inline(false),
+                                        Toggle::make('usesGoScan')->label('Uses GoScan')->default(false)->inline(false),
+                                        Toggle::make('sendWeeklyMails')->label('Send Weekly Mails')->default(false)->inline(false),
+                                        Toggle::make('canMoveToEntsha')->label('Can Move to Entsha')->default(true)->inline(false),
+                                        Toggle::make('using20')->label('Using SD 2.0')->default(true)->inline(false),
+                                    ]),
+                            ]),
+                    ]),
             ]);
     }
 }

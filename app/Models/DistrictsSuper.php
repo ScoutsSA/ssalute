@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class DistrictsSuper extends BaseModel
 {
@@ -26,4 +28,18 @@ class DistrictsSuper extends BaseModel
         'modifiedby' => 'int',
     ];
 
+    public function region(): BelongsTo
+    {
+        return $this->belongsTo(Region::class, 'regionID');
+    }
+
+    public function districts(): HasMany
+    {
+        return $this->hasMany(District::class, 'superDistrictID');
+    }
+
+    public function ownedAccount(): BelongsTo
+    {
+        return $this->belongsTo(GroupAccount::class, 'accountID');
+    }
 }

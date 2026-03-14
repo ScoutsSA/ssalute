@@ -32,6 +32,11 @@ class GroupsMulti extends BaseModel
         $query->where('active', 1);
     }
 
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(Group::class, 'groupID');
+    }
+
     public function district(): BelongsTo
     {
         return $this->belongsTo(Region::class, 'assoc_to_district', 'id');

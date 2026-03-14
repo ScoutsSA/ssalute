@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class DirectoryProfessionalLike extends BaseModel
 {
@@ -20,4 +21,8 @@ class DirectoryProfessionalLike extends BaseModel
         'createdby' => 'int',
     ];
 
+    public function directory(): BelongsTo
+    {
+        return $this->belongsTo(DirectoryProfessional::class, 'directoryID');
+    }
 }

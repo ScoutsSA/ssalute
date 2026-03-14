@@ -41,6 +41,11 @@ class District extends BaseModel
         return $this->belongsTo(Region::class, 'regionID', 'id');
     }
 
+    public function superDistrict(): BelongsTo
+    {
+        return $this->belongsTo(DistrictsSuper::class, 'superDistrictID', 'id');
+    }
+
     public function groups(): HasMany
     {
         return $this->hasMany(Group::class, 'assoc_to_district', 'id');
@@ -76,5 +81,35 @@ class District extends BaseModel
     public function ownedAccount()
     {
         return $this->hasOne(GroupAccount::class, 'id', 'accountID');
+    }
+
+    public function programs(): HasMany
+    {
+        return $this->hasMany(GroupProgram::class, 'assocToDistrict', 'id');
+    }
+
+    public function events(): HasMany
+    {
+        return $this->hasMany(GroupEvent::class, 'assocToDistrict', 'id');
+    }
+
+    public function newsletters(): HasMany
+    {
+        return $this->hasMany(GroupNewsletter::class, 'assocToDistrict', 'id');
+    }
+
+    public function districtReports(): HasMany
+    {
+        return $this->hasMany(GroupDistrictReport::class, 'assocToDistrict', 'id');
+    }
+
+    public function committees(): HasMany
+    {
+        return $this->hasMany(GroupCommittee::class, 'assocToDistrict', 'id');
+    }
+
+    public function youthCharges(): HasMany
+    {
+        return $this->hasMany(GroupYouthCharge::class, 'assocToDistrict', 'id');
     }
 }

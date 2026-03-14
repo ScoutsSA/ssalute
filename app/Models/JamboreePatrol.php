@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class JamboreePatrol extends BaseModel
 {
@@ -20,4 +21,8 @@ class JamboreePatrol extends BaseModel
         'active' => 'int',
     ];
 
+    public function troop(): BelongsTo
+    {
+        return $this->belongsTo(JamboreeTroop::class, 'troopID');
+    }
 }

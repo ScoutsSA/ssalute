@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class GroupDocument extends BaseModel
 {
@@ -29,4 +30,18 @@ class GroupDocument extends BaseModel
         'modifiedby' => 'int',
     ];
 
+    public function person(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'assocToPerson');
+    }
+
+    public function account(): BelongsTo
+    {
+        return $this->belongsTo(GroupAccount::class, 'assocToAccount');
+    }
+
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(Group::class, 'assocToGroup');
+    }
 }

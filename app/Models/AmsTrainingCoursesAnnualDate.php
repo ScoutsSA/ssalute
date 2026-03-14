@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AmsTrainingCoursesAnnualDate extends BaseModel
 {
@@ -28,4 +29,8 @@ class AmsTrainingCoursesAnnualDate extends BaseModel
         'modifiedby' => 'int',
     ];
 
+    public function course(): BelongsTo
+    {
+        return $this->belongsTo(AmsTrainingCoursesAnnual::class, 'courseID');
+    }
 }

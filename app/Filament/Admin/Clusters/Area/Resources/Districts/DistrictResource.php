@@ -3,6 +3,8 @@
 namespace App\Filament\Admin\Clusters\Area\Resources\Districts;
 
 use App\Filament\Admin\Clusters\Area\AreaCluster;
+use App\Filament\Admin\Clusters\Area\Resources\Districts\Pages\CreateDistrict;
+use App\Filament\Admin\Clusters\Area\Resources\Districts\Pages\EditDistrict;
 use App\Filament\Admin\Clusters\Area\Resources\Districts\Pages\ListDistricts;
 use App\Filament\Admin\Clusters\Area\Resources\Districts\Pages\ViewDistrict;
 use App\Filament\Admin\Clusters\Area\Resources\Districts\RelationManagers\DistrictGroupsRelationManager;
@@ -52,7 +54,9 @@ class DistrictResource extends Resource
     {
         return [
             'index' => ListDistricts::route('/'),
+            'create' => CreateDistrict::route('/create'),
             'view' => ViewDistrict::route('/{record}'),
+            'edit' => EditDistrict::route('/{record}/edit'),
         ];
     }
 }

@@ -2,11 +2,25 @@
 
 namespace App\Filament\Admin\Resources\Users\Schemas;
 
+use App\Enums\UserBranchTypes;
+use App\Enums\UserEnglishProficiency;
+use App\Enums\UserRace;
+use App\Enums\UserSex;
+use App\Enums\UserTitle;
+use App\Models\AmsHighestEducation;
+use App\Models\AmsLanguage;
+use App\Models\AmsMaritalStatus;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 
 class UserForm
 {
@@ -14,320 +28,465 @@ class UserForm
     {
         return $schema
             ->components([
-                TextInput::make('oldID')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('username'),
-                TextInput::make('passwordNew')
-                    ->password(),
-                DateTimePicker::make('lastPasswordChange'),
-                TextInput::make('passwordChangedBy')
-                    ->password()
-                    ->numeric(),
-                DateTimePicker::make('lastLoginDate'),
-                DatePicker::make('startDate'),
-                TextInput::make('title'),
-                TextInput::make('first_name'),
-                TextInput::make('otherName'),
-                TextInput::make('surname'),
-                TextInput::make('previousSurname'),
-                TextInput::make('knownName'),
-                TextInput::make('scoutName'),
-                TextInput::make('photo'),
-                TextInput::make('thumb'),
-                TextInput::make('idNumber'),
-                TextInput::make('IDBookLocation'),
-                TextInput::make('passportNumber'),
-                TextInput::make('passportCountry')
-                    ->numeric()
-                    ->default(196),
-                TextInput::make('partnersFullName'),
-                TextInput::make('sex'),
-                TextInput::make('race'),
-                DatePicker::make('dob'),
-                DatePicker::make('dateInvested'),
-                TextInput::make('multiID')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('packID')
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('troopID')
-                    ->numeric()
-                    ->default(0),
-                DateTimePicker::make('dateToCubs'),
-                DateTimePicker::make('dateToScouts'),
-                TextInput::make('scoutPatrolID')
-                    ->numeric(),
-                TextInput::make('scoutPatrolTaskID')
-                    ->numeric(),
-                DateTimePicker::make('dateToRovers'),
-                Textarea::make('phys_address')
-                    ->columnSpanFull(),
-                TextInput::make('gpsLat'),
-                TextInput::make('gpsLon'),
-                TextInput::make('gpsAccuracy'),
-                TextInput::make('phys_country_id')
-                    ->required()
-                    ->numeric()
-                    ->default(196),
-                Textarea::make('postal_address')
-                    ->columnSpanFull(),
-                TextInput::make('postal_country_id')
-                    ->numeric(),
-                DateTimePicker::make('created')
-                    ->required(),
-                TextInput::make('createdby')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                DateTimePicker::make('modified'),
-                TextInput::make('modifiedby')
-                    ->numeric(),
-                TextInput::make('user_type')
-                    ->numeric(),
-                TextInput::make('parentType')
-                    ->numeric(),
-                TextInput::make('active')
-                    ->required()
-                    ->numeric(),
-                DateTimePicker::make('dateDeactivated'),
-                TextInput::make('deactivatedBy')
-                    ->numeric(),
-                TextInput::make('assoc_to_account')
-                    ->required()
-                    ->numeric(),
-                TextInput::make('assoc_to_group')
-                    ->numeric(),
-                TextInput::make('branch'),
-                TextInput::make('assoc_to_district')
-                    ->numeric(),
-                TextInput::make('assoc_to_region')
-                    ->numeric(),
-                TextInput::make('trainingRegionName'),
-                TextInput::make('trainingDistrictName'),
-                TextInput::make('trainingGroupName'),
-                TextInput::make('language'),
-                TextInput::make('cellNr'),
-                TextInput::make('officeNr'),
-                TextInput::make('homeNr'),
-                TextInput::make('faxNr'),
-                TextInput::make('responsible_for_payment')
-                    ->numeric(),
-                TextInput::make('mustChangePassword')
-                    ->numeric(),
-                TextInput::make('canLogon')
-                    ->required()
-                    ->numeric(),
-                TextInput::make('medicalAidName'),
-                TextInput::make('medicalAidNr'),
-                TextInput::make('medicalAidPrincipalMember'),
-                TextInput::make('doctorsName'),
-                TextInput::make('doctorsPhone'),
-                TextInput::make('allergies'),
-                Textarea::make('allergiesInstructions')
-                    ->columnSpanFull(),
-                Textarea::make('disabilities')
-                    ->columnSpanFull(),
-                Textarea::make('disabilitiesInstructions')
-                    ->columnSpanFull(),
-                TextInput::make('medicalConditions'),
-                Textarea::make('medicalConditionsInstructions')
-                    ->columnSpanFull(),
-                Textarea::make('currentMedication')
-                    ->columnSpanFull(),
-                TextInput::make('emergencyContactName'),
-                TextInput::make('emergencyContactCell'),
-                TextInput::make('emergencyContactTel'),
-                TextInput::make('emergencyContactRelationship'),
-                Textarea::make('specialMealRequirements')
-                    ->columnSpanFull(),
-                TextInput::make('religiousAffilliation'),
-                TextInput::make('school'),
-                TextInput::make('religion'),
-                TextInput::make('religiousAffiliation'),
-                Textarea::make('hobbies')
-                    ->columnSpanFull(),
-                Textarea::make('sports')
-                    ->columnSpanFull(),
-                Textarea::make('interests')
-                    ->columnSpanFull(),
-                TextInput::make('canAdmin')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('100CharID'),
-                TextInput::make('uniquePIN')
-                    ->numeric(),
-                TextInput::make('weeklyEmailUnsubscribe')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                Textarea::make('weeklyEmailUnsubscribeText')
-                    ->columnSpanFull(),
-                DateTimePicker::make('weeklyEmailUnsubscribeDate'),
-                TextInput::make('logonEmailSent')
-                    ->numeric(),
-                DateTimePicker::make('LogonEmailDate'),
-                TextInput::make('amsOnly')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('amsRole')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('homeLanguage')
-                    ->numeric(),
-                TextInput::make('otherLanguage')
-                    ->numeric(),
-                Textarea::make('otherLanguages')
-                    ->columnSpanFull(),
-                TextInput::make('proficiencyInEnglish')
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('religiousBelief'),
-                TextInput::make('highestEducation')
-                    ->numeric(),
-                TextInput::make('nrOfChildrenBoys')
-                    ->numeric(),
-                TextInput::make('nrOfChildrenGirls')
-                    ->numeric(),
-                TextInput::make('occupation'),
-                TextInput::make('typeOfEmployment'),
-                TextInput::make('employer'),
-                TextInput::make('maritalStatus')
-                    ->numeric(),
-                TextInput::make('ref1Name'),
-                Textarea::make('ref1Address')
-                    ->columnSpanFull(),
-                TextInput::make('ref1Tel'),
-                TextInput::make('ref2Name'),
-                Textarea::make('ref2Address')
-                    ->columnSpanFull(),
-                TextInput::make('ref2Tel'),
-                TextInput::make('newsletterUnsubscribe')
-                    ->numeric()
-                    ->default(0),
-                DateTimePicker::make('newsletterUnsubscribeDate'),
-                TextInput::make('reportView')
-                    ->numeric()
-                    ->default(10),
-                TextInput::make('roverGroupID')
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('roverGroupRoleID')
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('roverGroupAccountID')
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('24WSJ')
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('24WSJRole')
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('24wsjNotListedDistrict'),
-                TextInput::make('24wsjNotListedGroup'),
-                TextInput::make('SANJamb2017')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('SANJamb2017Role')
-                    ->required()
-                    ->default('0'),
-                TextInput::make('sanJambNotListedRegion'),
-                TextInput::make('sanJambNotListedDistrict'),
-                TextInput::make('sanJambNotListedGroup'),
-                TextInput::make('infoRedacted')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('SSANumber'),
-                TextInput::make('orphaned')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('vulnerable')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('sendAMSMail')
-                    ->required()
-                    ->numeric()
-                    ->default(1),
-                Textarea::make('generalNotes')
-                    ->columnSpanFull(),
-                TextInput::make('form29Generated')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('logonEmail')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('weeklyProgramEmail')
-                    ->required()
-                    ->numeric()
-                    ->default(1),
-                TextInput::make('profileChangesEmail')
-                    ->required()
-                    ->numeric()
-                    ->default(1),
-                TextInput::make('newsletterEmail')
-                    ->required()
-                    ->numeric()
-                    ->default(1),
-                TextInput::make('lowerStaffProfileChanges')
-                    ->required()
-                    ->numeric()
-                    ->default(1),
-                TextInput::make('loggedInTo20')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('canLogonTo20')
-                    ->required()
-                    ->numeric()
-                    ->default(1),
-                TextInput::make('adultRecruit')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('addedIn')
-                    ->required()
-                    ->numeric()
-                    ->default(1),
-                TextInput::make('canAdminElearning')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('canAdminElearningCourses')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('view')
-                    ->required()
-                    ->numeric()
-                    ->default(1),
-                TextInput::make('docsDeleted')
-                    ->numeric(),
-                TextInput::make('takenSurvey')
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('ddValue')
-                    ->required()
-                    ->numeric()
-                    ->default(25),
-                TextInput::make('DSDHostelName')
-                    ->tel(),
-                TextInput::make('DSDTownshipName'),
-                TextInput::make('DSDDisabled')
-                    ->numeric()
-                    ->default(0),
+                Tabs::make()
+                    ->columnSpanFull()
+                    ->persistTabInQueryString('tab')
+                    ->tabs([
+
+                        Tab::make('Profile')
+                            ->icon(Heroicon::User)
+                            ->schema([
+                                Section::make('Account')
+                                    ->columns(['sm' => 2, 'md' => 3])
+                                    ->schema([
+                                        TextInput::make('username')
+                                            ->label('Email / Username')
+                                            ->email()
+                                            ->required(),
+                                        DatePicker::make('startDate')
+                                            ->label('Start Date'),
+                                        DatePicker::make('dateInvested')
+                                            ->label('Date Invested'),
+                                        Toggle::make('active')
+                                            ->inline(false),
+                                        Toggle::make('canLogon')
+                                            ->label('Can Log On')
+                                            ->inline(false),
+                                        Toggle::make('mustChangePassword')
+                                            ->label('Must Change Password')
+                                            ->inline(false),
+                                    ]),
+
+                                Section::make('Personal Information')
+                                    ->columns(['sm' => 2, 'md' => 3])
+                                    ->schema([
+                                        Select::make('title')
+                                            ->options(UserTitle::class)
+                                            ->placeholder('-'),
+                                        TextInput::make('first_name')
+                                            ->label('First Name'),
+                                        TextInput::make('otherName')
+                                            ->label('Other Name'),
+                                        TextInput::make('surname'),
+                                        TextInput::make('previousSurname')
+                                            ->label('Previous Surname'),
+                                        TextInput::make('knownName')
+                                            ->label('Known As'),
+                                        TextInput::make('scoutName')
+                                            ->label('Scout Name'),
+                                        TextInput::make('partnersFullName')
+                                            ->label("Partner's Full Name"),
+                                        Select::make('sex')
+                                            ->options(UserSex::class),
+                                        Select::make('race')
+                                            ->options(UserRace::class),
+                                        DatePicker::make('dob')
+                                            ->label('Date of Birth'),
+                                        TextInput::make('school'),
+                                        Select::make('branch')
+                                            ->options(UserBranchTypes::class)
+                                            ->placeholder('-'),
+                                    ]),
+
+                                Section::make('Identity Documents')
+                                    ->columns(['sm' => 2, 'md' => 3])
+                                    ->schema([
+                                        TextInput::make('idNumber')
+                                            ->label('ID Number'),
+                                        TextInput::make('IDBookLocation')
+                                            ->label('ID Book File'),
+                                        TextInput::make('passportNumber')
+                                            ->label('Passport Number'),
+                                        TextInput::make('passportCountry')
+                                            ->label('Passport Country')
+                                            ->numeric(),
+                                    ]),
+
+                                Section::make('Contact Details')
+                                    ->columns(['sm' => 2, 'md' => 3])
+                                    ->schema([
+                                        TextInput::make('cellNr')
+                                            ->label('Cell Number')
+                                            ->tel(),
+                                        TextInput::make('officeNr')
+                                            ->label('Office Number')
+                                            ->tel(),
+                                        TextInput::make('homeNr')
+                                            ->label('Home Number')
+                                            ->tel(),
+                                        TextInput::make('faxNr')
+                                            ->label('Fax Number')
+                                            ->tel(),
+                                    ]),
+
+                                Section::make('Address')
+                                    ->schema([
+                                        Textarea::make('phys_address')
+                                            ->label('Physical Address')
+                                            ->rows(3)
+                                            ->columnSpanFull(),
+                                        Textarea::make('postal_address')
+                                            ->label('Postal Address')
+                                            ->rows(3)
+                                            ->columnSpanFull(),
+                                    ]),
+
+                                Section::make('Background')
+                                    ->columns(['sm' => 2, 'md' => 3])
+                                    ->schema([
+                                        TextInput::make('occupation'),
+                                        TextInput::make('typeOfEmployment')
+                                            ->label('Employment Type'),
+                                        TextInput::make('employer'),
+                                        Select::make('maritalStatus')
+                                            ->label('Marital Status')
+                                            ->options(fn () => AmsMaritalStatus::orderBy('name')->pluck('name', 'id'))
+                                            ->placeholder('-'),
+                                        Select::make('highestEducation')
+                                            ->label('Highest Education')
+                                            ->options(fn () => AmsHighestEducation::orderBy('name')->pluck('name', 'id'))
+                                            ->placeholder('-'),
+                                        TextInput::make('nrOfChildrenBoys')
+                                            ->label('Children (Boys)')
+                                            ->numeric(),
+                                        TextInput::make('nrOfChildrenGirls')
+                                            ->label('Children (Girls)')
+                                            ->numeric(),
+                                        TextInput::make('religiousBelief')
+                                            ->label('Religious Belief'),
+                                        TextInput::make('religion'),
+                                        TextInput::make('religiousAffiliation')
+                                            ->label('Religious Affiliation'),
+                                        Textarea::make('hobbies')
+                                            ->columnSpanFull(),
+                                        Textarea::make('sports')
+                                            ->columnSpanFull(),
+                                        Textarea::make('interests')
+                                            ->columnSpanFull(),
+                                    ]),
+
+                                Section::make('Languages')
+                                    ->columns(['sm' => 2, 'md' => 3])
+                                    ->schema([
+                                        Select::make('homeLanguage')
+                                            ->label('Home Language')
+                                            ->options(fn () => AmsLanguage::orderBy('language')->pluck('language', 'id'))
+                                            ->placeholder('-'),
+                                        Select::make('otherLanguage')
+                                            ->label('Other Language')
+                                            ->options(fn () => AmsLanguage::orderBy('language')->pluck('language', 'id'))
+                                            ->placeholder('-'),
+                                        Textarea::make('otherLanguages')
+                                            ->label('Additional Languages')
+                                            ->columnSpanFull(),
+                                        Select::make('proficiencyInEnglish')
+                                            ->label('English Proficiency')
+                                            ->options(UserEnglishProficiency::class)
+                                            ->placeholder('-'),
+                                    ]),
+                            ]),
+
+                        Tab::make('Medical & Emergency')
+                            ->icon(Heroicon::Heart)
+                            ->schema([
+                                Section::make('Medical Aid')
+                                    ->columns(['sm' => 2, 'md' => 3])
+                                    ->schema([
+                                        TextInput::make('medicalAidName')
+                                            ->label('Medical Aid Name'),
+                                        TextInput::make('medicalAidNr')
+                                            ->label('Medical Aid Number'),
+                                        TextInput::make('medicalAidPrincipalMember')
+                                            ->label('Principal Member'),
+                                        TextInput::make('doctorsName')
+                                            ->label("Doctor's Name"),
+                                        TextInput::make('doctorsPhone')
+                                            ->label("Doctor's Phone")
+                                            ->tel(),
+                                    ]),
+
+                                Section::make('Health')
+                                    ->columns(['sm' => 2, 'md' => 3])
+                                    ->schema([
+                                        TextInput::make('allergies'),
+                                        Textarea::make('allergiesInstructions')
+                                            ->label('Allergy Instructions')
+                                            ->columnSpanFull(),
+                                        TextInput::make('disabilities'),
+                                        Textarea::make('disabilitiesInstructions')
+                                            ->label('Disability Instructions')
+                                            ->columnSpanFull(),
+                                        TextInput::make('medicalConditions')
+                                            ->label('Medical Conditions'),
+                                        Textarea::make('medicalConditionsInstructions')
+                                            ->label('Conditions Instructions')
+                                            ->columnSpanFull(),
+                                        Textarea::make('currentMedication')
+                                            ->label('Current Medication')
+                                            ->columnSpanFull(),
+                                        Textarea::make('specialMealRequirements')
+                                            ->label('Special Meal Requirements')
+                                            ->columnSpanFull(),
+                                    ]),
+
+                                Section::make('Emergency Contact')
+                                    ->columns(['sm' => 2, 'md' => 3])
+                                    ->schema([
+                                        TextInput::make('emergencyContactName')
+                                            ->label('Name'),
+                                        TextInput::make('emergencyContactCell')
+                                            ->label('Cell Number')
+                                            ->tel(),
+                                        TextInput::make('emergencyContactTel')
+                                            ->label('Telephone')
+                                            ->tel(),
+                                        TextInput::make('emergencyContactRelationship')
+                                            ->label('Relationship'),
+                                    ]),
+                            ]),
+
+                        Tab::make('References')
+                            ->icon(Heroicon::UserGroup)
+                            ->schema([
+                                Section::make('Reference 1')
+                                    ->columns(['sm' => 2, 'md' => 3])
+                                    ->schema([
+                                        TextInput::make('ref1Name')
+                                            ->label('Name'),
+                                        TextInput::make('ref1Tel')
+                                            ->label('Phone')
+                                            ->tel(),
+                                        Textarea::make('ref1Address')
+                                            ->label('Address')
+                                            ->columnSpanFull(),
+                                    ]),
+
+                                Section::make('Reference 2')
+                                    ->columns(['sm' => 2, 'md' => 3])
+                                    ->schema([
+                                        TextInput::make('ref2Name')
+                                            ->label('Name'),
+                                        TextInput::make('ref2Tel')
+                                            ->label('Phone')
+                                            ->tel(),
+                                        Textarea::make('ref2Address')
+                                            ->label('Address')
+                                            ->columnSpanFull(),
+                                    ]),
+                            ]),
+
+                        Tab::make('System')
+                            ->icon(Heroicon::Cog6Tooth)
+                            ->schema([
+                                Section::make('Identifiers')
+                                    ->columns(['sm' => 2, 'md' => 3])
+                                    ->schema([
+                                        TextInput::make('SSANumber')
+                                            ->label('SSA Number'),
+                                        TextInput::make('oldID')
+                                            ->label('Legacy ID')
+                                            ->numeric(),
+                                        TextInput::make('multiID')
+                                            ->label('Multi ID')
+                                            ->numeric(),
+                                    ]),
+
+                                Section::make('Access Flags')
+                                    ->columns(['sm' => 2, 'md' => 3, 'lg' => 4])
+                                    ->schema([
+                                        Toggle::make('active')
+                                            ->inline(false),
+                                        Toggle::make('canLogon')
+                                            ->label('Can Log On')
+                                            ->inline(false),
+                                        Toggle::make('mustChangePassword')
+                                            ->label('Must Change Password')
+                                            ->inline(false),
+                                        Toggle::make('canAdmin')
+                                            ->label('Can Admin')
+                                            ->inline(false),
+                                        Toggle::make('infoRedacted')
+                                            ->label('Info Redacted')
+                                            ->inline(false),
+                                        Toggle::make('orphaned')
+                                            ->inline(false),
+                                        Toggle::make('vulnerable')
+                                            ->inline(false),
+                                        Toggle::make('responsible_for_payment')
+                                            ->label('Responsible For Payment')
+                                            ->inline(false),
+                                        Toggle::make('form29Generated')
+                                            ->label('Form 29 Generated')
+                                            ->inline(false),
+                                        DateTimePicker::make('dateDeactivated')
+                                            ->label('Date Deactivated'),
+                                        TextInput::make('deactivatedBy')
+                                            ->label('Deactivated By')
+                                            ->numeric(),
+                                    ]),
+
+                                Section::make('Associations')
+                                    ->columns(['sm' => 2, 'md' => 3, 'lg' => 4])
+                                    ->schema([
+                                        TextInput::make('assoc_to_region')
+                                            ->label('Region ID')
+                                            ->numeric(),
+                                        TextInput::make('assoc_to_district')
+                                            ->label('District ID')
+                                            ->numeric(),
+                                        TextInput::make('assoc_to_group')
+                                            ->label('Group ID')
+                                            ->numeric(),
+                                        TextInput::make('assoc_to_account')
+                                            ->label('Account ID')
+                                            ->numeric(),
+                                        TextInput::make('packID')
+                                            ->label('Pack ID')
+                                            ->numeric(),
+                                        TextInput::make('troopID')
+                                            ->label('Troop ID')
+                                            ->numeric(),
+                                        TextInput::make('scoutPatrolID')
+                                            ->label('Scout Patrol ID')
+                                            ->numeric(),
+                                        TextInput::make('scoutPatrolTaskID')
+                                            ->label('Scout Patrol Task ID')
+                                            ->numeric(),
+                                        DateTimePicker::make('dateToCubs')
+                                            ->label('Date To Cubs'),
+                                        DateTimePicker::make('dateToScouts')
+                                            ->label('Date To Scouts'),
+                                        DateTimePicker::make('dateToRovers')
+                                            ->label('Date To Rovers'),
+                                    ]),
+
+                                Section::make('Email Preferences')
+                                    ->columns(['sm' => 2, 'md' => 3, 'lg' => 4])
+                                    ->schema([
+                                        Toggle::make('logonEmail')
+                                            ->label('Logon Email')
+                                            ->inline(false),
+                                        Toggle::make('weeklyProgramEmail')
+                                            ->label('Weekly Program Email')
+                                            ->inline(false),
+                                        Toggle::make('profileChangesEmail')
+                                            ->label('Profile Changes Email')
+                                            ->inline(false),
+                                        Toggle::make('newsletterEmail')
+                                            ->label('Newsletter Email')
+                                            ->inline(false),
+                                        Toggle::make('lowerStaffProfileChanges')
+                                            ->label('Lower Staff Profile Changes')
+                                            ->inline(false),
+                                        Toggle::make('weeklyEmailUnsubscribe')
+                                            ->label('Weekly Email Unsubscribed')
+                                            ->inline(false),
+                                        DateTimePicker::make('weeklyEmailUnsubscribeDate')
+                                            ->label('Weekly Unsubscribed At'),
+                                        Textarea::make('weeklyEmailUnsubscribeText')
+                                            ->label('Weekly Unsubscribe Reason')
+                                            ->columnSpanFull(),
+                                        Toggle::make('newsletterUnsubscribe')
+                                            ->label('Newsletter Unsubscribed')
+                                            ->inline(false),
+                                        DateTimePicker::make('newsletterUnsubscribeDate')
+                                            ->label('Newsletter Unsubscribed At'),
+                                        Toggle::make('logonEmailSent')
+                                            ->label('Logon Email Sent')
+                                            ->inline(false),
+                                        DateTimePicker::make('LogonEmailDate')
+                                            ->label('Logon Email Sent At'),
+                                    ]),
+
+                                Section::make('Notes')
+                                    ->schema([
+                                        Textarea::make('generalNotes')
+                                            ->label('')
+                                            ->rows(5)
+                                            ->columnSpanFull(),
+                                    ]),
+
+                                Section::make('Legacy / Deprecated')
+                                    ->collapsible()
+                                    ->collapsed()
+                                    ->columns(['sm' => 2, 'md' => 3, 'lg' => 4])
+                                    ->schema([
+                                        TextInput::make('amsRole')
+                                            ->label('AMS Role')
+                                            ->numeric(),
+                                        Toggle::make('amsOnly')
+                                            ->label('AMS Only')
+                                            ->inline(false),
+                                        Toggle::make('adultRecruit')
+                                            ->label('Adult Recruit')
+                                            ->inline(false),
+                                        Toggle::make('sendAMSMail')
+                                            ->label('Send AMS Mail')
+                                            ->inline(false),
+                                        TextInput::make('roverGroupID')
+                                            ->label('Rover Group ID')
+                                            ->numeric(),
+                                        TextInput::make('roverGroupRoleID')
+                                            ->label('Rover Group Role ID')
+                                            ->numeric(),
+                                        TextInput::make('roverGroupAccountID')
+                                            ->label('Rover Group Account ID')
+                                            ->numeric(),
+                                        Toggle::make('canAdminElearning')
+                                            ->label('Can Admin Elearning')
+                                            ->inline(false),
+                                        Toggle::make('canAdminElearningCourses')
+                                            ->label('Can Admin Elearning Courses')
+                                            ->inline(false),
+                                        Toggle::make('canLogonTo20')
+                                            ->label('Can Logon To SD 2.0')
+                                            ->inline(false),
+                                        Toggle::make('loggedInTo20')
+                                            ->label('Logged In To SD 2.0')
+                                            ->inline(false),
+                                        TextInput::make('addedIn')
+                                            ->label('Added In')
+                                            ->numeric(),
+                                        TextInput::make('ddValue')
+                                            ->label('DD Value')
+                                            ->numeric(),
+                                        TextInput::make('reportView')
+                                            ->label('Report View')
+                                            ->numeric(),
+                                        Toggle::make('takenSurvey')
+                                            ->label('Taken Survey')
+                                            ->inline(false),
+                                        TextInput::make('24WSJ')
+                                            ->label('24WSJ')
+                                            ->numeric(),
+                                        TextInput::make('24WSJRole')
+                                            ->label('24WSJ Role')
+                                            ->numeric(),
+                                        TextInput::make('24wsjNotListedDistrict')
+                                            ->label('24WSJ Not-listed District'),
+                                        TextInput::make('24wsjNotListedGroup')
+                                            ->label('24WSJ Not-listed Group'),
+                                        TextInput::make('SANJamb2017')
+                                            ->label('SANJamb2017')
+                                            ->numeric(),
+                                        TextInput::make('SANJamb2017Role')
+                                            ->label('SANJamb2017 Role'),
+                                        TextInput::make('sanJambNotListedRegion')
+                                            ->label('SANJamb Not-listed Region'),
+                                        TextInput::make('sanJambNotListedDistrict')
+                                            ->label('SANJamb Not-listed District'),
+                                        TextInput::make('sanJambNotListedGroup')
+                                            ->label('SANJamb Not-listed Group'),
+                                        TextInput::make('DSDHostelName')
+                                            ->label('DSD Hostel Name'),
+                                        TextInput::make('DSDTownshipName')
+                                            ->label('DSD Township Name'),
+                                        Toggle::make('DSDDisabled')
+                                            ->label('DSD Disabled')
+                                            ->inline(false),
+                                    ]),
+                            ]),
+                    ]),
             ]);
     }
 }

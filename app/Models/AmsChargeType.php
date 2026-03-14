@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class AmsChargeType extends BaseModel
 {
@@ -27,4 +28,8 @@ class AmsChargeType extends BaseModel
         'modifiedby' => 'int',
     ];
 
+    public function charges(): HasMany
+    {
+        return $this->hasMany(AmsChargeInfo::class, 'chargeTypeID');
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class InfoSharingReview extends BaseModel
 {
@@ -31,4 +32,18 @@ class InfoSharingReview extends BaseModel
         'declinedNotes' => 'string',
     ];
 
+    public function info(): BelongsTo
+    {
+        return $this->belongsTo(InfoSharing::class, 'infoID');
+    }
+
+    public function approvedBy(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'approvedby');
+    }
+
+    public function declinedBy(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'declinedby');
+    }
 }

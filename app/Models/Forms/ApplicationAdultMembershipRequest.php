@@ -16,6 +16,7 @@ use App\Models\Region;
 use App\Models\SystemUser;
 use App\Providers\AppServiceProvider;
 use App\Settings\FormSettings;
+use App\Settings\GeneralSettings;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -148,33 +149,33 @@ class ApplicationAdultMembershipRequest extends Model
     {
         return Attribute::make(
             get: function () {
-                $formSettings = resolve(FormSettings::class);
+                $generalSettings = resolve(GeneralSettings::class);
 
                 // National => National Adult Support Chair
                 if ($this->region_id === null && $this->district_id === null && $this->group_id === null) {
-                    $scouter = SystemUser::active()->whereHas('activeRoles', fn ($query) => $query->where('system_users_other_roles.roleID', $formSettings->aam_next_in_line_role_national))->first();
+                    $scouter = SystemUser::active()->whereHas('activeRoles', fn ($query) => $query->where('system_users_other_roles.roleID', $generalSettings->next_in_line_role_national))->first();
                 }
 
                 // Regional => Regional Adult Support
-                elseif ($this->district_id === null && $this->group_id === null && $formSettings->aam_next_in_line_role_regional) {
+                elseif ($this->district_id === null && $this->group_id === null && $generalSettings->next_in_line_role_regional) {
                     $scouter = SystemUser::active()->whereHas('activeRoles', fn ($query) => $query
-                        ->where('system_users_other_roles.roleID', $formSettings->aam_next_in_line_role_regional)
+                        ->where('system_users_other_roles.roleID', $generalSettings->next_in_line_role_regional)
                         ->where('system_users_other_roles.regionID', $this->region_id)
                     )->first();
                 }
 
                 // District => District Commissioner
-                elseif ($this->group_id === null && $formSettings->aam_next_in_line_role_district) {
+                elseif ($this->group_id === null && $generalSettings->next_in_line_role_district) {
                     $scouter = SystemUser::active()->whereHas('activeRoles', fn ($query) => $query
-                        ->where('system_users_other_roles.roleID', $formSettings->aam_next_in_line_role_district)
+                        ->where('system_users_other_roles.roleID', $generalSettings->next_in_line_role_district)
                         ->where('system_users_other_roles.districtID', $this->district_id)
                     )->first();
                 }
 
                 // Group => Group Scouter
-                elseif ($formSettings->aam_next_in_line_role_group) {
+                elseif ($generalSettings->next_in_line_role_group) {
                     $scouter = SystemUser::active()->whereHas('activeRoles', fn ($query) => $query
-                        ->where('system_users_other_roles.roleID', $formSettings->aam_next_in_line_role_group)
+                        ->where('system_users_other_roles.roleID', $generalSettings->next_in_line_role_group)
                         ->where('system_users_other_roles.groupID', $this->group_id)
                     )->first();
                 }
@@ -182,7 +183,7 @@ class ApplicationAdultMembershipRequest extends Model
                 // If no scouter found, default to National Adult Support Chair and log a warning
                 if (! $scouter) {
                     Log::warning('AAM Request - No NextInLineScouter Found, Defaulting to National Chair', ['aamRequestID' => $this->id, 'regionID' => $this->region_id, 'districtID' => $this->district_id, 'groupID' => $this->group_id]);
-                    $scouter = SystemUser::active()->whereHas('activeRoles', fn ($query) => $query->where('system_users_other_roles.roleID', $formSettings->aam_next_in_line_role_national))->first();
+                    $scouter = SystemUser::active()->whereHas('activeRoles', fn ($query) => $query->where('system_users_other_roles.roleID', $generalSettings->next_in_line_role_national))->first();
                 }
 
                 return $scouter;
@@ -197,8 +198,10 @@ class ApplicationAdultMembershipRequest extends Model
                 $formSettings = resolve(FormSettings::class);
                 $scouters = collect();
                 // National => National Adult Support Chair
-                foreach (SystemUser::active()->whereHas('activeRoles', fn ($query) => $query->whereIn('system_users_other_roles.roleID', $formSettings->aam_approval_role_national))->get() as $scouter) {
-                    $scouters->add($scouter);
+                if (! empty($formSettings->aam_approval_role_national)) {
+                    foreach (SystemUser::active()->whereHas('activeRoles', fn ($query) => $query->whereIn('system_users_other_roles.roleID', $formSettings->aam_approval_role_national))->get() as $scouter) {
+                        $scouters->add($scouter);
+                    }
                 }
 
                 // Regional => Regional Adult Support Team
@@ -232,7 +235,7 @@ class ApplicationAdultMembershipRequest extends Model
                 }
 
                 // Remove potential Duplicates
-                $scouters->unique('id');
+                $scouters = $scouters->unique('id');
 
                 return $scouters;
             },
@@ -251,13 +254,19 @@ class ApplicationAdultMembershipRequest extends Model
             ->queue(new ApplicationAdultMembershipApplicantInitialEmail($this));
 
         // Email NextInLine (Group/District/Region)
-        Mail::to($this->nextInLineScouter->username)
-            ->cc($this->scoutersWhoCanApprove
-                ->map(fn (SystemUser $user) => $user->username)
-                ->reject(fn ($email) => $email === $this->nextInLineScouter->username)
-                ->toArray())
-            ->bcc(resolve(FormSettings::class)->aam_national_support_emails)
-            ->queue(new ApplicationAdultMembershipApproverInitialEmail($this));
+        $nextInLineScouter = $this->nextInLineScouter;
+
+        if ($nextInLineScouter) {
+            Mail::to($nextInLineScouter->username)
+                ->cc($this->scoutersWhoCanApprove
+                    ->map(fn (SystemUser $user) => $user->username)
+                    ->reject(fn ($email) => $email === $nextInLineScouter->username)
+                    ->toArray())
+                ->bcc(resolve(FormSettings::class)->aam_national_support_emails)
+                ->queue(new ApplicationAdultMembershipApproverInitialEmail($this));
+        } else {
+            Log::warning('AAM Request - No NextInLineScouter found, skipping approver initial email', ['aamRequestID' => $this->id]);
+        }
     }
 
     public function sendEmailsApproved(): void

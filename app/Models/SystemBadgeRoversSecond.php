@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SystemBadgeRoversSecond extends BaseModel
 {
@@ -27,4 +28,8 @@ class SystemBadgeRoversSecond extends BaseModel
         'modifiedby' => 'int',
     ];
 
+    public function badgeFirst(): BelongsTo
+    {
+        return $this->belongsTo(SystemBadgeRoversFirst::class, 'firstID');
+    }
 }

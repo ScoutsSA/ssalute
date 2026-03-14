@@ -5,12 +5,17 @@ namespace App\Models;
 use App\Models\Concerns\MightHaveCreatedBy;
 use App\Models\Concerns\MightHaveModifiedBy;
 use App\Providers\AppServiceProvider;
+use Filament\Models\Contracts\HasAvatar;
+use Filament\Models\Contracts\HasCurrentTenantLabel;
+use Filament\Models\Contracts\HasName;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class SystemUsersOtherRole extends Pivot
+class SystemUsersOtherRole extends Pivot implements HasAvatar, HasCurrentTenantLabel, HasName
 {
+    use HasFactory;
     use MightHaveCreatedBy;
     use MightHaveModifiedBy;
 
@@ -77,6 +82,31 @@ class SystemUsersOtherRole extends Pivot
         return $this->belongsTo(Group::class, 'groupID');
     }
 
+    public function superDistrict(): BelongsTo
+    {
+        return $this->belongsTo(DistrictsSuper::class, 'superDistrictID');
+    }
+
+    public function actionRegion(): BelongsTo
+    {
+        return $this->belongsTo(Region::class, 'actionRegionID');
+    }
+
+    public function actionSuperDistrict(): BelongsTo
+    {
+        return $this->belongsTo(DistrictsSuper::class, 'actionSuperDistrictID');
+    }
+
+    public function actionDistrict(): BelongsTo
+    {
+        return $this->belongsTo(District::class, 'actionDistrictID');
+    }
+
+    public function actionGroup(): BelongsTo
+    {
+        return $this->belongsTo(Group::class, 'actionGroupID');
+    }
+
     public function roleTypeName(): Attribute
     {
         return Attribute::make(
@@ -95,7 +125,7 @@ class SystemUsersOtherRole extends Pivot
                     $this->role->adultLeaderRole === 1 => 'Adult Leader',
                     $this->role->parentHelperRole === 1 => 'Parent Helper',
                     $this->role->alumniRole === 1 => 'Alumni',
-                    default => 'Unknown',
+                    default => '',
                 };
             }
         );
@@ -116,7 +146,7 @@ class SystemUsersOtherRole extends Pivot
     }
 
     // This is only usable when eager loading the pivot relationship
-    public function roleScopedLabel(): Attribute
+    public function roleScopedFullLabel(): Attribute
     {
         return Attribute::make(
             get: function () {
@@ -125,22 +155,60 @@ class SystemUsersOtherRole extends Pivot
         );
     }
 
-    public function roleAttachmentScopedLabel(): Attribute
+    public function roleScopedLabel(): Attribute
     {
         return Attribute::make(
             get: function () {
-                if ($this->groupID !== 0) {
-                    return 'Group: ' . $this->group->name;
-                }
-                if ($this->districtID !== 0) {
-                    return 'District: ' . $this->district->name;
-                }
-                if ($this->regionID !== 0) {
-                    return 'Region: ' . $this->region->name;
-                }
-
-                return 'Not Scoped';
+                return $this->roleScopedModel->name ?? null;
             }
         );
+    }
+
+    // Filament tenant display — shown in the sidebar tenant switcher list
+    public function getFilamentName(): string
+    {
+        $scope = $this->roleScopedLabel;
+
+        return $scope === null
+            ? $this->role->name
+            : $this->role->name . ' — ' . $scope;
+    }
+
+    // Filament tenant display — shown as the "current tenant" label above the switcher
+    public function getCurrentTenantLabel(): string
+    {
+        return $this->roleTypeName;
+    }
+
+    // Filament tenant display — avatar shown in the sidebar tenant switcher
+    public function getFilamentAvatarUrl(): ?string
+    {
+        [$abbreviation, $color] = match (true) {
+            $this->role->sysAdmin === 1 => ['SYS',  '#7C3AED'],
+            $this->role->nationalRole === 1 => ['NAT',  '#B91C1C'],
+            $this->role->regionalRole === 1 => ['REG',  '#B45309'],
+            $this->role->superDistrictRole === 1 => ['SD',   '#047857'],
+            $this->role->districtRole === 1 => ['DIST', '#0369A1'],
+            $this->role->groupRole === 1 => ['GRP',  '#1D4ED8'],
+            $this->role->denRole === 1 => ['DEN',  '#6D28D9'],
+            $this->role->packRole === 1 => ['PACK', '#0F766E'],
+            $this->role->troopRole === 1 => ['TROOP', '#15803D'],
+            $this->role->crewRole === 1 => ['CREW', '#B45309'],
+            $this->role->adultLeaderRole === 1 => ['AL',   '#0E7490'],
+            $this->role->parentHelperRole === 1 => ['PH',   '#7C3AED'],
+            $this->role->alumniRole === 1 => ['ALU',  '#9D174D'],
+            default => [':)',    '#6B7280'],
+        };
+
+        $svg = <<<SVG
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+                <rect width="48" height="48" rx="6" fill="{$color}"/>
+                <text x="24" y="24" font-family="ui-sans-serif,system-ui,sans-serif"
+                      font-size="13" font-weight="700" text-anchor="middle"
+                      dominant-baseline="central" fill="white">{$abbreviation}</text>
+            </svg>
+            SVG;
+
+        return 'data:image/svg+xml;base64,' . base64_encode($svg);
     }
 }

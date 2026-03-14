@@ -2,9 +2,16 @@
 
 namespace App\Filament\Admin\Resources\Users;
 
+use App\Filament\Admin\Resources\Users\Pages\EditUser;
 use App\Filament\Admin\Resources\Users\Pages\ListUsers;
 use App\Filament\Admin\Resources\Users\Pages\ViewUser;
+use App\Filament\Admin\Resources\Users\RelationManagers\UserAwardsRelationManager;
+use App\Filament\Admin\Resources\Users\RelationManagers\UserDocumentsRelationManager;
+use App\Filament\Admin\Resources\Users\RelationManagers\UserPastServiceRelationManager;
+use App\Filament\Admin\Resources\Users\RelationManagers\UserPoliceClearancesRelationManager;
 use App\Filament\Admin\Resources\Users\RelationManagers\UserRoleAttachmentsRelationManager;
+use App\Filament\Admin\Resources\Users\RelationManagers\UserTrainingHistoryRelationManager;
+use App\Filament\Admin\Resources\Users\RelationManagers\UserWarrantsRelationManager;
 use App\Filament\Admin\Resources\Users\Schemas\UserForm;
 use App\Filament\Admin\Resources\Users\Schemas\UserInfolist;
 use App\Filament\Admin\Resources\Users\Tables\UsersTable;
@@ -46,13 +53,12 @@ class UserResource extends Resource
     {
         return [
             UserRoleAttachmentsRelationManager::class,
-            // Warrants
-            // Activity Licences
-            // Awards
-            // Past Training
-            // Past Service
-            // All Documents
-            // Police Clearances
+            UserWarrantsRelationManager::class,
+            UserTrainingHistoryRelationManager::class,
+            UserAwardsRelationManager::class,
+            UserDocumentsRelationManager::class,
+            UserPoliceClearancesRelationManager::class,
+            UserPastServiceRelationManager::class,
         ];
     }
 
@@ -61,6 +67,7 @@ class UserResource extends Resource
         return [
             'index' => ListUsers::route('/'),
             'view' => ViewUser::route('/{record}'),
+            'edit' => EditUser::route('/{record}/edit'),
         ];
     }
 }

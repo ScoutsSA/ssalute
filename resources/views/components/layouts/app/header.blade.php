@@ -11,6 +11,6 @@
         @fluxScripts
         @filamentScripts
         @vite('resources/js/app.js')
+        <x-impersonate::banner position="bottom"/>
     </body>
-    <x-impersonate::banner/>
 </html>

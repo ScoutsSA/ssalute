@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class GroupProgramsDocument extends BaseModel
 {
@@ -24,4 +25,8 @@ class GroupProgramsDocument extends BaseModel
         'modifiedby' => 'int',
     ];
 
+    public function program(): BelongsTo
+    {
+        return $this->belongsTo(GroupProgram::class, 'programID');
+    }
 }

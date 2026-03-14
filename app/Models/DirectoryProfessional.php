@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class DirectoryProfessional extends BaseModel
 {
@@ -44,4 +46,23 @@ class DirectoryProfessional extends BaseModel
         'modifiedby' => 'int',
     ];
 
+    public function approvedBy(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'approvedBy');
+    }
+
+    public function declinedBy(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'declinedBy');
+    }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(DirectoryProfessionalReview::class, 'directoryID');
+    }
+
+    public function likes(): HasMany
+    {
+        return $this->hasMany(DirectoryProfessionalLike::class, 'directoryID');
+    }
 }

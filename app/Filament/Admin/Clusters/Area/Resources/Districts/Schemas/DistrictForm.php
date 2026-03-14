@@ -2,9 +2,12 @@
 
 namespace App\Filament\Admin\Clusters\Area\Resources\Districts\Schemas;
 
-use Filament\Forms\Components\DateTimePicker;
+use App\Models\Region;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
 class DistrictForm
@@ -13,41 +16,26 @@ class DistrictForm
     {
         return $schema
             ->components([
-                TextInput::make('regionID')
-                    ->required()
-                    ->numeric(),
-                TextInput::make('superDistrictID')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('name')
-                    ->required(),
-                Textarea::make('description')
-                    ->columnSpanFull(),
-                Textarea::make('phys_address')
-                    ->columnSpanFull(),
-                TextInput::make('countryID')
-                    ->required()
-                    ->numeric()
-                    ->default(196),
-                TextInput::make('active')
-                    ->required()
-                    ->numeric()
-                    ->default(1),
-                TextInput::make('accountID')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('censusDone')
-                    ->numeric(),
-                DateTimePicker::make('created')
-                    ->required(),
-                TextInput::make('createdby')
-                    ->required()
-                    ->numeric(),
-                DateTimePicker::make('modified'),
-                TextInput::make('modifiedby')
-                    ->numeric(),
+                Section::make('District Details')
+                    ->columns(2)
+                    ->schema([
+                        Select::make('regionID')
+                            ->label('Region')
+                            ->options(fn () => Region::query()->orderBy('name')->pluck('name', 'id'))
+                            ->searchable()
+                            ->required(),
+                        TextInput::make('name')
+                            ->required(),
+                        Toggle::make('active')
+                            ->label('Active')
+                            ->default(true)
+                            ->inline(false),
+                        Textarea::make('description')
+                            ->columnSpanFull(),
+                        Textarea::make('phys_address')
+                            ->label('Physical Address')
+                            ->columnSpanFull(),
+                    ]),
             ]);
     }
 }

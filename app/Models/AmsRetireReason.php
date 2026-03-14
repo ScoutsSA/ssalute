@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class AmsRetireReason extends BaseModel
 {
@@ -18,4 +19,8 @@ class AmsRetireReason extends BaseModel
         'reason' => 'string',
     ];
 
+    public function retirements(): HasMany
+    {
+        return $this->hasMany(AmsRetireLeader::class, 'retiredReasonID');
+    }
 }

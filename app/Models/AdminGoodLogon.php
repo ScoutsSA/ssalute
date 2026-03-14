@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AdminGoodLogon extends BaseModel
 {
@@ -28,4 +29,23 @@ class AdminGoodLogon extends BaseModel
         'usingMobile' => 'int',
     ];
 
+    public function role(): BelongsTo
+    {
+        return $this->belongsTo(SystemUserType::class, 'roleID');
+    }
+
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(Group::class, 'groupID');
+    }
+
+    public function district(): BelongsTo
+    {
+        return $this->belongsTo(District::class, 'districtID');
+    }
+
+    public function region(): BelongsTo
+    {
+        return $this->belongsTo(Region::class, 'regionID');
+    }
 }

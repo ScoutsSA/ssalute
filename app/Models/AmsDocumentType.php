@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class AmsDocumentType extends BaseModel
 {
@@ -21,4 +22,8 @@ class AmsDocumentType extends BaseModel
         'active' => 'int',
     ];
 
+    public function documents(): HasMany
+    {
+        return $this->hasMany(AmsDocument::class, 'documentTypeID');
+    }
 }

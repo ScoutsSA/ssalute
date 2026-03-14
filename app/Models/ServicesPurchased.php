@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ServicesPurchased extends BaseModel
 {
@@ -32,4 +33,13 @@ class ServicesPurchased extends BaseModel
         'endDate' => 'date',
     ];
 
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(Group::class, 'groupID');
+    }
+
+    public function associatedToGroupBy(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'associatedToGroupBy');
+    }
 }

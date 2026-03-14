@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AdvancementScouter extends BaseModel
 {
@@ -27,4 +28,13 @@ class AdvancementScouter extends BaseModel
         'modifiedby' => 'int',
     ];
 
+    public function scouter(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'scouterID');
+    }
+
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(Group::class, 'assocToGroup');
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class JamboreePayment extends BaseModel
 {
@@ -27,4 +28,13 @@ class JamboreePayment extends BaseModel
         'notes' => 'string',
     ];
 
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(SystemUser::class, 'userID');
+    }
+
+    public function paymentType(): BelongsTo
+    {
+        return $this->belongsTo(JamboreePaymentType::class, 'paymentType');
+    }
 }

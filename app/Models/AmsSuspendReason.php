@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class AmsSuspendReason extends BaseModel
 {
@@ -18,4 +19,8 @@ class AmsSuspendReason extends BaseModel
         'reason' => 'string',
     ];
 
+    public function suspensions(): HasMany
+    {
+        return $this->hasMany(AmsSuspendLeader::class, 'suspenReasonID');
+    }
 }
