@@ -29,7 +29,7 @@ class DistrictsTable
                     ->label('ID')
                     ->numeric()
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('name')
                     ->label('Name')
                     ->description(fn (District $record) => $record->region?->name)

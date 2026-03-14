@@ -2,9 +2,13 @@
 
 namespace App\Filament\General\Pages;
 
+use App\Enums\UserEnglishProficiency;
 use App\Enums\UserRace;
 use App\Enums\UserSex;
 use App\Enums\UserTitle;
+use App\Models\AmsHighestEducation;
+use App\Models\AmsLanguage;
+use App\Models\AmsMaritalStatus;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
@@ -41,6 +45,7 @@ class EditProfile extends Page
             'first_name' => $user->first_name,
             'otherName' => $user->otherName,
             'surname' => $user->surname,
+            'previousSurname' => $user->previousSurname,
             'knownName' => $user->knownName,
             'scoutName' => $user->scoutName,
             'sex' => $user->sex,
@@ -57,10 +62,16 @@ class EditProfile extends Page
             'occupation' => $user->occupation,
             'typeOfEmployment' => $user->typeOfEmployment,
             'employer' => $user->employer,
+            'maritalStatus' => $user->maritalStatus,
+            'highestEducation' => $user->highestEducation,
             'religiousBelief' => $user->religiousBelief,
             'hobbies' => $user->hobbies,
             'sports' => $user->sports,
             'interests' => $user->interests,
+            'homeLanguage' => $user->homeLanguage,
+            'otherLanguage' => $user->otherLanguage,
+            'otherLanguages' => $user->otherLanguages,
+            'proficiencyInEnglish' => $user->proficiencyInEnglish,
             'medicalAidName' => $user->medicalAidName,
             'medicalAidNr' => $user->medicalAidNr,
             'medicalAidPrincipalMember' => $user->medicalAidPrincipalMember,
@@ -105,6 +116,7 @@ class EditProfile extends Page
             ->components([
                 Tabs::make()
                     ->columnSpanFull()
+                    ->persistTabInQueryString('tab')
                     ->tabs([
                         Tab::make('Personal')
                             ->icon(Heroicon::User)
@@ -120,6 +132,8 @@ class EditProfile extends Page
                                         TextInput::make('otherName')
                                             ->label('Other Name'),
                                         TextInput::make('surname'),
+                                        TextInput::make('previousSurname')
+                                            ->label('Previous Surname'),
                                         TextInput::make('knownName')
                                             ->label('Known As'),
                                         TextInput::make('scoutName')
@@ -134,11 +148,20 @@ class EditProfile extends Page
                                         Select::make('race')
                                             ->options(UserRace::class),
                                         DatePicker::make('dob')
-                                            ->label('Date of Birth'),
+                                            ->label('Date of Birth')
+                                            ->disabled()
+                                            ->dehydrated(false)
+                                            ->helperText('Contact an administrator to change your date of birth.'),
                                         TextInput::make('idNumber')
-                                            ->label('ID Number'),
+                                            ->label('ID Number')
+                                            ->disabled()
+                                            ->dehydrated(false)
+                                            ->helperText('Contact an administrator to change your ID number.'),
                                         TextInput::make('passportNumber')
-                                            ->label('Passport Number'),
+                                            ->label('Passport Number')
+                                            ->disabled()
+                                            ->dehydrated(false)
+                                            ->helperText('Contact an administrator to change your passport number.'),
                                     ]),
                             ]),
 
@@ -194,6 +217,19 @@ class EditProfile extends Page
                                             ->label('Employer'),
                                         TextInput::make('typeOfEmployment')
                                             ->label('Employment Type'),
+                                    ]),
+
+                                Section::make('Personal Details')
+                                    ->columns(3)
+                                    ->schema([
+                                        Select::make('maritalStatus')
+                                            ->label('Marital Status')
+                                            ->options(fn () => AmsMaritalStatus::orderBy('name')->pluck('name', 'id'))
+                                            ->placeholder('-'),
+                                        Select::make('highestEducation')
+                                            ->label('Highest Education')
+                                            ->options(fn () => AmsHighestEducation::orderBy('name')->pluck('name', 'id'))
+                                            ->placeholder('-'),
                                     ]),
 
                                 Section::make('Personal Interests')
@@ -261,6 +297,31 @@ class EditProfile extends Page
                                             ->columnSpanFull(),
                                         TextInput::make('specialMealRequirements')
                                             ->label('Special Meal Requirements'),
+                                    ]),
+                            ]),
+
+                        Tab::make('Languages')
+                            ->icon(Heroicon::Language)
+                            ->schema([
+                                Section::make('Languages')
+                                    ->columns(3)
+                                    ->schema([
+                                        Select::make('homeLanguage')
+                                            ->label('Home Language')
+                                            ->options(fn () => AmsLanguage::orderBy('language')->pluck('language', 'id'))
+                                            ->searchable()
+                                            ->placeholder('-'),
+                                        Select::make('otherLanguage')
+                                            ->label('Other Language')
+                                            ->options(fn () => AmsLanguage::orderBy('language')->pluck('language', 'id'))
+                                            ->searchable()
+                                            ->placeholder('-'),
+                                        TextInput::make('otherLanguages')
+                                            ->label('Additional Languages'),
+                                        Select::make('proficiencyInEnglish')
+                                            ->label('English Proficiency')
+                                            ->options(UserEnglishProficiency::class)
+                                            ->placeholder('-'),
                                     ]),
                             ]),
 

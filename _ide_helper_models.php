@@ -20,6 +20,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon $created
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Admin404Page newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Admin404Page newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Admin404Page query()
@@ -92,7 +93,11 @@ namespace App\Models{
  * @property string|null $userAgent
  * @property int|null $usingMobile
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\SystemUserType|null $role
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdminGoodLogon newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdminGoodLogon newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdminGoodLogon query()
@@ -137,8 +142,17 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \App\Models\SystemAdvancementCubsLevel|null $advancement
+ * @property-read \App\Models\SystemAdvancementCubsSecond|null $advancementSecond
+ * @property-read \App\Models\SystemAdvancementCubsThird|null $advancementThird
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\SystemUser|null $cub
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\SystemAdvancementCubsChallenge|null $theme
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdvancementCub newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdvancementCub newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdvancementCub query()
@@ -187,7 +201,9 @@ namespace App\Models{
  * @property int|null $advancementThirdID
  * @property int $active
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdvancementDocument newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdvancementDocument newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdvancementDocument query()
@@ -235,8 +251,17 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \App\Models\SystemAdvancementMeerkatsLevel|null $advancement
+ * @property-read \App\Models\SystemAdvancementMeerkatsSecond|null $advancementSecond
+ * @property-read \App\Models\SystemAdvancementMeerkatsThird|null $advancementThird
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
+ * @property-read \App\Models\SystemUser|null $meerkat
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\SystemAdvancementMeerkatsChallenge|null $theme
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdvancementMeerkat newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdvancementMeerkat newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdvancementMeerkat query()
@@ -284,7 +309,9 @@ namespace App\Models{
  * @property int|null $advancementThirdID
  * @property int $active
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdvancementNote newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdvancementNote newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdvancementNote query()
@@ -327,7 +354,9 @@ namespace App\Models{
  * @property int|null $advancementThirdID
  * @property int $active
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdvancementPhoto newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdvancementPhoto newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdvancementPhoto query()
@@ -375,8 +404,16 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \App\Models\SystemAdvancementRoversLevel|null $advancement
+ * @property-read \App\Models\SystemAdvancementRoversSecond|null $advancementSecond
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\SystemUser|null $rover
+ * @property-read \App\Models\SystemAdvancementRoversChallenge|null $theme
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdvancementRover newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdvancementRover newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdvancementRover query()
@@ -430,9 +467,18 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property \Illuminate\Support\Carbon|null $approvedDate
- * @property int|null $approvedBy
+ * @property \App\Models\SystemUser|null $approvedBy
+ * @property-read \App\Models\SystemAdvancementScoutsLevel|null $advancement
+ * @property-read \App\Models\SystemAdvancementScoutsSecond|null $advancementSecond
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\SystemUser|null $scout
+ * @property-read \App\Models\SystemProgramTypesScout|null $scoutProgramType
+ * @property-read \App\Models\SystemAdvancementScoutsSecondEntshaTheme|null $theme
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdvancementScout newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdvancementScout newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdvancementScout query()
@@ -479,7 +525,9 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemUser|null $scouter
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdvancementScouter newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdvancementScouter newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AdvancementScouter query()
@@ -505,7 +553,7 @@ namespace App\Models{
  * @property int $countryID
  * @property int $assocToRegion
  * @property int $userID
- * @property int $fromPosition
+ * @property \App\Models\SystemUserType|null $fromPosition
  * @property int $ToPosition
  * @property int $fromGroup
  * @property int $toGroup
@@ -515,7 +563,14 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon $created
  * @property int $createdby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $fromDistrictModel
+ * @property-read \App\Models\Group|null $fromGroupModel
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\District|null $toDistrictModel
+ * @property-read \App\Models\Group|null $toGroupModel
+ * @property-read \App\Models\SystemUserType|null $toPosition
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsAdultLeaderMove newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsAdultLeaderMove newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsAdultLeaderMove query()
@@ -551,13 +606,16 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property \Illuminate\Support\Carbon|null $awardDate
- * @property int|null $awardedBy
+ * @property \App\Models\SystemUser|null $awardedBy
  * @property \Illuminate\Support\Carbon|null $declinedDate
- * @property int|null $declinedBy
- * @property string|null $awardType
+ * @property \App\Models\SystemUser|null $declinedBy
+ * @property \App\Models\AmsAwardType|null $awardType
  * @property string|null $awardDescription
+ * @property-read \App\Models\AmsAwardHeading|null $awardHeading
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsAwardApplication newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsAwardApplication newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsAwardApplication query()
@@ -588,8 +646,15 @@ namespace App\Models{
  * @property int $id
  * @property int $countryID
  * @property string $reason
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsAwardApplication> $applications
+ * @property-read int|null $applications_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsAwardType> $awardTypes
+ * @property-read int|null $award_types_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsAwardInfo> $awards
+ * @property-read int|null $awards_count
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @method static \Database\Factories\AmsAwardHeadingFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsAwardHeading newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsAwardHeading newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsAwardHeading query()
@@ -617,8 +682,14 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \App\Models\AmsAwardType|null $awardType
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
+ * @property-read \App\Models\AmsAwardHeading|null $heading
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsAwardInfo newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsAwardInfo newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsAwardInfo query()
@@ -654,8 +725,14 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsAwardApplication> $applications
+ * @property-read int|null $applications_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsAwardInfo> $awards
+ * @property-read int|null $awards_count
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\AmsAwardHeading|null $heading
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @method static \Database\Factories\AmsAwardTypeFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsAwardType newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsAwardType newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsAwardType query()
@@ -692,8 +769,13 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \App\Models\AmsChargeType|null $chargeType
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsChargeInfo newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsChargeInfo newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsChargeInfo query()
@@ -731,8 +813,11 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsChargeInfo> $charges
+ * @property-read int|null $charges_count
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @method static \Database\Factories\AmsChargeTypeFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsChargeType newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsChargeType newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsChargeType query()
@@ -766,6 +851,8 @@ namespace App\Models{
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsCriminalCheck newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsCriminalCheck newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsCriminalCheck query()
@@ -789,7 +876,12 @@ namespace App\Models{
  * @property int $countryID
  * @property string $reason
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsDisciplinaryInfo> $disciplinaryInfos
+ * @property-read int|null $disciplinary_infos_count
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsDisciplinaryOffence> $offences
+ * @property-read int|null $offences_count
+ * @method static \Database\Factories\AmsDisciplinaryHeadingFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsDisciplinaryHeading newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsDisciplinaryHeading newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsDisciplinaryHeading query()
@@ -819,7 +911,12 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
+ * @property-read \App\Models\AmsDisciplinaryHeading|null $heading
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsDisciplinaryInfo newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsDisciplinaryInfo newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsDisciplinaryInfo query()
@@ -851,6 +948,7 @@ namespace App\Models{
  * @property string $offense
  * @property int $active
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\AmsDisciplinaryHeading|null $heading
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsDisciplinaryOffence newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsDisciplinaryOffence newQuery()
@@ -881,7 +979,12 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\AmsDocumentType|null $documentType
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsDocument newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsDocument newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsDocument query()
@@ -912,7 +1015,10 @@ namespace App\Models{
  * @property int|null $aamForm
  * @property int $active
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsDocument> $documents
+ * @property-read int|null $documents_count
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @method static \Database\Factories\AmsDocumentTypeFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsDocumentType newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsDocumentType newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsDocumentType query()
@@ -934,6 +1040,7 @@ namespace App\Models{
  * @property string $description
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @method static \Database\Factories\AmsDocumentTypesGroupFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsDocumentTypesGroup newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsDocumentTypesGroup newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsDocumentTypesGroup query()
@@ -962,7 +1069,11 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\AmsDocumentTypesGroup|null $documentType
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsDocumentsGroup newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsDocumentsGroup newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsDocumentsGroup query()
@@ -991,6 +1102,7 @@ namespace App\Models{
  * @property string $name
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @method static \Database\Factories\AmsHighestEducationFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsHighestEducation newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsHighestEducation newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsHighestEducation query()
@@ -1007,6 +1119,7 @@ namespace App\Models{
  * @property string $language
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @method static \Database\Factories\AmsLanguageFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsLanguage newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsLanguage newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsLanguage query()
@@ -1022,6 +1135,7 @@ namespace App\Models{
  * @property string $name
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @method static \Database\Factories\AmsMaritalStatusFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsMaritalStatus newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsMaritalStatus newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsMaritalStatus query()
@@ -1053,7 +1167,12 @@ namespace App\Models{
  * @property int|null $modifiedby
  * @property int $toBeFixed
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\AmsPastServiceType|null $serviceType
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsPastServiceInfo newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsPastServiceInfo newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsPastServiceInfo query()
@@ -1089,6 +1208,9 @@ namespace App\Models{
  * @property int $newID
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsPastServiceInfo> $pastServices
+ * @property-read int|null $past_services_count
+ * @method static \Database\Factories\AmsPastServiceTypeFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsPastServiceType newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsPastServiceType newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsPastServiceType query()
@@ -1115,6 +1237,7 @@ namespace App\Models{
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsPoliceClearance newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsPoliceClearance newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsPoliceClearance query()
@@ -1148,7 +1271,12 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\AmsResignReason|null $resignReason
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsResignLeader newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsResignLeader newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsResignLeader query()
@@ -1176,6 +1304,9 @@ namespace App\Models{
  * @property string $reason
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsResignLeader> $resignals
+ * @property-read int|null $resignals_count
+ * @method static \Database\Factories\AmsResignReasonFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsResignReason newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsResignReason newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsResignReason query()
@@ -1202,7 +1333,12 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\AmsRetireReason|null $retireReason
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsRetireLeader newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsRetireLeader newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsRetireLeader query()
@@ -1230,6 +1366,9 @@ namespace App\Models{
  * @property string $reason
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsRetireLeader> $retirements
+ * @property-read int|null $retirements_count
+ * @method static \Database\Factories\AmsRetireReasonFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsRetireReason newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsRetireReason newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsRetireReason query()
@@ -1257,7 +1396,13 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\AmsSuspendReason|null $suspendReason
+ * @property-read \App\Models\SystemUser|null $unsuspendedBy
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsSuspendLeader newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsSuspendLeader newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsSuspendLeader query()
@@ -1286,6 +1431,9 @@ namespace App\Models{
  * @property string $reason
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsSuspendLeader> $suspensions
+ * @property-read int|null $suspensions_count
+ * @method static \Database\Factories\AmsSuspendReasonFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsSuspendReason newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsSuspendReason newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsSuspendReason query()
@@ -1312,7 +1460,12 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\AmsTerminateReason|null $terminateReason
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsTerminateLeader newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsTerminateLeader newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsTerminateLeader query()
@@ -1340,6 +1493,9 @@ namespace App\Models{
  * @property string $reason
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsTerminateLeader> $terminations
+ * @property-read int|null $terminations_count
+ * @method static \Database\Factories\AmsTerminateReasonFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsTerminateReason newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsTerminateReason newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsTerminateReason query()
@@ -1354,7 +1510,7 @@ namespace App\Models{
 /**
  * @property int $id
  * @property int $countryID
- * @property int|null $courseType
+ * @property \App\Models\AmsTrainingCoursesType|null $courseType
  * @property int $assocToRegion
  * @property string $name
  * @property string|null $agendaPDFLocation
@@ -1367,8 +1523,11 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsTrainingCoursesAnnual> $annualCourses
+ * @property-read int|null $annual_courses_count
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsTrainingCourse newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsTrainingCourse newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsTrainingCourse query()
@@ -1418,8 +1577,21 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsTrainingCoursesAnnualAttendance> $attendance
+ * @property-read int|null $attendance_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsTrainingCoursesAnnualBooking> $bookings
+ * @property-read int|null $bookings_count
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsTrainingCoursesAnnualDate> $dates
+ * @property-read int|null $dates_count
+ * @property-read \App\Models\SystemUser|null $director
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsTrainingCoursesAnnualLecturer> $lecturers
+ * @property-read int|null $lecturers_count
+ * @property-read \App\Models\AmsTrainingLocation|null $location
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsTrainingCoursesAnnualWarrantsAvailable> $warrantsAvailable
+ * @property-read int|null $warrants_available_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsTrainingCoursesAnnual newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsTrainingCoursesAnnual newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsTrainingCoursesAnnual query()
@@ -1467,8 +1639,12 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \App\Models\AmsTrainingCoursesAnnual|null $course
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\AmsTrainingCoursesAnnualDate|null $day
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsTrainingCoursesAnnualAttendance newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsTrainingCoursesAnnualAttendance newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsTrainingCoursesAnnualAttendance query()
@@ -1510,8 +1686,15 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \App\Models\AmsTrainingCoursesAnnual|null $course
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsTrainingCoursesAnnualBookingsNote> $notes
+ * @property-read int|null $notes_count
+ * @property-read \App\Models\Region|null $region
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsTrainingCoursesAnnualBookingsTracking> $tracking
+ * @property-read int|null $tracking_count
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsTrainingCoursesAnnualBooking newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsTrainingCoursesAnnualBooking newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsTrainingCoursesAnnualBooking query()
@@ -1551,8 +1734,11 @@ namespace App\Models{
  * @property int|null $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \App\Models\AmsTrainingCoursesAnnualBooking|null $booking
+ * @property-read \App\Models\AmsTrainingCoursesAnnual|null $course
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsTrainingCoursesAnnualBookingsNote newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsTrainingCoursesAnnualBookingsNote newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsTrainingCoursesAnnualBookingsNote query()
@@ -1582,8 +1768,11 @@ namespace App\Models{
  * @property int $toStatus
  * @property \Illuminate\Support\Carbon $created
  * @property int|null $createdby
+ * @property-read \App\Models\AmsTrainingCoursesAnnualBooking|null $booking
+ * @property-read \App\Models\AmsTrainingCoursesAnnual|null $course
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsTrainingCoursesAnnualBookingsTracking newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsTrainingCoursesAnnualBookingsTracking newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsTrainingCoursesAnnualBookingsTracking query()
@@ -1615,6 +1804,7 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \App\Models\AmsTrainingCoursesAnnual|null $course
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsTrainingCoursesAnnualDate newModelQuery()
@@ -1647,7 +1837,9 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \App\Models\AmsTrainingCoursesAnnual|null $course
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\SystemUser|null $lecturer
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsTrainingCoursesAnnualLecturer newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsTrainingCoursesAnnualLecturer newQuery()
@@ -1674,8 +1866,10 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \App\Models\AmsTrainingCoursesAnnual|null $course
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\AmsWarrantType|null $warrantType
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsTrainingCoursesAnnualWarrantsAvailable newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsTrainingCoursesAnnualWarrantsAvailable newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsTrainingCoursesAnnualWarrantsAvailable query()
@@ -1700,6 +1894,9 @@ namespace App\Models{
  * @property int $active
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsTrainingCourse> $trainingCourses
+ * @property-read int|null $training_courses_count
+ * @method static \Database\Factories\AmsTrainingCoursesTypeFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsTrainingCoursesType newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsTrainingCoursesType newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsTrainingCoursesType query()
@@ -1731,8 +1928,11 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsTrainingCoursesAnnual> $courses
+ * @property-read int|null $courses_count
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsTrainingLocation newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsTrainingLocation newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsTrainingLocation query()
@@ -1779,7 +1979,13 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $validatedDate
  * @property int|null $validatedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\AmsTrainingPastType|null $trainingType
+ * @property-read \App\Models\SystemUser|null $user
+ * @property-read \App\Models\SystemUser|null $validatedByUser
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsTrainingPast newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsTrainingPast newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsTrainingPast query()
@@ -1822,6 +2028,9 @@ namespace App\Models{
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsTrainingPast> $trainingHistories
+ * @property-read int|null $training_histories_count
+ * @method static \Database\Factories\AmsTrainingPastTypeFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsTrainingPastType newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsTrainingPastType newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsTrainingPastType query()
@@ -1857,13 +2066,18 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property \Illuminate\Support\Carbon|null $awardDate
- * @property int|null $awardedBy
+ * @property \App\Models\SystemUser|null $awardedBy
  * @property \Illuminate\Support\Carbon|null $declinedDate
- * @property int|null $declinedBy
+ * @property \App\Models\SystemUser|null $declinedBy
  * @property string|null $awardType
  * @property string|null $awardDescription
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\SystemUser|null $user
+ * @property-read \App\Models\AmsWarrantType|null $warrantType
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsWarrantApplication newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsWarrantApplication newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsWarrantApplication query()
@@ -1897,6 +2111,9 @@ namespace App\Models{
  * @property int $active
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsWarrantInfo> $warrants
+ * @property-read int|null $warrants_count
+ * @method static \Database\Factories\AmsWarrantCancellationTypeFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsWarrantCancellationType newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsWarrantCancellationType newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsWarrantCancellationType query()
@@ -1925,7 +2142,12 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\SystemUser|null $user
+ * @property-read \App\Models\AmsWarrantInfo|null $warrant
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsWarrantExtension newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsWarrantExtension newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsWarrantExtension query()
@@ -1973,8 +2195,15 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \App\Models\AmsWarrantCancellationType|null $cancellationType
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\SystemUserType|null $role
+ * @property-read \App\Models\SystemUser|null $user
+ * @property-read \App\Models\AmsWarrantType|null $warrantType
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsWarrantInfo newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsWarrantInfo newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsWarrantInfo query()
@@ -2021,8 +2250,13 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsWarrantApplication> $applications
+ * @property-read int|null $applications_count
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsWarrantInfo> $warrants
+ * @property-read int|null $warrants_count
+ * @method static \Database\Factories\AmsWarrantTypeFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsWarrantType newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsWarrantType newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AmsWarrantType query()
@@ -2053,6 +2287,7 @@ namespace App\Models{
  * @property int $active
  * @property \Illuminate\Support\Carbon $created
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\SystemUser|null $issuedToUser
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApiKey newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ApiKey newQuery()
@@ -2115,8 +2350,15 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \App\Models\SystemBadgeCubsFirst|null $badgeFirst
+ * @property-read \App\Models\SystemBadgeCubsSecond|null $badgeSecond
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\SystemUser|null $cub
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BadgesCub newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BadgesCub newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BadgesCub query()
@@ -2160,7 +2402,9 @@ namespace App\Models{
  * @property int $badgeSecondID
  * @property int $active
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BadgesDocument newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BadgesDocument newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BadgesDocument query()
@@ -2203,8 +2447,15 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \App\Models\SystemBadgeMeerkatsFirst|null $badgeFirst
+ * @property-read \App\Models\SystemBadgeMeerkatsSecond|null $badgeSecond
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
+ * @property-read \App\Models\SystemUser|null $meerkat
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BadgesMeerkat newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BadgesMeerkat newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BadgesMeerkat query()
@@ -2248,7 +2499,9 @@ namespace App\Models{
  * @property int|null $thirdID
  * @property int $active
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BadgesNote newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BadgesNote newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BadgesNote query()
@@ -2288,7 +2541,9 @@ namespace App\Models{
  * @property int $badgeSecondID
  * @property int $active
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BadgesPhoto newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BadgesPhoto newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BadgesPhoto query()
@@ -2333,9 +2588,16 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property \Illuminate\Support\Carbon|null $approvedDate
- * @property int|null $approvedBy
+ * @property \App\Models\SystemUser|null $approvedBy
+ * @property-read \App\Models\SystemBadgeRoversFirst|null $badgeFirst
+ * @property-read \App\Models\SystemBadgeRoversSecond|null $badgeSecond
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\SystemUser|null $rover
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BadgesRover newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BadgesRover newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BadgesRover query()
@@ -2386,9 +2648,16 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property \Illuminate\Support\Carbon|null $approvedDate
- * @property int|null $approvedBy
+ * @property \App\Models\SystemUser|null $approvedBy
+ * @property-read \App\Models\SystemBadgeScoutsFirst|null $badgeFirst
+ * @property-read \App\Models\SystemBadgeScoutsSecond|null $badgeSecond
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\SystemUser|null $scout
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BadgesScout newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BadgesScout newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|BadgesScout query()
@@ -2429,7 +2698,10 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon $created
  * @property int $createdby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CensusDocument newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CensusDocument newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CensusDocument query()
@@ -2484,7 +2756,7 @@ namespace App\Models{
  * @property string $locationName
  * @property string $bio
  * @property string $skills
- * @property int $likes
+ * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\DirectoryProfessionalLike> $likes
  * @property string|null $facebook
  * @property string|null $linkedin
  * @property string|null $twitter
@@ -2496,10 +2768,10 @@ namespace App\Models{
  * @property string|null $contactTel
  * @property int $active
  * @property int $approved
- * @property int|null $approvedBy
+ * @property \App\Models\SystemUser|null $approvedBy
  * @property \Illuminate\Support\Carbon|null $approvedDate
  * @property int|null $declined
- * @property int|null $declinedBy
+ * @property \App\Models\SystemUser|null $declinedBy
  * @property \Illuminate\Support\Carbon|null $declinedDate
  * @property string|null $declinedReason
  * @property string|null $declinedNotes
@@ -2508,7 +2780,10 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read int|null $likes_count
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\DirectoryProfessionalReview> $reviews
+ * @property-read int|null $reviews_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DirectoryProfessional newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DirectoryProfessional newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DirectoryProfessional query()
@@ -2553,6 +2828,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon $created
  * @property int $createdby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\DirectoryProfessional|null $directory
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DirectoryProfessionalLike newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DirectoryProfessionalLike newQuery()
@@ -2574,7 +2850,7 @@ namespace App\Models{
  * @property int $stars
  * @property int $active
  * @property int $approved
- * @property int|null $approvedBy
+ * @property \App\Models\SystemUser|null $approvedBy
  * @property \Illuminate\Support\Carbon|null $approvedDate
  * @property int $declined
  * @property int $declinedReasonID
@@ -2585,6 +2861,8 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\SystemUser|null $declinedBy
+ * @property-read \App\Models\DirectoryProfessional|null $directory
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DirectoryProfessionalReview newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DirectoryProfessionalReview newQuery()
@@ -2646,20 +2924,33 @@ namespace App\Models{
  * @property int|null $modifiedby
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Group> $churchGroups
  * @property-read int|null $church_groups_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupCommittee> $committees
+ * @property-read int|null $committees_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Group> $communityGroups
  * @property-read int|null $community_groups_count
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupDistrictReport> $districtReports
+ * @property-read int|null $district_reports_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Group> $dsdGroups
  * @property-read int|null $dsd_groups_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupEvent> $events
+ * @property-read int|null $events_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Group> $groups
  * @property-read int|null $groups_count
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupNewsletter> $newsletters
+ * @property-read int|null $newsletters_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Group> $ngoGroups
  * @property-read int|null $ngo_groups_count
  * @property-read \App\Models\GroupAccount|null $ownedAccount
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupProgram> $programs
+ * @property-read int|null $programs_count
  * @property-read \App\Models\Region|null $region
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Group> $schoolGroups
  * @property-read int|null $school_groups_count
+ * @property-read \App\Models\DistrictsSuper|null $superDistrict
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupYouthCharge> $youthCharges
+ * @property-read int|null $youth_charges_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|District active()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|District newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|District newQuery()
@@ -2696,7 +2987,11 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\District> $districts
+ * @property-read int|null $districts_count
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\GroupAccount|null $ownedAccount
+ * @property-read \App\Models\Region|null $region
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DistrictsSuper newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DistrictsSuper newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DistrictsSuper query()
@@ -2729,7 +3024,12 @@ namespace App\Models{
  * @property int|null $groupID
  * @property \Illuminate\Support\Carbon|null $created
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\SystemUserType|null $role
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ErrorLogging newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ErrorLogging newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ErrorLogging query()
@@ -2774,6 +3074,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon $created
  * @property int $createdby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\GroupEvent|null $event
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventBookingSetupChange newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventBookingSetupChange newQuery()
@@ -2819,7 +3120,10 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\GroupEvent|null $event
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\EventCompetitionsScoringArea|null $scoringArea
+ * @property-read \App\Models\EventCompetitionsGroupsAttending|null $team
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionScoreAdjudication newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionScoreAdjudication newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionScoreAdjudication query()
@@ -2852,7 +3156,9 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\GroupEvent|null $event
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\EventCompetitionsQuestion|null $question
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsAnswer newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsAnswer newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsAnswer query()
@@ -2885,7 +3191,9 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\GroupEvent|null $event
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\EventCompetitionsGroupsAttending|null $team
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsFinancesInvoice newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsFinancesInvoice newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsFinancesInvoice query()
@@ -2917,7 +3225,9 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\GroupEvent|null $event
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\EventCompetitionsGroupsAttending|null $team
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsFinancesPayment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsFinancesPayment newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsFinancesPayment query()
@@ -2948,6 +3258,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\GroupEvent|null $event
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsGp newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsGp newQuery()
@@ -2980,6 +3291,8 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\GroupEvent|null $event
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsGroupsAttending newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsGroupsAttending newQuery()
@@ -3011,7 +3324,10 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\GroupEvent|null $event
+ * @property-read \App\Models\EventCompetitionsInternalCompetition|null $internalCompetition
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\EventCompetitionsGroupsAttending|null $team
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsGroupsParticipating newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsGroupsParticipating newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsGroupsParticipating query()
@@ -3039,7 +3355,16 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\GroupEvent|null $event
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\EventCompetitionsGroupsParticipating> $groupsParticipating
+ * @property-read int|null $groups_participating_count
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\EventCompetitionsQuestion> $questions
+ * @property-read int|null $questions_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\EventCompetitionsScoringArea> $scoringAreas
+ * @property-read int|null $scoring_areas_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\EventCompetitionsScoringSheet> $scoringSheets
+ * @property-read int|null $scoring_sheets_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsInternalCompetition newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsInternalCompetition newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsInternalCompetition query()
@@ -3067,7 +3392,10 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\GroupEvent|null $event
+ * @property-read \App\Models\EventCompetitionsJudgesType|null $judgeType
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsJudge newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsJudge newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsJudge query()
@@ -3138,7 +3466,13 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon $created
  * @property int $used
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\GroupEvent|null $event
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\SystemUserType|null $role
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsLocationLogging newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsLocationLogging newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsLocationLogging query()
@@ -3181,8 +3515,15 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\EventCompetitionsAnswer> $answers
+ * @property-read int|null $answers_count
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\GroupEvent|null $event
+ * @property-read \App\Models\EventCompetitionsScoringSheetsHeading|null $heading
+ * @property-read \App\Models\EventCompetitionsInternalCompetition|null $internalCompetition
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\EventCompetitionsScoringArea|null $scoringArea
+ * @property-read \App\Models\EventCompetitionsScoringSheet|null $scoringSheet
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsQuestion newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsQuestion newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsQuestion query()
@@ -3218,7 +3559,13 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property \App\Models\SystemUser|null $modifiedBy
  * @property string|null $notes
+ * @property-read \App\Models\EventCompetitionsAnswer|null $answer
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\GroupEvent|null $event
+ * @property-read \App\Models\EventCompetitionsQuestion|null $question
+ * @property-read \App\Models\EventCompetitionsScoringArea|null $scoringArea
+ * @property-read \App\Models\EventCompetitionsScoringSheet|null $scoringSheet
+ * @property-read \App\Models\EventCompetitionsGroupsAttending|null $team
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsScoring newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsScoring newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsScoring query()
@@ -3251,7 +3598,11 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\GroupEvent|null $event
+ * @property-read \App\Models\EventCompetitionsInternalCompetition|null $internalCompetition
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\EventCompetitionsQuestion> $questions
+ * @property-read int|null $questions_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsScoringArea newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsScoringArea newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsScoringArea query()
@@ -3280,7 +3631,10 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\GroupEvent|null $event
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\EventCompetitionsScoringSheet|null $scoringSheet
+ * @property-read \App\Models\EventCompetitionsGroupsAttending|null $team
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsScoringDnp newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsScoringDnp newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsScoringDnp query()
@@ -3318,7 +3672,13 @@ namespace App\Models{
  * @property int $medicalScore
  * @property int $seaWorthynessScore
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\GroupEvent|null $event
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\EventCompetitionsScoringSheetsHeading> $headings
+ * @property-read int|null $headings_count
+ * @property-read \App\Models\EventCompetitionsInternalCompetition|null $internalCompetition
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\EventCompetitionsQuestion> $questions
+ * @property-read int|null $questions_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsScoringSheet newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsScoringSheet newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsScoringSheet query()
@@ -3358,6 +3718,9 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property \App\Models\SystemUser|null $modifiedBy
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\GroupEvent|null $event
+ * @property-read \App\Models\EventCompetitionsInternalCompetition|null $internalCompetition
+ * @property-read \App\Models\EventCompetitionsScoringSheet|null $scoringSheet
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsScoringSheetsHeading newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsScoringSheetsHeading newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsScoringSheetsHeading query()
@@ -3398,6 +3761,7 @@ namespace App\Models{
  * @property int $active
  * @property \Illuminate\Support\Carbon $created
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\GroupEvent|null $event
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsSurveyResponse newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventCompetitionsSurveyResponse newQuery()
@@ -3442,7 +3806,14 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\GroupEvent|null $event
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\EventUserBookingNote> $notes
+ * @property-read int|null $notes_count
+ * @property-read \App\Models\EventUserBookingPatrol|null $patrol
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\EventUserBookingPayment> $payments
+ * @property-read int|null $payments_count
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventUserBooking newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventUserBooking newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventUserBooking query()
@@ -3477,6 +3848,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\GroupEvent|null $event
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventUserBookingAccomodation newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventUserBookingAccomodation newQuery()
@@ -3509,7 +3881,9 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\GroupEvent|null $event
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventUserBookingCreditNote newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventUserBookingCreditNote newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventUserBookingCreditNote query()
@@ -3544,7 +3918,9 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\GroupEvent|null $event
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventUserBookingInvoice newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventUserBookingInvoice newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventUserBookingInvoice query()
@@ -3577,7 +3953,9 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\GroupEvent|null $event
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventUserBookingNote newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventUserBookingNote newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventUserBookingNote query()
@@ -3606,6 +3984,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\GroupEvent|null $event
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventUserBookingOtherOption newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventUserBookingOtherOption newQuery()
@@ -3634,6 +4013,9 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\GroupEvent|null $event
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\EventUserBookingPatrolAllocation> $members
+ * @property-read int|null $members_count
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventUserBookingPatrol newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventUserBookingPatrol newQuery()
@@ -3662,7 +4044,10 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\GroupEvent|null $event
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\EventUserBookingPatrol|null $patrol
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventUserBookingPatrolAllocation newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventUserBookingPatrolAllocation newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventUserBookingPatrolAllocation query()
@@ -3693,7 +4078,9 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\GroupEvent|null $event
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventUserBookingPayment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventUserBookingPayment newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventUserBookingPayment query()
@@ -3724,7 +4111,9 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\GroupEvent|null $event
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventUserBookingPop newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventUserBookingPop newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventUserBookingPop query()
@@ -3752,7 +4141,9 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\GroupEvent|null $event
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemUserType|null $role
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventUserBookingRole newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventUserBookingRole newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventUserBookingRole query()
@@ -3781,6 +4172,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\GroupEvent|null $event
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventUserBookingTransport newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventUserBookingTransport newQuery()
@@ -3963,18 +4355,58 @@ namespace App\Models{
  * @property bool|null $censusDone
  * @property \Illuminate\Support\Carbon|null $groupLastUpdated
  * @property int|null $groupLastUpdatedBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupAccount> $accounts
+ * @property-read int|null $accounts_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupAttendance> $attendance
+ * @property-read int|null $attendance_count
  * @property-read mixed $bank_info_short
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupCommittee> $committees
+ * @property-read int|null $committees_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupCouncil> $council
+ * @property-read int|null $council_count
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupCubPack> $cubPacks
+ * @property-read int|null $cub_packs_count
  * @property-read mixed $cub_program_type_label
  * @property-read \App\Models\District|null $district
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupDistrictReport> $districtReports
+ * @property-read int|null $district_reports_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupDocument> $documents
+ * @property-read int|null $documents_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupEquipment> $equipment
+ * @property-read int|null $equipment_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupEquipmentStore> $equipmentStores
+ * @property-read int|null $equipment_stores_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupEvent> $events
+ * @property-read int|null $events_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupFinancialYear> $financialYears
+ * @property-read int|null $financial_years_count
+ * @property-read \App\Models\GroupAccount|null $groupAccount
+ * @property-read \App\Models\GroupsType|null $groupType
  * @property-read mixed $group_type_label
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupMeerkatDen> $meerkatDens
+ * @property-read int|null $meerkat_dens_count
  * @property-read mixed $meerkat_program_type_label
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupsMulti> $multiSections
  * @property-read int|null $multi_sections_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupNewsletter> $newsletters
+ * @property-read int|null $newsletters_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupProgram> $programs
+ * @property-read int|null $programs_count
  * @property-read \App\Models\Region|null $region
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupRoverCrew> $roverCrews
+ * @property-read int|null $rover_crews_count
  * @property-read mixed $rover_program_type_label
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupScoutsCharge> $scoutCharges
+ * @property-read int|null $scout_charges_count
  * @property-read mixed $scout_program_type_label
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupScoutTroop> $scoutTroops
+ * @property-read int|null $scout_troops_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupStarAward> $starAwards
+ * @property-read int|null $star_awards_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupYouthCharge> $youthCharges
+ * @property-read int|null $youth_charges_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Group active()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Group newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Group newQuery()
@@ -4073,7 +4505,16 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupFinancialCreditNote> $creditNotes
+ * @property-read int|null $credit_notes_count
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupFinancialInvoice> $invoices
+ * @property-read int|null $invoices_count
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupFinancialPaymentsMade> $paymentsMade
+ * @property-read int|null $payments_made_count
+ * @property-read \App\Models\Region|null $region
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupAccount newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupAccount newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupAccount query()
@@ -4109,6 +4550,7 @@ namespace App\Models{
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\GroupAccountsTransfer|null $transfer
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupAccountTransfersNote newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupAccountTransfersNote newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupAccountTransfersNote query()
@@ -4137,7 +4579,7 @@ namespace App\Models{
  * @property int $toGroupID
  * @property int $accountID
  * @property int $action 1 = From SGL Must Approve, 2 = From Treasurer Must Approve, 3 = To SGL Must Approve
- * @property string $notes
+ * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupAccountTransfersNote> $notes
  * @property int|null $fromSGLApproved
  * @property int|null $fromSGLID
  * @property \Illuminate\Support\Carbon|null $fromSGLApprovedDate
@@ -4156,8 +4598,19 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \App\Models\GroupAccount|null $account
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $fromDistrict
+ * @property-read \App\Models\Group|null $fromGroup
+ * @property-read \App\Models\Region|null $fromRegion
+ * @property-read \App\Models\SystemUser|null $fromSgl
+ * @property-read \App\Models\SystemUser|null $fromTreasurer
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read int|null $notes_count
+ * @property-read \App\Models\District|null $toDistrict
+ * @property-read \App\Models\Group|null $toGroup
+ * @property-read \App\Models\Region|null $toRegion
+ * @property-read \App\Models\SystemUser|null $toSgl
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupAccountsTransfer newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupAccountsTransfer newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupAccountsTransfer query()
@@ -4227,7 +4680,10 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\GroupEvent|null $event
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemProgramTypesScout|null $scoutProgramType
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupAdvancementsInEvent newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupAdvancementsInEvent newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupAdvancementsInEvent query()
@@ -4266,7 +4722,10 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\GroupProgram|null $program
+ * @property-read \App\Models\SystemProgramTypesScout|null $scoutProgramType
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupAdvancementsInProgram newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupAdvancementsInProgram newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupAdvancementsInProgram query()
@@ -4305,7 +4764,10 @@ namespace App\Models{
  * @property int|null $modifiedby
  * @property int $moved
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\GroupProgram|null $program
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupAttendance newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupAttendance newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupAttendance query()
@@ -4343,7 +4805,10 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\GroupEvent|null $event
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemProgramTypesScout|null $scoutProgramType
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupBadgesInEvent newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupBadgesInEvent newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupBadgesInEvent query()
@@ -4381,7 +4846,10 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\GroupProgram|null $program
+ * @property-read \App\Models\SystemProgramTypesScout|null $scoutProgramType
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupBadgesInProgram newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupBadgesInProgram newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupBadgesInProgram query()
@@ -4420,7 +4888,12 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\SystemCommitteeType|null $type
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupCommittee newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupCommittee newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupCommittee query()
@@ -4459,7 +4932,12 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\SystemCouncilType|null $type
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupCouncil newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupCouncil newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupCouncil query()
@@ -4492,6 +4970,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupCubPack newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupCubPack newQuery()
@@ -4519,7 +4998,9 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon $created
  * @property int $createdby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\GroupCubPack|null $pack
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupCubsSixesName newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupCubsSixesName newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupCubsSixesName query()
@@ -4547,7 +5028,10 @@ namespace App\Models{
  * @property int $boys
  * @property int $girls
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupDistrictReport newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupDistrictReport newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupDistrictReport query()
@@ -4607,7 +5091,10 @@ namespace App\Models{
  * @property string $packActivity
  * @property string $groupActivity
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupDistrictReportsCub newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupDistrictReportsCub newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupDistrictReportsCub query()
@@ -4670,7 +5157,10 @@ namespace App\Models{
  * @property int $percent
  * @property string $comments
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupDistrictReportsCubsAttendance newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupDistrictReportsCubsAttendance newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupDistrictReportsCubsAttendance query()
@@ -4737,7 +5227,10 @@ namespace App\Models{
  * @property string $troopActivity
  * @property string $groupActivity
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupDistrictReportsScout newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupDistrictReportsScout newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupDistrictReportsScout query()
@@ -4801,6 +5294,7 @@ namespace App\Models{
  * @property int $percent
  * @property string $comments
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupDistrictReportsScoutsAttendance newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupDistrictReportsScoutsAttendance newQuery()
@@ -4834,8 +5328,11 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \App\Models\GroupAccount|null $account
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemUser|null $person
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupDocument newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupDocument newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupDocument query()
@@ -4866,6 +5363,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created
  * @property int|null $createdByID
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupEditRecord newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupEditRecord newQuery()
@@ -4907,7 +5405,11 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
+ * @property-read \App\Models\GroupEquipmentStore|null $location
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupEquipment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupEquipment newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupEquipment query()
@@ -4952,6 +5454,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupEquipmentStore newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupEquipmentStore newQuery()
@@ -5002,7 +5505,7 @@ namespace App\Models{
  * @property string $startTime
  * @property \Illuminate\Support\Carbon $endDate
  * @property string $endTime
- * @property int $scouterResponsible
+ * @property \App\Models\SystemUser|null $scouterResponsible
  * @property \Illuminate\Support\Carbon $created
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
@@ -5050,8 +5553,23 @@ namespace App\Models{
  * @property string|null $surveyURL
  * @property string|null $leaderboardURL
  * @property string|null $calendarURL
+ * @property-read GroupEvent|null $associatedDistrictEvent
+ * @property-read GroupEvent|null $associatedNationalEvent
+ * @property-read GroupEvent|null $associatedRegionEvent
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupEventsAttending> $attendees
+ * @property-read int|null $attendees_count
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\GroupRoverCrew|null $crew
+ * @property-read \App\Models\GroupMeerkatDen|null $den
+ * @property-read \App\Models\District|null $district
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupEventDocument> $documents
+ * @property-read int|null $documents_count
+ * @property-read \App\Models\SystemGroupEventType|null $eventType
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\GroupCubPack|null $pack
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\GroupScoutTroop|null $troop
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupEvent newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupEvent newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupEvent query()
@@ -5149,6 +5667,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\GroupEvent|null $event
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupEventDocument newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupEventDocument newQuery()
@@ -5181,7 +5700,11 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\GroupEvent|null $event
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemUserType|null $role
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupEventsAttending newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupEventsAttending newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupEventsAttending query()
@@ -5218,8 +5741,12 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \App\Models\GroupAccount|null $account
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupFinancialAnnualInvoiceDiscount newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupFinancialAnnualInvoiceDiscount newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupFinancialAnnualInvoiceDiscount query()
@@ -5258,8 +5785,16 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \App\Models\GroupAccount|null $account
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\GroupFinancialYear|null $financialYear
+ * @property-read \App\Models\Group|null $group
+ * @property-read \App\Models\GroupFinancialInvoice|null $invoice
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupFinancialCreditNotesItem> $items
+ * @property-read int|null $items_count
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupFinancialCreditNote newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupFinancialCreditNote newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupFinancialCreditNote query()
@@ -5299,7 +5834,12 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \App\Models\GroupAccount|null $account
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\GroupFinancialCreditNote|null $creditNote
+ * @property-read \App\Models\GroupFinancialYear|null $financialYear
+ * @property-read \App\Models\Group|null $group
+ * @property-read \App\Models\GroupFinancialInvoice|null $invoice
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupFinancialCreditNotesItem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupFinancialCreditNotesItem newQuery()
@@ -5340,7 +5880,12 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\GroupFinancialFeeType|null $feeType
+ * @property-read \App\Models\GroupFinancialYear|null $financialYear
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupFinancialFee newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupFinancialFee newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupFinancialFee query()
@@ -5375,6 +5920,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupFinancialFeeType newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupFinancialFeeType newQuery()
@@ -5411,8 +5957,15 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \App\Models\GroupAccount|null $account
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\GroupFinancialYear|null $financialYear
+ * @property-read \App\Models\Group|null $group
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupFinancialInvoicesItem> $items
+ * @property-read int|null $items_count
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupFinancialInvoice newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupFinancialInvoice newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupFinancialInvoice query()
@@ -5446,7 +5999,11 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon $sentDate
  * @property \Illuminate\Support\Carbon $created
  * @property int $createdby
+ * @property-read \App\Models\GroupAccount|null $account
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\GroupFinancialYear|null $financialYear
+ * @property-read \App\Models\Group|null $group
+ * @property-read \App\Models\GroupFinancialInvoice|null $invoice
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupFinancialInvoicesEmailed newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupFinancialInvoicesEmailed newQuery()
@@ -5480,7 +6037,11 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \App\Models\GroupAccount|null $account
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\GroupFinancialYear|null $financialYear
+ * @property-read \App\Models\Group|null $group
+ * @property-read \App\Models\GroupFinancialInvoice|null $invoice
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupFinancialInvoicesItem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupFinancialInvoicesItem newQuery()
@@ -5519,8 +6080,13 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \App\Models\GroupAccount|null $account
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
+ * @property-read \App\Models\GroupFinancialInvoice|null $invoice
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupFinancialPaymentsMade newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupFinancialPaymentsMade newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupFinancialPaymentsMade query()
@@ -5555,6 +6121,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupFinancialYear newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupFinancialYear newQuery()
@@ -5584,6 +6151,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupMeerkatDen newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupMeerkatDen newQuery()
@@ -5611,6 +6179,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon $created
  * @property int $createdby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupMeerkatsPatrolName newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupMeerkatsPatrolName newQuery()
@@ -5643,7 +6212,10 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupNewsletter newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupNewsletter newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupNewsletter query()
@@ -5680,7 +6252,10 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupParentsCommitteeMinute newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupParentsCommitteeMinute newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupParentsCommitteeMinute query()
@@ -5719,7 +6294,7 @@ namespace App\Models{
  * @property int $cubProgramTypeID
  * @property int $scoutProgramTypeID
  * @property int|null $roverProgramTypeID
- * @property int|null $responsibleScouter
+ * @property \App\Models\SystemUser|null $responsibleScouter
  * @property int|null $dutyPatrol
  * @property string $title
  * @property string $description
@@ -5733,12 +6308,29 @@ namespace App\Models{
  * @property int $shared
  * @property int|null $sharedby
  * @property \Illuminate\Support\Carbon|null $sharedDate
- * @property int|null $roverProgramType
+ * @property \App\Models\SystemProgramTypesRover|null $roverProgramType
  * @property int $online
  * @property int $onlineActive
  * @property \Illuminate\Support\Carbon|null $onlineEndDate
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupAttendance> $attendance
+ * @property-read int|null $attendance_count
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\GroupRoverCrew|null $crew
+ * @property-read \App\Models\SystemProgramTypesCub|null $cubProgramType
+ * @property-read \App\Models\GroupMeerkatDen|null $den
+ * @property-read \App\Models\District|null $district
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupProgramsDocument> $documents
+ * @property-read int|null $documents_count
+ * @property-read \App\Models\Group|null $group
+ * @property-read \App\Models\SystemProgramTypesMeerkat|null $meerkatProgramType
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupProgramsOnlineTask> $onlineTasks
+ * @property-read int|null $online_tasks_count
+ * @property-read \App\Models\GroupCubPack|null $pack
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\SystemProgramTypesScout|null $scoutProgramType
+ * @property-read \App\Models\SystemUser|null $sharedBy
+ * @property-read \App\Models\GroupScoutTroop|null $troop
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupProgram newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupProgram newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupProgram query()
@@ -5793,6 +6385,7 @@ namespace App\Models{
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\GroupProgram|null $program
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupProgramsDocument newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupProgramsDocument newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupProgramsDocument query()
@@ -5828,6 +6421,7 @@ namespace App\Models{
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\GroupProgram|null $program
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupProgramsOnlineTask newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupProgramsOnlineTask newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupProgramsOnlineTask query()
@@ -5863,6 +6457,9 @@ namespace App\Models{
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\GroupProgram|null $program
+ * @property-read \App\Models\GroupProgramsOnlineTask|null $task
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupProgramsOnlineTasksCompletion newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupProgramsOnlineTasksCompletion newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupProgramsOnlineTasksCompletion query()
@@ -5894,6 +6491,9 @@ namespace App\Models{
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\GroupProgram|null $program
+ * @property-read \App\Models\GroupProgramsOnlineTask|null $task
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupProgramsOnlineTasksDocument newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupProgramsOnlineTasksDocument newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupProgramsOnlineTasksDocument query()
@@ -5927,6 +6527,9 @@ namespace App\Models{
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\GroupProgram|null $program
+ * @property-read \App\Models\GroupProgramsOnlineTask|null $task
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupProgramsOnlineTasksImage newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupProgramsOnlineTasksImage newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupProgramsOnlineTasksImage query()
@@ -5959,6 +6562,9 @@ namespace App\Models{
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\GroupProgram|null $program
+ * @property-read \App\Models\GroupProgramsOnlineTask|null $task
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupProgramsOnlineTasksNote newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupProgramsOnlineTasksNote newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupProgramsOnlineTasksNote query()
@@ -5990,6 +6596,9 @@ namespace App\Models{
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\GroupProgram|null $program
+ * @property-read \App\Models\GroupProgramsOnlineTask|null $task
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupProgramsOnlineTasksPenalty newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupProgramsOnlineTasksPenalty newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupProgramsOnlineTasksPenalty query()
@@ -6016,6 +6625,8 @@ namespace App\Models{
  * @property int $createdby
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\GroupProgram|null $program
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupProgramsOnlineWorkingOn newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupProgramsOnlineWorkingOn newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupProgramsOnlineWorkingOn query()
@@ -6040,6 +6651,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupRoverCrew newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupRoverCrew newQuery()
@@ -6068,6 +6680,8 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon $created
  * @property int $createdby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\GroupRoverCrew|null $crew
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupRoversPatrolName newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupRoversPatrolName newQuery()
@@ -6098,7 +6712,10 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupScoutTroop newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupScoutTroop newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupScoutTroop query()
@@ -6136,7 +6753,11 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\SystemUser|null $scout
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupScoutsCharge newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupScoutsCharge newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupScoutsCharge query()
@@ -6173,7 +6794,11 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon $created
  * @property int $createdby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\GroupScoutTroop|null $troop
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupScoutsPatrolName newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupScoutsPatrolName newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupScoutsPatrolName query()
@@ -6199,6 +6824,7 @@ namespace App\Models{
  * @property int $createdby
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupSendLogonDetail newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupSendLogonDetail newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupSendLogonDetail query()
@@ -6227,8 +6853,12 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \App\Models\SystemStarAwardType|null $award
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupStarAward newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupStarAward newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupStarAward query()
@@ -6260,6 +6890,7 @@ namespace App\Models{
  * @property int $createdby
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupUserPictureChange newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupUserPictureChange newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupUserPictureChange query()
@@ -6285,8 +6916,12 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon $created
  * @property int $createdby
  * @property string $mailType
+ * @property-read \App\Models\GroupAccount|null $account
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\GroupProgram|null $program
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupWeeklyEmailsEmailed newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupWeeklyEmailsEmailed newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupWeeklyEmailsEmailed query()
@@ -6324,8 +6959,13 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \App\Models\SystemFinancialFeeType|null $chargeType
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupYouthCharge newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupYouthCharge newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupYouthCharge query()
@@ -6360,7 +7000,10 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon $created
  * @property int $createdby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupsEntshaMove newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupsEntshaMove newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupsEntshaMove query()
@@ -6388,6 +7031,7 @@ namespace App\Models{
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\Region|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupsMulti active()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupsMulti newModelQuery()
@@ -6445,7 +7089,10 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupsProperty newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupsProperty newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupsProperty query()
@@ -6517,7 +7164,9 @@ namespace App\Models{
  * @property int $updatedby
  * @property \Illuminate\Support\Carbon $updatedDate
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemUser|null $updatedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupsPropertyUpdate newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupsPropertyUpdate newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|GroupsPropertyUpdate query()
@@ -6551,7 +7200,7 @@ namespace App\Models{
 namespace App\Models{
 /**
  * @property int $id
- * @property int $region
+ * @property \App\Models\Region|null $region
  * @property int $type 1 = Hiking, 2 = Camping, 3 = Supplier
  * @property string $name
  * @property string $description
@@ -6575,8 +7224,15 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \App\Models\SystemUser|null $approvedBy
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\SystemUser|null $declinedBy
+ * @property-read \App\Models\InfoSharingType|null $infoType
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\InfoSharingLike> $likes
+ * @property-read int|null $likes_count
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\InfoSharingReview> $reviews
+ * @property-read int|null $reviews_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|InfoSharing newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|InfoSharing newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|InfoSharing query()
@@ -6617,6 +7273,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon $created
  * @property int $createdby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\InfoSharing|null $info
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|InfoSharingLike newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|InfoSharingLike newQuery()
@@ -6648,7 +7305,10 @@ namespace App\Models{
  * @property int|null $declinedby
  * @property string|null $declineReason
  * @property string|null $declinedNotes
+ * @property-read \App\Models\SystemUser|null $approvedBy
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\SystemUser|null $declinedBy
+ * @property-read \App\Models\InfoSharing|null $info
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|InfoSharingReview newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|InfoSharingReview newQuery()
@@ -6718,6 +7378,7 @@ namespace App\Models{
  * @property int $concurrentPatrols
  * @property float $hoursLong
  * @property int $slots
+ * @property-read \App\Models\JamboreeActivityCenter|null $center
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeActivityCenterBase newModelQuery()
@@ -6750,8 +7411,13 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \App\Models\JamboreeActivityCenter|null $activityCenter
+ * @property-read \App\Models\JamboreeActivityCenterBase|null $base
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\JamboreeAdultRole|null $role
+ * @property-read \App\Models\JamboreeSubCamp|null $subCamp
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeAdultAllocation newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeAdultAllocation newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeAdultAllocation query()
@@ -6839,7 +7505,7 @@ namespace App\Models{
  * @property int|null $applicationApprovedBy
  * @property int|null $declinedPosition
  * @property \Illuminate\Support\Carbon|null $declinedPositionDate
- * @property int|null $declinedPositionBy
+ * @property \App\Models\SystemUser|null $declinedPositionBy
  * @property string|null $declinedReason
  * @property int|null $passportGenerated
  * @property \Illuminate\Support\Carbon $startDate
@@ -6849,8 +7515,11 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \App\Models\SystemUser|null $approvedBy
+ * @property-read \App\Models\Region|null $busRegion
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeApplication newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeApplication newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeApplication query()
@@ -6920,6 +7589,7 @@ namespace App\Models{
  * @property int $nrBeds
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\JamboreeSubCamp|null $subCamp
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeBed newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeBed newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeBed query()
@@ -6940,8 +7610,12 @@ namespace App\Models{
  * @property int $patrolID
  * @property int $bedID
  * @property int $active
+ * @property-read \App\Models\JamboreeBed|null $bed
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\JamboreePatrol|null $patrol
+ * @property-read \App\Models\JamboreeSubCamp|null $subCamp
+ * @property-read \App\Models\JamboreeTroop|null $troop
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeBedsAllocation newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeBedsAllocation newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeBedsAllocation query()
@@ -6978,6 +7652,7 @@ namespace App\Models{
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeBusInfo newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeBusInfo newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeBusInfo query()
@@ -7016,8 +7691,10 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \App\Models\JamboreeBusInfo|null $bus
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeBusesUser newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeBusesUser newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeBusesUser query()
@@ -7046,6 +7723,7 @@ namespace App\Models{
  * @property int $createdby
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeCoreTeam newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeCoreTeam newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeCoreTeam query()
@@ -7076,7 +7754,12 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\SystemUserType|null $role
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeEoi newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeEoi newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeEoi query()
@@ -7121,7 +7804,13 @@ namespace App\Models{
  * @property int|null $declinedPositionBy
  * @property string|null $declinedReason
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\SystemUser|null $declinedPositionByUser
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemUser|null $offeredPositionByUser
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeExprOfInterest newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeExprOfInterest newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeExprOfInterest query()
@@ -7162,8 +7851,12 @@ namespace App\Models{
  * @property string $PDFLocation
  * @property \Illuminate\Support\Carbon $created
  * @property int $createdby
+ * @property-read \App\Models\JamboreeBusInfo|null $bus
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\JamboreeSubCamp|null $subCamp
+ * @property-read \App\Models\JamboreeTroop|null $troop
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeGeneratedPdf newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeGeneratedPdf newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeGeneratedPdf query()
@@ -7224,6 +7917,7 @@ namespace App\Models{
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeInitialThought newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeInitialThought newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeInitialThought query()
@@ -7255,7 +7949,10 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\JamboreeInvoicesItem> $items
+ * @property-read int|null $items_count
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeInvoice newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeInvoice newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeInvoice query()
@@ -7290,7 +7987,9 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \App\Models\SystemUser|null $applicant
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\JamboreeInvoice|null $invoice
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeInvoicesItem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeInvoicesItem newQuery()
@@ -7320,6 +8019,7 @@ namespace App\Models{
  * @property int $active
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\JamboreeTroop|null $troop
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreePatrol newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreePatrol newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreePatrol query()
@@ -7337,7 +8037,7 @@ namespace App\Models{
  * @property int $id
  * @property int $jamboreeID
  * @property int $userID
- * @property int $paymentType
+ * @property \App\Models\JamboreePaymentType|null $paymentType
  * @property float $amount
  * @property \Illuminate\Support\Carbon $paymentDate
  * @property int $active
@@ -7348,6 +8048,7 @@ namespace App\Models{
  * @property string|null $notes
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreePayment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreePayment newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreePayment query()
@@ -7402,7 +8103,12 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $offeredPositionDate
  * @property int|null $offeredPositionBy
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemUser|null $offeredPositionByUser
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreePositionOffered newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreePositionOffered newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreePositionOffered query()
@@ -7436,6 +8142,7 @@ namespace App\Models{
  * @property string $scouterCellNr
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeScouter newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeScouter newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeScouter query()
@@ -7478,6 +8185,8 @@ namespace App\Models{
  * @property int $active
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\JamboreeSubCamp|null $subCamp
+ * @property-read \App\Models\JamboreeTroop|null $troop
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeSubCampTroopAllocation newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeSubCampTroopAllocation newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeSubCampTroopAllocation query()
@@ -7498,8 +8207,13 @@ namespace App\Models{
  * @property int|null $subCampID
  * @property string $colour
  * @property int $active
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\JamboreeTroopPatrolAllocation> $allocations
+ * @property-read int|null $allocations_count
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\JamboreePatrol> $patrols
+ * @property-read int|null $patrols_count
+ * @property-read \App\Models\JamboreeSubCamp|null $subCamp
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeTroop newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeTroop newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeTroop query()
@@ -7528,6 +8242,10 @@ namespace App\Models{
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\JamboreePatrol|null $patrol
+ * @property-read \App\Models\JamboreeAdultRole|null $role
+ * @property-read \App\Models\JamboreeTroop|null $troop
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeTroopPatrolAllocation newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeTroopPatrolAllocation newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|JamboreeTroopPatrolAllocation query()
@@ -7586,7 +8304,11 @@ namespace App\Models{
  * @property int $shown
  * @property \Illuminate\Support\Carbon|null $dismissDate
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Notification newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Notification newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Notification query()
@@ -7633,7 +8355,11 @@ namespace App\Models{
  * @property int $shown
  * @property \Illuminate\Support\Carbon|null $dismissDate
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|NotificationsArchive newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|NotificationsArchive newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|NotificationsArchive query()
@@ -7706,8 +8432,14 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \App\Models\SystemUser|null $approvedBy
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\SystemUser|null $declinedBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\ProjectsFor|null $projectFor
+ * @property-read \App\Models\Region|null $region
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Project newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Project newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Project query()
@@ -7778,7 +8510,11 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Project|null $project
+ * @property-read \App\Models\Region|null $region
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ProjectsSupported newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ProjectsSupported newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ProjectsSupported query()
@@ -7812,20 +8548,35 @@ namespace App\Models{
  * @property bool $censusDone
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Group> $churchGroups
  * @property-read int|null $church_groups_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupCommittee> $committees
+ * @property-read int|null $committees_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Group> $communityGroups
  * @property-read int|null $community_groups_count
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupDistrictReport> $districtReports
+ * @property-read int|null $district_reports_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\District> $districts
  * @property-read int|null $districts_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Group> $dsdGroups
  * @property-read int|null $dsd_groups_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupEvent> $events
+ * @property-read int|null $events_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Group> $groups
  * @property-read int|null $groups_count
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupNewsletter> $newsletters
+ * @property-read int|null $newsletters_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Group> $ngoGroups
  * @property-read int|null $ngo_groups_count
+ * @property-read \App\Models\GroupAccount|null $ownedAccount
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupProgram> $programs
+ * @property-read int|null $programs_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Group> $schoolGroups
  * @property-read int|null $school_groups_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\DistrictsSuper> $superDistricts
+ * @property-read int|null $super_districts_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupYouthCharge> $youthCharges
+ * @property-read int|null $youth_charges_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Region active()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Region newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Region newQuery()
@@ -7875,7 +8626,10 @@ namespace App\Models{
  * @property int|null $helpers
  * @property \Illuminate\Support\Carbon $created
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ReportsNumber newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ReportsNumber newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ReportsNumber query()
@@ -7935,8 +8689,15 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \App\Models\SystemUser|null $approvedBy
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\SystemUser|null $declinedBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\SystemUserType|null $role
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ScouterReview newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ScouterReview newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ScouterReview query()
@@ -7976,6 +8737,7 @@ namespace App\Models{
  * @property int $createdby
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\ScouterReview|null $review
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ScouterReviewsLike newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ScouterReviewsLike newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ScouterReviewsLike query()
@@ -8001,7 +8763,9 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon $created
  * @property string $createdby
  * @property int $views
+ * @property-read \App\Models\SdArticleCat|null $category
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SdArticle newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SdArticle newQuery()
@@ -8054,10 +8818,11 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $cancelledDate
  * @property int|null $groupID
  * @property \Illuminate\Support\Carbon|null $associatedToGroupDate
- * @property int|null $associatedToGroupBy
+ * @property \App\Models\SystemUser|null $associatedToGroupBy
  * @property \Illuminate\Support\Carbon|null $startDate
  * @property \Illuminate\Support\Carbon|null $endDate
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ServicesPurchased newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ServicesPurchased newQuery()
@@ -8091,7 +8856,9 @@ namespace App\Models{
  * @property string $location
  * @property int $addedBy
  * @property int $active
+ * @property-read \App\Models\SystemUser|null $addedByUser
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ServicesPurchasedSpreadsheetsReceived newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ServicesPurchasedSpreadsheetsReceived newQuery()
@@ -8114,7 +8881,9 @@ namespace App\Models{
  * @property int $sentBy
  * @property int $active
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemUser|null $sentByUser
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ServicesPurchasedSpreadsheetsSent newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ServicesPurchasedSpreadsheetsSent newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ServicesPurchasedSpreadsheetsSent query()
@@ -8156,8 +8925,20 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $chairAwardedDate
  * @property int|null $chairAwardedUserID
  * @property int $active
+ * @property-read \App\Models\SystemUser|null $chairAwardedUser
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\GroupRoverCrew|null $crew
+ * @property-read \App\Models\GroupMeerkatDen|null $den
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemUser|null $nptmAskedAwardUser
+ * @property-read \App\Models\GroupCubPack|null $pack
+ * @property-read \App\Models\GroupScoutsPatrolName|null $patrol
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\SystemUser|null $rtcRecommendedUser
+ * @property-read \App\Models\SystemUser|null $scouterAskedAwardUser
+ * @property-read \App\Models\GroupScoutTroop|null $troop
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StarAward newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StarAward newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StarAward query()
@@ -8209,7 +8990,13 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\GroupRoverCrew|null $crew
+ * @property-read \App\Models\GroupMeerkatDen|null $den
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\GroupCubPack|null $pack
+ * @property-read \App\Models\GroupScoutsPatrolName|null $patrol
+ * @property-read \App\Models\GroupScoutTroop|null $troop
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StarAwardsNote newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StarAwardsNote newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|StarAwardsNote query()
@@ -8242,6 +9029,8 @@ namespace App\Models{
  * @property int $active
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SupportChatsStart|null $support
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SupportChat newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SupportChat newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SupportChat query()
@@ -8288,8 +9077,11 @@ namespace App\Models{
  * @property int|null $closed
  * @property \Illuminate\Support\Carbon|null $closedDate
  * @property int|null $closedBy
+ * @property-read \App\Models\SystemUser|null $closedByUser
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SupportChatsStart newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SupportChatsStart newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SupportChatsStart query()
@@ -8368,6 +9160,7 @@ namespace App\Models{
  * @property int $active
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @method static \Database\Factories\SystemAccountTypeFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemAccountType newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemAccountType newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemAccountType query()
@@ -8413,6 +9206,7 @@ namespace App\Models{
  * @property int $active
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @method static \Database\Factories\SystemAdvancementCubsLevelFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemAdvancementCubsLevel newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemAdvancementCubsLevel newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemAdvancementCubsLevel query()
@@ -8440,6 +9234,7 @@ namespace App\Models{
  * @property string|null $advancementArea
  * @property string $name
  * @property string $description
+ * @property-read \App\Models\SystemAdvancementCubsLevel|null $advancement
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemAdvancementCubsSecond newModelQuery()
@@ -8474,6 +9269,8 @@ namespace App\Models{
  * @property int $campingTask
  * @property int $badgeTask
  * @property int $active
+ * @property-read \App\Models\SystemAdvancementCubsLevel|null $advancement
+ * @property-read \App\Models\SystemAdvancementCubsSecond|null $advancementSecond
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemAdvancementCubsThird newModelQuery()
@@ -8530,6 +9327,7 @@ namespace App\Models{
  * @property int $active
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @method static \Database\Factories\SystemAdvancementMeerkatsLevelFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemAdvancementMeerkatsLevel newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemAdvancementMeerkatsLevel newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemAdvancementMeerkatsLevel query()
@@ -8560,6 +9358,7 @@ namespace App\Models{
  * @property int $badgeTask
  * @property int $theme
  * @property int $active
+ * @property-read \App\Models\SystemAdvancementMeerkatsLevel|null $advancement
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemAdvancementMeerkatsSecond newModelQuery()
@@ -8598,6 +9397,8 @@ namespace App\Models{
  * @property int $campingTask
  * @property int $badgeTask
  * @property int $active
+ * @property-read \App\Models\SystemAdvancementMeerkatsLevel|null $advancement
+ * @property-read \App\Models\SystemAdvancementMeerkatsSecond|null $advancementSecond
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemAdvancementMeerkatsThird newModelQuery()
@@ -8657,6 +9458,7 @@ namespace App\Models{
  * @property int $active
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @method static \Database\Factories\SystemAdvancementRoversLevelFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemAdvancementRoversLevel newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemAdvancementRoversLevel newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemAdvancementRoversLevel query()
@@ -8688,6 +9490,7 @@ namespace App\Models{
  * @property int $campingTask
  * @property int $badgeTask
  * @property int $active
+ * @property-read \App\Models\SystemAdvancementRoversLevel|null $advancement
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemAdvancementRoversSecond newModelQuery()
@@ -8725,6 +9528,8 @@ namespace App\Models{
  * @property int $active
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemProgramTypesScout|null $scoutProgramType
+ * @method static \Database\Factories\SystemAdvancementScoutsLevelFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemAdvancementScoutsLevel newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemAdvancementScoutsLevel newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemAdvancementScoutsLevel query()
@@ -8761,8 +9566,10 @@ namespace App\Models{
  * @property string $oldID
  * @property int $active
  * @property int $PGATask
+ * @property-read \App\Models\SystemAdvancementScoutsLevel|null $advancement
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemProgramTypesScout|null $scoutProgramType
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemAdvancementScoutsSecond newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemAdvancementScoutsSecond newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemAdvancementScoutsSecond query()
@@ -8795,8 +9602,10 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \App\Models\SystemBadgeScoutsFirst|null $badge
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemAdvancementScoutsSecond|null $task
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemAdvancementScoutsSecondEntshaBadge newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemAdvancementScoutsSecondEntshaBadge newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemAdvancementScoutsSecondEntshaBadge query()
@@ -8839,6 +9648,7 @@ namespace App\Models{
  * @property int $active
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @method static \Database\Factories\SystemAssetConditionFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemAssetCondition newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemAssetCondition newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemAssetCondition query()
@@ -8890,6 +9700,8 @@ namespace App\Models{
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\SystemBadgeCubsSecond> $requirements
+ * @property-read int|null $requirements_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemBadgeCubsFirst newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemBadgeCubsFirst newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemBadgeCubsFirst query()
@@ -8922,6 +9734,7 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \App\Models\SystemBadgeCubsFirst|null $badgeFirst
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemBadgeCubsSecond newModelQuery()
@@ -8990,6 +9803,7 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \App\Models\SystemBadgeMeerkatsFirst|null $badgeFirst
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemBadgeMeerkatsSecond newModelQuery()
@@ -9058,6 +9872,7 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \App\Models\SystemBadgeRoversFirst|null $badgeFirst
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemBadgeRoversSecond newModelQuery()
@@ -9126,6 +9941,7 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \App\Models\SystemBadgeScoutsFirst|null $badgeFirst
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemBadgeScoutsSecond newModelQuery()
@@ -9153,8 +9969,10 @@ namespace App\Models{
  * @property int $badgeID
  * @property int $toBadgeTaskID
  * @property int $active
+ * @property-read \App\Models\SystemBadgeScoutsFirst|null $badge
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemBadgeScoutsSecond|null $toBadgeTask
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemBadgeScoutsToBadge newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemBadgeScoutsToBadge newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemBadgeScoutsToBadge query()
@@ -9196,6 +10014,7 @@ namespace App\Models{
  * @property int $createdby
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @method static \Database\Factories\SystemCommitteeTypeFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemCommitteeType newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemCommitteeType newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemCommitteeType query()
@@ -9220,6 +10039,7 @@ namespace App\Models{
  * @property int $createdby
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @method static \Database\Factories\SystemCouncilTypeFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemCouncilType newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemCouncilType newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemCouncilType query()
@@ -9345,6 +10165,7 @@ namespace App\Models{
  * @property string $a
  * @property int $active
  * @property int $position
+ * @property-read \App\Models\SystemFaqCat|null $category
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemFaq newModelQuery()
@@ -9409,6 +10230,7 @@ namespace App\Models{
  * @property int $active
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @method static \Database\Factories\SystemFinancialFeeTypeFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemFinancialFeeType newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemFinancialFeeType newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemFinancialFeeType query()
@@ -9434,6 +10256,7 @@ namespace App\Models{
  * @property int $nationalType
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @method static \Database\Factories\SystemGroupEventTypeFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemGroupEventType newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemGroupEventType newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemGroupEventType query()
@@ -9461,6 +10284,7 @@ namespace App\Models{
  * @property int $createdby
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @method static \Database\Factories\SystemGroupManagementLevelFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemGroupManagementLevel newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemGroupManagementLevel newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemGroupManagementLevel query()
@@ -9481,6 +10305,7 @@ namespace App\Models{
  * @property string $name
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @method static \Database\Factories\SystemParentTypeFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemParentType newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemParentType newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemParentType query()
@@ -9499,6 +10324,7 @@ namespace App\Models{
  * @property int $active
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @method static \Database\Factories\SystemProgramTypeFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemProgramType newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemProgramType newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemProgramType query()
@@ -9639,6 +10465,7 @@ namespace App\Models{
  * @property string $name
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @method static \Database\Factories\SystemRoverMeetingTypeFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemRoverMeetingType newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemRoverMeetingType newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemRoverMeetingType query()
@@ -9712,6 +10539,7 @@ namespace App\Models{
  * @property int $position
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @method static \Database\Factories\SystemStarAwardTypeFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemStarAwardType newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemStarAwardType newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemStarAwardType query()
@@ -9731,6 +10559,7 @@ namespace App\Models{
  * @property string $title
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @method static \Database\Factories\SystemTitleFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemTitle newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemTitle newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemTitle query()
@@ -9845,7 +10674,7 @@ namespace App\Models{
  * @property int|null $homeLanguage
  * @property int|null $otherLanguage
  * @property string|null $otherLanguages
- * @property int|null $proficiencyInEnglish
+ * @property \App\Enums\UserEnglishProficiency|null $proficiencyInEnglish
  * @property string|null $religiousBelief
  * @property int|null $highestEducation
  * @property int|null $nrOfChildrenBoys
@@ -9900,18 +10729,85 @@ namespace App\Models{
  * @property string|null $DSDHostelName
  * @property string|null $DSDTownshipName
  * @property int|null $DSDDisabled
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\SystemUsersOtherRole> $activeRoleAttachments
+ * @property-read int|null $active_role_attachments_count
  * @property-read \App\Models\SystemUsersOtherRole|null $pivot
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\SystemUserType> $activeRoles
  * @property-read int|null $active_roles_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsWarrantInfo> $activeWarrants
+ * @property-read int|null $active_warrants_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsAdultLeaderMove> $adultLeaderMoves
+ * @property-read int|null $adult_leader_moves_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupAttendance> $attendance
+ * @property-read int|null $attendance_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsAwardApplication> $awardApplications
+ * @property-read int|null $award_applications_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsAwardInfo> $awards
+ * @property-read int|null $awards_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsChargeInfo> $chargeInfos
+ * @property-read int|null $charge_infos_count
  * @property-read SystemUser|null $createdBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsCriminalCheck> $criminalChecks
+ * @property-read int|null $criminal_checks_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsDisciplinaryInfo> $disciplinaryInfos
+ * @property-read int|null $disciplinary_infos_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsDocument> $documents
+ * @property-read int|null $documents_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\SystemUsersEmergencyContact> $emergencyContacts
+ * @property-read int|null $emergency_contacts_count
+ * @property-read \App\Models\AmsHighestEducation|null $highestEducationInfo
+ * @property-read \App\Models\AmsLanguage|null $homeLanguageInfo
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\SystemUsersOtherRole> $inactiveRoleAttachments
+ * @property-read int|null $inactive_role_attachments_count
+ * @property-read \App\Models\AmsPoliceClearance|null $latestPoliceClearance
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\SystemUserLogging> $logging
+ * @property-read int|null $logging_count
+ * @property-read \App\Models\AmsMaritalStatus|null $maritalStatusInfo
  * @property-read SystemUser|null $modifiedBy
  * @property-read mixed $name
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Notification> $notifications
+ * @property-read int|null $notifications_count
+ * @property-read \App\Models\AmsLanguage|null $otherLanguageInfo
+ * @property-read \App\Models\GroupCubPack|null $pack
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\SystemUserType> $pastRoles
+ * @property-read int|null $past_roles_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsPastServiceInfo> $pastService
+ * @property-read int|null $past_service_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupUserPictureChange> $pictureChanges
+ * @property-read int|null $picture_changes_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsPoliceClearance> $policeClearances
+ * @property-read int|null $police_clearances_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsResignLeader> $resignals
+ * @property-read int|null $resignals_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\GroupProgram> $responsiblePrograms
+ * @property-read int|null $responsible_programs_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsRetireLeader> $retirements
+ * @property-read int|null $retirements_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\SystemUsersOtherRole> $roleAttachments
  * @property-read int|null $role_attachments_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\SystemUserType> $roles
  * @property-read int|null $roles_count
+ * @property-read \App\Models\GroupScoutsPatrolName|null $scoutPatrol
  * @property-read mixed $ssa_id
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\SupportChat> $supportChats
+ * @property-read int|null $support_chats_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\SupportChatsStart> $supportTickets
+ * @property-read int|null $support_tickets_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsSuspendLeader> $suspensions
+ * @property-read int|null $suspensions_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsTerminateLeader> $terminations
+ * @property-read int|null $terminations_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsTrainingPast> $trainingHistory
+ * @property-read int|null $training_history_count
+ * @property-read \App\Models\GroupScoutTroop|null $troop
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsWarrantApplication> $warrantApplications
+ * @property-read int|null $warrant_applications_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsWarrantExtension> $warrantExtensions
+ * @property-read int|null $warrant_extensions_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AmsWarrantInfo> $warrants
+ * @property-read int|null $warrants_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUser active()
+ * @method static \Database\Factories\SystemUserFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUser inactive()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUser newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUser newQuery()
@@ -10076,7 +10972,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUser whereWeeklyProgramEmail($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUser withPlainPassword()
  */
-	class SystemUser extends \Eloquent implements \Filament\Models\Contracts\FilamentUser, \Filament\Models\Contracts\HasTenants, \Filament\Models\Contracts\HasDefaultTenant {}
+	class SystemUser extends \Eloquent implements \Filament\Models\Contracts\FilamentUser, \Filament\Models\Contracts\HasDefaultTenant, \Filament\Models\Contracts\HasTenants {}
 }
 
 namespace App\Models{
@@ -10093,7 +10989,11 @@ namespace App\Models{
  * @property string|null $post
  * @property \Illuminate\Support\Carbon $created
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUserLogging newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUserLogging newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUserLogging query()
@@ -10183,6 +11083,7 @@ namespace App\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\SystemUser> $users
  * @property-read int|null $users_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUserType active()
+ * @method static \Database\Factories\SystemUserTypeFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUserType inactive()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUserType newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUserType newQuery()
@@ -10264,6 +11165,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon $created
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUsersEmailVerification newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUsersEmailVerification newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUsersEmailVerification query()
@@ -10308,6 +11210,7 @@ namespace App\Models{
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUsersEmergencyContact newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUsersEmergencyContact newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUsersEmergencyContact query()
@@ -10344,6 +11247,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon $created
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUsersFingerprint newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUsersFingerprint newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUsersFingerprint query()
@@ -10368,6 +11272,7 @@ namespace App\Models{
  * @property string|null $userAgent
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUsersForcedLogout newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUsersForcedLogout newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUsersForcedLogout query()
@@ -10399,7 +11304,9 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\SystemUser|null $dsdResponseBy
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUsersForm29 newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUsersForm29 newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUsersForm29 query()
@@ -10446,17 +11353,23 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \App\Models\District|null $actionDistrict
+ * @property-read \App\Models\Group|null $actionGroup
+ * @property-read \App\Models\Region|null $actionRegion
+ * @property-read \App\Models\DistrictsSuper|null $actionSuperDistrict
  * @property-read \App\Models\SystemUser|null $createdBy
  * @property-read \App\Models\District|null $district
  * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
  * @property-read \App\Models\Region|null $region
  * @property-read \App\Models\SystemUserType|null $role
- * @property-read mixed $role_attachment_scoped_label
+ * @property-read mixed $role_scoped_full_label
  * @property-read mixed $role_scoped_label
  * @property-read mixed $role_scoped_model
  * @property-read mixed $role_type_name
+ * @property-read \App\Models\DistrictsSuper|null $superDistrict
  * @property-read \App\Models\SystemUser|null $user
+ * @method static \Database\Factories\SystemUsersOtherRoleFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUsersOtherRole newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUsersOtherRole newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUsersOtherRole query()
@@ -10485,7 +11398,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUsersOtherRole whereSuspended($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|SystemUsersOtherRole whereUserID($value)
  */
-	class SystemUsersOtherRole extends \Eloquent implements \Filament\Models\Contracts\HasName, \Filament\Models\Contracts\HasCurrentTenantLabel {}
+	class SystemUsersOtherRole extends \Eloquent implements \Filament\Models\Contracts\HasAvatar, \Filament\Models\Contracts\HasCurrentTenantLabel, \Filament\Models\Contracts\HasName {}
 }
 
 namespace App\Models{
@@ -10546,8 +11459,14 @@ namespace App\Models{
  * @property int $createdby
  * @property \Illuminate\Support\Carbon|null $modified
  * @property int|null $modifiedby
+ * @property-read \App\Models\SystemUserType|null $applyRole
  * @property-read \App\Models\SystemUser|null $createdBy
+ * @property-read \App\Models\District|null $district
+ * @property-read \App\Models\Group|null $group
  * @property-read \App\Models\SystemUser|null $modifiedBy
+ * @property-read \App\Models\Region|null $region
+ * @property-read \App\Models\SystemUserType|null $role
+ * @property-read \App\Models\SystemUser|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Wsm16Expression newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Wsm16Expression newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Wsm16Expression query()

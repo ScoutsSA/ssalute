@@ -11,7 +11,6 @@ use Filament\Navigation\NavigationItem;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Support\Colors\Color;
 use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
@@ -34,7 +33,7 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->sidebarCollapsibleOnDesktop()
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => '#5C2D91',
             ])
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\Filament\Admin\Resources')
             ->discoverClusters(in: app_path('Filament/Admin/Clusters'), for: 'App\Filament\Admin\Clusters')
@@ -60,6 +59,11 @@ class AdminPanelProvider extends PanelProvider
                     ->url('/horizon', shouldOpenInNewTab: true)
                     ->sort(2)
                     ->icon(Heroicon::QueueList)
+                    ->group('System'),
+                NavigationItem::make('Pulse')
+                    ->url('/pulse', shouldOpenInNewTab: true)
+                    ->sort(3)
+                    ->icon(Heroicon::Heart)
                     ->group('System'),
             ])
             ->middleware([

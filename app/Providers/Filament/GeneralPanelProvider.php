@@ -14,7 +14,6 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\MenuItem;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Support\Colors\Color;
 use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\AccountWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -34,7 +33,7 @@ class GeneralPanelProvider extends PanelProvider
             ->favicon(asset('images/logo.png'))
             ->login()
             ->colors([
-                'primary' => Color::Blue,
+                'primary' => '#5C2D91',
             ])
             ->tenant(SystemUsersOtherRole::class)
             ->userMenuItems([

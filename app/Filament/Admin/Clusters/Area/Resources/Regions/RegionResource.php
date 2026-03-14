@@ -3,6 +3,8 @@
 namespace App\Filament\Admin\Clusters\Area\Resources\Regions;
 
 use App\Filament\Admin\Clusters\Area\AreaCluster;
+use App\Filament\Admin\Clusters\Area\Resources\Regions\Pages\CreateRegion;
+use App\Filament\Admin\Clusters\Area\Resources\Regions\Pages\EditRegion;
 use App\Filament\Admin\Clusters\Area\Resources\Regions\Pages\ListRegions;
 use App\Filament\Admin\Clusters\Area\Resources\Regions\Pages\ViewRegion;
 use App\Filament\Admin\Clusters\Area\Resources\Regions\RelationManagers\RegionDistrictsRelationManager;
@@ -54,7 +56,9 @@ class RegionResource extends Resource
     {
         return [
             'index' => ListRegions::route('/'),
+            'create' => CreateRegion::route('/create'),
             'view' => ViewRegion::route('/{record}'),
+            'edit' => EditRegion::route('/{record}/edit'),
         ];
     }
 }

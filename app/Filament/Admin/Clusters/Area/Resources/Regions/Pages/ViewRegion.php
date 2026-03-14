@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Clusters\Area\Resources\Regions\Pages;
 
 use App\Filament\Admin\Clusters\Area\Resources\Regions\RegionResource;
+use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewRegion extends ViewRecord
@@ -12,6 +13,7 @@ class ViewRegion extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            EditAction::make(),
         ];
     }
 }

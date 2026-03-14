@@ -2,19 +2,31 @@
 
 namespace App\Filament\General\Pages;
 
+use App\Enums\UserEnglishProficiency;
 use App\Enums\UserRace;
 use App\Enums\UserSex;
 use App\Enums\UserTitle;
+use App\Mail\Profile\ReportIssueEmail;
+use App\Models\SystemUser;
+use App\Models\SystemUsersOtherRole;
+use App\Services\FileUrlService;
+use App\Settings\GeneralSettings;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Facades\Filament;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\ToggleButtons;
+use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Facades\Mail;
 
 class ViewProfile extends Page
 {
@@ -35,11 +47,48 @@ class ViewProfile extends Page
             ->components([
                 Tabs::make()
                     ->columnSpanFull()
+                    ->persistTabInQueryString('tab')
                     ->tabs([
                         Tab::make('Profile')
                             ->icon(Heroicon::User)
                             ->schema([
+                                Section::make('Profile Photo')
+                                    ->collapsible()
+                                    ->columns(['sm' => 1, 'md' => 2])
+                                    ->schema([
+                                        ImageEntry::make('thumb')
+                                            ->label('Current Thumbnail')
+                                            ->getStateUsing(fn ($record) => $record->thumb
+                                                ? app(FileUrlService::class)->url($record->thumb)
+                                                : null)
+                                            ->circular()
+                                            ->height(120),
+                                        ImageEntry::make('photo')
+                                            ->label('Current Photo')
+                                            ->getStateUsing(fn ($record) => $record->photo
+                                                ? app(FileUrlService::class)->url($record->photo)
+                                                : null),
+                                        RepeatableEntry::make('pictureChanges')
+                                            ->label('Photo History')
+                                            ->schema([
+                                                ImageEntry::make('pictureLocation')
+                                                    ->label('')
+                                                    ->getStateUsing(fn ($record) => $record->pictureLocation
+                                                        ? app(FileUrlService::class)->url($record->pictureLocation)
+                                                        : null)
+                                                    ->circular()
+                                                    ->height(80),
+                                                TextEntry::make('created')
+                                                    ->label('Uploaded')
+                                                    ->dateTime(),
+                                            ])
+                                            ->columns(2)
+                                            ->hidden(fn ($record) => $record->pictureChanges->isEmpty()),
+                                    ])
+                                    ->hidden(fn ($record) => ! $record->thumb && $record->pictureChanges->isEmpty()),
+
                                 Section::make('Personal Information')
+                                    ->collapsible()
                                     ->columns(3)
                                     ->schema([
                                         TextEntry::make('ssaId')
@@ -56,6 +105,9 @@ class ViewProfile extends Page
                                             ->label('Other Name')
                                             ->placeholder('-'),
                                         TextEntry::make('surname')
+                                            ->placeholder('-'),
+                                        TextEntry::make('previousSurname')
+                                            ->label('Previous Surname')
                                             ->placeholder('-'),
                                         TextEntry::make('knownName')
                                             ->label('Known As')
@@ -77,9 +129,18 @@ class ViewProfile extends Page
                                             ->label('Date Invested')
                                             ->date()
                                             ->placeholder('-'),
+                                        TextEntry::make('startDate')
+                                            ->label('Start Date')
+                                            ->date()
+                                            ->placeholder('-'),
+                                        TextEntry::make('lastLoginDate')
+                                            ->label('Last SD Login Date')
+                                            ->dateTime()
+                                            ->placeholder('-'),
                                     ]),
 
                                 Section::make('Identity Documents')
+                                    ->collapsible()
                                     ->columns(2)
                                     ->schema([
                                         TextEntry::make('idNumber')
@@ -91,6 +152,7 @@ class ViewProfile extends Page
                                     ]),
 
                                 Section::make('Contact Details')
+                                    ->collapsible()
                                     ->columns(3)
                                     ->schema([
                                         TextEntry::make('username')
@@ -108,6 +170,7 @@ class ViewProfile extends Page
                                     ]),
 
                                 Section::make('Address')
+                                    ->collapsible()
                                     ->columns(1)
                                     ->schema([
                                         TextEntry::make('phys_address')
@@ -121,6 +184,8 @@ class ViewProfile extends Page
                                     ]),
 
                                 Section::make('Background')
+                                    ->collapsible()
+                                    ->collapsed()
                                     ->columns(3)
                                     ->schema([
                                         TextEntry::make('occupation')
@@ -133,6 +198,12 @@ class ViewProfile extends Page
                                         TextEntry::make('religiousBelief')
                                             ->label('Religious Belief')
                                             ->placeholder('-'),
+                                        TextEntry::make('maritalStatusInfo.name')
+                                            ->label('Marital Status')
+                                            ->placeholder('-'),
+                                        TextEntry::make('highestEducationInfo.name')
+                                            ->label('Highest Education')
+                                            ->placeholder('-'),
                                         TextEntry::make('hobbies')
                                             ->placeholder('-'),
                                         TextEntry::make('sports')
@@ -141,7 +212,29 @@ class ViewProfile extends Page
                                             ->placeholder('-'),
                                     ]),
 
+                                Section::make('Languages')
+                                    ->collapsible()
+                                    ->collapsed()
+                                    ->columns(3)
+                                    ->schema([
+                                        TextEntry::make('homeLanguageInfo.language')
+                                            ->label('Home Language')
+                                            ->placeholder('-'),
+                                        TextEntry::make('otherLanguageInfo.language')
+                                            ->label('Other Language')
+                                            ->placeholder('-'),
+                                        TextEntry::make('otherLanguages')
+                                            ->label('Additional Languages')
+                                            ->placeholder('-'),
+                                        TextEntry::make('proficiencyInEnglish')
+                                            ->label('English Proficiency')
+                                            ->formatStateUsing(fn ($state) => $state instanceof UserEnglishProficiency ? $state->getLabel() : $state)
+                                            ->placeholder('-'),
+                                    ]),
+
                                 Section::make('Medical')
+                                    ->collapsible()
+                                    ->collapsed()
                                     ->columns(3)
                                     ->schema([
                                         TextEntry::make('medicalAidName')
@@ -188,6 +281,8 @@ class ViewProfile extends Page
                                     ]),
 
                                 Section::make('Emergency Contact')
+                                    ->collapsible()
+                                    ->collapsed()
                                     ->columns(3)
                                     ->schema([
                                         TextEntry::make('emergencyContactName')
@@ -209,6 +304,7 @@ class ViewProfile extends Page
                             ->icon(Heroicon::Identification)
                             ->schema([
                                 Section::make('Active Roles')
+                                    ->collapsible()
                                     ->schema([
                                         RepeatableEntry::make('activeRoleAttachments')
                                             ->label('')
@@ -301,6 +397,14 @@ class ViewProfile extends Page
                                                     ->formatStateUsing(fn ($state) => $state ? 'Active' : 'Inactive')
                                                     ->badge()
                                                     ->color(fn ($state) => $state ? 'success' : 'danger'),
+                                                TextEntry::make('PDFLocation')
+                                                    ->label('Document')
+                                                    ->formatStateUsing(fn ($state) => $state ? 'View Document' : null)
+                                                    ->url(fn ($state) => $state ? app(FileUrlService::class)->url($state) : null)
+                                                    ->openUrlInNewTab()
+                                                    ->badge()
+                                                    ->color('primary')
+                                                    ->placeholder('-'),
                                             ])
                                             ->columns(3),
                                     ]),
@@ -331,6 +435,14 @@ class ViewProfile extends Page
                                                     ->formatStateUsing(fn ($state) => $state ? 'Validated' : 'Pending')
                                                     ->badge()
                                                     ->color(fn ($state) => $state ? 'success' : 'warning'),
+                                                TextEntry::make('PDFLocation')
+                                                    ->label('Certificate')
+                                                    ->formatStateUsing(fn ($state) => $state ? 'View Certificate' : null)
+                                                    ->url(fn ($state) => $state ? app(FileUrlService::class)->url($state) : null)
+                                                    ->openUrlInNewTab()
+                                                    ->badge()
+                                                    ->color('primary')
+                                                    ->placeholder('-'),
                                             ])
                                             ->columns(3),
                                     ]),
@@ -377,6 +489,12 @@ class ViewProfile extends Page
                                                 TextEntry::make('created')
                                                     ->label('Uploaded')
                                                     ->date(),
+                                                TextEntry::make('PDFLocation')
+                                                    ->label('File')
+                                                    ->formatStateUsing(fn ($state) => $state ? 'View Document' : null)
+                                                    ->url(fn ($state) => $state ? app(FileUrlService::class)->url($state) : null)
+                                                    ->openUrlInNewTab()
+                                                    ->placeholder('-'),
                                             ])
                                             ->columns(2),
                                     ]),
@@ -400,6 +518,14 @@ class ViewProfile extends Page
                                                     ->formatStateUsing(fn ($state) => $state ? 'Active' : 'Inactive')
                                                     ->badge()
                                                     ->color(fn ($state) => $state ? 'success' : 'danger'),
+                                                TextEntry::make('documentLocation')
+                                                    ->label('Document')
+                                                    ->formatStateUsing(fn ($state) => $state ? 'View Document' : null)
+                                                    ->url(fn ($state) => $state ? app(FileUrlService::class)->url($state) : null)
+                                                    ->openUrlInNewTab()
+                                                    ->badge()
+                                                    ->color('primary')
+                                                    ->placeholder('-'),
                                             ])
                                             ->columns(3),
                                     ]),
@@ -443,6 +569,152 @@ class ViewProfile extends Page
                 ->label('Edit Profile')
                 ->icon(Heroicon::PencilSquare)
                 ->url(fn () => EditProfile::getUrl()),
+
+            Action::make('reportIssue')
+                ->label('Report Issue')
+                ->icon(Heroicon::Flag)
+                ->color('danger')
+                ->modalHeading('Report an Issue')
+                ->modalDescription('Describe the issue you are experiencing. It will be sent to your next in line scouter, or to the national adult support team.')
+                ->schema([
+                    Textarea::make('description')
+                        ->label('Describe the issue')
+                        ->required()
+                        ->rows(5)
+                        ->columnSpanFull(),
+                    ToggleButtons::make('send_to_national')
+                        ->label('Send to')
+                        ->options(function () {
+                            $scouter = $this->resolveNextInLineScouters(auth()->user(), app(GeneralSettings::class))->first();
+                            $name = $scouter ? trim("{$scouter->first_name} {$scouter->surname}") : null;
+                            $label = $name ? 'Next in Line Scouter - ' . (mb_strlen($name) > 15 ? mb_substr($name, 0, 15) . '…' : $name) : 'Next in Line Scouter';
+
+                            return [
+                                false => $label,
+                                true => 'National Adult Support Team',
+                            ];
+                        })
+                        ->icons([
+                            false => Heroicon::UserGroup,
+                            true => Heroicon::BuildingOffice2,
+                        ])
+                        ->colors([
+                            false => 'primary',
+                            true => 'danger',
+                        ])
+                        ->default(false)
+                        ->helperText('Please only escalate to the National Adult Support Team if your next in line scouter has been unable to help.')
+                        ->columnSpanFull(),
+                ])
+                ->action(function (array $data): void {
+                    $reporter = auth()->user();
+                    $sendToNational = $data['send_to_national'];
+                    $generalSettings = app(GeneralSettings::class);
+
+                    $nationalUsers = $this->resolveNationalSupportUsers($generalSettings);
+                    $nationalEmails = $nationalUsers->map(fn ($u) => $u->username)->filter()->all();
+
+                    if ($sendToNational) {
+                        $to = $nationalEmails;
+                        $sentToNational = true;
+                    } else {
+                        $scouters = $this->resolveNextInLineScouters($reporter, $generalSettings);
+                        $to = $scouters->isEmpty()
+                            ? $nationalEmails
+                            : $scouters->map(fn ($u) => $u->username)->filter()->all();
+                        $sentToNational = $scouters->isEmpty();
+                    }
+
+                    $to = array_filter($to, fn ($email) => filter_var($email, FILTER_VALIDATE_EMAIL));
+
+                    if (empty($to)) {
+                        Notification::make()
+                            ->title('No valid email recipients found')
+                            ->danger()
+                            ->send();
+
+                        return;
+                    }
+
+                    Mail::to($to)
+                        ->cc($reporter->username)
+                        ->send(new ReportIssueEmail($reporter, $data['description'], $sentToNational));
+
+                    Notification::make()
+                        ->title('Issue reported successfully')
+                        ->success()
+                        ->send();
+                }),
         ];
+    }
+
+    /**
+     * Resolve all active users who hold a National Adult Support role.
+     *
+     * @return \Illuminate\Support\Collection<int, \App\Models\SystemUser>
+     */
+    private function resolveNationalSupportUsers(GeneralSettings $generalSettings): \Illuminate\Support\Collection
+    {
+        $roleIds = $generalSettings->national_support_role_ids ?? [];
+
+        if (empty($roleIds)) {
+            return collect();
+        }
+
+        return SystemUsersOtherRole::query()
+            ->whereIn('roleID', $roleIds)
+            ->where('active', 1)
+            ->with('user')
+            ->get()
+            ->map(fn ($attachment) => $attachment->user)
+            ->filter()
+            ->unique('id')
+            ->values();
+    }
+
+    /**
+     * Resolve next-in-line scouter users for the reporter.
+     * Walks from group → district → regional → national until recipients are found.
+     *
+     * @return \Illuminate\Support\Collection<int, \App\Models\SystemUser>
+     */
+    private function resolveNextInLineScouters(SystemUser $reporter, GeneralSettings $generalSettings): \Illuminate\Support\Collection
+    {
+        $levels = [
+            ['roleKey' => 'next_in_line_role_group',    'fk' => 'groupID'],
+            ['roleKey' => 'next_in_line_role_district', 'fk' => 'districtID'],
+            ['roleKey' => 'next_in_line_role_regional', 'fk' => 'regionID'],
+            ['roleKey' => 'next_in_line_role_national', 'fk' => null],
+        ];
+
+        $primaryRole = Filament::getTenant();
+
+        foreach ($levels as $level) {
+            $roleId = $generalSettings->{$level['roleKey']};
+
+            if (! $roleId) {
+                continue;
+            }
+
+            $query = SystemUsersOtherRole::query()
+                ->where('roleID', $roleId)
+                ->where('active', 1)
+                ->with('user');
+
+            if ($level['fk'] && $primaryRole?->{$level['fk']}) {
+                $query->where($level['fk'], $primaryRole->{$level['fk']});
+            }
+
+            $users = $query->get()
+                ->map(fn ($attachment) => $attachment->user)
+                ->filter()
+                ->values();
+
+            if ($users->isNotEmpty()) {
+                return $users;
+            }
+        }
+
+        return collect();
     }
 }

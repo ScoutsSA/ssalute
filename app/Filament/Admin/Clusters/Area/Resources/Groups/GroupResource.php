@@ -7,6 +7,11 @@ use App\Filament\Admin\Clusters\Area\Resources\Groups\Pages\CreateGroup;
 use App\Filament\Admin\Clusters\Area\Resources\Groups\Pages\EditGroup;
 use App\Filament\Admin\Clusters\Area\Resources\Groups\Pages\ListGroups;
 use App\Filament\Admin\Clusters\Area\Resources\Groups\Pages\ViewGroup;
+use App\Filament\Admin\Clusters\Area\Resources\Groups\RelationManagers\GroupCommitteeRelationManager;
+use App\Filament\Admin\Clusters\Area\Resources\Groups\RelationManagers\GroupCubPacksRelationManager;
+use App\Filament\Admin\Clusters\Area\Resources\Groups\RelationManagers\GroupMeerkatDensRelationManager;
+use App\Filament\Admin\Clusters\Area\Resources\Groups\RelationManagers\GroupRoverCrewsRelationManager;
+use App\Filament\Admin\Clusters\Area\Resources\Groups\RelationManagers\GroupScoutTroopsRelationManager;
 use App\Filament\Admin\Clusters\Area\Resources\Groups\Schemas\GroupForm;
 use App\Filament\Admin\Clusters\Area\Resources\Groups\Schemas\GroupInfolist;
 use App\Filament\Admin\Clusters\Area\Resources\Groups\Tables\GroupsTable;
@@ -45,7 +50,11 @@ class GroupResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            GroupCubPacksRelationManager::class,
+            GroupScoutTroopsRelationManager::class,
+            GroupRoverCrewsRelationManager::class,
+            GroupMeerkatDensRelationManager::class,
+            GroupCommitteeRelationManager::class,
         ];
     }
 

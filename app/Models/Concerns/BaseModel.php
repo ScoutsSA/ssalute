@@ -17,6 +17,15 @@ abstract class BaseModel extends Model
     use MightHaveCreatedBy;
     use MightHaveModifiedBy;
 
+    public function setAttribute($key, $value): static
+    {
+        if (is_null($value) && $this->hasCast($key, ['string'])) {
+            $value = '';
+        }
+
+        return parent::setAttribute($key, $value);
+    }
+
     public function getCreatedAtColumn(): ?string
     {
         return array_key_exists('created', $this->getCasts() ?? []) ? 'created' : null;

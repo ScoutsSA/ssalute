@@ -15,6 +15,7 @@ class RegionsTable
         return $table
             ->paginated([50])
             ->columns([
+                TextColumn::make('id')->label('ID')->sortable()->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('id')
                     ->label('ID')
                     ->numeric()

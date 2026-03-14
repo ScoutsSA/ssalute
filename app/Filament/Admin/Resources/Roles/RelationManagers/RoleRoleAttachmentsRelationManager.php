@@ -3,8 +3,8 @@
 namespace App\Filament\Admin\Resources\Roles\RelationManagers;
 
 use App\Filament\Admin\Resources\Users\UserResource;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\ViewAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -52,6 +52,7 @@ class RoleRoleAttachmentsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('name')
             ->columns([
+                TextColumn::make('id')->label('ID')->sortable()->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('id')
                     ->label('Attachment ID')
                     ->searchable()
@@ -102,14 +103,15 @@ class RoleRoleAttachmentsRelationManager extends RelationManager
                     ->description(fn ($record) => $record->modified)
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->recordUrl(fn ($record) => UserResource::getUrl('view', ['record' => $record->userID]))
             ->filters([
                 //
             ])
             ->headerActions([])
             ->recordActions([
-                ViewAction::make(),
-                ViewAction::make('View User')
+                Action::make('view_user')
                     ->label('View User')
+                    ->icon('heroicon-o-user')
                     ->url(fn ($record) => UserResource::getUrl('view', ['record' => $record->userID])),
             ])
             ->toolbarActions([

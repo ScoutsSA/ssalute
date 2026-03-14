@@ -1,0 +1,80 @@
+# ─────────────────────────────────────────────────────────────────────────────
+#  Ssalute — Claude Code dev container
+#
+#  Usage:
+#    1. Copy your API key into the shell (or add to a .env.docker file):
+#         export ANTHROPIC_API_KEY=sk-ant-...
+#
+#    2. Start the container (builds on first run):
+#         docker compose run --rm claude
+#
+#    3. Inside the container you have a full shell at /app.
+#       Run Claude Code:
+#         claude
+#
+#    Connecting to your HOST databases (MySQL / Redis):
+#      The container maps host.docker.internal → your host machine.
+#      Update the relevant values in .env before starting:
+#         DB_HOST=host.docker.internal
+#         REDIS_HOST=host.docker.internal
+#
+#    Alternatively, use the bundled mysql + redis services below by
+#    uncommenting them and setting DB_HOST=mysql / REDIS_HOST=redis in .env.
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+
+  # ── Dev container (Claude Code + PHP 8.4 + Node 22) ───────────────────────
+  claude:
+    build: .
+    volumes:
+      # Project files — Claude can read/write here, nowhere else on your system
+      - ./:/app
+      # Global Claude rules + auth from your host machine
+      - ~/.claude:/home/claude/.claude
+      - ~/.claude.json:/home/claude/.claude.json
+      # Stable machine identity so Claude auth persists across container runs
+      - /etc/machine-id:/etc/machine-id:ro
+    working_dir: /app
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - DB_HOST=host.docker.internal
+      - REDIS_HOST=host.docker.internal
+    # Allows the container to reach your host machine's MySQL/Redis via
+    # the hostname "host.docker.internal" (works on Linux, Mac, and Windows)
+    hostname: ssalute-claude
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    stdin_open: true
+    tty: true
+
+  # ── Optional: bundled MySQL 8.4 ───────────────────────────────────────────
+  # Uncomment if you want a fully isolated database instead of using your
+  # host MySQL. Then set DB_HOST=mysql in .env.
+  #
+  # mysql:
+  #   image: mysql:8.4
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: ${DOCKER_DB_PASSWORD:-secret}
+  #     MYSQL_DATABASE: ${DOCKER_DB_DATABASE:-ssalute}
+  #   volumes:
+  #     - mysql-data:/var/lib/mysql
+  #   ports:
+  #     - "13306:3306"   # Exposed on a non-standard port to avoid clash with host MySQL
+  #   healthcheck:
+  #     test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-psecret"]
+  #     interval: 5s
+  #     timeout: 5s
+  #     retries: 10
+
+  # ── Optional: bundled Redis ────────────────────────────────────────────────
+  # Uncomment if you want isolated Redis. Then set REDIS_HOST=redis in .env.
+  #
+  # redis:
+  #   image: redis:7-alpine
+  #   ports:
+  #     - "16379:6379"
+
+  # mysql-data volume — uncomment below if you enable the bundled MySQL service above:
+  # volumes:
+  #   mysql-data:

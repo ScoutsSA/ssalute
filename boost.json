@@ -1,13 +1,20 @@
 {
     "agents": [
-        "claude_code"
+        "claude_code",
+        "junie"
     ],
     "guidelines": true,
     "herd_mcp": false,
     "mcp": true,
-    "nightwatch_mcp": false,
+    "nightwatch_mcp": true,
+    "packages": [
+        "filament/filament",
+        "tightenco/duster"
+    ],
     "sail": false,
     "skills": [
+        "configuring-horizon",
+        "pulse-development",
         "fluxui-development",
         "tailwindcss-development"
     ]

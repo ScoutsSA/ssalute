@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\UserBranchTypes;
+use App\Enums\UserEnglishProficiency;
 use App\Enums\UserRace;
 use App\Enums\UserSex;
 use App\Enums\UserTitle;
@@ -150,7 +151,7 @@ class SystemUser extends User implements FilamentUser, HasDefaultTenant, HasTena
         'homeLanguage' => 'int',
         'otherLanguage' => 'int',
         'otherLanguages' => 'string',
-        'proficiencyInEnglish' => 'int',
+        'proficiencyInEnglish' => UserEnglishProficiency::class,
         'religiousBelief' => 'string',
         'highestEducation' => 'int',
         'nrOfChildrenBoys' => 'int',
@@ -252,7 +253,7 @@ class SystemUser extends User implements FilamentUser, HasDefaultTenant, HasTena
         ->wherePivot('suspended', 0)*/
     }
 
-    public function pastRoles()
+    public function pastRoles(): BelongsToMany
     {
         return $this->roles()
             ->wherePivot('active', 0);
@@ -415,6 +416,26 @@ class SystemUser extends User implements FilamentUser, HasDefaultTenant, HasTena
         return $this->hasMany(SystemUsersEmergencyContact::class, 'userID', 'id');
     }
 
+    public function maritalStatusInfo(): BelongsTo
+    {
+        return $this->belongsTo(AmsMaritalStatus::class, 'maritalStatus');
+    }
+
+    public function highestEducationInfo(): BelongsTo
+    {
+        return $this->belongsTo(AmsHighestEducation::class, 'highestEducation');
+    }
+
+    public function homeLanguageInfo(): BelongsTo
+    {
+        return $this->belongsTo(AmsLanguage::class, 'homeLanguage');
+    }
+
+    public function otherLanguageInfo(): BelongsTo
+    {
+        return $this->belongsTo(AmsLanguage::class, 'otherLanguage');
+    }
+
     public function pack(): BelongsTo
     {
         return $this->belongsTo(GroupCubPack::class, 'packID');
@@ -468,7 +489,7 @@ class SystemUser extends User implements FilamentUser, HasDefaultTenant, HasTena
     /*******************
      * Functions
      *******************/
-    public function getScoutsDigitalPlainTextPassword()
+    public function getScoutsDigitalPlainTextPassword(): string
     {
         return $this->newQuery()->where('id', $this->id)->selectRaw('CAST(AES_DECRYPT(passwordNew,"' . config('auth.scouts_digital.authentication.encryption_key') . '") AS CHAR(50)) as scouts_digital_plain_text_password')->first()->scouts_digital_plain_text_password;
     }
@@ -523,7 +544,9 @@ class SystemUser extends User implements FilamentUser, HasDefaultTenant, HasTena
 
     public function getDefaultTenant(Panel $panel): ?Model
     {
-        return $this->getTenants($panel)->first();
+        $tenants = $this->getTenants($panel);
+
+        return $tenants->firstWhere('defaultRole', 1) ?? $tenants->first();
     }
 
     public function isSuperAdmin(): bool

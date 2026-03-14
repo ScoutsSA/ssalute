@@ -58,6 +58,7 @@ class UserRoleAttachmentsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('name')
             ->columns([
+                TextColumn::make('id')->label('ID')->sortable()->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('id')
                     ->label('Attachment ID')
                     ->searchable()

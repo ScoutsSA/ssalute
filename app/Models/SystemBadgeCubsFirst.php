@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class SystemBadgeCubsFirst extends BaseModel
 {
@@ -26,4 +27,8 @@ class SystemBadgeCubsFirst extends BaseModel
         'modifiedby' => 'int',
     ];
 
+    public function requirements(): HasMany
+    {
+        return $this->hasMany(SystemBadgeCubsSecond::class, 'firstID');
+    }
 }
