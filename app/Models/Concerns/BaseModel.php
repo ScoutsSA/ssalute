@@ -4,16 +4,19 @@ namespace App\Models\Concerns;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * BaseModel for application Eloquent models.
  *
  * - Uses `created` / `modified` as timestamp columns.
  * - Automatically sets `createdby` and `modifiedby` columns when present.
+ * - Auditable: all changes are tracked in the ssalute_audits table.
  */
-abstract class BaseModel extends Model
+abstract class BaseModel extends Model implements Auditable
 {
     use HasFactory;
+    use IsAuditable;
     use MightHaveCreatedBy;
     use MightHaveModifiedBy;
 

@@ -9,10 +9,13 @@ use App\Enums\UserTitle;
 use App\Models\AmsHighestEducation;
 use App\Models\AmsLanguage;
 use App\Models\AmsMaritalStatus;
+use App\Models\GroupUserPictureChange;
+use App\Settings\FeatureSettings;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -36,11 +39,17 @@ class EditProfile extends Page
 
     protected string $view = 'filament.general.pages.edit-profile';
 
+    public static function canAccess(): bool
+    {
+        return resolve(FeatureSettings::class)->users_can_edit_profiles;
+    }
+
     public function mount(): void
     {
         $user = auth()->user();
 
         $this->form->fill([
+            'new_photo' => null,
             'title' => $user->title,
             'first_name' => $user->first_name,
             'otherName' => $user->otherName,
@@ -99,7 +108,27 @@ class EditProfile extends Page
         // Exclude username — users cannot change their login email here
         unset($data['username']);
 
-        auth()->user()->update($data);
+        $user = auth()->user();
+
+        // Handle photo upload
+        if (! empty($data['new_photo'])) {
+            $newPhotoPath = $data['new_photo'];
+
+            // Save old photo to history
+            if ($user->photo) {
+                GroupUserPictureChange::create([
+                    'userID' => $user->id,
+                    'pictureLocation' => $user->photo,
+                    'createdby' => $user->id,
+                ]);
+            }
+
+            $user->photo = $newPhotoPath;
+            $user->thumb = $newPhotoPath;
+        }
+        unset($data['new_photo']);
+
+        $user->update($data);
 
         Notification::make()
             ->title('Profile saved')
@@ -118,6 +147,24 @@ class EditProfile extends Page
                     ->columnSpanFull()
                     ->persistTabInQueryString('tab')
                     ->tabs([
+                        Tab::make('Photo')
+                            ->icon(Heroicon::Camera)
+                            ->visible(fn () => resolve(FeatureSettings::class)->users_can_upload_profile_photo)
+                            ->schema([
+                                Section::make('Profile Photo')
+                                    ->description('Upload a new profile photo. Accepted formats: JPEG, PNG. Max size: 5MB.')
+                                    ->schema([
+                                        FileUpload::make('new_photo')
+                                            ->label('New Photo')
+                                            ->disk('legacy_files')
+                                            ->directory(fn () => 'photos/users/' . auth()->id())
+                                            ->image()
+                                            ->imageEditor()
+                                            ->maxSize(5120)
+                                            ->acceptedFileTypes(['image/jpeg', 'image/png']),
+                                    ]),
+                            ]),
+
                         Tab::make('Personal')
                             ->icon(Heroicon::User)
                             ->schema([

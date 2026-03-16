@@ -9,13 +9,15 @@
     "nightwatch_mcp": true,
     "packages": [
         "filament/filament",
-        "tightenco/duster"
+        "tightenco/duster",
+        "spatie/boost-spatie-guidelines"
     ],
     "sail": false,
     "skills": [
         "configuring-horizon",
         "pulse-development",
         "fluxui-development",
-        "tailwindcss-development"
+        "tailwindcss-development",
+        "spatie-laravel-php-standards"
     ]
 }

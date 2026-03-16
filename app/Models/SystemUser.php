@@ -7,6 +7,7 @@ use App\Enums\UserEnglishProficiency;
 use App\Enums\UserRace;
 use App\Enums\UserSex;
 use App\Enums\UserTitle;
+use App\Models\Concerns\IsAuditable;
 use App\Models\Concerns\MightHaveCreatedBy;
 use App\Models\Concerns\MightHaveModifiedBy;
 use App\Providers\AppServiceProvider;
@@ -28,9 +29,10 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
-class SystemUser extends User implements FilamentUser, HasDefaultTenant, HasTenants
+class SystemUser extends User implements \OwenIt\Auditing\Contracts\Auditable, FilamentUser, HasDefaultTenant, HasTenants
 {
     use HasFactory;
+    use IsAuditable;
     use MightHaveCreatedBy;
     use MightHaveModifiedBy;
 
@@ -303,6 +305,11 @@ class SystemUser extends User implements FilamentUser, HasDefaultTenant, HasTena
     public function awards(): HasMany
     {
         return $this->hasMany(AmsAwardInfo::class, 'userID', 'id');
+    }
+
+    public function performedAudits(): HasMany
+    {
+        return $this->hasMany(Audit::class, 'user_id');
     }
 
     public function policeClearances(): HasMany

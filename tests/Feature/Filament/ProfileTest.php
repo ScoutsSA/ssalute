@@ -4,6 +4,7 @@ namespace Tests\Feature\Filament;
 
 use App\Filament\General\Pages\EditProfile;
 use App\Models\SystemUser;
+use App\Settings\FeatureSettings;
 use Filament\Facades\Filament;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\Test;
@@ -11,6 +12,16 @@ use Tests\Support\SdCoreTestCase;
 
 class ProfileTest extends SdCoreTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $features = resolve(FeatureSettings::class);
+        $features->users_can_edit_profiles = true;
+        $features->users_can_upload_profile_photo = true;
+        $features->save();
+    }
+
     // View profile page
 
     #[Test]

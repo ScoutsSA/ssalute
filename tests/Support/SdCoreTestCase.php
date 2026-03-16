@@ -40,5 +40,46 @@ abstract class SdCoreTestCase extends TestCase
         }
 
         $this->artisan('migrate', ['--force' => true]);
+
+        // Ensure all Spatie settings properties exist (settings migrations may
+        // not re-run if the migration table already records them from a prior run).
+        $this->ensureSettingsExist();
+    }
+
+    private function ensureSettingsExist(): void
+    {
+        $required = [
+            'general' => [
+                'super_user_admin_list' => '[]',
+                'national_support_role_ids' => '[]',
+                'system_issue_support_enabled' => 'false',
+                'system_issue_support_user_ids' => '[]',
+                'next_in_line_role_group' => 'null',
+                'next_in_line_role_district' => 'null',
+                'next_in_line_role_regional' => 'null',
+                'next_in_line_role_national' => 'null',
+            ],
+            'feature' => [
+                'users_can_edit_profiles' => 'false',
+                'users_can_browse_areas' => 'false',
+                'users_can_upload_profile_photo' => 'false',
+                'users_can_add_documents' => 'false',
+                'users_can_add_past_service' => 'false',
+                'users_can_add_past_training' => 'false',
+                'users_can_add_awards' => 'false',
+                'users_can_view_notifications' => 'false',
+                'users_can_report_issues' => 'false',
+                'users_can_view_audit_log' => 'false',
+            ],
+        ];
+
+        foreach ($required as $group => $settings) {
+            foreach ($settings as $name => $payload) {
+                DB::table('ssalute_settings')->updateOrInsert(
+                    ['group' => $group, 'name' => $name],
+                    ['payload' => $payload, 'locked' => false],
+                );
+            }
+        }
     }
 }
