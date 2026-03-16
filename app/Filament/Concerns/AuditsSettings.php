@@ -3,6 +3,7 @@
 namespace App\Filament\Concerns;
 
 use App\Models\Audit;
+use STS\FilamentImpersonate\Facades\Impersonation;
 
 trait AuditsSettings
 {
@@ -47,7 +48,9 @@ trait AuditsSettings
             'url' => request()->header('Referer', request()->fullUrl()),
             'ip_address' => request()->ip(),
             'user_agent' => request()->userAgent(),
-            'tags' => null,
+            'tags' => Impersonation::isImpersonating()
+                ? 'impersonated_by:' . Impersonation::getImpersonatorId()
+                : null,
         ]);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Models\Concerns;
 
 use App\Models\Audit;
 use OwenIt\Auditing\Auditable;
+use STS\FilamentImpersonate\Facades\Impersonation;
 
 trait IsAuditable
 {
@@ -20,5 +21,16 @@ trait IsAuditable
     public function resolveAuditImplementation(): string
     {
         return Audit::class;
+    }
+
+    public function generateTags(): array
+    {
+        if (Impersonation::isImpersonating()) {
+            $impersonatorId = Impersonation::getImpersonatorId();
+
+            return ["impersonated_by:{$impersonatorId}"];
+        }
+
+        return [];
     }
 }
