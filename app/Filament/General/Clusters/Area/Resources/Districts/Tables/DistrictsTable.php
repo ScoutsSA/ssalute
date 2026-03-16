@@ -2,8 +2,8 @@
 
 namespace App\Filament\General\Clusters\Area\Resources\Districts\Tables;
 
+use App\Filament\General\Clusters\Area\Resources\Groups\GroupResource;
 use App\Models\District;
-use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Grouping\Group;
@@ -16,7 +16,8 @@ class DistrictsTable
         return $table
             ->paginated(['10', '20', '50'])
             ->groupingDirectionSettingHidden()
-            ->groupingSettingsInDropdownOnDesktop()
+            ->groupingSettingsHidden()
+            ->defaultGroup('region.name')
             ->groups([
                 Group::make('region.name')
                     ->label('Region')
@@ -39,8 +40,11 @@ class DistrictsTable
                 SelectFilter::make('region')
                     ->relationship('region', 'name', fn ($query) => $query->orderBy('position', 'asc')),
             ])
-            ->recordActions([
-                ViewAction::make(),
-            ]);
+            ->deferFilters(false)
+            ->deferColumnManager(false)
+            ->recordUrl(fn (District $record) => GroupResource::getUrl('index', parameters: [
+                'filters[region][value]' => $record->region->getKey(),
+                'filters[district][value]' => $record->getKey(),
+            ]));
     }
 }

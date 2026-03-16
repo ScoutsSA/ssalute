@@ -12,6 +12,7 @@ use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Icons\Heroicon;
+use Filament\View\PanelsRenderHook;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -19,6 +20,7 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AdminPanelProvider extends PanelProvider
@@ -28,6 +30,7 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->id('admin')
             ->path('backoffice')
+            ->viteTheme('resources/css/filament/admin/theme.css')
             ->default()
             ->favicon(asset('images/logo.png'))
             ->login()
@@ -54,15 +57,21 @@ class AdminPanelProvider extends PanelProvider
                     ->label('System')
                     ->icon(Heroicon::Lifebuoy),
             ])
+            ->renderHook(
+                PanelsRenderHook::PAGE_START,
+                fn () => request()->is('backoffice/group-operations*', 'backoffice/ams*', 'backoffice/advancements*', 'backoffice/area*')
+                    ? Blade::render('@include("filament.admin.partials.beta-banner")')
+                    : '',
+            )
             ->navigationItems([
                 NavigationItem::make('Horizon')
                     ->url('/horizon', shouldOpenInNewTab: true)
-                    ->sort(2)
+                    ->sort(3)
                     ->icon(Heroicon::QueueList)
                     ->group('System'),
                 NavigationItem::make('Pulse')
                     ->url('/pulse', shouldOpenInNewTab: true)
-                    ->sort(3)
+                    ->sort(4)
                     ->icon(Heroicon::Heart)
                     ->group('System'),
             ])

@@ -22,6 +22,10 @@ class FeatureSettings extends Settings
 
     public bool $users_can_view_notifications = false;
 
+    public bool $users_can_report_issues = false;
+
+    public bool $users_can_view_audit_log = false;
+
     public static function group(): string
     {
         return 'feature';

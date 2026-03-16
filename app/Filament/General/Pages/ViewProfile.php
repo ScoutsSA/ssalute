@@ -16,11 +16,10 @@ use App\Models\AmsPastServiceInfo;
 use App\Models\AmsPastServiceType;
 use App\Models\AmsTrainingPast;
 use App\Models\AmsTrainingPastType;
-use App\Models\SystemUser;
 use App\Models\SystemUsersOtherRole;
 use App\Services\FileUrlService;
+use App\Services\NextInLineService;
 use App\Settings\FeatureSettings;
-use App\Settings\GeneralSettings;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
@@ -41,6 +40,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Mail;
+use UnitEnum;
 
 class ViewProfile extends Page
 {
@@ -50,14 +50,116 @@ class ViewProfile extends Page
 
     protected static ?string $title = 'My Profile';
 
-    protected static ?int $navigationSort = 10;
+    protected static string|UnitEnum|null $navigationGroup = 'My Info';
+
+    protected static ?int $navigationSort = 1;
 
     protected string $view = 'filament.general.pages.view-profile';
+
+    /**
+     * Build the common schema entries for a role attachment repeatable.
+     */
+    private static function sendToNationalToggle(): ToggleButtons
+    {
+        return ToggleButtons::make('send_to_national')
+            ->label('Send to')
+            ->options(function () {
+                $nextInLine = app(NextInLineService::class)->resolve(Filament::getTenant());
+                $name = $nextInLine ? trim("{$nextInLine->first_name} {$nextInLine->surname}") : null;
+                $label = $name ? 'Next in Line Scouter - ' . (mb_strlen($name) > 15 ? mb_substr($name, 0, 15) . '…' : $name) : 'Next in Line Scouter';
+
+                return [
+                    false => $label,
+                    true => 'National Adult Support Team',
+                ];
+            })
+            ->icons([
+                false => Heroicon::UserGroup,
+                true => Heroicon::BuildingOffice2,
+            ])
+            ->colors([
+                false => 'primary',
+                true => 'danger',
+            ])
+            ->default(false)
+            ->helperText('Please only escalate to the National Adult Support Team if your next in line scouter has been unable to help.')
+            ->columnSpanFull();
+    }
+
+    private static function roleEntrySchema(string $badgeColor = 'primary'): array
+    {
+        $showRegion = fn ($record) => $record?->role && ! in_array(1, [
+            $record->role->nationalRole,
+            $record->role->sysAdmin,
+        ], true);
+
+        $showDistrict = fn ($record) => $record?->role && ! in_array(1, [
+            $record->role->nationalRole,
+            $record->role->sysAdmin,
+            $record->role->regionalRole,
+        ], true);
+
+        $showGroup = fn ($record) => $record?->role && ! in_array(1, [
+            $record->role->nationalRole,
+            $record->role->sysAdmin,
+            $record->role->regionalRole,
+            $record->role->superDistrictRole,
+            $record->role->districtRole,
+        ], true);
+
+        return [
+            TextEntry::make('role.name')
+                ->label('Role'),
+            TextEntry::make('roleTypeName')
+                ->label('Level')
+                ->badge()
+                ->color($badgeColor),
+            TextEntry::make('created')
+                ->label('Since')
+                ->date(),
+            TextEntry::make('region.name')
+                ->label('Region')
+                ->placeholder('-')
+                ->visible($showRegion),
+            TextEntry::make('district.name')
+                ->label('District')
+                ->placeholder('-')
+                ->visible($showDistrict),
+            TextEntry::make('group.name')
+                ->label('Group')
+                ->placeholder('-')
+                ->visible($showGroup),
+            TextEntry::make('creationNotes')
+                ->label('Notes')
+                ->columnSpanFull()
+                ->placeholder('-'),
+        ];
+    }
 
     public function infolist(Schema $schema): Schema
     {
         return $schema
-            ->record(auth()->user())
+            ->record(auth()->user()->load([
+                'trainingHistory.trainingType',
+                'trainingHistory.validatedByUser',
+                'trainingHistory.region',
+                'trainingHistory.district',
+                'trainingHistory.group',
+                'awards.heading',
+                'awards.awardType',
+                'awards.region',
+                'awards.district',
+                'awards.group',
+                'documents.documentType',
+                'documents.region',
+                'documents.district',
+                'documents.group',
+                'pastService.serviceType',
+                'inactiveRoleAttachments.role',
+                'inactiveRoleAttachments.region',
+                'inactiveRoleAttachments.district',
+                'inactiveRoleAttachments.group',
+            ]))
             ->components([
                 Tabs::make()
                     ->columnSpanFull()
@@ -317,58 +419,85 @@ class ViewProfile extends Page
                         Tab::make('Roles')
                             ->icon(Heroicon::Identification)
                             ->schema([
-                                Section::make('Active Roles')
+                                Section::make('Default Role')
                                     ->collapsible()
-                                    ->schema([
-                                        RepeatableEntry::make('activeRoleAttachments')
-                                            ->label('')
+                                    ->headerActions([
+                                        Action::make('changeDefaultRole')
+                                            ->label('Change Default Role')
+                                            ->icon(Heroicon::Star)
+                                            ->color('primary')
                                             ->schema([
-                                                TextEntry::make('role.name')
-                                                    ->label('Role'),
-                                                TextEntry::make('roleTypeName')
-                                                    ->label('Level')
-                                                    ->badge()
-                                                    ->color('primary'),
-                                                TextEntry::make('region.name')
-                                                    ->label('Region')
-                                                    ->placeholder('-'),
-                                                TextEntry::make('district.name')
-                                                    ->label('District')
-                                                    ->placeholder('-'),
-                                                TextEntry::make('group.name')
-                                                    ->label('Group')
-                                                    ->placeholder('-'),
-                                                TextEntry::make('created')
-                                                    ->label('Since')
-                                                    ->date(),
+                                                Select::make('role_attachment_id')
+                                                    ->label('Select new default role')
+                                                    ->searchable()
+                                                    ->options(fn () => auth()->user()->activeRoleAttachments
+                                                        ->mapWithKeys(fn (SystemUsersOtherRole $attachment) => [
+                                                            $attachment->id => $attachment->getFilamentName(),
+                                                        ]))
+                                                    ->default(fn () => auth()->user()->activeRoleAttachments->firstWhere('defaultRole', 1)?->id)
+                                                    ->required(),
                                             ])
+                                            ->action(function (array $data): void {
+                                                $user = auth()->user();
+
+                                                // Clear existing default (load model so audit fires)
+                                                $currentDefault = $user->activeRoleAttachments()->where('defaultRole', 1)->first();
+                                                if ($currentDefault) {
+                                                    $currentDefault->update(['defaultRole' => 0]);
+                                                }
+
+                                                // Set new default (load model so audit fires)
+                                                $newDefault = $user->activeRoleAttachments()->where('id', $data['role_attachment_id'])->first();
+                                                $newDefault?->update(['defaultRole' => 1]);
+
+                                                Notification::make()
+                                                    ->title('Default role updated')
+                                                    ->success()
+                                                    ->send();
+                                            }),
+                                    ])
+                                    ->schema([
+                                        RepeatableEntry::make('defaultRoleAttachment')
+                                            ->label('')
+                                            ->getStateUsing(fn ($record) => $record->activeRoleAttachments()->with(['role', 'region', 'district', 'group'])->where('defaultRole', 1)->get())
+                                            ->schema(self::roleEntrySchema())
+                                            ->columns(3),
+                                    ]),
+
+                                Section::make('Other Active Roles')
+                                    ->collapsible()
+
+                                    ->schema([
+                                        RepeatableEntry::make('otherActiveRoleAttachments')
+                                            ->label('')
+                                            ->getStateUsing(fn ($record) => $record->activeRoleAttachments()->with(['role', 'region', 'district', 'group'])->where('defaultRole', '!=', 1)->get())
+                                            ->schema(self::roleEntrySchema())
                                             ->columns(3),
                                     ]),
 
                                 Section::make('Past Roles')
+                                    ->collapsible()
                                     ->collapsed()
                                     ->schema([
                                         RepeatableEntry::make('inactiveRoleAttachments')
                                             ->label('')
                                             ->schema([
-                                                TextEntry::make('role.name')
-                                                    ->label('Role'),
-                                                TextEntry::make('roleTypeName')
-                                                    ->label('Level')
+                                                ...self::roleEntrySchema('gray'),
+                                                TextEntry::make('role_status')
+                                                    ->label('Status')
+                                                    ->state(fn ($record) => match (true) {
+                                                        (bool) $record->retired => 'Retired',
+                                                        (bool) $record->resigned => 'Resigned',
+                                                        (bool) $record->suspended => 'Suspended',
+                                                        default => 'Inactive',
+                                                    })
                                                     ->badge()
-                                                    ->color('gray'),
-                                                TextEntry::make('region.name')
-                                                    ->label('Region')
-                                                    ->placeholder('-'),
-                                                TextEntry::make('district.name')
-                                                    ->label('District')
-                                                    ->placeholder('-'),
-                                                TextEntry::make('group.name')
-                                                    ->label('Group')
-                                                    ->placeholder('-'),
-                                                TextEntry::make('created')
-                                                    ->label('Since')
-                                                    ->date(),
+                                                    ->color(fn ($state) => match ($state) {
+                                                        'Retired' => 'gray',
+                                                        'Resigned' => 'warning',
+                                                        'Suspended' => 'danger',
+                                                        default => 'gray',
+                                                    }),
                                             ])
                                             ->columns(3),
                                     ]),
@@ -377,16 +506,41 @@ class ViewProfile extends Page
                         Tab::make('Warrants')
                             ->icon(Heroicon::DocumentCheck)
                             ->schema([
-                                Section::make('Warrants')
+                                Section::make('My Warrants')
+                                    ->collapsible()
+                                    ->headerActions([
+                                        Action::make('requestMissingWarrant')
+                                            ->label('Request Missing Warrant')
+                                            ->icon(Heroicon::ExclamationTriangle)
+                                            ->color('warning')
+                                            ->visible(fn () => resolve(FeatureSettings::class)->users_can_report_issues)
+                                            ->modalHeading('Report a Missing Warrant')
+                                            ->modalDescription('Let us know about a warrant that is missing from your profile. This will be sent to your next in line scouter, or to the national adult support team.')
+                                            ->schema([
+                                                Textarea::make('description')
+                                                    ->label('Describe the missing warrant')
+                                                    ->required()
+                                                    ->default("I believe I am missing a warrant from my warrant profile.\n\nWarrant type: \nExpected role: \nApproximate issue date: \nAdditional details: ")
+                                                    ->rows(8)
+                                                    ->columnSpanFull(),
+                                                self::sendToNationalToggle(),
+                                            ])
+                                            ->action(function (array $data): void {
+                                                $this->sendReportIssueEmail($data['description'], $data['send_to_national'], 'Missing warrant reported successfully');
+                                            }),
+                                    ])
                                     ->schema([
                                         RepeatableEntry::make('warrants')
-                                            ->label('')
-                                            ->getStateUsing(fn ($record) => $record->warrants()->orderByDesc('active')->orderByDesc('issueDate')->get())
+                                            ->hiddenLabel()
+                                            ->getStateUsing(fn ($record) => $record->warrants()->with(['warrantType', 'role', 'region', 'district', 'group', 'cancellationType'])->orderByDesc('active')->orderByDesc('issueDate')->get())
                                             ->schema([
                                                 TextEntry::make('warrantNr')
                                                     ->label('Warrant Nr')
                                                     ->badge()
                                                     ->color('primary'),
+                                                TextEntry::make('warrantName')
+                                                    ->label('Warrant Name')
+                                                    ->placeholder('-'),
                                                 TextEntry::make('warrantType.name')
                                                     ->label('Type'),
                                                 TextEntry::make('role.name')
@@ -412,6 +566,28 @@ class ViewProfile extends Page
                                                     ->formatStateUsing(fn ($state) => $state ? 'Active' : 'Inactive')
                                                     ->badge()
                                                     ->color(fn ($state) => $state ? 'success' : 'danger'),
+                                                TextEntry::make('limited')
+                                                    ->label('Limited')
+                                                    ->formatStateUsing(fn ($state) => $state ? 'Yes' : 'No')
+                                                    ->badge()
+                                                    ->color(fn ($state) => $state ? 'warning' : 'gray')
+                                                    ->placeholder('-'),
+                                                TextEntry::make('appointment')
+                                                    ->label('Appointment')
+                                                    ->formatStateUsing(fn ($state) => $state ? 'Yes' : 'No')
+                                                    ->badge()
+                                                    ->color(fn ($state) => $state ? 'info' : 'gray')
+                                                    ->placeholder('-'),
+                                                TextEntry::make('cancellationType.name')
+                                                    ->label('Cancellation Reason')
+                                                    ->placeholder('-'),
+                                                TextEntry::make('cancelationNotes')
+                                                    ->label('Cancellation Notes')
+                                                    ->placeholder('-'),
+                                                TextEntry::make('created')
+                                                    ->label('Created')
+                                                    ->date()
+                                                    ->placeholder('-'),
                                                 TextEntry::make('PDFLocation')
                                                     ->label('Document')
                                                     ->formatStateUsing(fn ($state) => $state ? 'View Document' : null)
@@ -493,6 +669,22 @@ class ViewProfile extends Page
                                                     ->formatStateUsing(fn ($state) => $state ? 'Validated' : 'Pending')
                                                     ->badge()
                                                     ->color(fn ($state) => $state ? 'success' : 'warning'),
+                                                TextEntry::make('validatedDate')
+                                                    ->label('Validated On')
+                                                    ->date()
+                                                    ->placeholder('-'),
+                                                TextEntry::make('validatedByUser.name')
+                                                    ->label('Validated By')
+                                                    ->placeholder('-'),
+                                                TextEntry::make('region.name')
+                                                    ->label('Region')
+                                                    ->placeholder('-'),
+                                                TextEntry::make('district.name')
+                                                    ->label('District')
+                                                    ->placeholder('-'),
+                                                TextEntry::make('group.name')
+                                                    ->label('Group')
+                                                    ->placeholder('-'),
                                                 TextEntry::make('PDFLocation')
                                                     ->label('Certificate')
                                                     ->formatStateUsing(fn ($state) => $state ? 'View Certificate' : null)
@@ -565,6 +757,27 @@ class ViewProfile extends Page
                                                 TextEntry::make('awardDate')
                                                     ->label('Date')
                                                     ->date(),
+                                                TextEntry::make('region.name')
+                                                    ->label('Region')
+                                                    ->placeholder('-'),
+                                                TextEntry::make('district.name')
+                                                    ->label('District')
+                                                    ->placeholder('-'),
+                                                TextEntry::make('group.name')
+                                                    ->label('Group')
+                                                    ->placeholder('-'),
+                                                TextEntry::make('created')
+                                                    ->label('Recorded')
+                                                    ->date()
+                                                    ->placeholder('-'),
+                                                TextEntry::make('PDFLocation')
+                                                    ->label('Certificate')
+                                                    ->formatStateUsing(fn ($state) => $state ? 'View Certificate' : null)
+                                                    ->url(fn ($state) => $state ? app(FileUrlService::class)->url($state) : null)
+                                                    ->openUrlInNewTab()
+                                                    ->badge()
+                                                    ->color('primary')
+                                                    ->placeholder('-'),
                                             ])
                                             ->columns(3),
                                     ]),
@@ -624,6 +837,15 @@ class ViewProfile extends Page
                                                     ->formatStateUsing(fn ($state) => $state ? 'Active' : 'Inactive')
                                                     ->badge()
                                                     ->color(fn ($state) => $state ? 'success' : 'danger'),
+                                                TextEntry::make('region.name')
+                                                    ->label('Region')
+                                                    ->placeholder('-'),
+                                                TextEntry::make('district.name')
+                                                    ->label('District')
+                                                    ->placeholder('-'),
+                                                TextEntry::make('group.name')
+                                                    ->label('Group')
+                                                    ->placeholder('-'),
                                                 TextEntry::make('created')
                                                     ->label('Uploaded')
                                                     ->date(),
@@ -634,7 +856,7 @@ class ViewProfile extends Page
                                                     ->openUrlInNewTab()
                                                     ->placeholder('-'),
                                             ])
-                                            ->columns(2),
+                                            ->columns(3),
                                     ]),
                             ]),
 
@@ -746,6 +968,7 @@ class ViewProfile extends Page
                                             ->columns(3),
                                     ]),
                             ]),
+
                     ]),
             ]);
     }
@@ -763,6 +986,7 @@ class ViewProfile extends Page
                 ->label('Report Issue')
                 ->icon(Heroicon::Flag)
                 ->color('danger')
+                ->visible(fn () => resolve(FeatureSettings::class)->users_can_report_issues)
                 ->modalHeading('Report an Issue')
                 ->modalDescription('Describe the issue you are experiencing. It will be sent to your next in line scouter, or to the national adult support team.')
                 ->schema([
@@ -771,139 +995,52 @@ class ViewProfile extends Page
                         ->required()
                         ->rows(5)
                         ->columnSpanFull(),
-                    ToggleButtons::make('send_to_national')
-                        ->label('Send to')
-                        ->options(function () {
-                            $scouter = $this->resolveNextInLineScouters(auth()->user(), app(GeneralSettings::class))->first();
-                            $name = $scouter ? trim("{$scouter->first_name} {$scouter->surname}") : null;
-                            $label = $name ? 'Next in Line Scouter - ' . (mb_strlen($name) > 15 ? mb_substr($name, 0, 15) . '…' : $name) : 'Next in Line Scouter';
-
-                            return [
-                                false => $label,
-                                true => 'National Adult Support Team',
-                            ];
-                        })
-                        ->icons([
-                            false => Heroicon::UserGroup,
-                            true => Heroicon::BuildingOffice2,
-                        ])
-                        ->colors([
-                            false => 'primary',
-                            true => 'danger',
-                        ])
-                        ->default(false)
-                        ->helperText('Please only escalate to the National Adult Support Team if your next in line scouter has been unable to help.')
-                        ->columnSpanFull(),
+                    self::sendToNationalToggle(),
                 ])
                 ->action(function (array $data): void {
-                    $reporter = auth()->user();
-                    $sendToNational = $data['send_to_national'];
-                    $generalSettings = app(GeneralSettings::class);
-
-                    $nationalUsers = $this->resolveNationalSupportUsers($generalSettings);
-                    $nationalEmails = $nationalUsers->map(fn ($u) => $u->username)->filter()->all();
-
-                    if ($sendToNational) {
-                        $to = $nationalEmails;
-                        $sentToNational = true;
-                    } else {
-                        $scouters = $this->resolveNextInLineScouters($reporter, $generalSettings);
-                        $to = $scouters->isEmpty()
-                            ? $nationalEmails
-                            : $scouters->map(fn ($u) => $u->username)->filter()->all();
-                        $sentToNational = $scouters->isEmpty();
-                    }
-
-                    $to = array_filter($to, fn ($email) => filter_var($email, FILTER_VALIDATE_EMAIL));
-
-                    if (empty($to)) {
-                        Notification::make()
-                            ->title('No valid email recipients found')
-                            ->danger()
-                            ->send();
-
-                        return;
-                    }
-
-                    Mail::to($to)
-                        ->cc($reporter->username)
-                        ->send(new ReportIssueEmail($reporter, $data['description'], $sentToNational));
-
-                    Notification::make()
-                        ->title('Issue reported successfully')
-                        ->success()
-                        ->send();
+                    $this->sendReportIssueEmail($data['description'], $data['send_to_national'], 'Issue reported successfully');
                 }),
         ];
     }
 
     /**
-     * Resolve all active users who hold a National Adult Support role.
-     *
-     * @return \Illuminate\Support\Collection<int, \App\Models\SystemUser>
+     * Send a report issue email using the NextInLineService for recipient resolution.
      */
-    private function resolveNationalSupportUsers(GeneralSettings $generalSettings): \Illuminate\Support\Collection
+    private function sendReportIssueEmail(string $description, bool $sendToNational, string $successMessage): void
     {
-        $roleIds = $generalSettings->national_support_role_ids ?? [];
+        $reporter = auth()->user();
+        $tenant = Filament::getTenant();
+        $service = app(NextInLineService::class);
 
-        if (empty($roleIds)) {
-            return collect();
+        if ($sendToNational) {
+            $to = $service->resolveNationalSupportEmails();
+            $sentToNational = true;
+        } else {
+            $scouters = $service->resolveAll($tenant);
+            $to = $scouters->isEmpty()
+                ? $service->resolveNationalSupportEmails()
+                : $scouters->map(fn ($u) => $u->username)->filter()->all();
+            $sentToNational = $scouters->isEmpty();
         }
 
-        return SystemUsersOtherRole::query()
-            ->whereIn('roleID', $roleIds)
-            ->where('active', 1)
-            ->with('user')
-            ->get()
-            ->map(fn ($attachment) => $attachment->user)
-            ->filter()
-            ->unique('id')
-            ->values();
-    }
+        $to = array_filter($to, fn ($email) => filter_var($email, FILTER_VALIDATE_EMAIL));
 
-    /**
-     * Resolve next-in-line scouter users for the reporter.
-     * Walks from group → district → regional → national until recipients are found.
-     *
-     * @return \Illuminate\Support\Collection<int, \App\Models\SystemUser>
-     */
-    private function resolveNextInLineScouters(SystemUser $reporter, GeneralSettings $generalSettings): \Illuminate\Support\Collection
-    {
-        $levels = [
-            ['roleKey' => 'next_in_line_role_group',    'fk' => 'groupID'],
-            ['roleKey' => 'next_in_line_role_district', 'fk' => 'districtID'],
-            ['roleKey' => 'next_in_line_role_regional', 'fk' => 'regionID'],
-            ['roleKey' => 'next_in_line_role_national', 'fk' => null],
-        ];
+        if (empty($to)) {
+            Notification::make()
+                ->title('No valid email recipients found')
+                ->danger()
+                ->send();
 
-        $primaryRole = Filament::getTenant();
-
-        foreach ($levels as $level) {
-            $roleId = $generalSettings->{$level['roleKey']};
-
-            if (! $roleId) {
-                continue;
-            }
-
-            $query = SystemUsersOtherRole::query()
-                ->where('roleID', $roleId)
-                ->where('active', 1)
-                ->with('user');
-
-            if ($level['fk'] && $primaryRole?->{$level['fk']}) {
-                $query->where($level['fk'], $primaryRole->{$level['fk']});
-            }
-
-            $users = $query->get()
-                ->map(fn ($attachment) => $attachment->user)
-                ->filter()
-                ->values();
-
-            if ($users->isNotEmpty()) {
-                return $users;
-            }
+            return;
         }
 
-        return collect();
+        Mail::to($to)
+            ->cc($reporter->username)
+            ->send(new ReportIssueEmail($reporter, $description, $sentToNational));
+
+        Notification::make()
+            ->title($successMessage)
+            ->success()
+            ->send();
     }
 }

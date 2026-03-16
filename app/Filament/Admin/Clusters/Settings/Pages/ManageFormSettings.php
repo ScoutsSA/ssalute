@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Clusters\Settings\Pages;
 
 use App\Filament\Admin\Clusters\Settings\SettingsCluster;
+use App\Filament\Concerns\AuditsSettings;
 use App\Models\SystemUserType;
 use App\Settings\FormSettings;
 use BackedEnum;
@@ -18,6 +19,7 @@ use Filament\Support\Icons\Heroicon;
 
 class ManageFormSettings extends SettingsPage
 {
+    use AuditsSettings;
     protected static string|null|BackedEnum $navigationIcon = Heroicon::DocumentText;
 
     protected static string $settings = FormSettings::class;

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Users;
 
+use App\Filament\Admin\RelationManagers\AuditsRelationManager;
 use App\Filament\Admin\Resources\Users\Pages\EditUser;
 use App\Filament\Admin\Resources\Users\Pages\ListUsers;
 use App\Filament\Admin\Resources\Users\Pages\ViewUser;
@@ -59,6 +60,7 @@ class UserResource extends Resource
             UserDocumentsRelationManager::class,
             UserPoliceClearancesRelationManager::class,
             UserPastServiceRelationManager::class,
+            AuditsRelationManager::class,
         ];
     }
 

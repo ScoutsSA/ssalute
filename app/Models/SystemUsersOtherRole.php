@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\IsAuditable;
 use App\Models\Concerns\MightHaveCreatedBy;
 use App\Models\Concerns\MightHaveModifiedBy;
 use App\Providers\AppServiceProvider;
@@ -12,10 +13,12 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class SystemUsersOtherRole extends Pivot implements HasAvatar, HasCurrentTenantLabel, HasName
+class SystemUsersOtherRole extends Pivot implements Auditable, HasAvatar, HasCurrentTenantLabel, HasName
 {
     use HasFactory;
+    use IsAuditable;
     use MightHaveCreatedBy;
     use MightHaveModifiedBy;
 

@@ -21,6 +21,7 @@ class ProfileSelfServiceTest extends SdCoreTestCase
         $features->users_can_add_awards = true;
         $features->users_can_add_documents = true;
         $features->users_can_add_past_service = true;
+        $features->users_can_report_issues = true;
         $features->save();
     }
 
@@ -36,6 +37,17 @@ class ProfileSelfServiceTest extends SdCoreTestCase
             ->assertSee('Add Award')
             ->assertSee('Add Document')
             ->assertSee('Add Past Service');
+    }
+
+    #[Test]
+    public function view_profile_page_renders_request_missing_warrant_action(): void
+    {
+        [$user, $tenant] = $this->setupUserAndPanel();
+
+        Livewire::actingAs($user)
+            ->test(ViewProfile::class)
+            ->assertOk()
+            ->assertSee('Request Missing Warrant');
     }
 
     #[Test]

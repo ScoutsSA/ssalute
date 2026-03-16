@@ -2,7 +2,8 @@
 
 namespace App\Filament\General\Clusters\Area\Resources\Regions\Tables;
 
-use Filament\Actions\ViewAction;
+use App\Filament\General\Clusters\Area\Resources\Districts\DistrictResource;
+use App\Models\Region;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -32,8 +33,10 @@ class RegionsTable
                     ->sortable()
                     ->toggleable(),
             ])
-            ->recordActions([
-                ViewAction::make(),
-            ]);
+            ->deferFilters(false)
+            ->deferColumnManager(false)
+            ->recordUrl(fn (Region $record) => DistrictResource::getUrl('index', parameters: [
+                'filters[region][value]' => $record->getKey(),
+            ]));
     }
 }

@@ -2,9 +2,13 @@
 
 namespace Tests\Feature\Filament\General;
 
+use App\Filament\General\Pages\Notifications;
 use App\Models\Notification as LegacyNotification;
 use App\Models\SystemUser;
 use App\Settings\FeatureSettings;
+use Filament\Actions\Testing\TestAction;
+use Filament\Facades\Filament;
+use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\Support\SdCoreTestCase;
 
@@ -32,109 +36,194 @@ class LegacyNotificationsTest extends SdCoreTestCase
     #[Test]
     public function authenticated_user_can_access_notifications_page(): void
     {
-        $user = SystemUser::factory()->withRole()->create();
-        $tenant = $user->roleAttachments()->first();
+        [$user, $tenant] = $this->setupUserAndPanel();
 
-        $this->actingAs($user)
-            ->get("/general/{$tenant->id}/notifications")
+        Livewire::actingAs($user)
+            ->test(Notifications::class)
             ->assertOk();
     }
 
     #[Test]
-    public function user_sees_notification_targeted_at_them(): void
+    public function user_sees_active_notifications_by_default(): void
     {
-        $user = SystemUser::factory()->withRole()->create();
-        $tenant = $user->roleAttachments()->first();
+        [$user, $tenant] = $this->setupUserAndPanel();
 
-        $this->createNotification([
+        $notification = $this->createNotification([
             'userID' => $user->id,
-            'title' => 'Personal notification for test',
+            'title' => 'Active notification',
         ]);
 
-        $this->actingAs($user)
-            ->get("/general/{$tenant->id}/notifications")
-            ->assertOk()
-            ->assertSee('Personal notification for test');
+        Livewire::actingAs($user)
+            ->test(Notifications::class)
+            ->assertCanSeeTableRecords([$notification]);
     }
 
     #[Test]
-    public function user_does_not_see_dismissed_notifications(): void
+    public function user_does_not_see_dismissed_notifications_by_default(): void
     {
-        $user = SystemUser::factory()->withRole()->create();
-        $tenant = $user->roleAttachments()->first();
+        [$user, $tenant] = $this->setupUserAndPanel();
 
-        $this->createNotification([
+        $dismissed = $this->createNotification([
             'userID' => $user->id,
             'title' => 'Dismissed notification',
             'dismissDate' => now(),
             'shown' => 1,
         ]);
 
-        $this->actingAs($user)
-            ->get("/general/{$tenant->id}/notifications")
-            ->assertOk()
-            ->assertDontSee('Dismissed notification');
+        Livewire::actingAs($user)
+            ->test(Notifications::class)
+            ->assertCanNotSeeTableRecords([$dismissed]);
+    }
+
+    #[Test]
+    public function dismissed_filter_shows_dismissed_and_expired_notifications(): void
+    {
+        [$user, $tenant] = $this->setupUserAndPanel();
+
+        $dismissed = $this->createNotification([
+            'userID' => $user->id,
+            'title' => 'Dismissed notification',
+            'dismissDate' => now(),
+            'shown' => 1,
+        ]);
+
+        $expired = $this->createNotification([
+            'userID' => $user->id,
+            'title' => 'Expired notification',
+            'doNotShowAfter' => now()->subDay(),
+        ]);
+
+        Livewire::actingAs($user)
+            ->test(Notifications::class)
+            ->filterTable('status', 'dismissed')
+            ->assertCanSeeTableRecords([$dismissed, $expired]);
+    }
+
+    #[Test]
+    public function expired_notifications_do_not_appear_in_active_filter(): void
+    {
+        [$user, $tenant] = $this->setupUserAndPanel();
+
+        $expired = $this->createNotification([
+            'userID' => $user->id,
+            'title' => 'Expired notification',
+            'doNotShowAfter' => now()->subDay(),
+        ]);
+
+        Livewire::actingAs($user)
+            ->test(Notifications::class)
+            ->assertCanNotSeeTableRecords([$expired]);
     }
 
     #[Test]
     public function user_does_not_see_inactive_notifications(): void
     {
-        $user = SystemUser::factory()->withRole()->create();
-        $tenant = $user->roleAttachments()->first();
+        [$user, $tenant] = $this->setupUserAndPanel();
 
-        $this->createNotification([
+        $inactive = $this->createNotification([
             'userID' => $user->id,
             'title' => 'Inactive notification',
             'active' => 0,
         ]);
 
-        $this->actingAs($user)
-            ->get("/general/{$tenant->id}/notifications")
-            ->assertOk()
-            ->assertDontSee('Inactive notification');
+        Livewire::actingAs($user)
+            ->test(Notifications::class)
+            ->assertCanNotSeeTableRecords([$inactive]);
     }
 
     #[Test]
-    public function user_does_not_see_notifications_outside_date_window(): void
+    public function user_does_not_see_future_notifications(): void
     {
-        $user = SystemUser::factory()->withRole()->create();
-        $tenant = $user->roleAttachments()->first();
+        [$user, $tenant] = $this->setupUserAndPanel();
 
-        $this->createNotification([
+        $future = $this->createNotification([
             'userID' => $user->id,
             'title' => 'Future notification',
             'doNotShowBefore' => now()->addDays(10),
         ]);
 
-        $this->createNotification([
-            'userID' => $user->id,
-            'title' => 'Expired notification',
-            'doNotShowAfter' => now()->subDays(10),
-        ]);
-
-        $this->actingAs($user)
-            ->get("/general/{$tenant->id}/notifications")
-            ->assertOk()
-            ->assertDontSee('Future notification')
-            ->assertDontSee('Expired notification');
+        Livewire::actingAs($user)
+            ->test(Notifications::class)
+            ->assertCanNotSeeTableRecords([$future]);
     }
 
     #[Test]
     public function user_does_not_see_other_users_notifications(): void
     {
-        $user = SystemUser::factory()->withRole()->create();
-        $otherUser = SystemUser::factory()->withRole()->create();
-        $tenant = $user->roleAttachments()->first();
+        [$user, $tenant] = $this->setupUserAndPanel();
+        $otherUser = SystemUser::factory()->create();
 
-        $this->createNotification([
+        $other = $this->createNotification([
             'userID' => $otherUser->id,
             'title' => 'Other user notification',
         ]);
 
-        $this->actingAs($user)
-            ->get("/general/{$tenant->id}/notifications")
-            ->assertOk()
-            ->assertDontSee('Other user notification');
+        Livewire::actingAs($user)
+            ->test(Notifications::class)
+            ->assertCanNotSeeTableRecords([$other]);
+    }
+
+    #[Test]
+    public function user_can_dismiss_a_notification(): void
+    {
+        [$user, $tenant] = $this->setupUserAndPanel();
+
+        $notification = $this->createNotification([
+            'userID' => $user->id,
+            'title' => 'Dismissable notification',
+        ]);
+
+        Livewire::actingAs($user)
+            ->test(Notifications::class)
+            ->callAction(TestAction::make('dismiss')->table($notification));
+
+        $this->assertNotNull($notification->fresh()->dismissDate);
+    }
+
+    #[Test]
+    public function user_can_bulk_dismiss_notifications(): void
+    {
+        [$user, $tenant] = $this->setupUserAndPanel();
+
+        $n1 = $this->createNotification(['userID' => $user->id, 'title' => 'First']);
+        $n2 = $this->createNotification(['userID' => $user->id, 'title' => 'Second']);
+
+        Livewire::actingAs($user)
+            ->test(Notifications::class)
+            ->selectTableRecords([$n1->id, $n2->id])
+            ->callAction(TestAction::make('dismiss')->table()->bulk());
+
+        $this->assertNotNull($n1->fresh()->dismissDate);
+        $this->assertNotNull($n2->fresh()->dismissDate);
+    }
+
+    #[Test]
+    public function dismiss_action_is_hidden_for_already_dismissed_notifications(): void
+    {
+        [$user, $tenant] = $this->setupUserAndPanel();
+
+        $dismissed = $this->createNotification([
+            'userID' => $user->id,
+            'dismissDate' => now(),
+            'shown' => 1,
+        ]);
+
+        Livewire::actingAs($user)
+            ->test(Notifications::class)
+            ->filterTable('status', 'dismissed')
+            ->assertActionHidden(TestAction::make('dismiss')->table($dismissed));
+    }
+
+    private function setupUserAndPanel(): array
+    {
+        $user = SystemUser::factory()->withRole()->create();
+        $tenant = $user->roleAttachments()->first();
+
+        $this->actingAs($user);
+        Filament::setCurrentPanel(Filament::getPanel('general'));
+        Filament::setTenant($tenant);
+
+        return [$user, $tenant];
     }
 
     private function createNotification(array $attributes = []): LegacyNotification

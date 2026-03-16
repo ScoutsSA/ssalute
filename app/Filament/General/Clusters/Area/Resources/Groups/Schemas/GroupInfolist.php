@@ -66,24 +66,37 @@ class GroupInfolist
                             ->schema([
                                 TextEntry::make('email')
                                     ->label('Email')
+                                    ->url(fn ($state) => $state ? "mailto:{$state}" : null)
                                     ->placeholder('-'),
                                 TextEntry::make('website')
                                     ->label('Website')
+                                    ->url(fn ($state) => $state ?: null)
+                                    ->openUrlInNewTab()
                                     ->placeholder('-'),
                                 TextEntry::make('facebook')
                                     ->label('Facebook')
+                                    ->url(fn ($state) => $state ?: null)
+                                    ->openUrlInNewTab()
                                     ->placeholder('-'),
                                 TextEntry::make('twitter')
                                     ->label('Twitter')
+                                    ->url(fn ($state) => $state ?: null)
+                                    ->openUrlInNewTab()
                                     ->placeholder('-'),
                                 TextEntry::make('instagram')
                                     ->label('Instagram')
+                                    ->url(fn ($state) => $state ?: null)
+                                    ->openUrlInNewTab()
                                     ->placeholder('-'),
                                 TextEntry::make('linkedin')
                                     ->label('LinkedIn')
+                                    ->url(fn ($state) => $state ?: null)
+                                    ->openUrlInNewTab()
                                     ->placeholder('-'),
                                 TextEntry::make('youtube')
                                     ->label('YouTube')
+                                    ->url(fn ($state) => $state ?: null)
+                                    ->openUrlInNewTab()
                                     ->placeholder('-'),
                             ]),
 
@@ -113,7 +126,7 @@ class GroupInfolist
                             ->secondary()
                             ->compact()
                             ->collapsed()
-                            ->columns(['sm' => 2, 'md' => 3])
+                            ->columns(2)
                             ->columnSpan(1)
                             ->schema([
                                 TextEntry::make('gpsLat')
@@ -124,6 +137,18 @@ class GroupInfolist
                                     ->placeholder('-'),
                                 TextEntry::make('googleMaps')
                                     ->label('Google Maps')
+                                    ->url(fn ($state) => $state ?: null)
+                                    ->openUrlInNewTab()
+                                    ->placeholder('-'),
+                                TextEntry::make('gps_link')
+                                    ->label('View on Map')
+                                    ->state(fn (Group $record) => $record->gpsLat && $record->gpsLon ? 'Open in Google Maps' : null)
+                                    ->url(fn (Group $record) => $record->gpsLat && $record->gpsLon
+                                        ? "https://www.google.com/maps?q={$record->gpsLat},{$record->gpsLon}"
+                                        : null)
+                                    ->openUrlInNewTab()
+                                    ->badge()
+                                    ->color('primary')
                                     ->placeholder('-'),
                             ]),
                     ]),
