@@ -42,6 +42,7 @@ class GeneralPanelProvider extends PanelProvider
                     ->icon(Heroicon::UserCircle)
                     ->url(fn () => ViewProfile::getUrl(panel: 'general', tenant: Filament::getTenant())),
             ])
+            ->discoverClusters(in: app_path('Filament/General/Clusters'), for: 'App\\Filament\\General\\Clusters')
             ->discoverResources(in: app_path('Filament/General/Resources'), for: 'App\Filament\General\Resources')
             ->discoverPages(in: app_path('Filament/General/Pages'), for: 'App\Filament\General\Pages')
             ->discoverWidgets(in: app_path('Filament/General/Widgets'), for: 'App\Filament\General\Widgets')

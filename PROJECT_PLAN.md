@@ -9,7 +9,7 @@ The legacy **Scouts Digital** system is a raw PHP application (~400+ files, no f
 complete lifecycle of Scouts South Africa membership — from recruitment through to retirement, including
 group management, financials, events, training, reporting, and more.
 
-**Ssalute** is currently in very early development. The infrastructure and first module (AAM) are being
+**Ssalute** is currently in very early development. The infrastructure is being
 built. Roughly 3–5% of legacy functionality has been re-implemented so far.
 
 ---
@@ -73,19 +73,7 @@ built. Roughly 3–5% of legacy functionality has been re-implemented so far.
 
 ---
 
-### 3. Adult Membership Application (AAM) — NEW MODULE
-> This is a new workflow that doesn't exist in legacy (legacy assumed members were already in the system).
-
-| Feature | Legacy | Ssalute | Status |
-|---------|--------|---------|--------|
-| Public application form | None | Forms cluster, AAM resource | WIP |
-| Email routing (group/district/regional/national) | None | FormSettings config-driven | DONE |
-| Application review (top-level admin) | None | ApplicationAdultMembershipRequests resource | WIP |
-| Applicant to User conversion | None | Not started | PLANNED |
-
----
-
-### 4. Adult Member System (AMS)
+### 3. Adult Member System (AMS)
 | Feature | Legacy | Ssalute | Status |
 |---------|--------|---------|--------|
 | Add adult member | ams-adult-add.php | Not started | PLANNED |
@@ -107,7 +95,7 @@ built. Roughly 3–5% of legacy functionality has been re-implemented so far.
 
 ---
 
-### 5. Warrants
+### 4. Warrants
 | Feature | Legacy | Ssalute | Status |
 |---------|--------|---------|--------|
 | Add warrant | ams-warrant-add-start.php, ams-warrant-add.php | Not started | PLANNED |
@@ -123,7 +111,7 @@ built. Roughly 3–5% of legacy functionality has been re-implemented so far.
 
 ---
 
-### 6. Awards & Charges & Disciplinary
+### 5. Awards & Charges & Disciplinary
 | Feature | Legacy | Ssalute | Status |
 |---------|--------|---------|--------|
 | Award management | ams-award-*.php | Not started | PLANNED |
@@ -134,7 +122,7 @@ built. Roughly 3–5% of legacy functionality has been re-implemented so far.
 
 ---
 
-### 7. Training
+### 6. Training
 | Feature | Legacy | Ssalute | Status |
 |---------|--------|---------|--------|
 | Book training (future) | ams-training-book.php, ams-training-book-course.php | Not started | PLANNED |
@@ -153,7 +141,7 @@ built. Roughly 3–5% of legacy functionality has been re-implemented so far.
 
 ---
 
-### 8. Group Management
+### 7. Group Management
 | Feature | Legacy | Ssalute | Status |
 |---------|--------|---------|--------|
 | Add group | ams-group-add.php | Not started | PLANNED |
@@ -166,7 +154,7 @@ built. Roughly 3–5% of legacy functionality has been re-implemented so far.
 
 ---
 
-### 9. Youth Management
+### 8. Youth Management
 | Feature | Legacy | Ssalute | Status |
 |---------|--------|---------|--------|
 | Add youth | group-youth-add.php | Not started | PLANNED |
@@ -186,7 +174,7 @@ built. Roughly 3–5% of legacy functionality has been re-implemented so far.
 
 ---
 
-### 10. Advancements & Badges
+### 9. Advancements & Badges
 | Feature | Legacy | Ssalute | Status |
 |---------|--------|---------|--------|
 | Advancements (Meerkats, Cubs, Scouts, Rovers) | group-advancement*.php, advancement-*.php | Not started | PLANNED |
@@ -199,7 +187,7 @@ built. Roughly 3–5% of legacy functionality has been re-implemented so far.
 
 ---
 
-### 11. District & Region & National Management
+### 10. District & Region & National Management
 | Feature | Legacy | Ssalute | Status |
 |---------|--------|---------|--------|
 | Add/edit/manage district | ams-district-*.php | Area cluster (basic) | WIP |
@@ -211,7 +199,7 @@ built. Roughly 3–5% of legacy functionality has been re-implemented so far.
 
 ---
 
-### 12. Financial Management
+### 11. Financial Management
 | Feature | Legacy | Ssalute | Status |
 |---------|--------|---------|--------|
 | Group financial accounts | group-financial-account-*.php | Not started | PLANNED |
@@ -230,7 +218,7 @@ built. Roughly 3–5% of legacy functionality has been re-implemented so far.
 
 ---
 
-### 13. Events System
+### 12. Events System
 | Feature | Legacy | Ssalute | Status |
 |---------|--------|---------|--------|
 | Add/edit event | event-add.php, event-edit.php | Not started | PLANNED |
@@ -246,7 +234,7 @@ built. Roughly 3–5% of legacy functionality has been re-implemented so far.
 
 ---
 
-### 14. Programs
+### 13. Programs
 | Feature | Legacy | Ssalute | Status |
 |---------|--------|---------|--------|
 | Add/edit/manage programs | group-program-*.php | Not started | PLANNED |
@@ -257,7 +245,7 @@ built. Roughly 3–5% of legacy functionality has been re-implemented so far.
 
 ---
 
-### 15. Reports
+### 14. Reports
 | Feature | Legacy | Ssalute | Status |
 |---------|--------|---------|--------|
 | Census reports | reports-census*.php, national-reports-census*.php, census/ | Not started | PLANNED |
@@ -281,7 +269,7 @@ built. Roughly 3–5% of legacy functionality has been re-implemented so far.
 
 ---
 
-### 16. Directories
+### 15. Directories
 | Feature | Legacy | Ssalute | Status |
 |---------|--------|---------|--------|
 | Group directory | directory-group*.php | Not started | PLANNED |
@@ -295,7 +283,7 @@ built. Roughly 3–5% of legacy functionality has been re-implemented so far.
 
 ---
 
-### 17. Content & Community
+### 16. Content & Community
 | Feature | Legacy | Ssalute | Status |
 |---------|--------|---------|--------|
 | Articles/news | articles*.php, admin-articles*.php | Not started | PLANNED |
@@ -311,7 +299,7 @@ built. Roughly 3–5% of legacy functionality has been re-implemented so far.
 
 ---
 
-### 18. Equipment Management
+### 17. Equipment Management
 | Feature | Legacy | Ssalute | Status |
 |---------|--------|---------|--------|
 | Add/edit/manage equipment | group-equipment-*.php | Not started | PLANNED |
@@ -319,7 +307,7 @@ built. Roughly 3–5% of legacy functionality has been re-implemented so far.
 
 ---
 
-### 19. Shop
+### 18. Shop
 | Feature | Legacy | Ssalute | Status |
 |---------|--------|---------|--------|
 | Group shop | shop-group.php | Not started | PLANNED |
@@ -331,7 +319,7 @@ built. Roughly 3–5% of legacy functionality has been re-implemented so far.
 
 ---
 
-### 20. Census
+### 19. Census
 | Feature | Legacy | Ssalute | Status |
 |---------|--------|---------|--------|
 | Annual census (group/district/regional/national) | census/*.php | Not started | PLANNED |
@@ -340,14 +328,14 @@ built. Roughly 3–5% of legacy functionality has been re-implemented so far.
 
 ---
 
-### 21. Support
+### 20. Support
 | Feature | Legacy | Ssalute | Status |
 |---------|--------|---------|--------|
 | Support tickets/chat | support-add.php, support-chat.php, support-log-admin.php | Not started | PLANNED |
 
 ---
 
-### 22. Special / One-Off
+### 21. Special / One-Off
 | Feature | Legacy | Ssalute | Status |
 |---------|--------|---------|--------|
 | Jamboree (SANJAMB) | sanjamb-*.php | Not started | PLANNED |
@@ -368,7 +356,6 @@ built. Roughly 3–5% of legacy functionality has been re-implemented so far.
 5. ~~**Automated test infrastructure**~~ — PHPUnit, SdCoreTestCase, factories, feature tests for both panels ✅ DONE
 6. **Authentication — profile, password reset, email verification** — proper self-service flows
 7. **Area hierarchy browsing** — Groups → Districts → Regions → National (view + basic management)
-8. **AAM (Adult Application for Membership)** — complete the current WIP; this is the entry point for new adults _(in progress)_
 
 ### Phase 2 — Adult Member Lifecycle
 > Once someone is in the system, manage them through their Scouts journey.
@@ -458,7 +445,10 @@ built. Roughly 3–5% of legacy functionality has been re-implemented so far.
 ## Current Completion Estimate
 - **Infrastructure:** ~90% ready for building features
 - **Feature parity with legacy:** ~5–7%
-- **New features (AAM onboarding flow):** ~40% complete
+
+## Development Rules
+
+- **All new features must have a feature flag.** Feature flags are managed via `FeatureSettings` (Spatie Laravel Settings) and toggled in the admin panel under Settings > Feature Flags. New features should default to **off** so they can be tested and rolled out incrementally.
 
 ## Architecture Decisions Log
 

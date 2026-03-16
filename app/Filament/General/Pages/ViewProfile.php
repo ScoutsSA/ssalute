@@ -7,14 +7,27 @@ use App\Enums\UserRace;
 use App\Enums\UserSex;
 use App\Enums\UserTitle;
 use App\Mail\Profile\ReportIssueEmail;
+use App\Models\AmsAwardHeading;
+use App\Models\AmsAwardInfo;
+use App\Models\AmsAwardType;
+use App\Models\AmsDocument;
+use App\Models\AmsDocumentType;
+use App\Models\AmsPastServiceInfo;
+use App\Models\AmsPastServiceType;
+use App\Models\AmsTrainingPast;
+use App\Models\AmsTrainingPastType;
 use App\Models\SystemUser;
 use App\Models\SystemUsersOtherRole;
 use App\Services\FileUrlService;
+use App\Settings\FeatureSettings;
 use App\Settings\GeneralSettings;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\RepeatableEntry;
@@ -24,6 +37,7 @@ use Filament\Pages\Page;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Mail;
@@ -367,6 +381,7 @@ class ViewProfile extends Page
                                     ->schema([
                                         RepeatableEntry::make('warrants')
                                             ->label('')
+                                            ->getStateUsing(fn ($record) => $record->warrants()->orderByDesc('active')->orderByDesc('issueDate')->get())
                                             ->schema([
                                                 TextEntry::make('warrantNr')
                                                     ->label('Warrant Nr')
@@ -414,6 +429,49 @@ class ViewProfile extends Page
                             ->icon(Heroicon::AcademicCap)
                             ->schema([
                                 Section::make('Training History')
+                                    ->afterHeader([
+                                        Action::make('addTraining')
+                                            ->label('Add Training')
+                                            ->icon(Heroicon::Plus)
+                                            ->visible(fn () => resolve(FeatureSettings::class)->users_can_add_past_training)
+                                            ->modalHeading('Add Past Training')
+                                            ->schema([
+                                                Select::make('trainingTypeID')
+                                                    ->label('Training Type')
+                                                    ->options(fn () => AmsTrainingPastType::where('active', 1)->pluck('name', 'id'))
+                                                    ->searchable(),
+                                                TextInput::make('courseName')
+                                                    ->label('Course Name')
+                                                    ->required()
+                                                    ->maxLength(255),
+                                                TextInput::make('courseNumber')
+                                                    ->label('Course Number')
+                                                    ->maxLength(255),
+                                                DatePicker::make('completionDate')
+                                                    ->label('Completion Date'),
+                                            ])
+                                            ->action(function (array $data): void {
+                                                $user = auth()->user();
+                                                $tenant = Filament::getTenant();
+
+                                                AmsTrainingPast::create([
+                                                    'userID' => $user->id,
+                                                    'countryID' => $tenant->countryID ?? 196,
+                                                    'assocToRegion' => $tenant->regionID,
+                                                    'assocToDistrict' => $tenant->districtID,
+                                                    'assocToGroup' => $tenant->groupID,
+                                                    'trainingTypeID' => $data['trainingTypeID'] ?? null,
+                                                    'courseName' => $data['courseName'],
+                                                    'courseNumber' => $data['courseNumber'] ?? null,
+                                                    'completionDate' => $data['completionDate'] ?? null,
+                                                    'active' => 1,
+                                                    'validated' => 0,
+                                                    'createdby' => $user->id,
+                                                ]);
+
+                                                Notification::make()->title('Training record added')->success()->send();
+                                            }),
+                                    ])
                                     ->schema([
                                         RepeatableEntry::make('trainingHistory')
                                             ->label('')
@@ -452,6 +510,50 @@ class ViewProfile extends Page
                             ->icon(Heroicon::Trophy)
                             ->schema([
                                 Section::make('Awards')
+                                    ->afterHeader([
+                                        Action::make('addAward')
+                                            ->label('Add Award')
+                                            ->icon(Heroicon::Plus)
+                                            ->visible(fn () => resolve(FeatureSettings::class)->users_can_add_awards)
+                                            ->modalHeading('Add Award')
+                                            ->schema([
+                                                Select::make('awardHeadingID')
+                                                    ->label('Award Category')
+                                                    ->options(fn () => AmsAwardHeading::pluck('reason', 'id'))
+                                                    ->required()
+                                                    ->searchable()
+                                                    ->live(),
+                                                Select::make('awardTypeID')
+                                                    ->label('Award')
+                                                    ->options(fn (Get $get) => AmsAwardType::query()
+                                                        ->when($get('awardHeadingID'), fn ($q, $headingId) => $q->where('headingID', $headingId))
+                                                        ->where('active', 1)
+                                                        ->pluck('name', 'id'))
+                                                    ->required()
+                                                    ->searchable(),
+                                                DatePicker::make('awardDate')
+                                                    ->label('Award Date'),
+                                            ])
+                                            ->action(function (array $data): void {
+                                                $user = auth()->user();
+                                                $tenant = Filament::getTenant();
+
+                                                AmsAwardInfo::create([
+                                                    'userID' => $user->id,
+                                                    'countryID' => $tenant->countryID ?? 196,
+                                                    'assocToRegion' => $tenant->regionID,
+                                                    'assocToDistrict' => $tenant->districtID,
+                                                    'assocToGroup' => $tenant->groupID,
+                                                    'awardHeadingID' => $data['awardHeadingID'],
+                                                    'awardTypeID' => $data['awardTypeID'],
+                                                    'awardDate' => $data['awardDate'] ?? null,
+                                                    'active' => 1,
+                                                    'createdby' => $user->id,
+                                                ]);
+
+                                                Notification::make()->title('Award added')->success()->send();
+                                            }),
+                                    ])
                                     ->schema([
                                         RepeatableEntry::make('awards')
                                             ->label('')
@@ -472,6 +574,42 @@ class ViewProfile extends Page
                             ->icon(Heroicon::FolderOpen)
                             ->schema([
                                 Section::make('Documents on File')
+                                    ->afterHeader([
+                                        Action::make('addDocument')
+                                            ->label('Add Document')
+                                            ->icon(Heroicon::Plus)
+                                            ->visible(fn () => resolve(FeatureSettings::class)->users_can_add_documents)
+                                            ->modalHeading('Upload Document')
+                                            ->schema([
+                                                Select::make('documentTypeID')
+                                                    ->label('Document Type')
+                                                    ->options(fn () => AmsDocumentType::where('active', 1)->pluck('name', 'id'))
+                                                    ->required()
+                                                    ->searchable(),
+                                                TextInput::make('description')
+                                                    ->label('Description')
+                                                    ->required()
+                                                    ->maxLength(255),
+                                            ])
+                                            ->action(function (array $data): void {
+                                                $user = auth()->user();
+                                                $tenant = Filament::getTenant();
+
+                                                AmsDocument::create([
+                                                    'userID' => $user->id,
+                                                    'countryID' => $tenant->countryID ?? 196,
+                                                    'assocToRegion' => $tenant->regionID,
+                                                    'assocToDistrict' => $tenant->districtID,
+                                                    'assocToGroup' => $tenant->groupID,
+                                                    'documentTypeID' => $data['documentTypeID'],
+                                                    'description' => $data['description'],
+                                                    'active' => 1,
+                                                    'createdby' => $user->id,
+                                                ]);
+
+                                                Notification::make()->title('Document added')->success()->send();
+                                            }),
+                                    ])
                                     ->schema([
                                         RepeatableEntry::make('documents')
                                             ->label('')
@@ -531,6 +669,56 @@ class ViewProfile extends Page
                                     ]),
 
                                 Section::make('Service History')
+                                    ->afterHeader([
+                                        Action::make('addPastService')
+                                            ->label('Add Past Service')
+                                            ->icon(Heroicon::Plus)
+                                            ->visible(fn () => resolve(FeatureSettings::class)->users_can_add_past_service)
+                                            ->modalHeading('Add Past Service')
+                                            ->schema([
+                                                Select::make('pastServiceType')
+                                                    ->label('Service Type')
+                                                    ->options(fn () => AmsPastServiceType::pluck('name', 'id'))
+                                                    ->required()
+                                                    ->searchable(),
+                                                DatePicker::make('startDate')
+                                                    ->label('Start Date')
+                                                    ->required(),
+                                                DatePicker::make('endDate')
+                                                    ->label('End Date'),
+                                                TextInput::make('otherRegionName')
+                                                    ->label('Region')
+                                                    ->maxLength(255),
+                                                TextInput::make('otherDistrictName')
+                                                    ->label('District')
+                                                    ->maxLength(255),
+                                                TextInput::make('otherGroupName')
+                                                    ->label('Group')
+                                                    ->maxLength(255),
+                                            ])
+                                            ->action(function (array $data): void {
+                                                $user = auth()->user();
+                                                $tenant = Filament::getTenant();
+
+                                                AmsPastServiceInfo::create([
+                                                    'userID' => $user->id,
+                                                    'countryID' => $tenant->countryID ?? 196,
+                                                    'assocToRegion' => $tenant->regionID,
+                                                    'assocToDistrict' => $tenant->districtID,
+                                                    'assocToGroup' => $tenant->groupID,
+                                                    'pastServiceType' => $data['pastServiceType'],
+                                                    'startDate' => $data['startDate'],
+                                                    'endDate' => $data['endDate'] ?? null,
+                                                    'otherRegionName' => $data['otherRegionName'] ?? null,
+                                                    'otherDistrictName' => $data['otherDistrictName'] ?? null,
+                                                    'otherGroupName' => $data['otherGroupName'] ?? null,
+                                                    'active' => 1,
+                                                    'createdby' => $user->id,
+                                                ]);
+
+                                                Notification::make()->title('Past service added')->success()->send();
+                                            }),
+                                    ])
                                     ->schema([
                                         RepeatableEntry::make('pastService')
                                             ->label('')
@@ -568,7 +756,8 @@ class ViewProfile extends Page
             Action::make('edit')
                 ->label('Edit Profile')
                 ->icon(Heroicon::PencilSquare)
-                ->url(fn () => EditProfile::getUrl()),
+                ->url(fn () => EditProfile::getUrl())
+                ->visible(fn () => resolve(FeatureSettings::class)->users_can_edit_profiles),
 
             Action::make('reportIssue')
                 ->label('Report Issue')

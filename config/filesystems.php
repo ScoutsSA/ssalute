@@ -79,6 +79,13 @@ return [
             'report' => false,
         ],
 
+        'legacy_files' => [
+            'driver' => 'local',
+            'root' => env('LEGACY_FILES_PATH', '/mnt/legacy-files'),
+            'throw' => false,
+            'report' => false,
+        ],
+
     ],
 
     /*
