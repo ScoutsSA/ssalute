@@ -354,8 +354,11 @@ built. Roughly 3–5% of legacy functionality has been re-implemented so far.
 3. ~~**Role switcher in URL**~~ — Filament tenancy embeds role attachment ID in every URL, built-in sidebar switcher ✅ DONE
 4. ~~**Shared link redirect**~~ — RedirectToValidTenant middleware safely redirects cross-user shared links ✅ DONE
 5. ~~**Automated test infrastructure**~~ — PHPUnit, SdCoreTestCase, factories, feature tests for both panels ✅ DONE
-6. **Authentication — profile, password reset, email verification** — proper self-service flows
-7. **Area hierarchy browsing** — Groups → Districts → Regions → National (view + basic management)
+6. ~~**Authentication — password reset, password change**~~ — forgot password flow, change password in general panel, fixed AES encryption bug in password reset ✅ DONE
+7. ~~**Area hierarchy browsing**~~ — read-only Region/District/Group browsing in general panel ✅ DONE
+8. ~~**Profile self-service**~~ — photo upload, add documents/training/awards/past service ✅ DONE
+9. ~~**Legacy notifications**~~ — dashboard widget + full notifications page ✅ DONE
+10. ~~**Feature flags**~~ — FeatureSettings with admin UI, all features gated ✅ DONE
 
 ### Phase 2 — Adult Member Lifecycle
 > Once someone is in the system, manage them through their Scouts journey.

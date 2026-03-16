@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\General\Pages\ChangePassword;
 use App\Filament\General\Pages\Dashboard;
 use App\Filament\General\Pages\ViewProfile;
 use App\Http\Middleware\RedirectToValidTenant;
@@ -15,12 +16,14 @@ use Filament\Navigation\MenuItem;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Icons\Heroicon;
+use Filament\View\PanelsRenderHook;
 use Filament\Widgets\AccountWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class GeneralPanelProvider extends PanelProvider
@@ -41,7 +44,15 @@ class GeneralPanelProvider extends PanelProvider
                     ->label('My Profile')
                     ->icon(Heroicon::UserCircle)
                     ->url(fn () => ViewProfile::getUrl(panel: 'general', tenant: Filament::getTenant())),
+                'change-password' => MenuItem::make()
+                    ->label('Change Password')
+                    ->icon(Heroicon::Key)
+                    ->url(fn () => ChangePassword::getUrl(panel: 'general', tenant: Filament::getTenant())),
             ])
+            ->renderHook(
+                PanelsRenderHook::AUTH_LOGIN_FORM_AFTER,
+                fn () => Blade::render('<div class="text-center"><a href="{{ route(\'password.request\') }}" class="text-sm text-primary-600 hover:text-primary-500 dark:text-primary-400">Forgot your password?</a></div>'),
+            )
             ->discoverClusters(in: app_path('Filament/General/Clusters'), for: 'App\\Filament\\General\\Clusters')
             ->discoverResources(in: app_path('Filament/General/Resources'), for: 'App\Filament\General\Resources')
             ->discoverPages(in: app_path('Filament/General/Pages'), for: 'App\Filament\General\Pages')
