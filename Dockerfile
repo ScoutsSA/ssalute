@@ -30,8 +30,10 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
         dom \
         xml
 
-# Redis extension (C extension, installed via PECL)
-RUN pecl install redis && docker-php-ext-enable redis
+# PECL extensions (Redis + Imagick)
+RUN apt-get update && apt-get install -y libmagickwand-dev && rm -rf /var/lib/apt/lists/* \
+    && pecl install redis imagick \
+    && docker-php-ext-enable redis imagick
 
 # ── PHP configuration ──────────────────────────────────────────────────────
 RUN echo "memory_limit = -1" > /usr/local/etc/php/conf.d/memory.ini
@@ -45,15 +47,16 @@ RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
     && apt-get install -y nodejs \
     && rm -rf /var/lib/apt/lists/*
 
-# ── Claude Code ──────────────────────────────────────────────────────────────
-RUN npm install -g @anthropic-ai/claude-code
-
 # ── Non-root user ─────────────────────────────────────────────────────────────
 RUN useradd -m -s /bin/bash claude
 
 WORKDIR /app
 RUN chown claude:claude /app
 
+# ── Claude Code (installed as root, then switch to claude) ───────────────────
+RUN npm install -g @anthropic-ai/claude-code
+
 USER claude
+RUN claude install
 
 CMD ["bash"]

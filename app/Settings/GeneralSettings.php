@@ -10,10 +10,6 @@ class GeneralSettings extends Settings
 
     public ?array $national_support_role_ids = [];
 
-    public bool $system_issue_support_enabled = false;
-
-    public ?array $system_issue_support_user_ids = [];
-
     public ?int $next_in_line_role_group = null;
     public ?int $next_in_line_role_district = null;
     public ?int $next_in_line_role_regional = null;

@@ -45,7 +45,6 @@ built. Roughly 3–5% of legacy functionality has been re-implemented so far.
 | Monitoring | None | Nightwatch + CloudWatch | DONE |
 | Slack alerts | None | spatie/laravel-slack-alerts | DONE |
 | PWA / Mobile | Basic PWA (serviceWorker.js, manifest.json) | Not started | PLANNED |
-| Telegram bot | telegram-bot.php | Not started | PLANNED |
 | Rate limiting | None | danharrin/livewire-rate-limiting installed | DONE (infra) |
 | Settings management | includes/settings.php | spatie/laravel-settings (GeneralSettings, FormSettings) | DONE |
 | API | Minimal (API/ dir) | Not started | PLANNED |
@@ -56,15 +55,14 @@ built. Roughly 3–5% of legacy functionality has been re-implemented so far.
 ### 2. User & Role Management
 | Feature | Legacy | Ssalute | Status |
 |---------|--------|---------|--------|
-| User listing/search | admin-roles.php | UserResource (Filament admin) | WIP |
+| User listing/search | admin-roles.php | UserResource (Filament admin) with Active/Inactive/All tabs | WIP |
 | User profile | user-profile.php | Not started | PLANNED |
 | Profile picture | user-profile-picture.php | Not started | PLANNED |
 | Email settings | user-email-settings.php | Not started | PLANNED |
 | Password change | user-password-change.php | Laravel default | DONE |
 | User notifications | user-notifications.php | Not started | PLANNED |
-| Redact/POPIA removal | user-redact-info.php | Not started | PLANNED |
 | Role type management | admin-roles*.php | RoleResource (Filament admin) | WIP |
-| Role assignment per user | ams-adult-role-*.php | Not started (general panel context) | PLANNED |
+| Role assignment per user | ams-adult-role-*.php | UserResource relation manager (create/edit/make primary) | WIP |
 | User impersonation | admin-roles-switch.php | stechstudio/filament-impersonate | DONE |
 | Role-based access (general panel) | Per-role PHP checks | canAccessPanel() + hasAnyActiveRole() | DONE |
 | Role-based dashboards (per section) | 13 dashboards | General panel (single), section panels future | PLANNED |
@@ -79,14 +77,14 @@ built. Roughly 3–5% of legacy functionality has been re-implemented so far.
 | Add adult member | ams-adult-add.php | Not started | PLANNED |
 | Edit adult member | ams-adult-edit.php | Not started | PLANNED |
 | View all adult info | ams-adult-all-info.php | Not started | PLANNED |
-| Manage active members | ams-adult-manage.php | Not started | PLANNED |
-| Manage inactive members | ams-adult-manage-inactive.php | Not started | PLANNED |
-| Activate member | ams-adult-activate.php | Not started | PLANNED |
-| Move member between groups | ams-adult-move.php | Not started | PLANNED |
-| Resign member | ams-adult-resign.php | Not started | PLANNED |
-| Retire member | ams-adult-retire.php | Not started | PLANNED |
-| Suspend member | ams-adult-suspend.php + ams-adult-suspended.php + undo | Not started | PLANNED |
-| Terminate member | ams-adult-terminate.php | Not started | PLANNED |
+| Manage active members | ams-adult-manage.php | UserResource list with Active tab | WIP |
+| Manage inactive members | ams-adult-manage-inactive.php | UserResource list with Inactive tab | WIP |
+| Activate member | ams-adult-activate.php | ViewUser activate action | WIP |
+| Move member between groups | ams-adult-move.php | ViewUser move action + move history relation manager | WIP |
+| Resign member | ams-adult-resign.php | ViewUser action + relation manager | WIP |
+| Retire member | ams-adult-retire.php | ViewUser action + relation manager | WIP |
+| Suspend member | ams-adult-suspend.php + ams-adult-suspended.php + undo | ViewUser actions + relation manager | WIP |
+| Terminate member | ams-adult-terminate.php | ViewUser action + relation manager | WIP |
 | Gone home (deceased) | ams-adult-gone-home.php | Not started | PLANNED |
 | Role management per member | ams-adult-role-*.php (add, disable, make primary) | Not started | PLANNED |
 | Police clearance | national-reports-police-clearance*.php | Not started | PLANNED |
@@ -269,7 +267,20 @@ built. Roughly 3–5% of legacy functionality has been re-implemented so far.
 
 ---
 
-### 15. Directories
+### 15. Membership Certificate
+| Feature | Legacy | Ssalute | Status |
+|---------|--------|---------|--------|
+| Membership certificate page (select info to share) | N/A | General panel — profile page action | NEW / PLANNED |
+| Shareable public certificate page | N/A | Public route with UUID token | NEW / PLANNED |
+| Membership verification stamp with date | N/A | Certificate page with verified badge | NEW / PLANNED |
+| Non-member role exclusion (e.g. parent-only) | N/A | Gate based on role type flags | NEW / PLANNED |
+| Disclaimer notice (not endorsement/nomination) | N/A | Prominent notice on generation page | NEW / PLANNED |
+| Request Endorsement action | N/A | Form (subject, description) sent to IC Reps | NEW / PLANNED |
+| IC Representative role config in settings | N/A | GeneralSettings — configurable role IDs | NEW / PLANNED |
+
+---
+
+### 16. Directories
 | Feature | Legacy | Ssalute | Status |
 |---------|--------|---------|--------|
 | Group directory | directory-group*.php | Not started | PLANNED |
@@ -363,11 +374,24 @@ built. Roughly 3–5% of legacy functionality has been re-implemented so far.
 ### Phase 2 — Adult Member Lifecycle
 > Once someone is in the system, manage them through their Scouts journey.
 
-5. **AMS core** — add, edit, view, activate, manage inactive adults
-6. **Warrants** — add, manage (5 levels), cancel, extend, expiry notifications
-7. **Awards** — service awards add/manage
-8. **Past service & charges** — basic tracking
-9. **Role management per member** — assign/remove/primary roles
+5. ~~**AMS core — lifecycle actions**~~ — resign, retire, suspend/unsuspend, terminate, activate, move via ViewUser actions ✅ WIP
+6. ~~**Active/Inactive member tabs**~~ — ListUsers page with Active/Inactive/All tabs ✅ WIP
+7. ~~**Role management per member**~~ — assign/remove/make primary via enhanced role attachments relation manager ✅ WIP
+8. ~~**Lifecycle history**~~ — resignations, retirements, suspensions, terminations, moves relation managers ✅ WIP
+9. **AMS core — add/edit members** — create new adult members, edit details
+10. **Warrants** — add, manage (5 levels), cancel, extend, expiry notifications
+11. **Awards** — service awards add/manage
+12. **Past service & charges** — basic tracking
+
+### Phase 2b — Membership Certificate (NEW)
+> Allow members to generate and share a verified membership certificate.
+
+11. **Membership certificate generation** — profile page action to select visible info, generate shareable page
+12. **Shareable public page** — UUID-based public route showing selected info, roles, verified stamp with date
+13. **Non-member exclusion** — parent-only and similar non-member roles cannot generate certificates
+14. **Disclaimer notice** — clear notice that certificate is NOT a nomination, endorsement, or letter of introduction
+15. **Request Endorsement** — action to send endorsement request (subject + description) to International Committee Representatives
+16. **IC Representative settings** — configurable role IDs in GeneralSettings for endorsement routing
 
 ### Phase 3 — Group Operations
 > Give group leaders the tools they need day to day.
@@ -462,5 +486,4 @@ built. Roughly 3–5% of legacy functionality has been re-implemented so far.
 | `SystemUsersOtherRole` as the Filament tenant | Each role attachment is a tenant; user can switch between their active roles |
 | `RedirectToValidTenant` middleware | Handles shared links gracefully without 404; placed before `IdentifyTenant` in middleware stack |
 | `hasAnyActiveRole()` for panel access | Any user with at least one active role can use the general panel — not just management-level roles |
-| SQLite-compatible test migration | Legacy sd_v2 migrations use non-unique index names (valid in MySQL, invalid in SQLite); test-only migration creates the minimal schema needed |
 | `SdCoreTestCase` for feature tests | Encapsulates `RefreshDatabase` + correct `migrateFreshUsing()` override so feature tests can use sd-core tables |

@@ -12,5 +12,9 @@ Route::get('impersonate/sd/{user}', \App\Http\Controllers\ScoutsDigitalImpersona
     ->name('impersonate.scouts-digital')
     ->middleware(['auth', 'signed']);
 
+Route::get('member-verification/{uuid}', \App\Http\Controllers\MembershipCertificateController::class)
+    ->name('membership-certificate.show')
+    ->middleware('throttle:60,1');
+
 require __DIR__ . '/auth.php';
 require __DIR__ . '/form-routes.php';

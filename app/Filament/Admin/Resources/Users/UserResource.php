@@ -8,9 +8,14 @@ use App\Filament\Admin\Resources\Users\Pages\ListUsers;
 use App\Filament\Admin\Resources\Users\Pages\ViewUser;
 use App\Filament\Admin\Resources\Users\RelationManagers\UserAwardsRelationManager;
 use App\Filament\Admin\Resources\Users\RelationManagers\UserDocumentsRelationManager;
+use App\Filament\Admin\Resources\Users\RelationManagers\UserMovesRelationManager;
 use App\Filament\Admin\Resources\Users\RelationManagers\UserPastServiceRelationManager;
 use App\Filament\Admin\Resources\Users\RelationManagers\UserPoliceClearancesRelationManager;
+use App\Filament\Admin\Resources\Users\RelationManagers\UserResignationsRelationManager;
+use App\Filament\Admin\Resources\Users\RelationManagers\UserRetirementsRelationManager;
 use App\Filament\Admin\Resources\Users\RelationManagers\UserRoleAttachmentsRelationManager;
+use App\Filament\Admin\Resources\Users\RelationManagers\UserSuspensionsRelationManager;
+use App\Filament\Admin\Resources\Users\RelationManagers\UserTerminationsRelationManager;
 use App\Filament\Admin\Resources\Users\RelationManagers\UserTrainingHistoryRelationManager;
 use App\Filament\Admin\Resources\Users\RelationManagers\UserWarrantsRelationManager;
 use App\Filament\Admin\Resources\Users\Schemas\UserForm;
@@ -60,6 +65,11 @@ class UserResource extends Resource
             UserDocumentsRelationManager::class,
             UserPoliceClearancesRelationManager::class,
             UserPastServiceRelationManager::class,
+            UserResignationsRelationManager::class,
+            UserRetirementsRelationManager::class,
+            UserSuspensionsRelationManager::class,
+            UserTerminationsRelationManager::class,
+            UserMovesRelationManager::class,
             AuditsRelationManager::class,
         ];
     }

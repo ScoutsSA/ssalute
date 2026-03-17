@@ -8,7 +8,7 @@ use App\Filament\General\Pages\ViewProfile;
 use App\Http\Middleware\RedirectToValidTenant;
 use App\Mail\ReportSystemIssueEmail;
 use App\Models\SystemUsersOtherRole;
-use App\Settings\GeneralSettings;
+use App\Settings\FeatureSettings;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Textarea;
@@ -57,7 +57,7 @@ class GeneralPanelProvider extends PanelProvider
                     ->label('Report System Issue')
                     ->icon(Heroicon::ExclamationTriangle)
                     ->color('danger')
-                    ->visible(fn () => app(GeneralSettings::class)->system_issue_support_enabled)
+                    ->visible(fn () => app(FeatureSettings::class)->system_issue_support_enabled)
                     ->modalHeading('Report a System Issue')
                     ->modalDescription('Describe the system issue you are experiencing. This will be sent to the Ssalute support team.')
                     ->schema([
@@ -69,7 +69,7 @@ class GeneralPanelProvider extends PanelProvider
                     ])
                     ->action(function (array $data): void {
                         $reporter = auth()->user();
-                        $settings = app(GeneralSettings::class);
+                        $settings = app(FeatureSettings::class);
                         $userIds = $settings->system_issue_support_user_ids ?? [];
 
                         $to = \App\Models\SystemUser::whereIn('id', $userIds)

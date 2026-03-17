@@ -34,7 +34,7 @@ class AuditLog extends Page implements HasActions, HasSchemas, HasTable
 
     protected static string|UnitEnum|null $navigationGroup = 'My Info';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 4;
 
     protected string $view = 'filament.general.pages.audit-log';
 

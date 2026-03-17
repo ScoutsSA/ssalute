@@ -58,7 +58,6 @@ class SystemUser extends User implements \OwenIt\Auditing\Contracts\Auditable, F
         'passwordChangedBy' => 'int',
         'lastLoginDate' => 'datetime',
         'startDate' => 'date',
-        'title' => UserTitle::class, // Probably should be removed
         'first_name' => 'string',
         'otherName' => 'string',
         'surname' => 'string',
@@ -328,6 +327,11 @@ class SystemUser extends User implements \OwenIt\Auditing\Contracts\Auditable, F
             ->latestOfMany('dateDone');
     }
 
+    public function membershipCertificate(): HasOne
+    {
+        return $this->hasOne(MembershipCertificate::class, 'user_id');
+    }
+
     public function chargeInfos(): HasMany
     {
         return $this->hasMany(AmsChargeInfo::class, 'userID', 'id');
@@ -476,9 +480,6 @@ class SystemUser extends User implements \OwenIt\Auditing\Contracts\Auditable, F
         $query->addSelect(DB::raw('CAST(AES_DECRYPT(passwordNew,"' . config('auth.scouts_digital.authentication.encryption_key') . '") AS CHAR(50)) as scouts_digital_plain_text_password'));
     }
 
-    /*******************
-     * Attributes
-     *******************/
     public function name(): Attribute // Note this is used for the Filament Name as well
     {
         return Attribute::make(
@@ -596,5 +597,15 @@ class SystemUser extends User implements \OwenIt\Auditing\Contracts\Auditable, F
             ->update([
                 'passwordNew' => DB::raw("AES_ENCRYPT('{$plain}', '{$key}')"),
             ]);
+    }
+
+    /*******************
+     * Attributes
+     *******************/
+    protected function title(): Attribute
+    {
+        return Attribute::make(
+            get: fn (mixed $value) => filled($value) ? UserTitle::tryFrom($value) : null,
+        );
     }
 }

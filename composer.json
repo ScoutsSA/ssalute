@@ -11,6 +11,7 @@
         "ext-mbstring": "*",
         "ext-pdo": "*",
         "aws/aws-sdk-php": "^3.373.3",
+        "chillerlan/php-qrcode": "^5.0",
         "danharrin/livewire-rate-limiting": "^2.2",
         "filament/filament": "^5.3.5",
         "filament/spatie-laravel-settings-plugin": "^5.3.5",

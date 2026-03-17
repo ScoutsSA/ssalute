@@ -4,13 +4,17 @@ namespace App\Filament\Admin\Clusters\Settings\Pages;
 
 use App\Filament\Admin\Clusters\Settings\SettingsCluster;
 use App\Filament\Concerns\AuditsSettings;
+use App\Models\SystemUser;
+use App\Models\SystemUserType;
 use App\Settings\FeatureSettings;
 use BackedEnum;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Pages\SettingsPage;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 
@@ -37,7 +41,7 @@ class ManageFeatureSettings extends SettingsPage
                     ->persistTabInQueryString()
                     ->columnSpanFull()
                     ->tabs([
-                        Tab::make('User General Flags')
+                        Tab::make('User Settings')
                             ->icon(Heroicon::User)
                             ->schema([
                                 Section::make('Profile')
@@ -82,6 +86,70 @@ class ManageFeatureSettings extends SettingsPage
                                         Toggle::make('users_can_view_audit_log')
                                             ->label('Users can view audit log')
                                             ->helperText('Allow users to view the audit log of changes made to their data.'),
+                                    ]),
+                                Section::make('Membership Certificate')
+                                    ->collapsible()
+                                    ->schema([
+                                        Toggle::make('users_can_generate_membership_certificate')
+                                            ->label('Users can generate membership certificate')
+                                            ->helperText('Allow members to generate and share a verified membership certificate from their profile.')
+                                            ->live(),
+                                        Select::make('membership_certificate_eligible_role_ids')
+                                            ->label('Eligible Roles for Certificate Generation')
+                                            ->multiple()
+                                            ->options(fn () => SystemUserType::active()->orderBy('position')->pluck('name', 'id'))
+                                            ->helperText('Only users holding at least one of these active roles can generate a membership certificate. Leave blank to allow anyone irrespective of their role')
+                                            ->visible(fn (Get $get): bool => $get('users_can_generate_membership_certificate'))
+                                            ->columnSpanFull(),
+                                        Toggle::make('users_can_request_endorsement')
+                                            ->label('Users can request endorsement')
+                                            ->helperText('Allow members to request endorsement from International Committee Representatives via the membership certificate page.')
+                                            ->visible(fn (Get $get): bool => $get('users_can_generate_membership_certificate'))
+                                            ->live(),
+                                        Select::make('international_committee_representative_role_ids')
+                                            ->label('International Committee Representative Roles')
+                                            ->multiple()
+                                            ->options(fn () => SystemUserType::active()->orderBy('position')->pluck('name', 'id'))
+                                            ->helperText('Users who hold any of these roles (with an active role attachment) will receive endorsement requests from the membership certificate feature.')
+                                            ->visible(fn (Get $get): bool => $get('users_can_generate_membership_certificate') && $get('users_can_request_endorsement'))
+                                            ->columnSpanFull(),
+                                    ]),
+                            ]),
+
+                        Tab::make('System Issue Support')
+                            ->icon(Heroicon::ExclamationTriangle)
+                            ->schema([
+                                Section::make('System Issue Support')
+                                    ->collapsible()
+                                    ->schema([
+                                        Toggle::make('system_issue_support_enabled')
+                                            ->label('Enable System Issue Reporting')
+                                            ->helperText('When enabled, users will see a "Report System Issue" option in the user menu.')
+                                            ->live(),
+                                        Select::make('system_issue_support_user_ids')
+                                            ->label('System Issue Support Users')
+                                            ->multiple()
+                                            ->searchable()
+                                            ->options([])
+                                            ->getSearchResultsUsing(fn (string $search): array => SystemUser::query()
+                                                ->where('username', 'like', "{$search}%")
+                                                ->orWhere('id', '=', $search)
+                                                ->limit(50)
+                                                ->get()
+                                                ->mapWithKeys(fn ($user) => [
+                                                    $user->id => "{$user->username} [{$user->name} - {$user->id}]",
+                                                ])
+                                                ->toArray())
+                                            ->getOptionLabelsUsing(fn (array $values): array => SystemUser::whereIn('id', $values)
+                                                ->get()
+                                                ->mapWithKeys(fn ($user) => [
+                                                    $user->id => "{$user->username} [{$user->name} - {$user->id}]",
+                                                ])
+                                                ->toArray()
+                                            )
+                                            ->helperText('Users who will receive system issue reports submitted via the general panel user menu. Search via username or ID.')
+                                            ->visible(fn (Get $get): bool => $get('system_issue_support_enabled'))
+                                            ->columnSpanFull(),
                                     ]),
                             ]),
                     ]),
