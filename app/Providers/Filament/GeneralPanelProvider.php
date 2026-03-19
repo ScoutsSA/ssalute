@@ -86,12 +86,12 @@ class GeneralPanelProvider extends PanelProvider
                     ->icon(Heroicon::BuildingOffice)
                     ->group('External Links')
                     ->sort(4)
-                    ->url('https://scouts.org.za/', shouldOpenInNewTab: true),
+                    ->url('https://www.scouts.org.za/', shouldOpenInNewTab: true),
                 NavigationItem::make('Alumni')
                     ->icon(Heroicon::AcademicCap)
                     ->group('External Links')
                     ->sort(5)
-                    ->url('https://scouts.org.za/', shouldOpenInNewTab: true),
+                    ->url('https://www.scouts.org.za/get-involved/scouts-sa-alumni/', shouldOpenInNewTab: true),
                 NavigationItem::make('General Support')
                     ->icon(Heroicon::Lifebuoy)
                     ->group('External Links')
