@@ -96,7 +96,8 @@ class ViewProfile extends ViewRecord
                 Action::make('membershipCertificate')
                     ->label('Membership Certificate')
                     ->icon(Heroicon::DocumentCheck)
-                    ->url(fn () => ProfileResource::getUrl('membership-certificate', ['record' => $this->getRecord()])),
+                    ->url(fn () => ProfileResource::getUrl('membership-certificate', ['record' => $this->getRecord()]))
+                    ->visible(fn () => MembershipCertificate::canAccess()),
             ])
                 ->label('')
                 ->icon(Heroicon::EllipsisVertical)
