@@ -8,7 +8,7 @@ use App\Filament\Admin\Clusters\AMS\Resources\PastService\Pages\ViewPastServiceR
 use App\Filament\Admin\Clusters\AMS\Resources\PastService\Schemas\PastServiceForm;
 use App\Filament\Admin\Clusters\AMS\Resources\PastService\Schemas\PastServiceInfolist;
 use App\Filament\Admin\Clusters\AMS\Resources\PastService\Tables\PastServiceTable;
-use App\Models\AmsPastServiceInfo;
+use App\Models\PastService;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -17,7 +17,7 @@ use Filament\Tables\Table;
 
 class PastServiceResource extends Resource
 {
-    protected static ?string $model = AmsPastServiceInfo::class;
+    protected static ?string $model = PastService::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::ClipboardDocumentList;
 

@@ -70,8 +70,6 @@ abstract class SdCoreTestCase extends TestCase
                 'users_can_view_audit_log' => 'false',
                 'users_can_generate_membership_certificate' => 'false',
                 'membership_certificate_eligible_role_ids' => '[]',
-                'users_can_request_endorsement' => 'false',
-                'international_committee_representative_role_ids' => '[]',
                 'system_issue_support_enabled' => 'false',
                 'system_issue_support_user_ids' => '[]',
             ],

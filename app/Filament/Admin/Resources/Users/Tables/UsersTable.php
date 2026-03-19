@@ -6,6 +6,8 @@ use App\Models\SystemUser;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\ViewAction;
+use Filament\Facades\Filament;
+use Filament\Pages\Dashboard;
 use Filament\Tables\Columns\ColumnGroup;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TernaryFilter;
@@ -302,7 +304,7 @@ class UsersTable
             ])
             ->recordActions([
                 Impersonate::make()
-                    ->redirectTo(route('home')),
+                    ->redirectTo(fn (SystemUser $record): string => self::generalPanelUrl($record)),
                 Action::make('SD_Login')
                     ->label('Impersonate on SD')
                     ->url(fn (SystemUser $record): string => URL::temporarySignedRoute(
@@ -316,5 +318,16 @@ class UsersTable
             ->toolbarActions([
                 BulkActionGroup::make([]),
             ]);
+    }
+
+    private static function generalPanelUrl(SystemUser $user): string
+    {
+        $tenant = $user->getDefaultTenant(Filament::getPanel('general'));
+
+        if ($tenant) {
+            return Dashboard::getUrl(panel: 'general', tenant: $tenant);
+        }
+
+        return '/general';
     }
 }

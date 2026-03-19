@@ -2,10 +2,10 @@
 
 namespace App\Filament\General\Pages;
 
+use App\Filament\General\Resources\Profile\ProfileResource;
 use App\Rules\CurrentPasswordUsingAuthProvider;
 use BackedEnum;
 use Filament\Actions\Action;
-use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -44,7 +44,7 @@ class ChangePassword extends Page
 
         $this->form->fill();
 
-        $this->redirect(ViewProfile::getUrl(panel: 'general', tenant: Filament::getTenant()));
+        $this->redirect(ProfileResource::getUrl('view', ['record' => auth()->id()]));
     }
 
     public function form(Schema $schema): Schema
@@ -91,7 +91,7 @@ class ChangePassword extends Page
                 ->label('Cancel')
                 ->icon(Heroicon::XMark)
                 ->color('gray')
-                ->url(fn () => ViewProfile::getUrl(panel: 'general', tenant: Filament::getTenant())),
+                ->url(fn () => ProfileResource::getUrl('view', ['record' => auth()->id()])),
         ];
     }
 }

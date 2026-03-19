@@ -33,8 +33,6 @@ class RegionsTable
                     ->sortable()
                     ->toggleable(),
             ])
-            ->deferFilters(false)
-            ->deferColumnManager(false)
             ->recordUrl(fn (Region $record) => DistrictResource::getUrl('index', parameters: [
                 'filters[region][value]' => $record->getKey(),
             ]));

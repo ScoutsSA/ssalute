@@ -174,8 +174,6 @@ class UserRoleAttachmentsRelationManager extends RelationManager
     {
         return $table
             ->recordTitleAttribute('name')
-            ->deferFilters(false)
-            ->deferColumnManager(false)
             ->columns([
                 TextColumn::make('id')
                     ->label('Attachment ID')

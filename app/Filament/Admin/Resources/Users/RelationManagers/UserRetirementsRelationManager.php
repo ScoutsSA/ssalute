@@ -68,8 +68,6 @@ class UserRetirementsRelationManager extends RelationManager
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->defaultSort('retiredDate', 'desc')
-            ->deferFilters(false)
-            ->deferColumnManager(false)
             ->recordAction(ViewAction::class)
             ->actions([
                 ViewAction::make(),

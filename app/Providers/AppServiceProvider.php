@@ -5,7 +5,10 @@ namespace App\Providers;
 use App\Auth\ScoutsDigitalUserProvider;
 use App\Models\CustomDatabaseNotification;
 use App\Models\SystemUser;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Schemas\Schema as FilamentSchema;
+use Filament\Tables\Table;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\DatabaseNotification;
@@ -45,6 +48,10 @@ class AppServiceProvider extends ServiceProvider
         Schema::defaultStringLength(255);
 
         FilamentSchema::configureUsing(fn (FilamentSchema $schema) => $schema->columns(1));
+
+        DatePicker::configureUsing(fn (DatePicker $datePicker) => $datePicker->native(false)->displayFormat('Y/m/d'));
+        DateTimePicker::configureUsing(fn (DateTimePicker $dateTimePicker) => $dateTimePicker->native(false)->displayFormat('Y/m/d H:i'));
+        Table::configureUsing(fn (Table $table) => $table->deferFilters(false)->deferColumnManager(false));
 
         DatabaseNotification::resolveRelationUsing('databaseNotifications', function () {
             return new CustomDatabaseNotification;

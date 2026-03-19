@@ -1,47 +1,47 @@
 <?php
 
-namespace App\Filament\General\Pages;
+namespace App\Filament\General\Resources\Profile\Pages;
 
-use App\Mail\Profile\EndorsementRequestEmail;
+use App\Filament\General\Resources\Profile\ProfileResource;
 use App\Models\MembershipCertificate as MembershipCertificateModel;
-use App\Models\SystemUsersOtherRole;
 use App\Settings\FeatureSettings;
-use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
-use Filament\Pages\Page;
+use Filament\Resources\Pages\Concerns\InteractsWithRecord;
+use Filament\Resources\Pages\Page;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Js;
-use UnitEnum;
 
 class MembershipCertificate extends Page
 {
-    protected static string|null|BackedEnum $navigationIcon = Heroicon::DocumentCheck;
+    use InteractsWithRecord;
 
-    protected static ?string $navigationLabel = 'Membership Certificate';
+    protected static string $resource = ProfileResource::class;
 
     protected static ?string $title = 'Membership Certificate';
 
-    protected static string|UnitEnum|null $navigationGroup = 'My Info';
 
-    protected static ?int $navigationSort = 3;
+
+
+    /** Fields that are always included on the certificate. */
+    public const REQUIRED_FIELDS = ['name', 'ssa_id', 'roles'];
 
     /** @var array<string> */
-    public array $selectedFields = ['name', 'ssa_id', 'roles', 'email', 'phone', 'start_date'];
+    public array $requiredFields = ['name', 'ssa_id', 'roles'];
+
+    /** @var array<string> */
+    public array $selectedFields = ['email', 'phone', 'age', 'date_invested'];
 
     public bool $includePhoto = true;
 
     protected string $view = 'filament.general.pages.membership-certificate';
 
-    public static function canAccess(): bool
+    public static function canAccess(array $parameters = []): bool
     {
         if (! resolve(FeatureSettings::class)->users_can_generate_membership_certificate) {
             return false;
@@ -51,19 +51,16 @@ class MembershipCertificate extends Page
     }
 
     /**
-     * Available fields that can be shown on the certificate.
+     * Optional fields that can be shown on the certificate.
      *
      * @return array<string, string>
      */
-    public static function availableFields(): array
+    public static function optionalFields(): array
     {
         return [
-            'name' => 'Full Name',
-            'ssa_id' => 'SSA Membership ID',
             'email' => 'Email Address',
             'phone' => 'Phone Number',
-            'roles' => 'Active Roles',
-            'start_date' => 'Membership Start Date',
+            'age' => 'Age',
             'date_invested' => 'Date Invested',
         ];
     }
@@ -81,14 +78,24 @@ class MembershipCertificate extends Page
         return MembershipCertificateModel::userHasEligibleRoles($activeAttachments);
     }
 
-    public function mount(): void
+    public function getBreadcrumbs(): array
     {
+        return [
+            ProfileResource::getUrl('view', ['record' => auth()->id()]) => 'My Profile',
+            '' => 'Membership Certificate',
+        ];
+    }
+
+    public function mount(int|string $record): void
+    {
+        $this->record = $this->resolveRecord($record);
+
         $certificate = auth()->user()->membershipCertificate;
 
         if ($certificate) {
             $visibleFields = $certificate->visible_fields;
             $this->includePhoto = in_array('photo', $visibleFields);
-            $this->selectedFields = array_values(array_diff($visibleFields, ['photo']));
+            $this->selectedFields = array_values(array_diff($visibleFields, ['photo', ...self::REQUIRED_FIELDS]));
         }
     }
 
@@ -115,23 +122,36 @@ class MembershipCertificate extends Page
                     ->description('Choose which personal information should be visible on your shareable membership certificate.')
                     ->collapsible()
                     ->schema([
-                        CheckboxList::make('selectedFields')
-                            ->label('Visible Information')
-                            ->options(static::availableFields())
-                            ->descriptions([
-                                'name' => 'Your full name as registered',
-                                'ssa_id' => 'Your unique SSA membership number',
-                                'email' => 'Your registered email address',
-                                'phone' => 'Your cell phone number',
-                                'roles' => 'All your current active roles and their areas',
-                                'start_date' => 'The date your membership started',
-                                'date_invested' => 'The date you were invested',
+                        CheckboxList::make('requiredFields')
+                            ->label('Always Included')
+                            ->options([
+                                'name' => 'Full Name',
+                                'ssa_id' => 'SSA Membership ID',
+                                'roles' => 'Active Roles',
                             ])
-                            ->columns(2)
+                            ->disableOptionWhen(fn (): bool => true)
+                            ->columns(3)
                             ->columnSpanFull(),
-                        Toggle::make('includePhoto')
-                            ->label('Include profile photo')
-                            ->helperText('Display your profile photo on the certificate.'),
+                        Section::make('Optional Information')
+                            ->schema([
+                                Toggle::make('includePhoto')
+                                    ->label('Include profile photo')
+                                    ->helperText('Display your profile photo on the certificate.')
+                                    ->inline()
+                                    ->columnSpan(1),
+                                CheckboxList::make('selectedFields')
+                                    ->label('Other Fields')
+                                    ->options(static::optionalFields())
+                                    ->descriptions([
+                                        'email' => 'Your registered email address',
+                                        'phone' => 'Your cell phone number',
+                                        'age' => 'Your current age (calculated from date of birth)',
+                                        'date_invested' => 'The date you were invested',
+                                    ])
+                                    ->columns(2)
+                                    ->columnSpanFull(),
+                            ])
+
                     ])
                     ->footer([
                         Action::make('saveCertificate')
@@ -160,18 +180,9 @@ class MembershipCertificate extends Page
     {
         $user = auth()->user();
 
-        $visibleFields = $this->selectedFields;
+        $visibleFields = array_values(array_unique([...self::REQUIRED_FIELDS, ...$this->selectedFields]));
         if ($this->includePhoto) {
             $visibleFields[] = 'photo';
-        }
-
-        if (empty($visibleFields)) {
-            Notification::make()
-                ->title('Please select at least one field to display.')
-                ->danger()
-                ->send();
-
-            return;
         }
 
         $certificate = MembershipCertificateModel::updateOrCreate(
@@ -199,7 +210,7 @@ class MembershipCertificate extends Page
             ])
             ->send();
 
-        $this->redirect(static::getUrl(), navigate: true);
+        $this->redirect(static::getUrl(['record' => $this->getRecord()]), navigate: true);
     }
 
     public function removeCertificate(): void
@@ -219,7 +230,7 @@ class MembershipCertificate extends Page
             ->success()
             ->send();
 
-        $this->redirect(static::getUrl(), navigate: true);
+        $this->redirect(static::getUrl(['record' => $this->getRecord()]), navigate: true);
     }
 
     protected function getHeaderActions(): array
@@ -235,82 +246,6 @@ class MembershipCertificate extends Page
                 ->openUrlInNewTab()
                 ->visible(fn () => $certificate !== null),
 
-            Action::make('requestEndorsement')
-                ->label('Request Endorsement')
-                ->icon(Heroicon::EnvelopeOpen)
-                ->color('warning')
-                ->visible(fn () => resolve(FeatureSettings::class)->users_can_request_endorsement)
-                ->modalHeading('Request Endorsement')
-                ->modalDescription('Submit a request for endorsement to the International Committee Representatives. This is separate from your membership certificate.')
-                ->schema([
-                    TextInput::make('subject')
-                        ->label('Subject')
-                        ->required()
-                        ->maxLength(255)
-                        ->placeholder('e.g. Endorsement for international event attendance'),
-                    Textarea::make('description')
-                        ->label('Description')
-                        ->required()
-                        ->rows(5)
-                        ->placeholder('Describe the purpose of the endorsement and any relevant details...'),
-                ])
-                ->action(function (array $data): void {
-                    $this->sendEndorsementRequest($data['subject'], $data['description']);
-                }),
         ];
-    }
-
-    private function sendEndorsementRequest(string $subject, string $description): void
-    {
-        $requester = auth()->user();
-        $settings = resolve(FeatureSettings::class);
-        $roleIds = $settings->international_committee_representative_role_ids ?? [];
-
-        if (empty($roleIds)) {
-            Notification::make()
-                ->title('No International Committee Representatives configured')
-                ->body('Please contact your administrator to configure the International Committee Representative roles in settings.')
-                ->danger()
-                ->send();
-
-            return;
-        }
-
-        $recipients = SystemUsersOtherRole::query()
-            ->whereIn('roleID', $roleIds)
-            ->where('active', 1)
-            ->with('user')
-            ->get()
-            ->pluck('user')
-            ->filter()
-            ->unique('id')
-            ->pluck('username')
-            ->filter(fn ($email) => filter_var($email, FILTER_VALIDATE_EMAIL))
-            ->values()
-            ->all();
-
-        if (empty($recipients)) {
-            Notification::make()
-                ->title('No valid recipients found')
-                ->body('No active users with International Committee Representative roles have valid email addresses.')
-                ->danger()
-                ->send();
-
-            return;
-        }
-
-        $mail = Mail::to($recipients);
-
-        if (filter_var($requester->username, FILTER_VALIDATE_EMAIL)) {
-            $mail->cc($requester->username);
-        }
-
-        $mail->send(new EndorsementRequestEmail($requester, endorsementSubject: $subject, description: $description));
-
-        Notification::make()
-            ->title('Endorsement request sent successfully')
-            ->body('Your request has been sent to the International Committee Representatives. You have been CC\'d on the email.')
-            ->success()
-            ->send();
     }
 }

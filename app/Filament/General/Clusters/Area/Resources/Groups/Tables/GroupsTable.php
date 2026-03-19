@@ -92,8 +92,6 @@ class GroupsTable
                     ->trueLabel('Yes')
                     ->falseLabel('No'),
             ])
-            ->deferFilters(false)
-            ->deferColumnManager(false)
             ->recordActions([
                 ViewAction::make(),
             ]);

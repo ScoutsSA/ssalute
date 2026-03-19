@@ -2,11 +2,11 @@
 
 namespace Tests\Feature\Auditing;
 
-use App\Models\AmsAwardInfo;
-use App\Models\AmsDocument;
-use App\Models\AmsTrainingPast;
 use App\Models\AmsWarrantInfo;
 use App\Models\Audit;
+use App\Models\Award;
+use App\Models\Document;
+use App\Models\PastTraining;
 use App\Models\SystemUser;
 use App\Models\SystemUsersOtherRole;
 use App\Models\SystemUserType;
@@ -58,7 +58,7 @@ class AuditingTest extends SdCoreTestCase
         $user = SystemUser::factory()->create();
         $this->actingAs($user);
 
-        $training = AmsTrainingPast::create([
+        $training = PastTraining::create([
             'userID' => $user->id,
             'countryID' => 196,
             'assocToRegion' => 0,
@@ -74,7 +74,7 @@ class AuditingTest extends SdCoreTestCase
         ]);
 
         $this->assertDatabaseHas('ssalute_audits', [
-            'auditable_type' => AmsTrainingPast::class,
+            'auditable_type' => PastTraining::class,
             'auditable_id' => $training->id,
             'event' => 'created',
             'user_id' => $user->id,
@@ -87,7 +87,7 @@ class AuditingTest extends SdCoreTestCase
         $user = SystemUser::factory()->create();
         $this->actingAs($user);
 
-        $award = AmsAwardInfo::create([
+        $award = Award::create([
             'userID' => $user->id,
             'countryID' => 196,
             'assocToRegion' => 0,
@@ -102,7 +102,7 @@ class AuditingTest extends SdCoreTestCase
         ]);
 
         $this->assertDatabaseHas('ssalute_audits', [
-            'auditable_type' => AmsAwardInfo::class,
+            'auditable_type' => Award::class,
             'auditable_id' => $award->id,
             'event' => 'created',
         ]);
@@ -114,7 +114,7 @@ class AuditingTest extends SdCoreTestCase
         $user = SystemUser::factory()->create();
         $this->actingAs($user);
 
-        $doc = AmsDocument::create([
+        $doc = Document::create([
             'userID' => $user->id,
             'countryID' => 196,
             'assocToRegion' => 0,
@@ -128,7 +128,7 @@ class AuditingTest extends SdCoreTestCase
         ]);
 
         $this->assertDatabaseHas('ssalute_audits', [
-            'auditable_type' => AmsDocument::class,
+            'auditable_type' => Document::class,
             'auditable_id' => $doc->id,
             'event' => 'created',
         ]);

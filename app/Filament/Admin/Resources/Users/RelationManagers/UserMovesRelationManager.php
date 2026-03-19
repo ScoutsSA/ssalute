@@ -49,8 +49,6 @@ class UserMovesRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->deferFilters(false)
-            ->deferColumnManager(false)
             ->columns([
                 TextColumn::make('effectiveDate')
                     ->label('Effective Date')

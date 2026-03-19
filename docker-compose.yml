@@ -30,6 +30,8 @@ services:
     volumes:
       # Project files — Claude can read/write here, nowhere else on your system
       - ./:/app
+      # Legacy Scouts Digital files (photos, documents, etc.)
+      - ../scouts-digital:/app/storage/legacy-storage:ro
       # Global Claude rules + auth from your host machine
       - ~/.claude:/home/claude/.claude
       - ~/.claude.json:/home/claude/.claude.json

@@ -35,7 +35,7 @@ class AmsAwardType extends BaseModel
 
     public function awards(): HasMany
     {
-        return $this->hasMany(AmsAwardInfo::class, 'awardTypeID');
+        return $this->hasMany(Award::class, 'awardTypeID');
     }
 
     public function applications(): HasMany

@@ -5,10 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     @php
-        $metaTitle = (in_array('name', $visibleFields) ? $user->name . ' — ' : '') . 'Membership Certificate';
-        $metaDescription = 'Verified active member of Scouts South Africa' . (in_array('name', $visibleFields) ? ' — ' . $user->name : '') . '. View this certificate to confirm membership status.';
+        $metaTitle = $user->name . ' — Membership Certificate';
+        $metaDescription = $isActiveMember
+            ? 'Verified active member of Scouts South Africa — ' . $user->name . '. View this certificate to confirm membership status.'
+            : $user->name . ' is no longer an active member of Scouts South Africa. This certificate is no longer valid.';
         $metaUrl = route('membership-certificate.show', $certificate->uuid);
-        $metaImage = asset('images/logo_padded.png');
+        $metaImage = $photoUrl ?: asset('images/logo_padded.png');
     @endphp
 
     <title>{{ $metaTitle }} — Scouts South Africa</title>
@@ -24,7 +26,7 @@
     <meta property="og:site_name" content="Scouts South Africa — Ssalute">
 
     {{-- Twitter Card --}}
-    <meta name="twitter:card" content="summary">
+    <meta name="twitter:card" content="{{ $photoUrl ? 'summary_large_image' : 'summary' }}">
     <meta name="twitter:title" content="{{ $metaTitle }}">
     <meta name="twitter:description" content="{{ $metaDescription }}">
     <meta name="twitter:image" content="{{ $metaImage }}">
@@ -66,6 +68,8 @@
         @page {
             size: A4;
             margin: 10mm;
+            margin-top: 0;
+            margin-bottom: 0;
         }
         .stamp {
             animation: stamp-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both;
@@ -177,7 +181,7 @@
                 </div>
 
                 {{-- Details grid --}}
-                @if (array_intersect(['email', 'phone', 'start_date', 'date_invested'], $visibleFields))
+                @if (array_intersect(['email', 'phone', 'age', 'date_invested'], $visibleFields))
                     <div class="fade-up fade-up-d1 mt-8 rounded-xl border border-zinc-100 bg-zinc-50/60 px-5 py-5 dark:border-zinc-700 dark:bg-zinc-900/50">
                         <h3 class="mb-4 text-[11px] font-bold uppercase tracking-[0.12em] text-zinc-400 dark:text-zinc-500">Member Details</h3>
                         <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -203,14 +207,14 @@
                                     </div>
                                 </div>
                             @endif
-                            @if (in_array('start_date', $visibleFields) && $user->startDate)
+                            @if (in_array('age', $visibleFields) && $user->dob)
                                 <div class="flex items-start gap-3">
                                     <div class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-white text-zinc-400 shadow-sm ring-1 ring-zinc-100 dark:bg-zinc-800 dark:text-zinc-500 dark:ring-zinc-700">
-                                        <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" /></svg>
+                                        <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8.25v-1.5m0 1.5c-1.355 0-2.697.056-4.024.166C6.845 8.51 6 9.473 6 10.608v2.513m6-4.871c1.355 0 2.697.056 4.024.166C17.155 8.51 18 9.473 18 10.608v2.513M15 8.25v-1.5m-6 1.5v-1.5m12 9.75-1.5.75a3.354 3.354 0 0 1-3 0 3.354 3.354 0 0 0-3 0 3.354 3.354 0 0 1-3 0 3.354 3.354 0 0 0-3 0 3.354 3.354 0 0 1-3 0L3 16.5m15-3.379a48.474 48.474 0 0 0-6-.371c-2.032 0-4.034.126-6 .371m12 0c.39.049.777.102 1.163.16 1.07.16 1.837 1.094 1.837 2.175v5.169c0 .621-.504 1.125-1.125 1.125H4.125A1.125 1.125 0 0 1 3 20.625v-5.17c0-1.08.768-2.014 1.837-2.174A47.78 47.78 0 0 1 6 13.12M12.265 3.11a.375.375 0 1 1-.53 0L12 2.845l.265.265Z" /></svg>
                                     </div>
                                     <div class="min-w-0">
-                                        <dt class="text-[10px] font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">Member Since</dt>
-                                        <dd class="mt-0.5 text-sm font-medium text-zinc-800 dark:text-zinc-200">{{ $user->startDate->format('d F Y') }}</dd>
+                                        <dt class="text-[10px] font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">Age</dt>
+                                        <dd class="mt-0.5 text-sm font-medium text-zinc-800 dark:text-zinc-200">{{ $user->dob->age }} years</dd>
                                     </div>
                                 </div>
                             @endif

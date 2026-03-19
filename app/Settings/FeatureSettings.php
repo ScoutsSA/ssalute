@@ -30,10 +30,6 @@ class FeatureSettings extends Settings
 
     public ?array $membership_certificate_eligible_role_ids = [];
 
-    public bool $users_can_request_endorsement = false;
-
-    public ?array $international_committee_representative_role_ids = [];
-
     public bool $system_issue_support_enabled = false;
 
     public ?array $system_issue_support_user_ids = [];

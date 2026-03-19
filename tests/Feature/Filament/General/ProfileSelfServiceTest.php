@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Filament\General;
 
-use App\Filament\General\Pages\ViewProfile;
+use App\Filament\General\Resources\Profile\Pages\ViewProfile;
 use App\Models\SystemUser;
 use App\Settings\FeatureSettings;
 use Filament\Facades\Filament;
@@ -26,28 +26,13 @@ class ProfileSelfServiceTest extends SdCoreTestCase
     }
 
     #[Test]
-    public function view_profile_page_renders_with_section_actions(): void
+    public function view_profile_page_renders_for_authenticated_user(): void
     {
         [$user, $tenant] = $this->setupUserAndPanel();
 
         Livewire::actingAs($user)
-            ->test(ViewProfile::class)
-            ->assertOk()
-            ->assertSee('Add Training')
-            ->assertSee('Add Award')
-            ->assertSee('Add Document')
-            ->assertSee('Add Past Service');
-    }
-
-    #[Test]
-    public function view_profile_page_renders_request_missing_warrant_action(): void
-    {
-        [$user, $tenant] = $this->setupUserAndPanel();
-
-        Livewire::actingAs($user)
-            ->test(ViewProfile::class)
-            ->assertOk()
-            ->assertSee('Request Missing Warrant');
+            ->test(ViewProfile::class, ['record' => $user->id])
+            ->assertOk();
     }
 
     #[Test]
@@ -60,7 +45,7 @@ class ProfileSelfServiceTest extends SdCoreTestCase
         $tenant = $user->roleAttachments()->first();
 
         $this->actingAs($user)
-            ->get("/general/{$tenant->id}/view-profile")
+            ->get("/general/{$tenant->id}/profile/{$user->id}")
             ->assertOk()
             ->assertSee('TestProfileName')
             ->assertSee('TestProfileSurname');

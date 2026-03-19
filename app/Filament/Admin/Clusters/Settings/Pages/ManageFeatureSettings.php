@@ -101,18 +101,6 @@ class ManageFeatureSettings extends SettingsPage
                                             ->helperText('Only users holding at least one of these active roles can generate a membership certificate. Leave blank to allow anyone irrespective of their role')
                                             ->visible(fn (Get $get): bool => $get('users_can_generate_membership_certificate'))
                                             ->columnSpanFull(),
-                                        Toggle::make('users_can_request_endorsement')
-                                            ->label('Users can request endorsement')
-                                            ->helperText('Allow members to request endorsement from International Committee Representatives via the membership certificate page.')
-                                            ->visible(fn (Get $get): bool => $get('users_can_generate_membership_certificate'))
-                                            ->live(),
-                                        Select::make('international_committee_representative_role_ids')
-                                            ->label('International Committee Representative Roles')
-                                            ->multiple()
-                                            ->options(fn () => SystemUserType::active()->orderBy('position')->pluck('name', 'id'))
-                                            ->helperText('Users who hold any of these roles (with an active role attachment) will receive endorsement requests from the membership certificate feature.')
-                                            ->visible(fn (Get $get): bool => $get('users_can_generate_membership_certificate') && $get('users_can_request_endorsement'))
-                                            ->columnSpanFull(),
                                     ]),
                             ]),
 

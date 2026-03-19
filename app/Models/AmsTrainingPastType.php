@@ -30,6 +30,6 @@ class AmsTrainingPastType extends BaseModel
 
     public function trainingHistories(): HasMany
     {
-        return $this->hasMany(AmsTrainingPast::class, 'trainingTypeID');
+        return $this->hasMany(PastTraining::class, 'trainingTypeID');
     }
 }

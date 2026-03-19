@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Users\RelationManagers;
 
+use App\Services\FileUrlService;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -9,6 +10,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\IconEntry;
@@ -41,6 +43,12 @@ class UserTrainingHistoryRelationManager extends RelationManager
                     ->relationship('trainingType', 'typeName'),
                 DatePicker::make('completionDate')
                     ->label('Completion Date'),
+                FileUpload::make('PDFLocation')
+                    ->label('Certificate / Document')
+                    ->disk('legacy')
+                    ->directory('ssalute/training')
+                    ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
+                    ->maxSize(51200),
             ]);
     }
 
@@ -65,6 +73,10 @@ class UserTrainingHistoryRelationManager extends RelationManager
                 TextEntry::make('validatedDate')
                     ->label('Validated On')
                     ->dateTime(),
+                TextEntry::make('PDFLocation')
+                    ->label('Document')
+                    ->url(fn ($state) => $state ? app(FileUrlService::class)->url($state) : null)
+                    ->openUrlInNewTab(),
             ]);
     }
 

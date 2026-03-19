@@ -2,10 +2,15 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\Storage;
+
 class FileUrlService
 {
     public function url(string $path): string
     {
-        return rtrim(config('ssalute.scouts_digital_url'), '/') . '/' . ltrim($path, '/');
+        return Storage::disk('legacy')->temporaryUrl(
+            ltrim($path, '/'),
+            now()->addMinutes(30),
+        );
     }
 }

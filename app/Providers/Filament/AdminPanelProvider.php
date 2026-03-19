@@ -2,6 +2,8 @@
 
 namespace App\Providers\Filament;
 
+use Filament\Actions\Action;
+use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -63,6 +65,17 @@ class AdminPanelProvider extends PanelProvider
                     ? Blade::render('@include("filament.admin.partials.beta-banner")')
                     : '',
             )
+            ->userMenuItems([
+                'general-panel' => Action::make('general-panel')
+                    ->label('General Panel')
+                    ->icon(Heroicon::ArrowLeftStartOnRectangle)
+                    ->url(function () {
+                        $user = auth()->user();
+                        $tenant = $user?->getDefaultTenant(Filament::getPanel('general'));
+
+                        return $tenant ? Dashboard::getUrl(panel: 'general', tenant: $tenant) : '/general';
+                    }),
+            ])
             ->navigationItems([
                 NavigationItem::make('Horizon')
                     ->url('/horizon', shouldOpenInNewTab: true)

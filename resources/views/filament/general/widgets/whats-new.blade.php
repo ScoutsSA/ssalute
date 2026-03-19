@@ -3,6 +3,12 @@
         <div class="space-y-4">
             @php
                 $features = [
+                     [
+                        'date' => '2026-03-19',
+                        'title' => 'Membership Certificate',
+                        'description' => 'Members can now view, share and print a membership certificate, verifying their information publicly. View this in My Profile -> Actions -> Membership Certificate',
+                        'icon' => 'heroicon-m-document-check',
+                    ],
                     [
                         'date' => '2026-03-16',
                         'title' => 'Audit Logging',

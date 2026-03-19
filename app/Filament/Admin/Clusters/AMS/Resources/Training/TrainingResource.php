@@ -8,7 +8,7 @@ use App\Filament\Admin\Clusters\AMS\Resources\Training\Pages\ViewTrainingRecord;
 use App\Filament\Admin\Clusters\AMS\Resources\Training\Schemas\TrainingForm;
 use App\Filament\Admin\Clusters\AMS\Resources\Training\Schemas\TrainingInfolist;
 use App\Filament\Admin\Clusters\AMS\Resources\Training\Tables\TrainingTable;
-use App\Models\AmsTrainingPast;
+use App\Models\PastTraining;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -17,7 +17,7 @@ use Filament\Tables\Table;
 
 class TrainingResource extends Resource
 {
-    protected static ?string $model = AmsTrainingPast::class;
+    protected static ?string $model = PastTraining::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::AcademicCap;
 

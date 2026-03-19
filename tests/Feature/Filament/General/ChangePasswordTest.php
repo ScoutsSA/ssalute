@@ -75,6 +75,6 @@ class ChangePasswordTest extends SdCoreTestCase
     {
         $this->get('/general/login')
             ->assertOk()
-            ->assertSee('Forgot your password?');
+            ->assertSee('Forgot password?');
     }
 }

@@ -4,7 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\General\Pages\ChangePassword;
 use App\Filament\General\Pages\Dashboard;
-use App\Filament\General\Pages\ViewProfile;
+use App\Filament\General\Resources\Profile\ProfileResource;
 use App\Http\Middleware\RedirectToValidTenant;
 use App\Mail\ReportSystemIssueEmail;
 use App\Models\SystemUsersOtherRole;
@@ -16,17 +16,20 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationGroup;
+use Filament\Navigation\NavigationItem;
 use Filament\Notifications\Notification;
+use Filament\Pages\Dashboard as FilamentDashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Icons\Heroicon;
 use Filament\View\PanelsRenderHook;
+use Illuminate\Contracts\View\View;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
-use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
@@ -39,20 +42,86 @@ class GeneralPanelProvider extends PanelProvider
             ->path('general')
             ->viteTheme('resources/css/filament/general/theme.css')
             ->favicon(asset('images/logo.png'))
-            ->login()
+            ->login(\App\Filament\General\Pages\Auth\Login::class)
+            ->passwordReset()
+            ->renderHook(
+                PanelsRenderHook::AUTH_LOGIN_FORM_BEFORE,
+                fn (): View => view('filament.general.login-blurb'),
+            )
+            ->spa()
+            ->unsavedChangesAlerts()
             ->colors([
                 'primary' => '#5C2D91',
             ])
+            ->readOnlyRelationManagersOnResourceViewPagesByDefault(false)
             ->tenant(SystemUsersOtherRole::class)
+            ->navigationGroups([
+                NavigationGroup::make('External Links')
+                    ->collapsed(),
+            ])
+            ->navigationItems([
+                NavigationItem::make('My Profile')
+                    ->icon(Heroicon::UserCircle)
+                    ->group('My Info')
+                    ->sort(1)
+                    ->url(fn () => ProfileResource::getUrl('view', ['record' => auth()->id()]))
+                    ->isActiveWhen(fn () => request()->routeIs('filament.general.resources.profile.*')),
+
+                NavigationItem::make('Scouts Digital')
+                    ->icon(Heroicon::GlobeAlt)
+                    ->group('External Links')
+                    ->sort(1)
+                    ->url('https://ssa.scouts.digital', shouldOpenInNewTab: true),
+                NavigationItem::make('Permit System')
+                    ->icon(Heroicon::ClipboardDocumentCheck)
+                    ->group('External Links')
+                    ->sort(2)
+                    ->url('https://permits.scouts.org.za', shouldOpenInNewTab: true),
+                NavigationItem::make('Scout Wiki')
+                    ->icon(Heroicon::BookOpen)
+                    ->group('External Links')
+                    ->sort(3)
+                    ->url('https://scoutwiki.scouts.org.za/wiki/SCOUTS_South_Africa_Wiki', shouldOpenInNewTab: true),
+                NavigationItem::make('National Website')
+                    ->icon(Heroicon::BuildingOffice)
+                    ->group('External Links')
+                    ->sort(4)
+                    ->url('https://scouts.org.za/', shouldOpenInNewTab: true),
+                NavigationItem::make('Alumni')
+                    ->icon(Heroicon::AcademicCap)
+                    ->group('External Links')
+                    ->sort(5)
+                    ->url('https://scouts.org.za/', shouldOpenInNewTab: true),
+                NavigationItem::make('General Support')
+                    ->icon(Heroicon::Lifebuoy)
+                    ->group('External Links')
+                    ->sort(6)
+                    ->url('https://support.scouts.org.za/', shouldOpenInNewTab: true),
+                NavigationItem::make('Donations')
+                    ->icon(Heroicon::Heart)
+                    ->group('External Links')
+                    ->sort(7)
+                    ->url('https://www.scoutfoundation.org.za/donate/#monthly-donation-options', shouldOpenInNewTab: true),
+                NavigationItem::make('Slack Group')
+                    ->icon(Heroicon::ChatBubbleLeftRight)
+                    ->group('External Links')
+                    ->sort(8)
+                    ->url('https://join.slack.com/t/scoutssa/shared_invite/zt-3ss7zpgqa-UkqirUjoLRX9jd8R0lpu~w', shouldOpenInNewTab: true),
+            ])
             ->userMenuItems([
                 'profile' => Action::make('profile')
                     ->label('My Profile')
                     ->icon(Heroicon::UserCircle)
-                    ->url(fn () => ViewProfile::getUrl(panel: 'general', tenant: Filament::getTenant())),
+                    ->url(fn () => ProfileResource::getUrl('view', ['record' => auth()->id()])),
                 'change-password' => Action::make('change-password')
                     ->label('Change Password')
                     ->icon(Heroicon::Key)
                     ->url(fn () => ChangePassword::getUrl(panel: 'general', tenant: Filament::getTenant())),
+                'admin-panel' => Action::make('admin-panel')
+                    ->label('Backoffice Admin')
+                    ->icon(Heroicon::Cog6Tooth)
+                    ->url(fn () => FilamentDashboard::getUrl(panel: 'admin'))
+                    ->visible(fn () => auth()->user()?->isSuperAdmin()),
                 'report-system-issue' => Action::make('report-system-issue')
                     ->label('Report System Issue')
                     ->icon(Heroicon::ExclamationTriangle)
@@ -98,10 +167,6 @@ class GeneralPanelProvider extends PanelProvider
                             ->send();
                     }),
             ])
-            ->renderHook(
-                PanelsRenderHook::AUTH_LOGIN_FORM_AFTER,
-                fn () => Blade::render('<div class="text-center"><a href="{{ route(\'password.request\') }}" class="text-sm text-primary-600 hover:text-primary-500 dark:text-primary-400">Forgot your password?</a></div>'),
-            )
             ->discoverClusters(in: app_path('Filament/General/Clusters'), for: 'App\\Filament\\General\\Clusters')
             ->discoverResources(in: app_path('Filament/General/Resources'), for: 'App\Filament\General\Resources')
             ->discoverPages(in: app_path('Filament/General/Pages'), for: 'App\Filament\General\Pages')

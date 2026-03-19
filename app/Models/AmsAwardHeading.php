@@ -26,7 +26,7 @@ class AmsAwardHeading extends BaseModel
 
     public function awards(): HasMany
     {
-        return $this->hasMany(AmsAwardInfo::class, 'awardHeadingID');
+        return $this->hasMany(Award::class, 'awardHeadingID');
     }
 
     public function applications(): HasMany

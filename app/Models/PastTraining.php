@@ -6,10 +6,10 @@ use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class AmsAwardInfo extends BaseModel
+class PastTraining extends BaseModel
 {
     protected $connection = AppServiceProvider::DB_SD_CORE;
-    protected $table = 'ams_award_info';
+    protected $table = 'ams_training_past';
 
     protected $guarded = [];
 
@@ -20,15 +20,19 @@ class AmsAwardInfo extends BaseModel
         'assocToDistrict' => 'int',
         'assocToGroup' => 'int',
         'userID' => 'int',
-        'awardHeadingID' => 'int',
-        'awardTypeID' => 'int',
-        'awardDate' => 'date',
+        'trainingTypeID' => 'int',
+        'courseName' => 'string',
+        'courseNumber' => 'string',
+        'completionDate' => 'date',
         'PDFLocation' => 'string',
         'active' => 'int',
         'created' => 'datetime',
         'createdby' => 'int',
         'modified' => 'datetime',
         'modifiedby' => 'int',
+        'validated' => 'int',
+        'validatedDate' => 'datetime',
+        'validatedby' => 'int',
     ];
 
     public function user(): BelongsTo
@@ -51,13 +55,13 @@ class AmsAwardInfo extends BaseModel
         return $this->belongsTo(Group::class, 'assocToGroup');
     }
 
-    public function awardType(): BelongsTo
+    public function trainingType(): BelongsTo
     {
-        return $this->belongsTo(AmsAwardType::class, 'awardTypeID');
+        return $this->belongsTo(AmsTrainingPastType::class, 'trainingTypeID');
     }
 
-    public function heading(): BelongsTo
+    public function validatedByUser(): BelongsTo
     {
-        return $this->belongsTo(AmsAwardHeading::class, 'awardHeadingID');
+        return $this->belongsTo(SystemUser::class, 'validatedby');
     }
 }

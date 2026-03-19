@@ -64,8 +64,6 @@ class AuditsRelationManager extends RelationManager
             ->recordActions([
                 self::auditViewAction(showUser: true),
             ])
-            ->deferFilters(false)
-            ->deferColumnManager(false)
             ->paginated([10, 25, 50]);
     }
 }

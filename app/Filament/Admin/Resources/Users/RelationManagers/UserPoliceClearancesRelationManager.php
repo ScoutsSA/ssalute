@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Users\RelationManagers;
 
+use App\Services\FileUrlService;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -9,6 +10,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -33,9 +35,12 @@ class UserPoliceClearancesRelationManager extends RelationManager
                     ->maxLength(255),
                 DatePicker::make('dateDone')
                     ->label('Date Done'),
-                TextInput::make('documentLocation')
-                    ->label('Document Location')
-                    ->maxLength(255),
+                FileUpload::make('documentLocation')
+                    ->label('Document')
+                    ->disk('legacy')
+                    ->directory('ssalute/police-clearance')
+                    ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
+                    ->maxSize(51200),
             ]);
     }
 
@@ -49,7 +54,9 @@ class UserPoliceClearancesRelationManager extends RelationManager
                     ->label('Date Done')
                     ->date(),
                 TextEntry::make('documentLocation')
-                    ->label('Document Location'),
+                    ->label('Document')
+                    ->url(fn ($state) => $state ? app(FileUrlService::class)->url($state) : null)
+                    ->openUrlInNewTab(),
             ]);
     }
 
@@ -78,6 +85,8 @@ class UserPoliceClearancesRelationManager extends RelationManager
                     ->sortable(),
                 TextColumn::make('documentLocation')
                     ->label('Document')
+                    ->url(fn ($state) => $state ? app(FileUrlService::class)->url($state) : null)
+                    ->openUrlInNewTab()
                     ->toggleable(isToggledHiddenByDefault: true),
                 IconColumn::make('active')
                     ->boolean()

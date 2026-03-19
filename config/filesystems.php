@@ -79,9 +79,11 @@ return [
             'report' => false,
         ],
 
-        'legacy_files' => [
+        'legacy' => [
             'driver' => 'local',
-            'root' => env('LEGACY_FILES_PATH', '/mnt/legacy-files'),
+            'root' => env('LEGACY_FILES_PATH', storage_path('legacy-storage')),
+            'serve' => true,
+            'url' => env('APP_URL') . '/legacy-files',
             'throw' => false,
             'report' => false,
         ],

@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Filament;
 
-use App\Filament\General\Pages\EditProfile;
+use App\Filament\General\Resources\Profile\Pages\EditProfile;
 use App\Models\SystemUser;
 use App\Settings\FeatureSettings;
 use Filament\Facades\Filament;
@@ -66,10 +66,14 @@ class ProfileTest extends SdCoreTestCase
         $userA = SystemUser::factory()->withRole()->create();
         $userB = SystemUser::factory()->withRole()->create();
 
-        // User B accesses view-profile under User A's tenant — redirected to their own tenant
+        $tenantA = $userA->roleAttachments()->first();
+        $tenantB = $userB->roleAttachments()->first();
+
+        // User B accesses view-profile under User A's tenant. The RedirectToValidTenant
+        // middleware redirects to User B's tenant but preserves the record parameter.
         $this->actingAs($userB)
-            ->get($this->viewProfileUrl($userA))
-            ->assertRedirect($this->viewProfileUrl($userB));
+            ->get("/general/{$tenantA->id}/profile/{$userA->id}")
+            ->assertRedirect("/general/{$tenantB->id}/profile/{$userA->id}");
     }
 
     // Edit profile page
@@ -109,7 +113,7 @@ class ProfileTest extends SdCoreTestCase
         Filament::setTenant($tenant);
 
         Livewire::actingAs($user)
-            ->test(EditProfile::class)
+            ->test(EditProfile::class, ['record' => $user->id])
             ->set('data.first_name', 'New')
             ->set('data.surname', 'Name')
             ->set('data.cellNr', '0811111111')
@@ -128,10 +132,14 @@ class ProfileTest extends SdCoreTestCase
         $userA = SystemUser::factory()->withRole()->create();
         $userB = SystemUser::factory()->withRole()->create();
 
-        // User B accesses edit-profile under User A's tenant — redirected to their own tenant
+        $tenantA = $userA->roleAttachments()->first();
+        $tenantB = $userB->roleAttachments()->first();
+
+        // User B accesses edit-profile under User A's tenant. The RedirectToValidTenant
+        // middleware redirects to User B's tenant but preserves the record parameter.
         $this->actingAs($userB)
-            ->get($this->editProfileUrl($userA))
-            ->assertRedirect($this->editProfileUrl($userB));
+            ->get("/general/{$tenantA->id}/profile/{$userA->id}/edit")
+            ->assertRedirect("/general/{$tenantB->id}/profile/{$userA->id}/edit");
     }
 
     #[Test]
@@ -150,7 +158,7 @@ class ProfileTest extends SdCoreTestCase
         Filament::setTenant($tenant);
 
         Livewire::actingAs($user)
-            ->test(EditProfile::class)
+            ->test(EditProfile::class, ['record' => $user->id])
             ->set('data.username', 'hacked@example.com')
             ->call('save');
 
@@ -162,11 +170,11 @@ class ProfileTest extends SdCoreTestCase
 
     private function viewProfileUrl(SystemUser $user): string
     {
-        return "/general/{$user->roleAttachments()->first()->id}/view-profile";
+        return "/general/{$user->roleAttachments()->first()->id}/profile/{$user->id}";
     }
 
     private function editProfileUrl(SystemUser $user): string
     {
-        return "/general/{$user->roleAttachments()->first()->id}/edit-profile";
+        return "/general/{$user->roleAttachments()->first()->id}/profile/{$user->id}/edit";
     }
 }

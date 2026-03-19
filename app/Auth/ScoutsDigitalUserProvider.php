@@ -47,14 +47,15 @@ class ScoutsDigitalUserProvider implements UserProviderContract
 
     public function retrieveByCredentials(array $credentials): ?AuthenticatableContract
     {
-        // Require a password to be present for lookup-by-encrypted-match
-        if (! isset($credentials['password'])) {
-            return null;
-        }
-
         /** @var SystemUser $model */
         $model = new $this->model;
         $query = $model->newQuery();
+
+        // Map 'email' to 'username' for password reset compatibility
+        if (isset($credentials['email']) && ! isset($credentials['username'])) {
+            $credentials['username'] = $credentials['email'];
+            unset($credentials['email']);
+        }
 
         // Prefer an explicit username; otherwise, fall back to the model's auth identifier name.
         if (isset($credentials['username'])) {
@@ -71,10 +72,12 @@ class ScoutsDigitalUserProvider implements UserProviderContract
             $query->active();
         }
 
-        // Match against the encrypted value at the DB level so no decryption/comparison happens in PHP
-        $key = config('auth.scouts_digital.authentication.encryption_key');
-        $plain = (string) $credentials['password'];
-        $query->whereRaw('passwordNew = AES_ENCRYPT(?, ?)', [$plain, $key]);
+        // If password is provided, match against the encrypted value at the DB level
+        if (isset($credentials['password'])) {
+            $key = config('auth.scouts_digital.authentication.encryption_key');
+            $plain = (string) $credentials['password'];
+            $query->whereRaw('passwordNew = AES_ENCRYPT(?, ?)', [$plain, $key]);
+        }
 
         return $query->first();
     }

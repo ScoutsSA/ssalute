@@ -24,6 +24,6 @@ class AmsDocumentType extends BaseModel
 
     public function documents(): HasMany
     {
-        return $this->hasMany(AmsDocument::class, 'documentTypeID');
+        return $this->hasMany(Document::class, 'documentTypeID');
     }
 }

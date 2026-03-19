@@ -2,12 +2,14 @@
 
 namespace App\Filament\Admin\Resources\Users\RelationManagers;
 
+use App\Services\FileUrlService;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
@@ -34,9 +36,12 @@ class UserDocumentsRelationManager extends RelationManager
                 Select::make('documentTypeID')
                     ->label('Document Type')
                     ->relationship('documentType', 'typeName'),
-                TextInput::make('PDFLocation')
-                    ->label('Document Location')
-                    ->maxLength(255),
+                FileUpload::make('PDFLocation')
+                    ->label('Document')
+                    ->disk('legacy')
+                    ->directory('ssalute/documents')
+                    ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])
+                    ->maxSize(51200),
             ]);
     }
 
@@ -49,7 +54,9 @@ class UserDocumentsRelationManager extends RelationManager
                 TextEntry::make('documentType.typeName')
                     ->label('Document Type'),
                 TextEntry::make('PDFLocation')
-                    ->label('Document Location'),
+                    ->label('Document')
+                    ->url(fn ($state) => $state ? app(FileUrlService::class)->url($state) : null)
+                    ->openUrlInNewTab(),
             ]);
     }
 
@@ -76,7 +83,9 @@ class UserDocumentsRelationManager extends RelationManager
                     ->label('Type')
                     ->toggleable(),
                 TextColumn::make('PDFLocation')
-                    ->label('Location')
+                    ->label('Document')
+                    ->url(fn ($state) => $state ? app(FileUrlService::class)->url($state) : null)
+                    ->openUrlInNewTab()
                     ->toggleable(isToggledHiddenByDefault: true),
                 IconColumn::make('active')
                     ->boolean()

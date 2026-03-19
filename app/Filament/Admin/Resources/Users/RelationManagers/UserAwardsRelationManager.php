@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Users\RelationManagers;
 
+use App\Services\FileUrlService;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -9,6 +10,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -36,6 +38,12 @@ class UserAwardsRelationManager extends RelationManager
                     ->relationship('heading', 'heading'),
                 DatePicker::make('awardDate')
                     ->label('Award Date'),
+                FileUpload::make('PDFLocation')
+                    ->label('Document')
+                    ->disk('legacy')
+                    ->directory('ssalute/awards')
+                    ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
+                    ->maxSize(51200),
             ]);
     }
 
@@ -50,6 +58,10 @@ class UserAwardsRelationManager extends RelationManager
                 TextEntry::make('awardDate')
                     ->label('Award Date')
                     ->date(),
+                TextEntry::make('PDFLocation')
+                    ->label('Document')
+                    ->url(fn ($state) => $state ? app(FileUrlService::class)->url($state) : null)
+                    ->openUrlInNewTab(),
             ]);
     }
 

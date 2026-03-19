@@ -68,8 +68,6 @@ class UserResignationsRelationManager extends RelationManager
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->defaultSort('resignDate', 'desc')
-            ->deferFilters(false)
-            ->deferColumnManager(false)
             ->recordAction(ViewAction::class)
             ->actions([
                 ViewAction::make(),

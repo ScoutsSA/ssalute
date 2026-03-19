@@ -1,55 +1,65 @@
 <?php
 
-namespace App\Filament\General\Pages;
+namespace App\Filament\General\Resources\Profile\Pages;
 
 use App\Enums\UserEnglishProficiency;
 use App\Enums\UserRace;
 use App\Enums\UserSex;
 use App\Enums\UserTitle;
+use App\Filament\General\Resources\Profile\ProfileResource;
 use App\Models\AmsHighestEducation;
 use App\Models\AmsLanguage;
 use App\Models\AmsMaritalStatus;
 use App\Models\GroupUserPictureChange;
 use App\Settings\FeatureSettings;
-use BackedEnum;
 use Filament\Actions\Action;
-use Filament\Facades\Filament;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
-use Filament\Pages\Page;
+use Filament\Resources\Pages\Concerns\InteractsWithRecord;
+use Filament\Resources\Pages\Page;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Js;
+use Imagick;
 
 class EditProfile extends Page
 {
-    protected static string|null|BackedEnum $navigationIcon = Heroicon::PencilSquare;
+    use InteractsWithRecord;
+
+    protected static string $resource = ProfileResource::class;
 
     protected static ?string $title = 'Edit Profile';
-
-    protected static bool $shouldRegisterNavigation = false;
 
     public ?array $data = [];
 
     protected string $view = 'filament.general.pages.edit-profile';
 
-    public static function canAccess(): bool
+    public static function canAccess(array $parameters = []): bool
     {
         return resolve(FeatureSettings::class)->users_can_edit_profiles;
     }
 
-    public function mount(): void
+    public function getBreadcrumbs(): array
     {
+        return [];
+    }
+
+    public function mount(int|string $record): void
+    {
+        $this->record = $this->resolveRecord($record);
+
         $user = auth()->user();
 
         $this->form->fill([
-            'new_photo' => null,
+            'new_photo' => $user->photo,
             'title' => $user->title,
             'first_name' => $user->first_name,
             'otherName' => $user->otherName,
@@ -62,6 +72,8 @@ class EditProfile extends Page
             'dob' => $user->dob,
             'idNumber' => $user->idNumber,
             'passportNumber' => $user->passportNumber,
+            'startDate' => $user->startDate,
+            'dateInvested' => $user->dateInvested,
             'username' => $user->username,
             'cellNr' => $user->cellNr,
             'officeNr' => $user->officeNr,
@@ -73,7 +85,7 @@ class EditProfile extends Page
             'employer' => $user->employer,
             'maritalStatus' => $user->maritalStatus,
             'highestEducation' => $user->highestEducation,
-            'religiousBelief' => $user->religiousBelief,
+
             'hobbies' => $user->hobbies,
             'sports' => $user->sports,
             'interests' => $user->interests,
@@ -105,26 +117,15 @@ class EditProfile extends Page
     {
         $data = $this->form->getState();
 
-        // Exclude username — users cannot change their login email here
+        // Exclude username: users cannot change their login email here
         unset($data['username']);
 
         $user = auth()->user();
 
-        // Handle photo upload
-        if (! empty($data['new_photo'])) {
-            $newPhotoPath = $data['new_photo'];
-
-            // Save old photo to history
-            if ($user->photo) {
-                GroupUserPictureChange::create([
-                    'userID' => $user->id,
-                    'pictureLocation' => $user->photo,
-                    'createdby' => $user->id,
-                ]);
-            }
-
-            $user->photo = $newPhotoPath;
-            $user->thumb = $newPhotoPath;
+        // Handle photo upload — only process if the file changed
+        $newPhoto = $data['new_photo'] ?? null;
+        if ($newPhoto && $newPhoto !== $user->photo) {
+            $this->processPhotoUpload($user, $newPhoto);
         }
         unset($data['new_photo']);
 
@@ -135,7 +136,14 @@ class EditProfile extends Page
             ->success()
             ->send();
 
-        $this->redirect(ViewProfile::getUrl(panel: 'general', tenant: Filament::getTenant()));
+        $baseUrl = ProfileResource::getUrl('view', ['record' => $user->id]);
+
+        $this->js(
+            'const params = new URLSearchParams(window.location.search);' .
+            'let url = ' . Js::from($baseUrl) . ';' .
+            'if (params.has(\'tab\')) url += \'?tab=\' + encodeURIComponent(params.get(\'tab\'));' .
+            'window.location.href = url;'
+        );
     }
 
     public function form(Schema $schema): Schema
@@ -144,6 +152,7 @@ class EditProfile extends Page
             ->statePath('data')
             ->components([
                 Tabs::make()
+                    ->id('profile-tabs')
                     ->columnSpanFull()
                     ->persistTabInQueryString('tab')
                     ->tabs([
@@ -152,15 +161,16 @@ class EditProfile extends Page
                             ->visible(fn () => resolve(FeatureSettings::class)->users_can_upload_profile_photo)
                             ->schema([
                                 Section::make('Profile Photo')
-                                    ->description('Upload a new profile photo. Accepted formats: JPEG, PNG. Max size: 5MB.')
+                                    ->collapsible()
+                                    ->description('Upload a new profile photo. Accepted formats: JPEG, PNG. Max size: 50MB.')
                                     ->schema([
                                         FileUpload::make('new_photo')
-                                            ->label('New Photo')
-                                            ->disk('legacy_files')
-                                            ->directory(fn () => 'photos/users/' . auth()->id())
+                                            ->label('Photo')
+                                            ->disk('legacy')
+                                            ->directory('ssalute/profile-picture')
                                             ->image()
                                             ->imageEditor()
-                                            ->maxSize(5120)
+                                            ->maxSize(51200)
                                             ->acceptedFileTypes(['image/jpeg', 'image/png']),
                                     ]),
                             ]),
@@ -169,6 +179,7 @@ class EditProfile extends Page
                             ->icon(Heroicon::User)
                             ->schema([
                                 Section::make('Name')
+                                    ->collapsible()
                                     ->columns(3)
                                     ->schema([
                                         Select::make('title')
@@ -188,6 +199,7 @@ class EditProfile extends Page
                                     ]),
 
                                 Section::make('Details')
+                                    ->collapsible()
                                     ->columns(3)
                                     ->schema([
                                         Select::make('sex')
@@ -209,6 +221,10 @@ class EditProfile extends Page
                                             ->disabled()
                                             ->dehydrated(false)
                                             ->helperText('Contact an administrator to change your passport number.'),
+                                        DatePicker::make('startDate')
+                                            ->label('Member Since'),
+                                        DatePicker::make('dateInvested')
+                                            ->label('Date Invested'),
                                     ]),
                             ]),
 
@@ -216,7 +232,8 @@ class EditProfile extends Page
                             ->icon(Heroicon::Phone)
                             ->schema([
                                 Section::make('Contact Details')
-                                    ->columns(3)
+                                    ->collapsible()
+                                    ->columns(2)
                                     ->schema([
                                         TextInput::make('username')
                                             ->label('Email / Username')
@@ -239,6 +256,7 @@ class EditProfile extends Page
                             ->icon(Heroicon::MapPin)
                             ->schema([
                                 Section::make('Address')
+                                    ->collapsible()
                                     ->columns(1)
                                     ->schema([
                                         Textarea::make('phys_address')
@@ -256,6 +274,7 @@ class EditProfile extends Page
                             ->icon(Heroicon::Briefcase)
                             ->schema([
                                 Section::make('Employment')
+                                    ->collapsible()
                                     ->columns(3)
                                     ->schema([
                                         TextInput::make('occupation')
@@ -267,7 +286,8 @@ class EditProfile extends Page
                                     ]),
 
                                 Section::make('Personal Details')
-                                    ->columns(3)
+                                    ->collapsible()
+                                    ->columns(2)
                                     ->schema([
                                         Select::make('maritalStatus')
                                             ->label('Marital Status')
@@ -280,10 +300,9 @@ class EditProfile extends Page
                                     ]),
 
                                 Section::make('Personal Interests')
-                                    ->columns(3)
+                                    ->collapsible()
+                                    ->columns(2)
                                     ->schema([
-                                        TextInput::make('religiousBelief')
-                                            ->label('Religious Belief'),
                                         Textarea::make('hobbies')
                                             ->rows(2),
                                         Textarea::make('sports')
@@ -297,6 +316,7 @@ class EditProfile extends Page
                             ->icon(Heroicon::Heart)
                             ->schema([
                                 Section::make('Medical Aid')
+                                    ->collapsible()
                                     ->columns(3)
                                     ->schema([
                                         TextInput::make('medicalAidName')
@@ -308,7 +328,8 @@ class EditProfile extends Page
                                     ]),
 
                                 Section::make('Doctor')
-                                    ->columns(3)
+                                    ->collapsible()
+                                    ->columns(2)
                                     ->schema([
                                         TextInput::make('doctorsName')
                                             ->label("Doctor's Name"),
@@ -318,6 +339,7 @@ class EditProfile extends Page
                                     ]),
 
                                 Section::make('Health Information')
+                                    ->collapsible()
                                     ->columns(1)
                                     ->schema([
                                         TextInput::make('allergies')
@@ -351,7 +373,8 @@ class EditProfile extends Page
                             ->icon(Heroicon::Language)
                             ->schema([
                                 Section::make('Languages')
-                                    ->columns(3)
+                                    ->collapsible()
+                                    ->columns(2)
                                     ->schema([
                                         Select::make('homeLanguage')
                                             ->label('Home Language')
@@ -376,7 +399,8 @@ class EditProfile extends Page
                             ->icon(Heroicon::ExclamationTriangle)
                             ->schema([
                                 Section::make('Emergency Contact')
-                                    ->columns(3)
+                                    ->collapsible()
+                                    ->columns(2)
                                     ->schema([
                                         TextInput::make('emergencyContactName')
                                             ->label('Name'),
@@ -405,7 +429,65 @@ class EditProfile extends Page
                 ->label('Cancel')
                 ->icon(Heroicon::XMark)
                 ->color('gray')
-                ->url(fn () => ViewProfile::getUrl(panel: 'general', tenant: Filament::getTenant())),
+                ->alpineClickHandler(
+                    'const params = new URLSearchParams(window.location.search);' .
+                    'let url = ' . Js::from(ProfileResource::getUrl('view', ['record' => $this->getRecord()])) . ';' .
+                    'if (params.has(\'tab\')) url += \'?tab=\' + encodeURIComponent(params.get(\'tab\'));' .
+                    'window.location.href = url;'
+                ),
         ];
+    }
+
+    private function processPhotoUpload(\App\Models\SystemUser $user, string $uploadedPath): void
+    {
+        $legacyDisk = Storage::disk('legacy');
+
+        $extension = pathinfo($uploadedPath, PATHINFO_EXTENSION) ?: 'jpg';
+        $filename = 'PROFILE_IMAGE_' . $user->id . '_' . now()->format('Y-m-d_H-i-s') . '.' . $extension;
+        $photoPath = 'ssalute/profile-picture/' . $filename;
+        $thumbPath = 'ssalute/profile-picture-thumbnail/' . $filename;
+
+        // Archive old photo and remove old thumbnail
+        if ($user->photo) {
+            $oldFilename = basename($user->photo);
+            $historicPath = 'ssalute/historic-profile-picture/' . $oldFilename;
+
+            if ($legacyDisk->exists($user->photo)) {
+                $legacyDisk->move($user->photo, $historicPath);
+            }
+
+            if ($user->thumb && $legacyDisk->exists($user->thumb)) {
+                $legacyDisk->delete($user->thumb);
+            }
+
+            GroupUserPictureChange::create([
+                'userID' => $user->id,
+                'pictureLocation' => $historicPath,
+                'createdby' => $user->id,
+            ]);
+        }
+
+        $absolutePath = $legacyDisk->path($uploadedPath);
+
+        // Resize original to max 1000x1000 at 85% quality
+        $image = new Imagick($absolutePath);
+        $image->setImageCompressionQuality(85);
+        $image->thumbnailImage(1000, 1000, true);
+        $legacyDisk->put($photoPath, $image->getImageBlob());
+
+        // Generate 80px tall thumbnail at 85% quality
+        $image->thumbnailImage(0, 80);
+        $legacyDisk->put($thumbPath, $image->getImageBlob());
+
+        $image->clear();
+        $image->destroy();
+
+        // Clean up the raw upload (FileUpload stored it before processing)
+        if ($uploadedPath !== $photoPath) {
+            $legacyDisk->delete($uploadedPath);
+        }
+
+        $user->photo = $photoPath;
+        $user->thumb = $thumbPath;
     }
 }

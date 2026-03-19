@@ -32,6 +32,7 @@ use Illuminate\Support\Str;
 class SystemUser extends User implements \OwenIt\Auditing\Contracts\Auditable, FilamentUser, HasDefaultTenant, HasTenants
 {
     use HasFactory;
+    use \Illuminate\Notifications\Notifiable;
     use IsAuditable;
     use MightHaveCreatedBy;
     use MightHaveModifiedBy;
@@ -293,17 +294,17 @@ class SystemUser extends User implements \OwenIt\Auditing\Contracts\Auditable, F
 
     public function documents(): HasMany
     {
-        return $this->hasMany(AmsDocument::class, 'userID', 'id');
+        return $this->hasMany(Document::class, 'userID', 'id');
     }
 
     public function trainingHistory(): HasMany
     {
-        return $this->hasMany(AmsTrainingPast::class, 'userID', 'id');
+        return $this->hasMany(PastTraining::class, 'userID', 'id');
     }
 
     public function awards(): HasMany
     {
-        return $this->hasMany(AmsAwardInfo::class, 'userID', 'id');
+        return $this->hasMany(Award::class, 'userID', 'id');
     }
 
     public function performedAudits(): HasMany
@@ -318,7 +319,7 @@ class SystemUser extends User implements \OwenIt\Auditing\Contracts\Auditable, F
 
     public function pastService(): HasMany
     {
-        return $this->hasMany(AmsPastServiceInfo::class, 'userID', 'id');
+        return $this->hasMany(PastService::class, 'userID', 'id');
     }
 
     public function latestPoliceClearance(): HasOne
@@ -600,12 +601,26 @@ class SystemUser extends User implements \OwenIt\Auditing\Contracts\Auditable, F
     }
 
     /*******************
+     * Password Reset
+     *******************/
+    public function getEmailForPasswordReset(): string
+    {
+        return $this->username;
+    }
+
+    public function routeNotificationForMail(): string
+    {
+        return $this->username;
+    }
+
+    /*******************
      * Attributes
      *******************/
     protected function title(): Attribute
     {
         return Attribute::make(
             get: fn (mixed $value) => filled($value) ? UserTitle::tryFrom($value) : null,
+            set: fn (mixed $value) => $value instanceof UserTitle ? $value->value : $value,
         );
     }
 }

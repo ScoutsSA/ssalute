@@ -2,13 +2,12 @@
 
 namespace Tests\Feature\Filament\General;
 
-use App\Filament\General\Pages\MembershipCertificate;
+use App\Filament\General\Resources\Profile\Pages\MembershipCertificate;
 use App\Models\MembershipCertificate as MembershipCertificateModel;
 use App\Models\SystemUser;
 use App\Models\SystemUserType;
 use App\Settings\FeatureSettings;
 use Filament\Facades\Filament;
-use Illuminate\Support\Facades\Mail;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\Support\SdCoreTestCase;
@@ -30,7 +29,7 @@ class MembershipCertificateTest extends SdCoreTestCase
         [$user, $tenant] = $this->setupUserAndPanel();
 
         Livewire::actingAs($user)
-            ->test(MembershipCertificate::class)
+            ->test(MembershipCertificate::class, ['record' => $user->id])
             ->assertOk()
             ->assertSee('Important Notice')
             ->assertSee('Select Information to Display');
@@ -47,7 +46,7 @@ class MembershipCertificateTest extends SdCoreTestCase
         $tenant = $user->roleAttachments()->first();
 
         $this->actingAs($user)
-            ->get("/general/{$tenant->id}/membership-certificate")
+            ->get("/general/{$tenant->id}/profile/{$user->id}/membership-certificate")
             ->assertForbidden();
     }
 
@@ -63,7 +62,7 @@ class MembershipCertificateTest extends SdCoreTestCase
         $tenant = $user->roleAttachments()->first();
 
         $this->actingAs($user)
-            ->get("/general/{$tenant->id}/membership-certificate")
+            ->get("/general/{$tenant->id}/profile/{$user->id}/membership-certificate")
             ->assertForbidden();
     }
 
@@ -79,7 +78,7 @@ class MembershipCertificateTest extends SdCoreTestCase
         $tenant = $user->roleAttachments()->first();
 
         $this->actingAs($user)
-            ->get("/general/{$tenant->id}/membership-certificate")
+            ->get("/general/{$tenant->id}/profile/{$user->id}/membership-certificate")
             ->assertForbidden();
     }
 
@@ -101,7 +100,7 @@ class MembershipCertificateTest extends SdCoreTestCase
         $tenant = $user->roleAttachments()->first();
 
         $this->actingAs($user)
-            ->get("/general/{$tenant->id}/membership-certificate")
+            ->get("/general/{$tenant->id}/profile/{$user->id}/membership-certificate")
             ->assertOk();
     }
 
@@ -111,8 +110,8 @@ class MembershipCertificateTest extends SdCoreTestCase
         [$user, $tenant] = $this->setupUserAndPanel();
 
         Livewire::actingAs($user)
-            ->test(MembershipCertificate::class)
-            ->set('selectedFields', ['name', 'ssa_id', 'roles'])
+            ->test(MembershipCertificate::class, ['record' => $user->id])
+            ->set('selectedFields', ['email'])
             ->set('includePhoto', false)
             ->call('saveCertificate')
             ->assertNotified('Certificate saved successfully!');
@@ -123,7 +122,10 @@ class MembershipCertificateTest extends SdCoreTestCase
 
         $certificate = MembershipCertificateModel::where('user_id', $user->id)->first();
         $this->assertNotNull($certificate);
-        $this->assertEquals(['name', 'ssa_id', 'roles'], $certificate->visible_fields);
+        $this->assertContains('name', $certificate->visible_fields);
+        $this->assertContains('ssa_id', $certificate->visible_fields);
+        $this->assertContains('roles', $certificate->visible_fields);
+        $this->assertContains('email', $certificate->visible_fields);
         $this->assertNotNull($certificate->uuid);
     }
 
@@ -133,14 +135,17 @@ class MembershipCertificateTest extends SdCoreTestCase
         [$user, $tenant] = $this->setupUserAndPanel();
 
         Livewire::actingAs($user)
-            ->test(MembershipCertificate::class)
-            ->set('selectedFields', ['name', 'ssa_id'])
+            ->test(MembershipCertificate::class, ['record' => $user->id])
+            ->set('selectedFields', [])
             ->set('includePhoto', true)
             ->call('saveCertificate')
             ->assertNotified('Certificate saved successfully!');
 
         $certificate = MembershipCertificateModel::where('user_id', $user->id)->first();
         $this->assertContains('photo', $certificate->visible_fields);
+        $this->assertContains('name', $certificate->visible_fields);
+        $this->assertContains('ssa_id', $certificate->visible_fields);
+        $this->assertContains('roles', $certificate->visible_fields);
     }
 
     #[Test]
@@ -149,8 +154,8 @@ class MembershipCertificateTest extends SdCoreTestCase
         [$user, $tenant] = $this->setupUserAndPanel();
 
         Livewire::actingAs($user)
-            ->test(MembershipCertificate::class)
-            ->set('selectedFields', ['name', 'ssa_id'])
+            ->test(MembershipCertificate::class, ['record' => $user->id])
+            ->set('selectedFields', ['phone'])
             ->set('includePhoto', false)
             ->call('saveCertificate')
             ->assertNotified('Certificate saved successfully!');
@@ -158,8 +163,8 @@ class MembershipCertificateTest extends SdCoreTestCase
         $originalUuid = MembershipCertificateModel::where('user_id', $user->id)->first()->uuid;
 
         Livewire::actingAs($user)
-            ->test(MembershipCertificate::class)
-            ->set('selectedFields', ['name', 'email', 'roles'])
+            ->test(MembershipCertificate::class, ['record' => $user->id])
+            ->set('selectedFields', ['email'])
             ->set('includePhoto', true)
             ->call('saveCertificate')
             ->assertNotified('Certificate saved successfully!');
@@ -168,7 +173,12 @@ class MembershipCertificateTest extends SdCoreTestCase
 
         $certificate = MembershipCertificateModel::where('user_id', $user->id)->first();
         $this->assertEquals($originalUuid, $certificate->uuid);
-        $this->assertEquals(['name', 'email', 'roles', 'photo'], $certificate->visible_fields);
+        $this->assertContains('name', $certificate->visible_fields);
+        $this->assertContains('ssa_id', $certificate->visible_fields);
+        $this->assertContains('roles', $certificate->visible_fields);
+        $this->assertContains('email', $certificate->visible_fields);
+        $this->assertContains('photo', $certificate->visible_fields);
+        $this->assertNotContains('phone', $certificate->visible_fields);
     }
 
     #[Test]
@@ -182,8 +192,8 @@ class MembershipCertificateTest extends SdCoreTestCase
         ]);
 
         Livewire::actingAs($user)
-            ->test(MembershipCertificate::class)
-            ->assertSet('selectedFields', ['name', 'email'])
+            ->test(MembershipCertificate::class, ['record' => $user->id])
+            ->assertSet('selectedFields', ['email'])
             ->assertSet('includePhoto', true);
     }
 
@@ -265,58 +275,11 @@ class MembershipCertificateTest extends SdCoreTestCase
         $this->assertDatabaseCount('membership_certificates', 1);
 
         Livewire::actingAs($user)
-            ->test(MembershipCertificate::class)
+            ->test(MembershipCertificate::class, ['record' => $user->id])
             ->call('removeCertificate')
             ->assertNotified('Certificate removed');
 
         $this->assertDatabaseCount('membership_certificates', 0);
-    }
-
-    #[Test]
-    public function endorsement_request_sends_email(): void
-    {
-        Mail::fake();
-
-        $icRole = SystemUserType::factory()->create();
-        $icUser = SystemUser::factory()->withRole($icRole)->create([
-            'username' => 'ic-rep@test.example',
-        ]);
-
-        $settings = resolve(FeatureSettings::class);
-        $settings->users_can_request_endorsement = true;
-        $settings->international_committee_representative_role_ids = [$icRole->id];
-        $settings->save();
-
-        [$user, $tenant] = $this->setupUserAndPanel();
-
-        Livewire::actingAs($user)
-            ->test(MembershipCertificate::class)
-            ->callAction('requestEndorsement', [
-                'subject' => 'Test Endorsement Subject',
-                'description' => 'Test endorsement description',
-            ])
-            ->assertNotified('Endorsement request sent successfully');
-
-        Mail::assertQueued(\App\Mail\Profile\EndorsementRequestEmail::class);
-    }
-
-    #[Test]
-    public function endorsement_request_fails_without_configured_roles(): void
-    {
-        [$user, $tenant] = $this->setupUserAndPanel();
-
-        $settings = resolve(FeatureSettings::class);
-        $settings->users_can_request_endorsement = true;
-        $settings->international_committee_representative_role_ids = [];
-        $settings->save();
-
-        Livewire::actingAs($user)
-            ->test(MembershipCertificate::class)
-            ->callAction('requestEndorsement', [
-                'subject' => 'Test Subject',
-                'description' => 'Test description',
-            ])
-            ->assertNotified('No International Committee Representatives configured');
     }
 
     #[Test]
@@ -333,7 +296,7 @@ class MembershipCertificateTest extends SdCoreTestCase
         $tenant = $user->roleAttachments()->first();
 
         $this->actingAs($user)
-            ->get("/general/{$tenant->id}/membership-certificate")
+            ->get("/general/{$tenant->id}/profile/{$user->id}/membership-certificate")
             ->assertForbidden();
     }
 
@@ -354,7 +317,7 @@ class MembershipCertificateTest extends SdCoreTestCase
         Filament::setTenant($tenant);
 
         Livewire::actingAs($user)
-            ->test(MembershipCertificate::class)
+            ->test(MembershipCertificate::class, ['record' => $user->id])
             ->assertOk();
     }
 

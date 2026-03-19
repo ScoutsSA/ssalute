@@ -8,7 +8,7 @@ use App\Filament\Admin\Clusters\AMS\Resources\Awards\Pages\ViewAward;
 use App\Filament\Admin\Clusters\AMS\Resources\Awards\Schemas\AwardForm;
 use App\Filament\Admin\Clusters\AMS\Resources\Awards\Schemas\AwardInfolist;
 use App\Filament\Admin\Clusters\AMS\Resources\Awards\Tables\AwardsTable;
-use App\Models\AmsAwardInfo;
+use App\Models\Award;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -17,7 +17,7 @@ use Filament\Tables\Table;
 
 class AwardResource extends Resource
 {
-    protected static ?string $model = AmsAwardInfo::class;
+    protected static ?string $model = Award::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::Trophy;
 

@@ -10,21 +10,21 @@ use App\Filament\Admin\Clusters\AMS\Resources\PoliceClearances\Pages\ViewPoliceC
 use App\Filament\Admin\Clusters\AMS\Resources\Training\Pages\ViewTrainingRecord;
 use App\Filament\Admin\Clusters\AMS\Resources\Warrants\Pages\ViewWarrant;
 use App\Models\AmsAwardHeading;
-use App\Models\AmsAwardInfo;
 use App\Models\AmsAwardType;
 use App\Models\AmsChargeInfo;
 use App\Models\AmsChargeType;
 use App\Models\AmsDisciplinaryHeading;
 use App\Models\AmsDisciplinaryInfo;
-use App\Models\AmsPastServiceInfo;
 use App\Models\AmsPastServiceType;
 use App\Models\AmsPoliceClearance;
-use App\Models\AmsTrainingPast;
 use App\Models\AmsTrainingPastType;
 use App\Models\AmsWarrantInfo;
 use App\Models\AmsWarrantType;
+use App\Models\Award;
 use App\Models\District;
 use App\Models\Group;
+use App\Models\PastService;
+use App\Models\PastTraining;
 use App\Models\Region;
 use App\Models\SystemUser;
 use App\Settings\GeneralSettings;
@@ -82,7 +82,7 @@ class AmsClusterCrudTest extends SdCoreTestCase
             ])
             ->assertHasNoActionErrors();
 
-        $this->assertDatabaseHas(AmsAwardInfo::class, [
+        $this->assertDatabaseHas(Award::class, [
             'id' => $record->id,
             'awardDate' => '2025-06-15',
         ]);
@@ -212,7 +212,7 @@ class AmsClusterCrudTest extends SdCoreTestCase
             ])
             ->assertHasNoActionErrors();
 
-        $this->assertDatabaseHas(AmsPastServiceInfo::class, [
+        $this->assertDatabaseHas(PastService::class, [
             'id' => $record->id,
             'startDate' => '2021-06-01',
         ]);
@@ -264,7 +264,7 @@ class AmsClusterCrudTest extends SdCoreTestCase
             ])
             ->assertHasNoActionErrors();
 
-        $this->assertDatabaseHas(AmsTrainingPast::class, [
+        $this->assertDatabaseHas(PastTraining::class, [
             'id' => $record->id,
             'courseName' => 'Updated Course',
         ]);
@@ -272,12 +272,12 @@ class AmsClusterCrudTest extends SdCoreTestCase
 
     // --- Helpers ---
 
-    private function createAward(array $overrides = []): AmsAwardInfo
+    private function createAward(array $overrides = []): Award
     {
         $heading = AmsAwardHeading::factory()->create();
         $type = AmsAwardType::factory()->create(['headingID' => $heading->id]);
 
-        return AmsAwardInfo::create(array_merge([
+        return Award::create(array_merge([
             'userID' => $this->member->id,
             'awardHeadingID' => $heading->id,
             'awardTypeID' => $type->id,
@@ -346,11 +346,11 @@ class AmsClusterCrudTest extends SdCoreTestCase
         ], $overrides));
     }
 
-    private function createPastService(array $overrides = []): AmsPastServiceInfo
+    private function createPastService(array $overrides = []): PastService
     {
         $type = AmsPastServiceType::factory()->create();
 
-        return AmsPastServiceInfo::create(array_merge([
+        return PastService::create(array_merge([
             'userID' => $this->member->id,
             'pastServiceType' => $type->id,
             'startDate' => '2020-01-01',
@@ -364,11 +364,11 @@ class AmsClusterCrudTest extends SdCoreTestCase
         ], $overrides));
     }
 
-    private function createTraining(array $overrides = []): AmsTrainingPast
+    private function createTraining(array $overrides = []): PastTraining
     {
         $type = AmsTrainingPastType::factory()->create();
 
-        return AmsTrainingPast::create(array_merge([
+        return PastTraining::create(array_merge([
             'userID' => $this->member->id,
             'trainingTypeID' => $type->id,
             'courseName' => 'Test Course',

@@ -80,8 +80,6 @@ class UserSuspensionsRelationManager extends RelationManager
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->defaultSort('suspendDate', 'desc')
-            ->deferFilters(false)
-            ->deferColumnManager(false)
             ->recordAction(ViewAction::class)
             ->actions([
                 ViewAction::make(),

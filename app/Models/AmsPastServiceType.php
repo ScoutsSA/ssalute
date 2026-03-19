@@ -23,6 +23,6 @@ class AmsPastServiceType extends BaseModel // This whole model/database table is
 
     public function pastServices(): HasMany
     {
-        return $this->hasMany(AmsPastServiceInfo::class, 'pastServiceType');
+        return $this->hasMany(PastService::class, 'pastServiceType');
     }
 }

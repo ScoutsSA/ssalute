@@ -98,8 +98,6 @@ class AuditLog extends Page implements HasActions, HasSchemas, HasTable
             ->recordActions([
                 self::auditViewAction(),
             ])
-            ->deferFilters(false)
-            ->deferColumnManager(false)
             ->paginated([10, 25, 50]);
     }
 }

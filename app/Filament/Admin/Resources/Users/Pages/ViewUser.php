@@ -20,13 +20,16 @@ use App\Models\SystemUserType;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\EditAction;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
+use Filament\Pages\Dashboard;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
 use STS\FilamentImpersonate\Actions\Impersonate;
 
 class ViewUser extends ViewRecord
@@ -40,7 +43,23 @@ class ViewUser extends ViewRecord
 
         return [
             EditAction::make(),
-            Impersonate::make()->record($record),
+            Impersonate::make()
+                ->record($record)
+                ->redirectTo(function () use ($record): string {
+                    $tenant = $record->getDefaultTenant(Filament::getPanel('general'));
+
+                    return $tenant ? Dashboard::getUrl(panel: 'general', tenant: $tenant) : '/general';
+                }),
+            Action::make('SD_Login')
+                ->label('Impersonate on SD')
+                ->icon(Heroicon::ArrowTopRightOnSquare)
+                ->color('gray')
+                ->url(fn (): string => URL::temporarySignedRoute(
+                    'impersonate.scouts-digital',
+                    now()->addSeconds(60),
+                    ['user' => $record->id],
+                ))
+                ->openUrlInNewTab(),
 
             Action::make('activate')
                 ->label('Activate')

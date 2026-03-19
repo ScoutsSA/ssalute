@@ -174,8 +174,6 @@ class Notifications extends Page implements HasActions, HasSchemas, HasTable
                             'shown' => 1,
                         ]))),
             ])
-            ->deferFilters(false)
-            ->deferColumnManager(false)
             ->paginated([10, 25, 50]);
     }
 }

@@ -40,8 +40,6 @@ class DistrictsTable
                 SelectFilter::make('region')
                     ->relationship('region', 'name', fn ($query) => $query->orderBy('position', 'asc')),
             ])
-            ->deferFilters(false)
-            ->deferColumnManager(false)
             ->recordUrl(fn (District $record) => GroupResource::getUrl('index', parameters: [
                 'filters[region][value]' => $record->region->getKey(),
                 'filters[district][value]' => $record->getKey(),
