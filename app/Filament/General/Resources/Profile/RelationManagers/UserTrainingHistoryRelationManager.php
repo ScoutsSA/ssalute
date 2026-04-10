@@ -28,6 +28,10 @@ class UserTrainingHistoryRelationManager extends RelationManager
 
     protected static ?string $title = 'Training History';
 
+    protected static ?string $modelLabel = 'training record';
+
+    protected static ?string $pluralModelLabel = 'training records';
+
     public function infolist(Schema $schema): Schema
     {
         return $schema

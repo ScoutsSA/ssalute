@@ -30,6 +30,10 @@ class UserWarrantsRelationManager extends RelationManager
 
     protected static ?string $title = 'Warrants';
 
+    protected static ?string $modelLabel = 'warrant';
+
+    protected static ?string $pluralModelLabel = 'warrants';
+
     public function infolist(Schema $schema): Schema
     {
         return $schema

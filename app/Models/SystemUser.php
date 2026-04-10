@@ -25,17 +25,19 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class SystemUser extends User implements \OwenIt\Auditing\Contracts\Auditable, FilamentUser, HasDefaultTenant, HasTenants
+class SystemUser extends User implements Auditable, FilamentUser, HasDefaultTenant, HasTenants
 {
     use HasFactory;
-    use \Illuminate\Notifications\Notifiable;
     use IsAuditable;
     use MightHaveCreatedBy;
     use MightHaveModifiedBy;
+    use Notifiable;
 
     const CREATED_AT = 'created';
     const UPDATED_AT = 'modified';
@@ -333,9 +335,9 @@ class SystemUser extends User implements \OwenIt\Auditing\Contracts\Auditable, F
         return $this->hasOne(MembershipCertificate::class, 'user_id');
     }
 
-    public function chargeInfos(): HasMany
+    public function licenceInfos(): HasMany
     {
-        return $this->hasMany(AmsChargeInfo::class, 'userID', 'id');
+        return $this->hasMany(AmsLicenceInfo::class, 'userID', 'id');
     }
 
     public function disciplinaryInfos(): HasMany

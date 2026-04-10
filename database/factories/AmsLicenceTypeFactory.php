@@ -2,13 +2,13 @@
 
 namespace Database\Factories;
 
-use App\Models\AmsChargeType;
+use App\Models\AmsLicenceType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/** @extends Factory<AmsChargeType> */
-class AmsChargeTypeFactory extends Factory
+/** @extends Factory<AmsLicenceType> */
+class AmsLicenceTypeFactory extends Factory
 {
-    protected $model = AmsChargeType::class;
+    protected $model = AmsLicenceType::class;
 
     public function definition(): array
     {

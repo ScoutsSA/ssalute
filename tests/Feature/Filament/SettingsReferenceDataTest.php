@@ -6,7 +6,6 @@ use App\Filament\Admin\Clusters\LookupTables\Resources\AccountTypes\AccountTypeR
 use App\Filament\Admin\Clusters\LookupTables\Resources\AssetConditions\AssetConditionResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\AwardHeadings\AwardHeadingResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\AwardTypes\AwardTypeResource;
-use App\Filament\Admin\Clusters\LookupTables\Resources\ChargeTypes\ChargeTypeResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\CommitteeTypes\CommitteeTypeResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\CommitteeTypes\Pages\ManageCommitteeTypes;
 use App\Filament\Admin\Clusters\LookupTables\Resources\CouncilTypes\CouncilTypeResource;
@@ -21,6 +20,7 @@ use App\Filament\Admin\Clusters\LookupTables\Resources\FinancialFeeTypes\Financi
 use App\Filament\Admin\Clusters\LookupTables\Resources\GroupManagementLevels\GroupManagementLevelResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\HighestEducations\HighestEducationResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\Languages\LanguageResource;
+use App\Filament\Admin\Clusters\LookupTables\Resources\LicenceTypes\LicenceTypeResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\MaritalStatuses\MaritalStatusResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\MeerkatLevels\MeerkatLevelResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\ParentTypes\ParentTypeResource;
@@ -46,6 +46,7 @@ use App\Models\SystemAdvancementCubsLevel;
 use App\Models\SystemCommitteeType;
 use App\Models\SystemUser;
 use App\Settings\GeneralSettings;
+use Filament\Actions\Testing\TestAction;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -88,7 +89,7 @@ class SettingsReferenceDataTest extends SdCoreTestCase
             'warrant cancellation types' => [WarrantCancellationTypeResource::class],
             'document types' => [DocumentTypeResource::class],
             'document group types' => [DocumentGroupTypeResource::class],
-            'charge types' => [ChargeTypeResource::class],
+            'licence types' => [LicenceTypeResource::class],
             'disciplinary headings' => [DisciplinaryHeadingResource::class],
             'resign reasons' => [ResignReasonResource::class],
             'retire reasons' => [RetireReasonResource::class],
@@ -185,7 +186,7 @@ class SettingsReferenceDataTest extends SdCoreTestCase
         Livewire::actingAs($this->superAdmin)
             ->test(ManageCommitteeTypes::class)
             ->callAction('create', data: ['name' => 'New Committee Type', 'description' => 'A description', 'active' => true])
-            ->assertHasNoActionErrors();
+            ->assertHasNoFormErrors();
 
         $this->assertDatabaseHas('system_committee_types', ['name' => 'New Committee Type']);
     }
@@ -197,8 +198,8 @@ class SettingsReferenceDataTest extends SdCoreTestCase
 
         Livewire::actingAs($this->superAdmin)
             ->test(ManageCommitteeTypes::class)
-            ->callTableAction('edit', $record, data: ['name' => 'Updated Name', 'description' => 'A description'])
-            ->assertHasNoTableActionErrors();
+            ->callAction(TestAction::make('edit')->table($record), data: ['name' => 'Updated Name', 'description' => 'A description'])
+            ->assertHasNoFormErrors();
 
         $this->assertDatabaseHas('system_committee_types', ['id' => $record->id, 'name' => 'Updated Name']);
     }
@@ -210,8 +211,8 @@ class SettingsReferenceDataTest extends SdCoreTestCase
 
         Livewire::actingAs($this->superAdmin)
             ->test(ManageCommitteeTypes::class)
-            ->callTableAction('delete', $record)
-            ->assertHasNoTableActionErrors();
+            ->callAction(TestAction::make('delete')->table($record))
+            ->assertHasNoFormErrors();
 
         $this->assertDatabaseMissing('system_committee_types', ['id' => $record->id]);
     }
@@ -273,7 +274,7 @@ class SettingsReferenceDataTest extends SdCoreTestCase
                 'district' => false,
                 'group' => true,
             ])
-            ->assertHasNoActionErrors();
+            ->assertHasNoFormErrors();
 
         $this->assertDatabaseHas('ams_warrant_types', ['name' => 'New Warrant Type']);
     }
@@ -285,12 +286,12 @@ class SettingsReferenceDataTest extends SdCoreTestCase
 
         Livewire::actingAs($this->superAdmin)
             ->test(ManageWarrantTypes::class)
-            ->callTableAction('edit', $record, data: [
+            ->callAction(TestAction::make('edit')->table($record), data: [
                 'name' => 'Updated Warrant',
                 'shortName' => 'UW',
                 'description' => 'A description',
             ])
-            ->assertHasNoTableActionErrors();
+            ->assertHasNoFormErrors();
 
         $this->assertDatabaseHas('ams_warrant_types', ['id' => $record->id, 'name' => 'Updated Warrant']);
     }
@@ -302,8 +303,8 @@ class SettingsReferenceDataTest extends SdCoreTestCase
 
         Livewire::actingAs($this->superAdmin)
             ->test(ManageWarrantTypes::class)
-            ->callTableAction('delete', $record)
-            ->assertHasNoTableActionErrors();
+            ->callAction(TestAction::make('delete')->table($record))
+            ->assertHasNoFormErrors();
 
         $this->assertDatabaseMissing('ams_warrant_types', ['id' => $record->id]);
     }
@@ -327,7 +328,7 @@ class SettingsReferenceDataTest extends SdCoreTestCase
         Livewire::actingAs($this->superAdmin)
             ->test(ManageDisciplinaryHeadings::class)
             ->callAction('create', data: ['reason' => 'Misconduct of a serious nature'])
-            ->assertHasNoActionErrors();
+            ->assertHasNoFormErrors();
 
         $this->assertDatabaseHas('ams_disciplinary_headings', ['reason' => 'Misconduct of a serious nature']);
     }
@@ -339,8 +340,8 @@ class SettingsReferenceDataTest extends SdCoreTestCase
 
         Livewire::actingAs($this->superAdmin)
             ->test(ManageDisciplinaryHeadings::class)
-            ->callTableAction('edit', $record, data: ['reason' => 'Updated Reason'])
-            ->assertHasNoTableActionErrors();
+            ->callAction(TestAction::make('edit')->table($record), data: ['reason' => 'Updated Reason'])
+            ->assertHasNoFormErrors();
 
         $this->assertDatabaseHas('ams_disciplinary_headings', ['id' => $record->id, 'reason' => 'Updated Reason']);
     }
@@ -352,8 +353,8 @@ class SettingsReferenceDataTest extends SdCoreTestCase
 
         Livewire::actingAs($this->superAdmin)
             ->test(ManageDisciplinaryHeadings::class)
-            ->callTableAction('delete', $record)
-            ->assertHasNoTableActionErrors();
+            ->callAction(TestAction::make('delete')->table($record))
+            ->assertHasNoFormErrors();
 
         $this->assertDatabaseMissing('ams_disciplinary_headings', ['id' => $record->id]);
     }
@@ -390,7 +391,7 @@ class SettingsReferenceDataTest extends SdCoreTestCase
         Livewire::actingAs($this->superAdmin)
             ->test(ManageCubLevels::class)
             ->callAction('create', data: ['name' => 'New Cub Level', 'description' => 'A cub level description', 'active' => true])
-            ->assertHasNoActionErrors();
+            ->assertHasNoFormErrors();
 
         $this->assertDatabaseHas('system_advancement_cubs_levels', ['name' => 'New Cub Level']);
     }
@@ -402,8 +403,8 @@ class SettingsReferenceDataTest extends SdCoreTestCase
 
         Livewire::actingAs($this->superAdmin)
             ->test(ManageCubLevels::class)
-            ->callTableAction('edit', $record, data: ['name' => 'Updated Cub Level', 'description' => 'A description'])
-            ->assertHasNoTableActionErrors();
+            ->callAction(TestAction::make('edit')->table($record), data: ['name' => 'Updated Cub Level', 'description' => 'A description'])
+            ->assertHasNoFormErrors();
 
         $this->assertDatabaseHas('system_advancement_cubs_levels', ['id' => $record->id, 'name' => 'Updated Cub Level']);
     }
@@ -415,8 +416,8 @@ class SettingsReferenceDataTest extends SdCoreTestCase
 
         Livewire::actingAs($this->superAdmin)
             ->test(ManageCubLevels::class)
-            ->callTableAction('delete', $record)
-            ->assertHasNoTableActionErrors();
+            ->callAction(TestAction::make('delete')->table($record))
+            ->assertHasNoFormErrors();
 
         $this->assertDatabaseMissing('system_advancement_cubs_levels', ['id' => $record->id]);
     }
@@ -431,7 +432,7 @@ class SettingsReferenceDataTest extends SdCoreTestCase
             ->callAction('create', data: [
                 'name' => 'Minimal Warrant Type',
             ])
-            ->assertHasNoActionErrors();
+            ->assertHasNoFormErrors();
 
         $this->assertDatabaseHas('ams_warrant_types', [
             'name' => 'Minimal Warrant Type',
@@ -447,12 +448,12 @@ class SettingsReferenceDataTest extends SdCoreTestCase
 
         Livewire::actingAs($this->superAdmin)
             ->test(ManageWarrantTypes::class)
-            ->callTableAction('edit', $record, data: [
+            ->callAction(TestAction::make('edit')->table($record), data: [
                 'name' => 'Updated',
                 'shortName' => '',
                 'description' => '',
             ])
-            ->assertHasNoTableActionErrors();
+            ->assertHasNoFormErrors();
 
         $this->assertDatabaseHas('ams_warrant_types', [
             'id' => $record->id,
@@ -470,7 +471,7 @@ class SettingsReferenceDataTest extends SdCoreTestCase
             ->callAction('create', data: [
                 'name' => 'Minimal Committee',
             ])
-            ->assertHasNoActionErrors();
+            ->assertHasNoFormErrors();
 
         $this->assertDatabaseHas('system_committee_types', [
             'name' => 'Minimal Committee',

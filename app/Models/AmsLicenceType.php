@@ -6,7 +6,7 @@ use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class AmsChargeType extends BaseModel
+class AmsLicenceType extends BaseModel
 {
     protected $connection = AppServiceProvider::DB_SD_CORE;
     protected $table = 'ams_charge_types';
@@ -28,8 +28,8 @@ class AmsChargeType extends BaseModel
         'modifiedby' => 'int',
     ];
 
-    public function charges(): HasMany
+    public function licences(): HasMany
     {
-        return $this->hasMany(AmsChargeInfo::class, 'chargeTypeID');
+        return $this->hasMany(AmsLicenceInfo::class, 'chargeTypeID');
     }
 }

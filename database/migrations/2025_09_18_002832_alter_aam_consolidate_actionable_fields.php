@@ -3,13 +3,14 @@
 use App\Enums\Forms\Aam\AamStatuses;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
     public function up(): void
     {
-        \Illuminate\Support\Facades\DB::table('forms_aam_requests')
+        DB::table('forms_aam_requests')
             ->where('status', AamStatuses::DECLINED->value)
             ->update([
                 'approved_at' => DB::raw('`declined_at`'),
@@ -39,14 +40,14 @@ return new class extends Migration
             $table->renameColumn('actioned_reason_external', 'declined_reason_external');
         });
 
-        \Illuminate\Support\Facades\DB::table('forms_aam_requests')
+        DB::table('forms_aam_requests')
             ->where('status', AamStatuses::DECLINED->value)
             ->update([
                 'declined_at' => DB::raw('`approved_at`'),
                 'declined_by' => DB::raw('`approved_by`'),
             ]);
 
-        \Illuminate\Support\Facades\DB::table('forms_aam_requests')
+        DB::table('forms_aam_requests')
             ->where('status', AamStatuses::DECLINED->value)
             ->update([
                 'approved_at' => null,

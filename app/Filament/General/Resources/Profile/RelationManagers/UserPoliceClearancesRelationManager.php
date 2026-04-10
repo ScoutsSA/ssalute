@@ -20,6 +20,10 @@ class UserPoliceClearancesRelationManager extends RelationManager
 
     protected static ?string $title = 'Police Clearances';
 
+    protected static ?string $modelLabel = 'police clearance';
+
+    protected static ?string $pluralModelLabel = 'police clearances';
+
     public function infolist(Schema $schema): Schema
     {
         return $schema

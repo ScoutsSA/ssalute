@@ -3,8 +3,8 @@
 namespace Tests\Feature\Filament;
 
 use App\Filament\Admin\Clusters\AMS\Resources\Awards\AwardResource;
-use App\Filament\Admin\Clusters\AMS\Resources\Charges\ChargeResource;
 use App\Filament\Admin\Clusters\AMS\Resources\Disciplinary\DisciplinaryResource;
+use App\Filament\Admin\Clusters\AMS\Resources\Licences\LicenceResource;
 use App\Filament\Admin\Clusters\AMS\Resources\PastService\PastServiceResource;
 use App\Filament\Admin\Clusters\AMS\Resources\PoliceClearances\PoliceClearanceResource;
 use App\Filament\Admin\Clusters\AMS\Resources\Training\TrainingResource;
@@ -34,7 +34,7 @@ class AmsClusterTest extends SdCoreTestCase
             'warrants' => [WarrantResource::class],
             'awards' => [AwardResource::class],
             'disciplinary' => [DisciplinaryResource::class],
-            'charges' => [ChargeResource::class],
+            'licences' => [LicenceResource::class],
             'police clearances' => [PoliceClearanceResource::class],
             'past service' => [PastServiceResource::class],
             'training' => [TrainingResource::class],

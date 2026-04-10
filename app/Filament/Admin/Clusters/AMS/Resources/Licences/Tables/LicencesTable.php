@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Filament\Admin\Clusters\AMS\Resources\Charges\Tables;
+namespace App\Filament\Admin\Clusters\AMS\Resources\Licences\Tables;
 
-use App\Filament\Admin\Clusters\AMS\Resources\Charges\ChargeResource;
+use App\Filament\Admin\Clusters\AMS\Resources\Licences\LicenceResource;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-class ChargesTable
+class LicencesTable
 {
     public static function configure(Table $table): Table
     {
@@ -17,10 +17,10 @@ class ChargesTable
                 TextColumn::make('user.name')
                     ->label('Member')
                     ->searchable(['first_name', 'surname']),
-                TextColumn::make('chargeType.name')
-                    ->label('Charge Type'),
+                TextColumn::make('licenceType.name')
+                    ->label('Licence Type'),
                 TextColumn::make('chargeNr')
-                    ->label('Charge Nr')
+                    ->label('Licence Nr')
                     ->searchable(),
                 TextColumn::make('issueDate')
                     ->label('Issued')
@@ -35,6 +35,6 @@ class ChargesTable
                     ->boolean(),
             ])
             ->defaultSort('issueDate', 'desc')
-            ->recordUrl(fn ($record) => ChargeResource::getUrl('view', ['record' => $record]));
+            ->recordUrl(fn ($record) => LicenceResource::getUrl('view', ['record' => $record]));
     }
 }

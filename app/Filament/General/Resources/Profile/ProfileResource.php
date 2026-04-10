@@ -6,8 +6,8 @@ use App\Filament\General\Resources\Profile\Pages\EditProfile;
 use App\Filament\General\Resources\Profile\Pages\MembershipCertificate;
 use App\Filament\General\Resources\Profile\Pages\ViewProfile;
 use App\Filament\General\Resources\Profile\RelationManagers\UserAwardsRelationManager;
-use App\Filament\General\Resources\Profile\RelationManagers\UserChargesRelationManager;
 use App\Filament\General\Resources\Profile\RelationManagers\UserDocumentsRelationManager;
+use App\Filament\General\Resources\Profile\RelationManagers\UserLicencesRelationManager;
 use App\Filament\General\Resources\Profile\RelationManagers\UserPastServiceRelationManager;
 use App\Filament\General\Resources\Profile\RelationManagers\UserPoliceClearancesRelationManager;
 use App\Filament\General\Resources\Profile\RelationManagers\UserRolesRelationManager;
@@ -58,7 +58,7 @@ class ProfileResource extends Resource
             UserAwardsRelationManager::class,
             UserDocumentsRelationManager::class,
             UserPoliceClearancesRelationManager::class,
-            UserChargesRelationManager::class,
+            UserLicencesRelationManager::class,
             UserPastServiceRelationManager::class,
         ];
     }

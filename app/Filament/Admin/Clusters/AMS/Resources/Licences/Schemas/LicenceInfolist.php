@@ -1,25 +1,25 @@
 <?php
 
-namespace App\Filament\Admin\Clusters\AMS\Resources\Charges\Schemas;
+namespace App\Filament\Admin\Clusters\AMS\Resources\Licences\Schemas;
 
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
-class ChargeInfolist
+class LicenceInfolist
 {
     public static function configure(Schema $schema): Schema
     {
         return $schema
             ->components([
-                Section::make('Charge Details')
+                Section::make('Licence Details')
                     ->columns(['md' => 2, 'lg' => 4])
                     ->columnSpanFull()
                     ->schema([
                         TextEntry::make('user.name')->label('Member'),
-                        TextEntry::make('chargeType.name')->label('Charge Type'),
-                        TextEntry::make('chargeNr')->label('Charge Nr')->placeholder('-'),
+                        TextEntry::make('licenceType.name')->label('Licence Type'),
+                        TextEntry::make('chargeNr')->label('Licence Nr')->placeholder('-'),
                         TextEntry::make('issueDate')->label('Issue Date')->date()->placeholder('-'),
                         TextEntry::make('expireDate')->label('Expiry Date')->date()->placeholder('-'),
                         IconEntry::make('active')->label('Active')->boolean(),

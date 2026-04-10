@@ -60,7 +60,7 @@ class UserLifecycleActionsTest extends SdCoreTestCase
                 'resignDate' => '2026-03-16',
                 'resignReasonID' => $this->resignReason->id,
             ])
-            ->assertHasNoActionErrors()
+            ->assertHasNoFormErrors()
             ->assertNotified();
 
         $this->assertDatabaseHas(AmsResignLeader::class, [
@@ -88,7 +88,7 @@ class UserLifecycleActionsTest extends SdCoreTestCase
                 'retiredDate' => '2026-03-16',
                 'retiredReasonID' => $this->retireReason->id,
             ])
-            ->assertHasNoActionErrors()
+            ->assertHasNoFormErrors()
             ->assertNotified();
 
         $this->assertDatabaseHas(AmsRetireLeader::class, [
@@ -115,7 +115,7 @@ class UserLifecycleActionsTest extends SdCoreTestCase
                 'suspendDate' => '2026-03-16',
                 'suspenReasonID' => $this->suspendReason->id,
             ])
-            ->assertHasNoActionErrors()
+            ->assertHasNoFormErrors()
             ->assertNotified();
 
         $this->assertDatabaseHas(AmsSuspendLeader::class, [
@@ -154,7 +154,7 @@ class UserLifecycleActionsTest extends SdCoreTestCase
             ->test(ViewUser::class, ['record' => $this->member->id])
             ->assertActionVisible('unsuspend')
             ->callAction('unsuspend')
-            ->assertHasNoActionErrors()
+            ->assertHasNoFormErrors()
             ->assertNotified();
 
         $this->member->refresh();
@@ -178,7 +178,7 @@ class UserLifecycleActionsTest extends SdCoreTestCase
                 'terminateDate' => '2026-03-16',
                 'terminateReasonID' => $this->terminateReason->id,
             ])
-            ->assertHasNoActionErrors()
+            ->assertHasNoFormErrors()
             ->assertNotified();
 
         $this->assertDatabaseHas(AmsTerminateLeader::class, [
@@ -204,7 +204,7 @@ class UserLifecycleActionsTest extends SdCoreTestCase
             ->test(ViewUser::class, ['record' => $this->member->id])
             ->assertActionVisible('activate')
             ->callAction('activate')
-            ->assertHasNoActionErrors()
+            ->assertHasNoFormErrors()
             ->assertNotified();
 
         $this->member->refresh();
@@ -259,7 +259,7 @@ class UserLifecycleActionsTest extends SdCoreTestCase
                 'toDistrict' => $district->id,
                 'effectiveDate' => '2026-03-16',
             ])
-            ->assertHasNoActionErrors()
+            ->assertHasNoFormErrors()
             ->assertNotified();
 
         $this->assertDatabaseHas(AmsAdultLeaderMove::class, [

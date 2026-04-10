@@ -4,6 +4,7 @@ FROM php:8.4-cli-bookworm
 RUN apt-get update && apt-get install -y \
     curl \
     git \
+    jq \
     unzip \
     zip \
     libzip-dev \
@@ -53,10 +54,12 @@ RUN useradd -m -s /bin/bash claude
 WORKDIR /app
 RUN chown claude:claude /app
 
-# ── Claude Code (installed as root, then switch to claude) ───────────────────
+# ── Claude Code ──────────────────────────────────────────────────────────────
+# Installed via npm for the initial image. The native auto-updater will
+# take over at runtime and install to ~/.local, so we add that to PATH too.
 RUN npm install -g @anthropic-ai/claude-code
 
 USER claude
-RUN claude install
+ENV PATH="/home/claude/.local/bin:${PATH}"
 
 CMD ["bash"]

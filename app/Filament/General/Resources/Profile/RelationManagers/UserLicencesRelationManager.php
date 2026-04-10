@@ -14,25 +14,29 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
-class UserChargesRelationManager extends RelationManager
+class UserLicencesRelationManager extends RelationManager
 {
-    protected static string $relationship = 'chargeInfos';
+    protected static string $relationship = 'licenceInfos';
 
-    protected static ?string $title = 'Charges';
+    protected static ?string $title = 'Licences';
+
+    protected static ?string $modelLabel = 'licence';
+
+    protected static ?string $pluralModelLabel = 'licences';
 
     public function infolist(Schema $schema): Schema
     {
         return $schema
             ->components([
-                Section::make('Charge Details')
+                Section::make('Licence Details')
                     ->collapsible()
                     ->columns(2)
                     ->schema([
-                        TextEntry::make('chargeType.name')
-                            ->label('Charge Type')
+                        TextEntry::make('licenceType.name')
+                            ->label('Licence Type')
                             ->placeholder('-'),
                         TextEntry::make('chargeNr')
-                            ->label('Charge Number')
+                            ->label('Licence Number')
                             ->badge()
                             ->color('primary')
                             ->placeholder('-'),
@@ -80,12 +84,12 @@ class UserChargesRelationManager extends RelationManager
                     ->label('ID')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('chargeType.name')
-                    ->label('Charge Type')
+                TextColumn::make('licenceType.name')
+                    ->label('Licence Type')
                     ->searchable()
                     ->toggleable(),
                 TextColumn::make('chargeNr')
-                    ->label('Charge #')
+                    ->label('Licence #')
                     ->badge()
                     ->color('primary')
                     ->searchable()

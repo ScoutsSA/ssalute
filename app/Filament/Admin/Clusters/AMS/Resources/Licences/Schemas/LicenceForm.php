@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Admin\Clusters\AMS\Resources\Charges\Schemas;
+namespace App\Filament\Admin\Clusters\AMS\Resources\Licences\Schemas;
 
-use App\Models\AmsChargeType;
+use App\Models\AmsLicenceType;
 use App\Models\District;
 use App\Models\Group;
 use App\Models\Region;
@@ -14,13 +14,13 @@ use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
-class ChargeForm
+class LicenceForm
 {
     public static function configure(Schema $schema): Schema
     {
         return $schema
             ->components([
-                Section::make('Charge Details')
+                Section::make('Licence Details')
                     ->columns(2)
                     ->schema([
                         Select::make('userID')
@@ -29,11 +29,11 @@ class ChargeForm
                             ->searchable()
                             ->required(),
                         Select::make('chargeTypeID')
-                            ->label('Charge Type')
-                            ->options(fn () => AmsChargeType::query()->orderBy('name')->pluck('name', 'id'))
+                            ->label('Licence Type')
+                            ->options(fn () => AmsLicenceType::query()->orderBy('name')->pluck('name', 'id'))
                             ->searchable(),
                         TextInput::make('chargeNr')
-                            ->label('Charge Number'),
+                            ->label('Licence Number'),
                         DatePicker::make('issueDate')
                             ->label('Issue Date'),
                         DatePicker::make('expireDate')

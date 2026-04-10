@@ -6,7 +6,7 @@ use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class AmsChargeInfo extends BaseModel
+class AmsLicenceInfo extends BaseModel
 {
     protected $connection = AppServiceProvider::DB_SD_CORE;
     protected $table = 'ams_charge_info';
@@ -52,8 +52,8 @@ class AmsChargeInfo extends BaseModel
         return $this->belongsTo(Group::class, 'assocToGroup');
     }
 
-    public function chargeType(): BelongsTo
+    public function licenceType(): BelongsTo
     {
-        return $this->belongsTo(AmsChargeType::class, 'chargeTypeID');
+        return $this->belongsTo(AmsLicenceType::class, 'chargeTypeID');
     }
 }

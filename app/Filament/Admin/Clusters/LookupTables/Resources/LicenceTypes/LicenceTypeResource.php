@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Filament\Admin\Clusters\LookupTables\Resources\ChargeTypes;
+namespace App\Filament\Admin\Clusters\LookupTables\Resources\LicenceTypes;
 
 use App\Filament\Admin\Clusters\LookupTables\LookupTablesCluster;
-use App\Filament\Admin\Clusters\LookupTables\Resources\ChargeTypes\Pages\ManageChargeTypes;
-use App\Models\AmsChargeType;
+use App\Filament\Admin\Clusters\LookupTables\Resources\LicenceTypes\Pages\ManageLicenceTypes;
+use App\Models\AmsLicenceType;
 use BackedEnum;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
@@ -19,19 +19,19 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use UnitEnum;
 
-class ChargeTypeResource extends Resource
+class LicenceTypeResource extends Resource
 {
-    protected static ?string $model = AmsChargeType::class;
+    protected static ?string $model = AmsLicenceType::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::Tag;
 
-    protected static ?string $pluralLabel = 'Charge Types';
+    protected static ?string $pluralLabel = 'Licence Types';
 
     protected static ?string $cluster = LookupTablesCluster::class;
 
     protected static ?int $navigationSort = 80;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Charges & Disciplinary';
+    protected static string|UnitEnum|null $navigationGroup = 'Licences & Disciplinary';
 
     public static function form(Schema $schema): Schema
     {
@@ -80,7 +80,7 @@ class ChargeTypeResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ManageChargeTypes::route('/'),
+            'index' => ManageLicenceTypes::route('/'),
         ];
     }
 }

@@ -7,6 +7,7 @@ use App\Filament\General\Pages\Dashboard;
 use App\Filament\General\Resources\Profile\ProfileResource;
 use App\Http\Middleware\RedirectToValidTenant;
 use App\Mail\ReportSystemIssueEmail;
+use App\Models\SystemUser;
 use App\Models\SystemUsersOtherRole;
 use App\Settings\FeatureSettings;
 use Filament\Actions\Action;
@@ -141,7 +142,7 @@ class GeneralPanelProvider extends PanelProvider
                         $settings = app(FeatureSettings::class);
                         $userIds = $settings->system_issue_support_user_ids ?? [];
 
-                        $to = \App\Models\SystemUser::whereIn('id', $userIds)
+                        $to = SystemUser::whereIn('id', $userIds)
                             ->pluck('username')
                             ->filter(fn ($email) => filter_var($email, FILTER_VALIDATE_EMAIL))
                             ->unique()

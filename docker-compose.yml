@@ -2,10 +2,7 @@
 #  Ssalute — Claude Code dev container
 #
 #  Usage:
-#    1. Copy your API key into the shell (or add to a .env.docker file):
-#         export ANTHROPIC_API_KEY=sk-ant-...
-#
-#    2. Start the container (builds on first run):
+#    1. Start the container (builds on first run):
 #         docker compose run --rm claude
 #
 #    3. Inside the container you have a full shell at /app.
@@ -28,10 +25,10 @@ services:
   claude:
     build: .
     volumes:
-      # Project files — Claude can read/write here, nowhere else on your system
+      # Project files — Claude can read/write here
       - ./:/app
       # Legacy Scouts Digital files (photos, documents, etc.)
-      - ../scouts-digital:/app/storage/legacy-storage:ro
+      - ../scouts-digital:/app/storage/legacy-storage
       # Global Claude rules + auth from your host machine
       - ~/.claude:/home/claude/.claude
       - ~/.claude.json:/home/claude/.claude.json
@@ -39,7 +36,6 @@ services:
       - /etc/machine-id:/etc/machine-id:ro
     working_dir: /app
     environment:
-      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
       - DB_HOST=host.docker.internal
       - REDIS_HOST=host.docker.internal
     # Allows the container to reach your host machine's MySQL/Redis via

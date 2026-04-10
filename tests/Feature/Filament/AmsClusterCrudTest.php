@@ -3,18 +3,18 @@
 namespace Tests\Feature\Filament;
 
 use App\Filament\Admin\Clusters\AMS\Resources\Awards\Pages\ViewAward;
-use App\Filament\Admin\Clusters\AMS\Resources\Charges\Pages\ViewCharge;
 use App\Filament\Admin\Clusters\AMS\Resources\Disciplinary\Pages\ViewDisciplinaryRecord;
+use App\Filament\Admin\Clusters\AMS\Resources\Licences\Pages\ViewLicence;
 use App\Filament\Admin\Clusters\AMS\Resources\PastService\Pages\ViewPastServiceRecord;
 use App\Filament\Admin\Clusters\AMS\Resources\PoliceClearances\Pages\ViewPoliceClearance;
 use App\Filament\Admin\Clusters\AMS\Resources\Training\Pages\ViewTrainingRecord;
 use App\Filament\Admin\Clusters\AMS\Resources\Warrants\Pages\ViewWarrant;
 use App\Models\AmsAwardHeading;
 use App\Models\AmsAwardType;
-use App\Models\AmsChargeInfo;
-use App\Models\AmsChargeType;
 use App\Models\AmsDisciplinaryHeading;
 use App\Models\AmsDisciplinaryInfo;
+use App\Models\AmsLicenceInfo;
+use App\Models\AmsLicenceType;
 use App\Models\AmsPastServiceType;
 use App\Models\AmsPoliceClearance;
 use App\Models\AmsTrainingPastType;
@@ -80,7 +80,7 @@ class AmsClusterCrudTest extends SdCoreTestCase
             ->callAction(EditAction::class, data: [
                 'awardDate' => '2025-06-15',
             ])
-            ->assertHasNoActionErrors();
+            ->assertHasNoFormErrors();
 
         $this->assertDatabaseHas(Award::class, [
             'id' => $record->id,
@@ -115,7 +115,7 @@ class AmsClusterCrudTest extends SdCoreTestCase
             ->callAction(EditAction::class, data: [
                 'warrantNr' => 'W-UPDATED',
             ])
-            ->assertHasNoActionErrors();
+            ->assertHasNoFormErrors();
 
         $this->assertDatabaseHas(AmsWarrantInfo::class, [
             'id' => $record->id,
@@ -125,32 +125,32 @@ class AmsClusterCrudTest extends SdCoreTestCase
 
     // TODO: Warrant create test skipped — same audit field issue as awards.
 
-    // --- Charges ---
+    // --- Licences ---
 
     #[Test]
-    public function super_admin_can_view_a_charge(): void
+    public function super_admin_can_view_a_licence(): void
     {
-        $record = $this->createCharge();
+        $record = $this->createLicence();
 
         Livewire::actingAs($this->superAdmin)
-            ->test(ViewCharge::class, ['record' => $record->id])
+            ->test(ViewLicence::class, ['record' => $record->id])
             ->assertOk()
             ->assertActionExists(EditAction::class);
     }
 
     #[Test]
-    public function super_admin_can_edit_a_charge_via_modal(): void
+    public function super_admin_can_edit_a_licence_via_modal(): void
     {
-        $record = $this->createCharge();
+        $record = $this->createLicence();
 
         Livewire::actingAs($this->superAdmin)
-            ->test(ViewCharge::class, ['record' => $record->id])
+            ->test(ViewLicence::class, ['record' => $record->id])
             ->callAction(EditAction::class, data: [
                 'chargeNr' => 'C-UPDATED',
             ])
-            ->assertHasNoActionErrors();
+            ->assertHasNoFormErrors();
 
-        $this->assertDatabaseHas(AmsChargeInfo::class, [
+        $this->assertDatabaseHas(AmsLicenceInfo::class, [
             'id' => $record->id,
             'chargeNr' => 'C-UPDATED',
         ]);
@@ -179,7 +179,7 @@ class AmsClusterCrudTest extends SdCoreTestCase
             ->callAction(EditAction::class, data: [
                 'sanction' => 'Final Warning',
             ])
-            ->assertHasNoActionErrors();
+            ->assertHasNoFormErrors();
 
         $this->assertDatabaseHas(AmsDisciplinaryInfo::class, [
             'id' => $record->id,
@@ -210,7 +210,7 @@ class AmsClusterCrudTest extends SdCoreTestCase
             ->callAction(EditAction::class, data: [
                 'startDate' => '2021-06-01',
             ])
-            ->assertHasNoActionErrors();
+            ->assertHasNoFormErrors();
 
         $this->assertDatabaseHas(PastService::class, [
             'id' => $record->id,
@@ -262,7 +262,7 @@ class AmsClusterCrudTest extends SdCoreTestCase
             ->callAction(EditAction::class, data: [
                 'courseName' => 'Updated Course',
             ])
-            ->assertHasNoActionErrors();
+            ->assertHasNoFormErrors();
 
         $this->assertDatabaseHas(PastTraining::class, [
             'id' => $record->id,
@@ -308,11 +308,11 @@ class AmsClusterCrudTest extends SdCoreTestCase
         ], $overrides));
     }
 
-    private function createCharge(array $overrides = []): AmsChargeInfo
+    private function createLicence(array $overrides = []): AmsLicenceInfo
     {
-        $type = AmsChargeType::factory()->create();
+        $type = AmsLicenceType::factory()->create();
 
-        return AmsChargeInfo::create(array_merge([
+        return AmsLicenceInfo::create(array_merge([
             'userID' => $this->member->id,
             'chargeTypeID' => $type->id,
             'chargeNr' => 'C-001',

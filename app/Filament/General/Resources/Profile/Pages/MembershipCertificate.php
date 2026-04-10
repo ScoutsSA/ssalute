@@ -25,9 +25,6 @@ class MembershipCertificate extends Page
 
     protected static ?string $title = 'Membership Certificate';
 
-
-
-
     /** Fields that are always included on the certificate. */
     public const REQUIRED_FIELDS = ['name', 'ssa_id', 'roles'];
 
@@ -150,7 +147,7 @@ class MembershipCertificate extends Page
                                     ])
                                     ->columns(2)
                                     ->columnSpanFull(),
-                            ])
+                            ]),
 
                     ])
                     ->footer([
