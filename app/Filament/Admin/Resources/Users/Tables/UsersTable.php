@@ -304,7 +304,7 @@ class UsersTable
             ])
             ->recordActions([
                 Impersonate::make()
-                    ->redirectTo(fn (SystemUser $record): string => self::generalPanelUrl($record)),
+                    ->redirectTo(fn (SystemUser $record): string => self::memberPanelUrl($record)),
                 Action::make('SD_Login')
                     ->label('Impersonate on SD')
                     ->url(fn (SystemUser $record): string => URL::temporarySignedRoute(
@@ -320,14 +320,14 @@ class UsersTable
             ]);
     }
 
-    private static function generalPanelUrl(SystemUser $user): string
+    private static function memberPanelUrl(SystemUser $user): string
     {
-        $tenant = $user->getDefaultTenant(Filament::getPanel('general'));
+        $tenant = $user->getDefaultTenant(Filament::getPanel('member'));
 
         if ($tenant) {
-            return Dashboard::getUrl(panel: 'general', tenant: $tenant);
+            return Dashboard::getUrl(panel: 'member', tenant: $tenant);
         }
 
-        return '/general';
+        return '/member';
     }
 }

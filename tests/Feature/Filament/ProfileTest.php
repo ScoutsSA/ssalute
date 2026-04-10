@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Filament;
 
-use App\Filament\General\Resources\Profile\Pages\EditProfile;
+use App\Filament\Member\Resources\Profile\Pages\EditProfile;
 use App\Models\SystemUser;
 use App\Settings\FeatureSettings;
 use Filament\Facades\Filament;
@@ -30,7 +30,7 @@ class ProfileTest extends SdCoreTestCase
         $user = SystemUser::factory()->withRole()->create();
 
         $this->get($this->viewProfileUrl($user))
-            ->assertRedirect('/general/login');
+            ->assertRedirect('/login');
     }
 
     #[Test]
@@ -72,8 +72,8 @@ class ProfileTest extends SdCoreTestCase
         // User B accesses view-profile under User A's tenant. The RedirectToValidTenant
         // middleware redirects to User B's tenant but preserves the record parameter.
         $this->actingAs($userB)
-            ->get("/general/{$tenantA->id}/profile/{$userA->id}")
-            ->assertRedirect("/general/{$tenantB->id}/profile/{$userA->id}");
+            ->get("/member/{$tenantA->id}/profile/{$userA->id}")
+            ->assertRedirect("/member/{$tenantB->id}/profile/{$userA->id}");
     }
 
     // Edit profile page
@@ -84,7 +84,7 @@ class ProfileTest extends SdCoreTestCase
         $user = SystemUser::factory()->withRole()->create();
 
         $this->get($this->editProfileUrl($user))
-            ->assertRedirect('/general/login');
+            ->assertRedirect('/login');
     }
 
     #[Test]
@@ -109,7 +109,7 @@ class ProfileTest extends SdCoreTestCase
         $tenant = $user->roleAttachments()->first();
 
         $this->actingAs($user);
-        Filament::setCurrentPanel(Filament::getPanel('general'));
+        Filament::setCurrentPanel(Filament::getPanel('member'));
         Filament::setTenant($tenant);
 
         Livewire::actingAs($user)
@@ -138,8 +138,8 @@ class ProfileTest extends SdCoreTestCase
         // User B accesses edit-profile under User A's tenant. The RedirectToValidTenant
         // middleware redirects to User B's tenant but preserves the record parameter.
         $this->actingAs($userB)
-            ->get("/general/{$tenantA->id}/profile/{$userA->id}/edit")
-            ->assertRedirect("/general/{$tenantB->id}/profile/{$userA->id}/edit");
+            ->get("/member/{$tenantA->id}/profile/{$userA->id}/edit")
+            ->assertRedirect("/member/{$tenantB->id}/profile/{$userA->id}/edit");
     }
 
     #[Test]
@@ -154,7 +154,7 @@ class ProfileTest extends SdCoreTestCase
         $tenant = $user->roleAttachments()->first();
 
         $this->actingAs($user);
-        Filament::setCurrentPanel(Filament::getPanel('general'));
+        Filament::setCurrentPanel(Filament::getPanel('member'));
         Filament::setTenant($tenant);
 
         Livewire::actingAs($user)
@@ -170,11 +170,11 @@ class ProfileTest extends SdCoreTestCase
 
     private function viewProfileUrl(SystemUser $user): string
     {
-        return "/general/{$user->roleAttachments()->first()->id}/profile/{$user->id}";
+        return "/member/{$user->roleAttachments()->first()->id}/profile/{$user->id}";
     }
 
     private function editProfileUrl(SystemUser $user): string
     {
-        return "/general/{$user->roleAttachments()->first()->id}/profile/{$user->id}/edit";
+        return "/member/{$user->roleAttachments()->first()->id}/profile/{$user->id}/edit";
     }
 }

@@ -14,7 +14,7 @@ class AdminPanelTest extends SdCoreTestCase
     public function guest_is_redirected_to_login_when_accessing_admin_panel(): void
     {
         $this->get('/backoffice')
-            ->assertRedirect('/backoffice/login');
+            ->assertRedirect('/login');
     }
 
     #[Test]

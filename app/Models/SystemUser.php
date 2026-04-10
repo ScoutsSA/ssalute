@@ -509,7 +509,8 @@ class SystemUser extends User implements Auditable, FilamentUser, HasDefaultTena
     {
         return match ($panel->getId()) {
             'admin' => $this->isSuperAdmin(),
-            'general' => $this->hasAnyActiveRole(),
+            'member' => $this->getTenants($panel)->isNotEmpty(),
+            'holding-zone' => true,
             default => false,
         };
     }
@@ -537,10 +538,11 @@ class SystemUser extends User implements Auditable, FilamentUser, HasDefaultTena
     public function getTenants(Panel $panel): Collection
     {
         return match ($panel->getId()) {
-            'general' => $this->roleAttachments()
+            'member' => $this->roleAttachments()
                 ->where('active', 1)
                 ->with(['role', 'region', 'district', 'group'])
-                ->get(),
+                ->get()
+                ->filter(fn (SystemUsersOtherRole $role) => $role->hasValidWarrantOrAppointment()),
             default => collect(),
         };
     }
@@ -598,7 +600,7 @@ class SystemUser extends User implements Auditable, FilamentUser, HasDefaultTena
         DB::table($this->getTable())
             ->where($this->getKeyName(), $this->getKey())
             ->update([
-                'passwordNew' => DB::raw("AES_ENCRYPT('{$plain}', '{$key}')"),
+                'passwordNew' => DB::raw('AES_ENCRYPT(?, ?)', [$plain, $key]),
             ]);
     }
 

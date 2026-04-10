@@ -110,6 +110,28 @@ class SystemUsersOtherRole extends Pivot implements Auditable, HasAvatar, HasCur
         return $this->belongsTo(Group::class, 'actionGroupID');
     }
 
+    public function requiresWarrantOrAppointment(): bool
+    {
+        return $this->role->warrantedRole > 0 || $this->role->appointmentRole > 0;
+    }
+
+    public function hasValidWarrantOrAppointment(): bool
+    {
+        if (! $this->requiresWarrantOrAppointment()) {
+            return true;
+        }
+
+        return AmsWarrantInfo::query()
+            ->where('userID', $this->userID)
+            ->where('countryID', $this->actionCountryID ?? 0)
+            ->where('assocToRegion', $this->actionRegionID ?? 0)
+            ->where('assocToDistrict', $this->actionDistrictID ?? 0)
+            ->where('assocToGroup', $this->actionGroupID ?? 0)
+            ->where('roleID', $this->roleID)
+            ->where('active', 1)
+            ->exists();
+    }
+
     public function roleTypeName(): Attribute
     {
         return Attribute::make(

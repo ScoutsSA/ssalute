@@ -2,7 +2,7 @@
 
 namespace App\Filament\Admin\Resources\AuditLogs\Tables;
 
-use App\Filament\Concerns\HasAuditDisplay;
+use App\Filament\Shared\Concerns\HasAuditDisplay;
 use App\Models\Audit;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\TextInput;

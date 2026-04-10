@@ -2,7 +2,7 @@
 
 namespace App\Filament\Admin\RelationManagers;
 
-use App\Filament\Concerns\HasAuditDisplay;
+use App\Filament\Shared\Concerns\HasAuditDisplay;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;

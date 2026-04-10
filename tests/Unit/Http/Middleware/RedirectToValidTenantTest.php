@@ -193,7 +193,7 @@ class RedirectToValidTenantTest extends TestCase
         return $tenant;
     }
 
-    private function makeRequest(string $tenantKey, string $routeName = 'filament.general.pages.dashboard'): Request
+    private function makeRequest(string $tenantKey, string $routeName = 'filament.member.pages.dashboard'): Request
     {
         $route = Mockery::mock(Route::class);
         $route->shouldReceive('hasParameter')->with('tenant')->andReturn(true);

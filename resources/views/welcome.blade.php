@@ -10,12 +10,12 @@
     <link rel="manifest" href="{{ asset('manifest.json') }}">
     @php
         $authedUser = auth()->user();
-        $panelUrl = '/general/login';
+        $panelUrl = '/holding-zone/login';
         if ($authedUser) {
-            $tenant = $authedUser->getDefaultTenant(\Filament\Facades\Filament::getPanel('general'));
+            $tenant = $authedUser->getDefaultTenant(\Filament\Facades\Filament::getPanel('member'));
             $panelUrl = $tenant
-                ? \Filament\Pages\Dashboard::getUrl(panel: 'general', tenant: $tenant)
-                : '/general';
+                ? \Filament\Pages\Dashboard::getUrl(panel: 'member', tenant: $tenant)
+                : '/holding-zone';
         }
     @endphp
     @vite(['resources/css/app.css'])

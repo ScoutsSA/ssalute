@@ -42,4 +42,14 @@ class SystemUserTypeFactory extends Factory
     {
         return $this->state(['groupRole' => 1]);
     }
+
+    public function warranted(): static
+    {
+        return $this->state(['warrantedRole' => 1, 'adultLeaderRole' => 1]);
+    }
+
+    public function appointment(): static
+    {
+        return $this->state(['appointmentRole' => 1, 'adultLeaderRole' => 1]);
+    }
 }

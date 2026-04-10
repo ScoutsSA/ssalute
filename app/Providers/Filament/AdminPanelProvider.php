@@ -35,7 +35,6 @@ class AdminPanelProvider extends PanelProvider
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->default()
             ->favicon(asset('images/logo.png'))
-            ->login()
             ->sidebarCollapsibleOnDesktop()
             ->colors([
                 'primary' => '#5C2D91',
@@ -66,14 +65,14 @@ class AdminPanelProvider extends PanelProvider
                     : '',
             )
             ->userMenuItems([
-                'general-panel' => Action::make('general-panel')
-                    ->label('General Panel')
+                'member-panel' => Action::make('member-panel')
+                    ->label('Member Panel')
                     ->icon(Heroicon::ArrowLeftStartOnRectangle)
                     ->url(function () {
                         $user = auth()->user();
-                        $tenant = $user?->getDefaultTenant(Filament::getPanel('general'));
+                        $tenant = $user?->getDefaultTenant(Filament::getPanel('member'));
 
-                        return $tenant ? Dashboard::getUrl(panel: 'general', tenant: $tenant) : '/general';
+                        return $tenant ? Dashboard::getUrl(panel: 'member', tenant: $tenant) : '/member';
                     }),
             ])
             ->navigationItems([

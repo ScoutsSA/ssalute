@@ -46,9 +46,9 @@ class ViewUser extends ViewRecord
             Impersonate::make()
                 ->record($record)
                 ->redirectTo(function () use ($record): string {
-                    $tenant = $record->getDefaultTenant(Filament::getPanel('general'));
+                    $tenant = $record->getDefaultTenant(Filament::getPanel('member'));
 
-                    return $tenant ? Dashboard::getUrl(panel: 'general', tenant: $tenant) : '/general';
+                    return $tenant ? Dashboard::getUrl(panel: 'member', tenant: $tenant) : '/member';
                 }),
             Action::make('SD_Login')
                 ->label('Impersonate on SD')

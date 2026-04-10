@@ -7,6 +7,7 @@ use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
+use stdClass;
 use Tests\TestCase;
 
 class SystemUserTest extends TestCase
@@ -44,25 +45,25 @@ class SystemUserTest extends TestCase
     }
 
     #[Test]
-    public function can_access_general_panel_when_user_has_any_active_role(): void
+    public function can_access_member_panel_when_user_has_warranted_tenants(): void
     {
         $user = Mockery::mock(SystemUser::class)->makePartial();
-        $user->shouldReceive('hasAnyActiveRole')->andReturn(true);
+        $user->shouldReceive('getTenants')->andReturn(collect([new stdClass]));
 
         $panel = Mockery::mock(Panel::class);
-        $panel->shouldReceive('getId')->andReturn('general');
+        $panel->shouldReceive('getId')->andReturn('member');
 
         $this->assertTrue($user->canAccessPanel($panel));
     }
 
     #[Test]
-    public function cannot_access_general_panel_when_user_has_no_active_roles(): void
+    public function cannot_access_member_panel_when_user_has_no_warranted_tenants(): void
     {
         $user = Mockery::mock(SystemUser::class)->makePartial();
-        $user->shouldReceive('hasAnyActiveRole')->andReturn(false);
+        $user->shouldReceive('getTenants')->andReturn(collect());
 
         $panel = Mockery::mock(Panel::class);
-        $panel->shouldReceive('getId')->andReturn('general');
+        $panel->shouldReceive('getId')->andReturn('member');
 
         $this->assertFalse($user->canAccessPanel($panel));
     }

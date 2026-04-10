@@ -87,6 +87,7 @@ return [
     'exclude' => [
         'modified',
         'modifiedby',
+        'remember_token',
     ],
 
     /*

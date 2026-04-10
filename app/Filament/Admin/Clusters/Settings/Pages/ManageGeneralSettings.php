@@ -3,7 +3,7 @@
 namespace App\Filament\Admin\Clusters\Settings\Pages;
 
 use App\Filament\Admin\Clusters\Settings\SettingsCluster;
-use App\Filament\Concerns\AuditsSettings;
+use App\Filament\Shared\Concerns\AuditsSettings;
 use App\Models\SystemUser;
 use App\Models\SystemUserType;
 use App\Settings\GeneralSettings;
