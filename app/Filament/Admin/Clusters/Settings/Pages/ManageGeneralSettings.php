@@ -9,6 +9,7 @@ use App\Models\SystemUserType;
 use App\Settings\GeneralSettings;
 use BackedEnum;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TagsInput;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Pages\SettingsPage;
 use Filament\Schemas\Components\Tabs;
@@ -69,11 +70,12 @@ class ManageGeneralSettings extends SettingsPage
 
                             Tab::make('National Support')
                                 ->schema([
-                                    Select::make('national_support_role_ids')
-                                        ->label('National Adult Support Roles')
-                                        ->multiple()
-                                        ->options(fn () => SystemUserType::active()->orderBy('position')->pluck('name', 'id'))
-                                        ->helperText('Users who hold any of these roles (with an active role attachment) will be considered part of the National Adult Support Team. They will receive issue reports escalated to the national level.')
+                                    TagsInput::make('national_support_emails')
+                                        ->label('National Adult Support Emails')
+                                        ->placeholder('Add an email address')
+                                        ->splitKeys(['Tab', ',', ' '])
+                                        ->nestedRecursiveRules(['email'])
+                                        ->helperText('Email addresses of the National Adult Support Team. They will receive issue reports escalated to the national level.')
                                         ->columnSpanFull(),
                                 ]),
 

@@ -62,24 +62,13 @@ class NextInLineService
     }
 
     /**
-     * Resolve email addresses for all active National Adult Support users.
+     * Resolve email addresses for the National Adult Support Team.
      *
      * @return array<int, string>
      */
     public function resolveNationalSupportEmails(): array
     {
-        $roleIds = $this->settings->national_support_role_ids ?? [];
-
-        if (empty($roleIds)) {
-            return [];
-        }
-
-        return SystemUsersOtherRole::query()
-            ->whereIn('roleID', $roleIds)
-            ->where('active', 1)
-            ->with('user')
-            ->get()
-            ->map(fn ($attachment) => $attachment->user?->username)
+        return collect($this->settings->national_support_emails ?? [])
             ->filter(fn ($email) => filter_var($email, FILTER_VALIDATE_EMAIL))
             ->unique()
             ->values()

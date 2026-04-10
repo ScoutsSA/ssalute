@@ -51,7 +51,7 @@ abstract class SdCoreTestCase extends TestCase
         $required = [
             'general' => [
                 'super_user_admin_list' => '[]',
-                'national_support_role_ids' => '[]',
+                'national_support_emails' => '[]',
                 'next_in_line_role_group' => 'null',
                 'next_in_line_role_district' => 'null',
                 'next_in_line_role_regional' => 'null',

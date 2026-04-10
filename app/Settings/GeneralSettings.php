@@ -8,7 +8,7 @@ class GeneralSettings extends Settings
 {
     public ?array $super_user_admin_list = [];
 
-    public ?array $national_support_role_ids = [];
+    public ?array $national_support_emails = [];
 
     public ?int $next_in_line_role_group = null;
     public ?int $next_in_line_role_district = null;
