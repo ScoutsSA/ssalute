@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Clusters\Area\Resources\Groups;
 
 use App\Filament\Admin\Clusters\Area\AreaCluster;
+use App\Filament\Admin\Clusters\Area\RelationManagers\RoleAttachmentsRelationManager;
 use App\Filament\Admin\Clusters\Area\Resources\Groups\Pages\CreateGroup;
 use App\Filament\Admin\Clusters\Area\Resources\Groups\Pages\EditGroup;
 use App\Filament\Admin\Clusters\Area\Resources\Groups\Pages\ListGroups;
@@ -55,6 +56,7 @@ class GroupResource extends Resource
             GroupRoverCrewsRelationManager::class,
             GroupMeerkatDensRelationManager::class,
             GroupCommitteeRelationManager::class,
+            RoleAttachmentsRelationManager::class,
         ];
     }
 

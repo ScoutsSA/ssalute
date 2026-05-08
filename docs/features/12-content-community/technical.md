@@ -1,7 +1,7 @@
 # Feature Spec: Content & Community
 
 > Module: Content & Community
-> Panel(s): Admin (backoffice), General
+> Panel(s): Admin (backoffice), Member
 > Status: PLANNED
 > Phase: 10 — Content & Community
 
@@ -9,7 +9,7 @@
 
 ## Overview
 
-The platform includes several community-facing features for sharing news, resources, and information across the organisation. The backoffice panel provides full content management and moderation tools. The general panel provides a read-focused experience for members, with limited creation capabilities for authorised users.
+The platform includes several community-facing features for sharing news, resources, and information across the organisation. The backoffice panel provides full content management and moderation tools. The member panel provides a read-focused experience for members, with limited creation capabilities for authorised users.
 
 ---
 
@@ -77,7 +77,7 @@ The Content cluster groups all content and community management resources under 
 - **Type:** Row actions and header action on view page
 - **Publish:** Sets status to published; sets published_at to now if not already set
 - **Unpublish:** Sets status to draft; clears published_at
-- **Archive:** Sets status to archived; article no longer visible in general panel
+- **Archive:** Sets status to archived; article no longer visible in member panel
 
 ---
 
@@ -100,7 +100,7 @@ The Content cluster groups all content and community management resources under 
 
 - **Type:** Custom action (row and header)
 - **Modal fields:** Decision (approve/reject), moderation reason (required for rejection)
-- **On approve:** Creates `InfoSharingReview` record with approved status; post becomes visible in general panel
+- **On approve:** Creates `InfoSharingReview` record with approved status; post becomes visible in member panel
 - **On reject:** Creates `InfoSharingReview` record with rejected status and reason; submitter is notified by email
 
 ---
@@ -176,11 +176,11 @@ The Content cluster groups all content and community management resources under 
   - Description (textarea or short rich text)
   - Status (select: planned, in-progress, completed, cancelled)
   - Target date (date picker, optional)
-  - Public (toggle — controls visibility in general panel)
+  - Public (toggle — controls visibility in member panel)
 
 ---
 
-## General Panel Requirements
+## Member Panel Requirements
 
 ### Role Gating
 
@@ -193,7 +193,7 @@ The Content cluster groups all content and community management resources under 
 ### 1. Browse and Read Articles
 
 - **Type:** List page and view page
-- **Class:** `app/Filament/General/Pages/Articles.php` (or resource equivalent)
+- **Class:** `app/Filament/Member/Pages/Articles.php` (or resource equivalent)
 - **List:** Paginated card or table layout; shows title, category, excerpt, published at
 - **Filters:** Category
 - **Search:** Title, content
@@ -204,7 +204,7 @@ The Content cluster groups all content and community management resources under 
 ### 2. Browse Info Sharing Posts
 
 - **Type:** List page
-- **Class:** `app/Filament/General/Pages/InfoSharing.php`
+- **Class:** `app/Filament/Member/Pages/InfoSharing.php`
 - **List:** Shows title, type, submitted by, approved at, like count
 - **Filters:** Type
 - **Search:** Title
@@ -215,7 +215,7 @@ The Content cluster groups all content and community management resources under 
 ### 3. Create Info Sharing Post
 
 - **Type:** Create page accessible from the info sharing list
-- **Class:** `app/Filament/General/Pages/CreateInfoSharingPost.php`
+- **Class:** `app/Filament/Member/Pages/CreateInfoSharingPost.php`
 - **Access control:** Requires role permission for post creation; unauthenticated or unauthorised users see a permission error
 - **Fields:** Title (required), type (`InfoSharingType` — select), body (rich text or textarea, required), attachments (optional file upload)
 - **On submit:** Creates `InfoSharing` record with `status = pending`; shows confirmation message; post enters moderation queue
@@ -225,7 +225,7 @@ The Content cluster groups all content and community management resources under 
 ### 4. Browse and Search FAQ
 
 - **Type:** List page with expandable answers
-- **Class:** `app/Filament/General/Pages/Faq.php`
+- **Class:** `app/Filament/Member/Pages/Faq.php`
 - **Layout:** Category-grouped accordion; each category shows its FAQs collapsed by default
 - **Search:** Full-text search across questions and answers; matching FAQs are highlighted or filtered in real time
 - **Only active FAQs and categories are shown**
@@ -235,7 +235,7 @@ The Content cluster groups all content and community management resources under 
 ### 5. View Community Projects
 
 - **Type:** List page and view page
-- **Class:** `app/Filament/General/Pages/Projects.php`
+- **Class:** `app/Filament/Member/Pages/Projects.php`
 - **List:** Shows name, for type, supported badge (if `ProjectsSupported` record exists)
 - **View:** Full description, attachments, for type, supported status
 - **Only active projects are shown**
@@ -245,17 +245,17 @@ The Content cluster groups all content and community management resources under 
 ### 6. View Public Roadmap
 
 - **Type:** List page
-- **Class:** `app/Filament/General/Pages/Roadmap.php`
+- **Class:** `app/Filament/Member/Pages/Roadmap.php`
 - **Layout:** Status-grouped list (in-progress → planned → completed)
 - **Only items with `public = true` are shown**
-- **No edit access in general panel**
+- **No edit access in member panel**
 
 ---
 
 ### 7. Group Newsletter
 
 - **Type:** List page and view page scoped to the user's active group
-- **Class:** `app/Filament/General/Pages/GroupNewsletter.php`
+- **Class:** `app/Filament/Member/Pages/GroupNewsletter.php`
 - **Scope:** Only newsletters belonging to the user's active group are shown
 - **List:** Columns — title, published date
 - **View:** Full newsletter content
@@ -265,7 +265,7 @@ The Content cluster groups all content and community management resources under 
 ### 8. Committee Meeting Minutes
 
 - **Type:** List page and view page scoped to the user's active group
-- **Class:** `app/Filament/General/Pages/CommitteeMinutes.php`
+- **Class:** `app/Filament/Member/Pages/CommitteeMinutes.php`
 - **Scope:** Only minutes belonging to the user's active group are shown
 - **List:** Columns — meeting date, title/subject
 - **View:** Full minutes content, attached documents (downloadable)
@@ -286,15 +286,15 @@ The Content cluster groups all content and community management resources under 
 | Rejected post submitter receives a notification email | `tests/Feature/Filament/Admin/Content/InfoSharingModerationTest.php` | Feature |
 | Admin can manage FAQ entries (CRUD) | `tests/Feature/Filament/Admin/Content/FaqManagementTest.php` | Feature |
 | Admin can mark a project as supported | `tests/Feature/Filament/Admin/Content/ProjectManagementTest.php` | Feature |
-| Authenticated user can browse published articles | `tests/Feature/Filament/General/Content/ArticleBrowseTest.php` | Feature |
-| Unpublished article is not visible in general panel | `tests/Feature/Filament/General/Content/ArticleBrowseTest.php` | Feature |
-| Authenticated user can browse approved info sharing posts | `tests/Feature/Filament/General/Content/InfoSharingBrowseTest.php` | Feature |
-| Pending or rejected info sharing posts are not visible in general panel | `tests/Feature/Filament/General/Content/InfoSharingBrowseTest.php` | Feature |
-| Authorised user can create an info sharing post | `tests/Feature/Filament/General/Content/InfoSharingCreateTest.php` | Feature |
-| Unauthorised user cannot create an info sharing post | `tests/Feature/Filament/General/Content/InfoSharingCreateTest.php` | Feature |
-| FAQ search returns results matching both question and answer text | `tests/Feature/Filament/General/Content/FaqSearchTest.php` | Feature |
-| Group newsletter is scoped to user's active group | `tests/Feature/Filament/General/Content/GroupNewsletterTest.php` | Feature |
-| Committee minutes are not accessible to non-committee members | `tests/Feature/Filament/General/Content/CommitteeMinutesTest.php` | Feature |
+| Authenticated user can browse published articles | `tests/Feature/Filament/Member/Content/ArticleBrowseTest.php` | Feature |
+| Unpublished article is not visible in member panel | `tests/Feature/Filament/Member/Content/ArticleBrowseTest.php` | Feature |
+| Authenticated user can browse approved info sharing posts | `tests/Feature/Filament/Member/Content/InfoSharingBrowseTest.php` | Feature |
+| Pending or rejected info sharing posts are not visible in member panel | `tests/Feature/Filament/Member/Content/InfoSharingBrowseTest.php` | Feature |
+| Authorised user can create an info sharing post | `tests/Feature/Filament/Member/Content/InfoSharingCreateTest.php` | Feature |
+| Unauthorised user cannot create an info sharing post | `tests/Feature/Filament/Member/Content/InfoSharingCreateTest.php` | Feature |
+| FAQ search returns results matching both question and answer text | `tests/Feature/Filament/Member/Content/FaqSearchTest.php` | Feature |
+| Group newsletter is scoped to user's active group | `tests/Feature/Filament/Member/Content/GroupNewsletterTest.php` | Feature |
+| Committee minutes are not accessible to non-committee members | `tests/Feature/Filament/Member/Content/CommitteeMinutesTest.php` | Feature |
 
 ---
 

@@ -278,12 +278,12 @@ Grouped results showing count of active warrants per type per level. Link throug
 
 ---
 
-## 4. General Panel Requirements
+## 4. Member Panel Requirements
 
 ### 4.1 View Own Warrants
 
-**Page:** Tab within `ViewProfile` or dedicated page `App\Filament\General\Pages\MyWarrants`
-**Route:** `/general/{tenant}/my-warrants`
+**Page:** Tab within `ViewProfile` or dedicated page `App\Filament\Member\Pages\MyWarrants`
+**Route:** `/member/{tenant}/my-warrants`
 
 Displays all `AmsWarrantInfo` records where `userID = auth()->id()` ordered by `issueDate` descending.
 
@@ -295,8 +295,8 @@ Filters: Active / expired / all.
 
 ### 4.2 View Warrant Details
 
-**Page:** ViewRecord within the general panel's warrant resource (read-only)
-**Route:** `/general/{tenant}/my-warrants/{record}`
+**Page:** ViewRecord within the member panel's warrant resource (read-only)
+**Route:** `/member/{tenant}/my-warrants/{record}`
 
 Shows full warrant infolist (same fields as admin ViewRecord). No edit actions. No cancel/extend actions.
 
@@ -306,8 +306,8 @@ Access control: User can only view their own warrants. Attempting to view anothe
 
 ### 4.3 Apply for a Warrant
 
-**Page:** Create page within the general panel's warrant resource
-**Route:** `/general/{tenant}/my-warrants/apply`
+**Page:** Create page within the member panel's warrant resource
+**Route:** `/member/{tenant}/my-warrants/apply`
 
 Allows the authenticated user to submit an `AmsWarrantApplication` for themselves.
 
@@ -387,11 +387,11 @@ All tests must extend `Tests\Support\SdCoreTestCase`.
 
 ---
 
-### `Tests\Feature\Filament\GeneralPanelWarrantTest`
+### `Tests\Feature\Filament\MemberPanelWarrantTest`
 
 | Method | Asserts |
 |--------|---------|
-| `user_can_view_own_warrants_in_general_panel` | My warrants page returns `assertOk()` with user's warrants listed |
+| `user_can_view_own_warrants_in_member_panel` | My warrants page returns `assertOk()` with user's warrants listed |
 | `user_cannot_view_another_users_warrant` | Attempt to access warrant with `userID != auth()->id()` returns `assertForbidden()` |
 | `user_can_submit_warrant_application` | `AmsWarrantApplication` created with correct `userID` and geographic scope from tenant |
 | `warrant_application_form_only_shows_types_valid_for_level` | Group-level tenant; form only shows types with `group = 1` |

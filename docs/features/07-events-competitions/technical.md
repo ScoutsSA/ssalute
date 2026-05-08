@@ -1,5 +1,12 @@
 # Feature Spec: Events & Competitions
 
+> Module: Events & Competitions
+> Panel(s): Admin (backoffice), Member
+> Status: PLANNED
+> Phase: 7 — Events & Competitions
+
+---
+
 ## Overview
 
 Events are organised at group, district, regional, or national level. Each event has a booking system allowing groups to register attending members. Some events include formal competition tracks with scoring, leaderboards, GPS tracking, and judge management. Booking financials (invoices, payments, credit notes) are managed independently from group account financials.
@@ -132,11 +139,11 @@ Dedicated `Events` cluster under `app/Filament/Admin/Clusters/Events/`.
 
 ---
 
-## General Panel (Group Leader / Group Admin)
+## Member Panel (Group Leader / Group Admin)
 
 ### Resource Location
 
-`app/Filament/General/` — Events section scoped to the authenticated user's group.
+`app/Filament/Member/` — Events section scoped to the authenticated user's group.
 
 ### 1. Browse Upcoming Events
 
@@ -180,25 +187,27 @@ Dedicated `Events` cluster under `app/Filament/Admin/Clusters/Events/`.
 
 ## Tests Required
 
-### Feature Tests (`tests/Feature/Events/`)
+### Admin Feature Tests (`tests/Feature/Filament/Admin/Events/`)
 
 1. **Super admin can manage events**
    - Assert admin can create, edit, and delete a `GroupEvent`.
    - Assert admin can view all bookings for an event.
 
-2. **Group leader can register their group for events**
-   - Assert group leader can submit a `GroupEventsAttending` registration.
-   - Assert group leader can add members to the booking.
-
-3. **Group leader cannot manage another group's booking**
-   - Assert group leader receives 403/404 when attempting to view or edit another group's `EventUserBooking`.
-
-4. **Competition scoring workflow**
+2. **Competition scoring workflow**
    - Assert scores can be recorded against a scoring sheet.
    - Assert leaderboard reflects updated scores after a score is saved.
    - Assert DNP records exclude the group from rankings correctly.
 
-5. **Booking financial workflow (invoice → payment → receipt)**
+3. **Booking financial workflow (invoice → payment → receipt)**
    - Assert a booking invoice is generated with correct line items.
    - Assert recording a payment marks the invoice as paid.
    - Assert proof of payment upload links correctly to the booking.
+
+### Member Feature Tests (`tests/Feature/Filament/Member/Events/`)
+
+1. **Group leader can register their group for events**
+   - Assert group leader can submit a `GroupEventsAttending` registration.
+   - Assert group leader can add members to the booking.
+
+2. **Group leader cannot manage another group's booking**
+   - Assert group leader receives 403/404 when attempting to view or edit another group's `EventUserBooking`.

@@ -1,7 +1,7 @@
 # Feature Spec: Youth Management
 
 > Module: Youth Management
-> Panel(s): Admin (backoffice), General
+> Panel(s): Admin (backoffice), Member
 > Status: PLANNED
 > Phase: 3 — Group Operations
 
@@ -172,20 +172,20 @@ Available on `ListYouth`:
 
 ---
 
-## General Panel Requirements
+## Member Panel Requirements
 
-The General panel exposes a limited subset of youth management functionality, role-gated so that leaders can only access youth within their own group or section.
+The Member panel exposes a limited subset of youth management functionality, role-gated so that leaders can only access youth within their own group or section.
 
 ### Role Gating
 
-All general panel youth pages enforce:
+All member panel youth pages enforce:
 - User must have an active leadership role (e.g., Group Scout Leader, Section Leader, Assistant Leader) for the relevant group.
 - Queries are scoped to the user's active tenant role's group — youth from other groups are never returned.
 
 ### 1. View Youth Roster
 
 - **Type:** `ListRecords` page
-- **Class:** `app/Filament/General/Resources/YouthResource/Pages/ListYouth.php`
+- **Class:** `app/Filament/Member/Resources/YouthResource/Pages/ListYouth.php`
 - **Columns:** Name, section, sub-unit, active status, age
 - **Filters:** Section, active status
 - **Search:** Name
@@ -194,22 +194,22 @@ All general panel youth pages enforce:
 ### 2. Add Youth to Own Group
 
 - **Type:** `CreateRecord` page
-- **Class:** `app/Filament/General/Resources/YouthResource/Pages/CreateYouth.php`
+- **Class:** `app/Filament/Member/Resources/YouthResource/Pages/CreateYouth.php`
 - **Pre-filled:** Group and section derived from the leader's active role
 - **Required fields:** Name, date of birth, gender, section unit assignment
 
 ### 3. Edit Youth Profile (Own Group Only)
 
 - **Type:** `EditRecord` page
-- **Class:** `app/Filament/General/Resources/YouthResource/Pages/EditYouth.php`
+- **Class:** `app/Filament/Member/Resources/YouthResource/Pages/EditYouth.php`
 - **Editable fields:** Personal details, sub-unit assignment
-- **Not editable at general level:** Group assignment, section (use Entsha move instead), membership number
+- **Not editable at member level:** Group assignment, section (use Entsha move instead), membership number
 - **Authorization:** 403 if youth does not belong to the leader's group
 
 ### 4. Record Attendance
 
 - **Type:** Custom action or dedicated page accessible from `ViewYouth` or the section's roster
-- **Class:** `app/Filament/General/Resources/YouthResource/Pages/RecordAttendance.php`
+- **Class:** `app/Filament/Member/Resources/YouthResource/Pages/RecordAttendance.php`
 - **Scope:** Own section only
 - **Fields per entry:** Date, meeting/event type, present (yes/no/excused), notes
 - **Batch recording:** Allows marking attendance for multiple youth in a single session (checklist-style)
@@ -236,9 +236,9 @@ All general panel youth pages enforce:
 | Super admin can create a new youth record | `tests/Feature/Filament/Admin/Youth/YouthResourceTest.php` | Feature |
 | Super admin can edit a youth record | `tests/Feature/Filament/Admin/Youth/YouthResourceTest.php` | Feature |
 | Super admin can deactivate and re-activate youth | `tests/Feature/Filament/Admin/Youth/YouthResourceTest.php` | Feature |
-| Group leader can access their group's youth in the general panel | `tests/Feature/Filament/General/Youth/YouthRosterTest.php` | Feature |
-| Group leader cannot access another group's youth | `tests/Feature/Filament/General/Youth/YouthRosterTest.php` | Feature |
-| Regular member (no leadership role) cannot access youth management | `tests/Feature/Filament/General/Youth/YouthRosterTest.php` | Feature |
+| Group leader can access their group's youth in the member panel | `tests/Feature/Filament/Member/Youth/YouthRosterTest.php` | Feature |
+| Group leader cannot access another group's youth | `tests/Feature/Filament/Member/Youth/YouthRosterTest.php` | Feature |
+| Regular member (no leadership role) cannot access youth management | `tests/Feature/Filament/Member/Youth/YouthRosterTest.php` | Feature |
 | Entsha move fails if youth is outside the accepted age range for target section | `tests/Feature/Youth/EntshaTest.php` | Feature |
 | Entsha move fails if target section does not logically follow source section | `tests/Feature/Youth/EntshaTest.php` | Feature |
 | Entsha move succeeds and creates GroupsEntshaMove record | `tests/Feature/Youth/EntshaTest.php` | Feature |

@@ -1,5 +1,7 @@
 @import '../../../../vendor/filament/filament/resources/css/theme.css';
 
-@source '../../../../app/Filament/General/**/*';
-@source '../../../../resources/views/filament/general/**/*';
+@source '../../../../app/Filament/Member/**/*';
+@source '../../../../app/Filament/HoldingZone/**/*';
+@source '../../../../resources/views/filament/member/**/*';
+@source '../../../../resources/views/filament/holding-zone/**/*';
 @source '../../../../resources/views/filament/**/*.blade.php';

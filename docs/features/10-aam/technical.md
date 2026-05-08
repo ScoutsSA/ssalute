@@ -1,7 +1,7 @@
 # Feature Spec: Adult Application for Membership (AAM)
 
 > Module: AAM — Adult Application for Membership
-> Panel(s): Admin (backoffice), General (public-facing form)
+> Panel(s): Admin (backoffice), Member (public-facing form)
 > Status: WIP (~40%)
 > Phase: 2 — Adult Lifecycle
 
@@ -156,12 +156,12 @@ When an `AamRequest` is submitted, the application level is determined from the 
 
 ---
 
-## General Panel Requirements
+## Member Panel Requirements
 
 ### 1. Public-Facing Application Form
 
 - **Type:** Publicly accessible Livewire page or Filament page (no authentication required)
-- **Class:** `app/Filament/General/Pages/ApplyAdultMembership.php` (or equivalent)
+- **Class:** `app/Filament/Member/Pages/ApplyAdultMembership.php` (or equivalent)
 - **Partially built:** Form exists; routing and submission handling partially implemented
 - **Fields:**
   - Personal details: first name, last name, email, phone, date of birth, gender, ID/passport number, address
@@ -176,7 +176,7 @@ When an `AamRequest` is submitted, the application level is determined from the 
 ### 2. Application Status Tracking
 
 - **Type:** Publicly accessible page, accessed via a signed URL sent in the confirmation email
-- **Class:** `app/Filament/General/Pages/CheckApplicationStatus.php` (or equivalent)
+- **Class:** `app/Filament/Member/Pages/CheckApplicationStatus.php` (or equivalent)
 - **Access control:** Signed URL (Laravel `URL::signedRoute()`); no login required
 - **Displays:** Applicant name, application reference, current status, submitted at, review notes (if the application was rejected or requested more info)
 - **Does not display:** Other applicants' data; internal review notes not intended for the applicant
@@ -187,12 +187,12 @@ When an `AamRequest` is submitted, the application level is determined from the 
 
 | Test | File | Type |
 |---|---|---|
-| Application form submits successfully with all valid required fields | `tests/Feature/Filament/General/Aam/AamFormTest.php` | Feature |
-| Application form fails validation when required fields are missing | `tests/Feature/Filament/General/Aam/AamFormTest.php` | Feature |
-| Application form prevents duplicate submission from the same email | `tests/Feature/Filament/General/Aam/AamFormTest.php` | Feature |
-| Successful submission routes notification to the correct level email | `tests/Feature/Filament/General/Aam/AamEmailRoutingTest.php` | Feature |
-| Missing level email falls back to next_in_line_roles users | `tests/Feature/Filament/General/Aam/AamEmailRoutingTest.php` | Feature |
-| National application additionally notifies national_support_role_ids users | `tests/Feature/Filament/General/Aam/AamEmailRoutingTest.php` | Feature |
+| Application form submits successfully with all valid required fields | `tests/Feature/Filament/Member/Aam/AamFormTest.php` | Feature |
+| Application form fails validation when required fields are missing | `tests/Feature/Filament/Member/Aam/AamFormTest.php` | Feature |
+| Application form prevents duplicate submission from the same email | `tests/Feature/Filament/Member/Aam/AamFormTest.php` | Feature |
+| Successful submission routes notification to the correct level email | `tests/Feature/Filament/Member/Aam/AamEmailRoutingTest.php` | Feature |
+| Missing level email falls back to next_in_line_roles users | `tests/Feature/Filament/Member/Aam/AamEmailRoutingTest.php` | Feature |
+| National application additionally notifies national_support_role_ids users | `tests/Feature/Filament/Member/Aam/AamEmailRoutingTest.php` | Feature |
 | Admin can view and filter AAM application list | `tests/Feature/Filament/Admin/Aam/ApplicationListTest.php` | Feature |
 | Admin can approve an application | `tests/Feature/Filament/Admin/Aam/ReviewApplicationTest.php` | Feature |
 | Admin can reject an application with a required reason | `tests/Feature/Filament/Admin/Aam/ReviewApplicationTest.php` | Feature |
@@ -201,8 +201,8 @@ When an `AamRequest` is submitted, the application level is determined from the 
 | Already-converted application cannot be converted again | `tests/Feature/Filament/Admin/Aam/ConvertToUserTest.php` | Feature |
 | Unapproved application cannot be converted to a user | `tests/Feature/Filament/Admin/Aam/ConvertToUserTest.php` | Feature |
 | AAM form settings page loads correctly | `tests/Feature/Filament/Admin/Settings/ManageFormSettingsTest.php` | Feature |
-| Status tracking page shows correct status via signed URL | `tests/Feature/Filament/General/Aam/StatusTrackingTest.php` | Feature |
-| Status tracking page returns 403 for invalid or expired signed URL | `tests/Feature/Filament/General/Aam/StatusTrackingTest.php` | Feature |
+| Status tracking page shows correct status via signed URL | `tests/Feature/Filament/Member/Aam/StatusTrackingTest.php` | Feature |
+| Status tracking page returns 403 for invalid or expired signed URL | `tests/Feature/Filament/Member/Aam/StatusTrackingTest.php` | Feature |
 
 ---
 

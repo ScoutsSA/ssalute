@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Clusters\Area\Resources\Districts;
 
 use App\Filament\Admin\Clusters\Area\AreaCluster;
+use App\Filament\Admin\Clusters\Area\RelationManagers\RoleAttachmentsRelationManager;
 use App\Filament\Admin\Clusters\Area\Resources\Districts\Pages\CreateDistrict;
 use App\Filament\Admin\Clusters\Area\Resources\Districts\Pages\EditDistrict;
 use App\Filament\Admin\Clusters\Area\Resources\Districts\Pages\ListDistricts;
@@ -47,6 +48,7 @@ class DistrictResource extends Resource
     {
         return [
             DistrictGroupsRelationManager::make(),
+            RoleAttachmentsRelationManager::make(),
         ];
     }
 

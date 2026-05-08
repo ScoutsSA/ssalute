@@ -10,6 +10,10 @@
         "nightwatch": {
             "type": "http",
             "url": "https://nightwatch.laravel.com/mcp"
+        },
+        "github": {
+            "type": "http",
+            "url": "https://api.githubcopilot.com/mcp/"
         }
     }
 }

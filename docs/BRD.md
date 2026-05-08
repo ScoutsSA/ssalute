@@ -1,8 +1,8 @@
 # Business Requirements Document — Ssalute
 ## Scouts South Africa Member Management System
 
-**Version:** 1.0
-**Date:** 2026-03-13
+**Version:** 1.1
+**Date:** 2026-04-16
 **Status:** Living document — updated as each phase is delivered
 
 ---
@@ -11,7 +11,7 @@
 
 Ssalute is a modern, framework-based rewrite of **Scouts Digital** — the internal member management system for Scouts South Africa. The legacy system is a raw PHP application (~400+ files, no framework, no test coverage) that has accumulated significant technical debt over many years. It covers the complete lifecycle of Scouts SA membership from recruitment and adult onboarding through to retirement, group management, financials, events, training, reporting, and beyond.
 
-Ssalute replaces this with a clean Laravel 12 application backed by Filament v4, PHPUnit test coverage from day one, queued async processing via Horizon, and a structured architecture that can be maintained, extended, and deployed with confidence.
+Ssalute replaces this with a clean Laravel application backed by Filament v5, PHPUnit test coverage from day one, queued async processing via Horizon, and a structured architecture that can be maintained, extended, and deployed with confidence.
 
 The new system maintains full data compatibility with the existing `sd-core` database schema so that migration can happen incrementally with zero data loss.
 
@@ -21,27 +21,35 @@ The new system maintains full data compatibility with the existing `sd-core` dat
 
 ### 2.1 In Scope
 
-| Dimension | Detail |
-|-----------|--------|
-| **Data layer** | Full compatibility with the existing MySQL `sd-core` database (291 Eloquent models) |
-| **Functional coverage** | 20+ modules covering all major areas of the legacy system (see Section 8) |
-| **Admin backoffice panel** | Filament v4 admin panel for super admins and national-level staff at `/backoffice` |
-| **General member panel** | Filament v4 general panel for all active role holders at `/general/{tenant}` |
-| **Authentication** | Laravel Auth — login, logout, password reset, email verification |
-| **Multi-role support** | Filament tenancy — one user can hold multiple roles across different geographic levels |
-| **Infrastructure** | Horizon queues, Laravel Scheduler, SES email, Sentry error tracking, Nightwatch monitoring |
-| **Testing** | PHPUnit feature tests using `SdCoreTestCase` for all features |
+| Dimension | Detail                                                                                                                              |
+|-----------|-------------------------------------------------------------------------------------------------------------------------------------|
+| **Data layer** | Full compatibility with the existing MySQL `sd-core` database (291 Eloquent models)                                                 |
+| **Functional coverage** | 20+ modules covering all major areas of the legacy system (see Section 8)                                                           |
+| **Admin backoffice panel** | Filament v5 admin panel for super admins and national-level staff at `/backoffice`                                                  |
+| **Member panel** | Filament v5 member panel for all active role holders at `/member/{tenant}`                                                          |
+| **Holding zone panel** | Temporary Filament v5 fallback panel for authenticated users without active roles or valid warrants/appointments at `/holding-zone` |
+| **Authentication** | Laravel Auth — login, logout, password reset, email verification                                                                    |
+| **Multi-role support** | Filament tenancy — one user can hold multiple roles across different geographic levels                                              |
+| **Infrastructure** | Horizon queues, Laravel Scheduler, SES email, Sentry error tracking, Nightwatch monitoring                                          |
+| **Testing** | PHPUnit feature tests using `SdCoreTestCase` for all features                                                                       |
 
 ### 2.2 Out of Scope
 
-| Item | Reason |
-|------|--------|
-| **WSM16** (World Scout Moot 2016) | Past event; no ongoing operational need |
-| **24WSJ** (24th World Scout Jamboree) | Past event; legacy dashboard to be retired |
-| **Gauteng Kontiki** | Regional-specific one-off event; not a national platform concern |
-| **Telegram bot** | Planned future feature; not in current phases |
-| **External API** | Planned future feature; not in current phases |
-| **PWA / Mobile app** | Planned future feature; not in current phases |
+| Item                                  | Reason                                                                  |
+|---------------------------------------|-------------------------------------------------------------------------|
+| **WSM16** (World Scout Moot 2016)     | Past event; no ongoing operational need                                 |
+| **24WSJ** (24th World Scout Jamboree) | Past event; legacy dashboard to be retired                              |
+| **Gauteng Kontiki**                   | Regional-specific one-off event; not a national platform concern        |
+| **Shop**                              | Legacy references to a potential on-platform shop                       |
+| **Payment Tiers**                     | Legacy references to "paid" groups and tiering                          |
+| **Telegram bot**                      | Legacy references to telegram bot                                       |
+| **External API**                      | Planned future feature; not in current phases                           |
+| **External MCP Server**               | Planned future feature; not in current phases                           |
+| **AI Documentation & Policy Helper**  | Planned future feature; not in current phases                           |
+| **Permit System**                     | Planned future migration from an external system; not in current phases |
+| **Minor Consent Form Overhaul**       | Planned future feature; not in current phases |
+| **Whatsapp & SMS Integrations**       | Planned future feature; not in current phases |
+| **PWA / Mobile app**                  | Planned future feature; not in current phases                           |
 
 ---
 
@@ -67,15 +75,16 @@ National
 
 | Stakeholder | Panel Access | Description |
 |-------------|-------------|-------------|
-| **Super Admin** | Admin + General | System administrators; can access all backoffice functions. Identified by `super_user_admin_list` in `GeneralSettings` or by config `ssalute.superuser_email`. |
-| **National Commissioner / Staff** | Admin (limited) + General | National-level role holders with `canAdminNational = 1` on their `SystemUserType`. Access to national-scoped reports and management. |
-| **Regional Commissioner / Admins** | General | Regional-level roles (`regionalRole = 1`). Manage groups and adults within their region. |
-| **District Commissioner / Admins** | General | District-level roles (`districtRole = 1`). Manage groups and adults within their district. |
-| **Group Leader / Scouter (warranted)** | General | Group-level roles (`groupRole = 1`, `warrantedRole = 1`). Manage youth, programs, and group operations. |
-| **Group Admin** | General | Group-level administrative roles. Manage invoices, communications, and administrative tasks for the group. |
-| **Parent / Parent Helper** | General | `parentHelperRole = 1`. Read-limited access to youth information for their own children. |
-| **Youth (read-only)** | General (future) | Youth members in Meerkat/Cub/Scout/Rover sections. Read-only access to personal advancement records. |
-| **Alumni** | General | `alumniRole = 1`. Read-only access to own historical records. |
+| **Super Admin** | Admin + Member | System administrators; can access all backoffice functions. Identified by `super_user_admin_list` in `GeneralSettings` or by config `ssalute.superuser_email`. |
+| **National Commissioner / Staff** | Admin (limited) + Member | National-level role holders with `canAdminNational = 1` on their `SystemUserType`. Access to national-scoped reports and management. |
+| **Regional Commissioner / Admins** | Member | Regional-level roles (`regionalRole = 1`). Manage groups and adults within their region. |
+| **District Commissioner / Admins** | Member | District-level roles (`districtRole = 1`). Manage groups and adults within their district. |
+| **Group Leader / Scouter (warranted)** | Member | Group-level roles (`groupRole = 1`, `warrantedRole = 1`). Manage youth, programs, and group operations. |
+| **Group Admin** | Member | Group-level administrative roles. Manage invoices, communications, and administrative tasks for the group. |
+| **Parent / Parent Helper** | Member | `parentHelperRole = 1`. Read-limited access to youth information for their own children. |
+| **Youth (read-only)** | Member (future) | Youth members in Meerkat/Cub/Scout/Rover sections. Read-only access to personal advancement records. |
+| **Alumni** | Member | `alumniRole = 1`. Read-only access to own historical records. |
+| **Holding Zone User** | Holding Zone | Authenticated users without active warrants or appointments. Redirected here by `EnsureValidWarrant` middleware until their role attachments are valid. |
 
 ---
 
@@ -83,48 +92,48 @@ National
 
 ### 4.1 Admin Backoffice Panel (`/backoffice`)
 
-The admin panel is a Filament v4 panel provided by `AdminPanelProvider`. It is accessible only to users who pass `canAccessPanel()` on `SystemUser` — currently restricted to super admins (by `GeneralSettings::super_user_admin_list` or by configured superuser email).
-
-This panel is **not tenant-aware**; it provides a global view across all geographic levels.
+Accessible only to super admins. Provides a global view across all geographic levels without tenant scoping.
 
 **Purpose:** System administration, data corrections, lookup table management, national-level reporting, and backoffice operations that should not be exposed to field-level operators.
 
-### 4.2 General Member Panel (`/general/{tenant}`)
+### 4.2 Member Panel (`/member/{tenant}`)
 
-The general panel is a Filament v4 tenant-aware panel provided by `GeneralPanelProvider`. The tenant model is `SystemUsersOtherRole` — each role attachment a user holds is a separate "tenant" in Filament terms. The tenant ID is embedded in the URL, making every page bookmarkable and shareable.
+Accessible to any user with at least one active role that has a valid warrant or appointment. The panel is tenant-aware, where each role attachment a user holds is a separate tenant. The tenant ID is embedded in the URL, making every page bookmarkable and shareable. Users switch between their roles via the sidebar tenant switcher. Shared links are handled gracefully by redirecting to the recipient's equivalent context rather than returning a 404.
 
-Users switch between their roles via the built-in Filament sidebar tenant switcher. The `RedirectToValidTenant` middleware handles shared links gracefully, redirecting to the recipient's equivalent context rather than returning a 404.
+**Purpose:** Day-to-day operations for all active role holders, including profile management, youth management, group operations, training bookings, event attendance, and more.
 
-**Purpose:** Day-to-day operations for all active role holders — profile management, youth management, group operations, training bookings, event attendance, and more.
+### 4.3 Holding Zone Panel (`/holding-zone`)
+
+Accessible to any authenticated user. Serves as a fallback for users who do not currently have any active roles with valid warrants or appointments. Users are redirected here automatically if their role's warrant or appointment is invalid.
+
+The panel provides limited functionality: profile viewing and editing, password change, and informational notices explaining why the user's access is restricted.
+
+**Purpose:** A safe landing area for authenticated users whose roles lack valid warrants or appointments, keeping them informed of their status while preventing access to operational features.
 
 ---
 
 ## 5. Current State
 
-| Dimension | Status |
-|-----------|--------|
-| **Infrastructure** | ~90% complete — Auth, panels, tenancy, queues, email, error tracking, testing infrastructure all in place |
-| **Feature parity with legacy** | ~5–7% — AAM onboarding flow ~40% complete; AMS cluster scaffolded with lookup tables and basic resources |
-| **Test coverage** | Feature tests in place for admin panel access, general panel access, AMS cluster, area cluster, settings, and AAM form |
+| Dimension | Status                                                                                                                |
+|-----------|-----------------------------------------------------------------------------------------------------------------------|
+| **Infrastructure** | ~90% complete — Auth, panels, tenancy, queues, email, error tracking, testing infrastructure all in place             |
+| **Feature parity with legacy** | ~5% — My Profile and Tenant switcher logic all in place                                                               |
+| **Test coverage** | Feature tests in place for admin panel access, member panel access, area cluster, settings|
 
 ---
 
 ## 6. Technology Decisions
 
-| Decision | Detail | Rationale |
-|----------|--------|-----------|
-| **Laravel 12 + PHP 8.4** | Core framework | Modern, well-supported, security-maintained |
-| **Filament v4** | Admin and general panels | Rich component library; inbuilt tenancy, impersonation, form/table/infolist components |
-| **Filament tenancy for role switching** | `SystemUsersOtherRole` as the tenant model | Role context is embedded in the URL — bookmarkable, shareable, no hidden session state |
-| **Single general panel** | All roles use one panel at `/general/{tenant}` | Avoids panel proliferation; role-specific content is gated within the panel using tenant context |
-| **Filament clusters** | One cluster per module (AMS, Area, Forms, Settings, etc.) | Groups related resources in the sidebar; maps cleanly to legacy module boundaries |
-| **spatie/laravel-settings** | `GeneralSettings`, `FormSettings` | Strongly-typed settings stored in DB; editable in the admin UI without code changes |
-| **SdCoreTestCase** | Base class for feature tests | Handles the `sd-core` schema dump + Ssalute migrations; `RefreshDatabase` for test isolation |
-| **`actingAs(superAdmin)` pattern** | Standard test auth pattern | Matches how Filament resolves `canAccessPanel()` in tests |
-| **`hasAnyActiveRole()`** | General panel access check | Any user with at least one active `SystemUsersOtherRole` can access the general panel |
-| **Horizon** | Queue worker | Manages all queued jobs (email sends, report generation, cron-triggered notifications) |
-| **SES + Laravel Mail** | Email delivery | Replaces legacy PHPMailer; queued, retryable |
-| **Sentry + Nightwatch** | Error tracking and monitoring | No equivalent existed in legacy |
+| Decision | Detail | Rationale                                                                              |
+|----------|--------|----------------------------------------------------------------------------------------|
+| **Laravel 12 + PHP 8.4** | Core framework | Modern, well-supported, security-maintained                                            |
+| **Filament v5** | Admin and member panels | Rich component library; inbuilt tenancy, impersonation, form/table/infolist components |
+| **Filament tenancy for role switching** | One panel, role context in URL | Bookmarkable, shareable, no hidden session state; avoids panel proliferation           |
+| **Filament clusters** | One cluster per module | Groups related resources in the sidebar; maps cleanly to legacy module boundaries      |
+| **spatie/laravel-settings** | Strongly-typed settings stored in DB | Editable in the backoffice UI without code changes                                     |
+| **Horizon** | Queue worker | Manages all queued jobs (email sends, report generation, notifications)                |
+| **SES + Laravel Mail** | Email delivery | Replaces legacy PHPMailer; queued, retryable                                           |
+| **Sentry + Nightwatch** | Error tracking and monitoring | No equivalent existed in legacy                                                        |
 
 ---
 
@@ -133,144 +142,62 @@ Users switch between their roles via the built-in Filament sidebar tenant switch
 ### 7.1 Geography Hierarchy
 
 ```
-National (National model)
-  └── Region (Region model) — province-level
-        └── DistrictsSuper (DistrictsSuper model) — optional super-district grouping
-              └── District (District model)
-                    └── Group (Group model)
-                          ├── GroupMeerkatDen — Meerkat dens
-                          ├── GroupCubPack — Cub packs
-                          ├── GroupScoutTroop — Scout troops
-                          └── GroupRoverCrew — Rover crews
+National
+  └── Region (province-level)
+        └── (Super District — optional grouping)
+              └── District
+                    └── Group
+                          ├── Meerkat Den
+                          ├── Cub Pack
+                          ├── Scout Troop
+                          └── Rover Crew
 ```
 
 ### 7.2 Adult Member Lifecycle
 
-```
-AAM Application (AamsRequest)
-  → Approval workflow (email routing via FormSettings)
-  → Conversion to SystemUser
-  → Role assignment (SystemUsersOtherRole)
-  → Warrant issuance (AmsWarrantInfo)
-  → Ongoing: training, awards, police clearance, documents
-  → Exit: resign / retire / terminate / suspend (AmsResignLeader, AmsRetireLeader, etc.)
-```
+The adult member lifecycle covers recruitment, onboarding, active membership, and exit. The exact onboarding workflow (Adult Application for Membership) is still being planned and specified (see [docs/features/10-aam.md](features/10-aam.md)). At a high level, the lifecycle includes:
+
+- **Onboarding:** application, approval, member record creation, role assignment, warrant issuance (workflow TBD)
+- **Active membership:** training, awards, police clearance, document management
+- **Exit:** resign, retire, terminate, or suspend
 
 ### 7.3 Financial Model
 
-Each group has one or more `GroupAccount` records. Financial activity is tracked through:
-- `GroupFinancialInvoice` / `GroupFinancialInvoicesItem`
-- `GroupFinancialPaymentsMade`
-- `GroupFinancialCreditNote` / `GroupFinancialCreditNotesItem`
-- `GroupFinancialFee` / `GroupFinancialFeeType`
-- `GroupFinancialYear`
-- `GroupAccountsTransfer` (transfers between group accounts)
-
-Annual invoice generation creates bulk invoices for all groups in a financial year.
-
-### 7.4 Application Structure
-
-```
-app/
-  Filament/
-    Admin/
-      Clusters/
-        AMS/           — Adult Member System (warrants, awards, charges, discipline, training, police clearance, past service + lookups)
-        Area/          — Geographic management (Districts, Regions, Groups)
-        Forms/         — Public-facing forms (AAM application management)
-        Settings/      — System configuration pages
-        Advancements/  — (Planned) Youth advancement management
-        GroupOperations/ — (Planned) Group management
-      Resources/
-        Users/         — SystemUser management (admin-level)
-        Roles/         — SystemUserType management
-    General/
-      Pages/
-        Dashboard      — Role-aware landing page
-        ViewProfile    — Read-only profile (infolist-based)
-        EditProfile    — Editable profile
-  Models/              — 291 Eloquent models mapped to sd-core schema
-  Settings/            — spatie/laravel-settings: GeneralSettings, FormSettings
-  Providers/
-    Filament/
-      AdminPanelProvider
-      GeneralPanelProvider
-```
+Each group maintains one or more financial accounts. Financial activity is tracked through invoices, payments, credit notes, fees, and inter-group transfers. Annual invoice generation creates bulk invoices for all groups in a financial year.
 
 ---
 
 ## 8. Module List
 
-The following modules are planned for Ssalute. Each has a dedicated feature specification document.
+The following modules are planned for Ssalute. Each has a dedicated feature folder containing an `overview.md` (business requirements) and a `technical.md` (implementation details).
 
 | # | Module | Status | Feature Spec |
 |---|--------|--------|-------------|
-| 1 | Adult Member System (AMS) | Planned | [docs/features/01-adult-member-system.md](features/01-adult-member-system.md) |
-| 2 | Warrants | Scaffolded (list/view) | [docs/features/02-warrants.md](features/02-warrants.md) |
-| 3 | Youth Management | Planned | [docs/features/03-youth-management.md](features/03-youth-management.md) |
-| 4 | Advancements & Badges | Planned | [docs/features/04-advancements-badges.md](features/04-advancements-badges.md) |
-| 5 | Training | Scaffolded (list) | [docs/features/05-training.md](features/05-training.md) |
-| 6 | Financial Management | Planned | [docs/features/06-financial-management.md](features/06-financial-management.md) |
-| 7 | Events & Competitions | Planned | [docs/features/07-events-competitions.md](features/07-events-competitions.md) |
-| 8 | Group Operations | Planned | [docs/features/08-group-operations.md](features/08-group-operations.md) |
-| 9 | Reports & Census | Planned | [docs/features/09-reports-census.md](features/09-reports-census.md) |
-| 10 | Adult Application for Membership (AAM) | WIP (~40%) | [docs/features/10-aam.md](features/10-aam.md) |
-| 11 | Area Management (Districts/Regions) | WIP (basic) | [docs/features/11-area-management.md](features/11-area-management.md) |
-| 12 | Content & Community | Planned | [docs/features/12-content-community.md](features/12-content-community.md) |
-| 13 | Support & Ticketing | Planned | [docs/features/13-support.md](features/13-support.md) |
-| 14 | Shop | Planned | [docs/features/14-shop.md](features/14-shop.md) |
-| 15 | Jamboree | Planned | [docs/features/15-jamboree.md](features/15-jamboree.md) |
+| 1 | Adult Member System (AMS) | Planned | [features/01-adult-member-system/overview.md](features/01-adult-member-system/overview.md) |
+| 2 | Warrants | Scaffolded (list/view) | [features/02-warrants/overview.md](features/02-warrants/overview.md) |
+| 3 | Youth Management | Planned | [features/03-youth-management/overview.md](features/03-youth-management/overview.md) |
+| 4 | Advancements & Badges | Planned | [features/04-advancements-badges/overview.md](features/04-advancements-badges/overview.md) |
+| 5 | Training | Scaffolded (list) | [features/05-training/overview.md](features/05-training/overview.md) |
+| 6 | Financial Management | Planned | [features/06-financial-management/overview.md](features/06-financial-management/overview.md) |
+| 7 | Events & Competitions | Planned | [features/07-events-competitions/overview.md](features/07-events-competitions/overview.md) |
+| 8 | Group Operations | Planned | [features/08-group-operations/overview.md](features/08-group-operations/overview.md) |
+| 9 | Reports & Census | Planned | [features/09-reports-census/overview.md](features/09-reports-census/overview.md) |
+| 10 | Adult Application for Membership (AAM) | WIP (~40%) | [features/10-aam/overview.md](features/10-aam/overview.md) |
+| 11 | Area Management (Districts/Regions) | WIP (basic) | [features/11-area-management/overview.md](features/11-area-management/overview.md) |
+| 12 | Content & Community | Planned | [features/12-content-community/overview.md](features/12-content-community/overview.md) |
+| 13 | Support & Ticketing | Planned | Not yet documented |
 
 ---
 
 ## 9. Testing Strategy
 
-All features must have PHPUnit feature tests. The following conventions apply across the project:
+All features must have PHPUnit feature tests. Each module must test:
 
-### 9.1 Base Test Class
-
-All feature tests that touch the `sd-core` database schema must extend `Tests\Support\SdCoreTestCase`. This class:
-
-- Loads the `sd-core` MySQL schema dump on first run
-- Applies Ssalute-specific migrations on top
-- Uses `RefreshDatabase` (wraps each test in a transaction and rolls back)
-
-Tests that do not touch the database may extend the base `Tests\TestCase` directly.
-
-### 9.2 Auth Pattern
-
-```php
-// Super admin access
-$superAdmin = SystemUser::factory()->create();
-app(GeneralSettings::class)->fill(['super_user_admin_list' => [$superAdmin->id]])->save();
-$this->actingAs($superAdmin)->get($url)->assertOk();
-
-// Regular user with a role
-$user = SystemUser::factory()->withRole()->create();
-$this->actingAs($user)->get($url)->assertForbidden(); // for admin panel
-```
-
-### 9.3 Test Structure
-
-Each module must test:
 - **Happy paths** — the feature works correctly for authorised users
 - **Forbidden paths** — unauthorised users receive `403 Forbidden` or are redirected
 - **Guest paths** — unauthenticated users are redirected to login
 - **Validation failures** — invalid form submissions return appropriate errors
 - **Edge cases** — boundary conditions specific to the business logic
-
-### 9.4 Running Tests
-
-```bash
-# Run all tests
-php artisan test --compact
-
-# Run a specific test file
-php artisan test --compact tests/Feature/Filament/AmsClusterTest.php
-
-# Filter by test name
-php artisan test --compact --filter=super_admin_can_access
-```
 
 ---
 

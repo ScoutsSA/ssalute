@@ -1,7 +1,7 @@
 # Feature Spec: Reports & Census
 
 > Module: Reports & Census
-> Panel(s): Admin (backoffice), General
+> Panel(s): Admin (backoffice), Member
 > Status: PLANNED
 > Phase: 9 — Reporting & Census
 
@@ -181,7 +181,7 @@ The Reports cluster lives under the Admin panel and groups all reporting resourc
 
 ---
 
-## General Panel Requirements
+## Member Panel Requirements
 
 ### 1. Group Leader — Reports for Own Group
 
@@ -197,8 +197,8 @@ The Reports cluster lives under the Admin panel and groups all reporting resourc
 
 ### 3. Annual Census Submission
 
-- **Type:** Custom page in the General panel
-- **Class:** `app/Filament/General/Pages/SubmitCensus.php`
+- **Type:** Custom page in the Member panel
+- **Class:** `app/Filament/Member/Pages/SubmitCensus.php`
 - **Availability:** Only accessible when a census window is open (checked against census window record)
 - **Fields:** Section-by-section member counts (Meerkats, Cubs, Scouts, Rovers); optional supporting document upload
 - **On submit:** Creates or updates a `CensusDocument` record; marks submission as complete; sends confirmation email to the submitter
@@ -219,13 +219,13 @@ The Reports cluster lives under the Admin panel and groups all reporting resourc
 | Super admin can access the reports dashboard | `tests/Feature/Filament/Admin/Reports/ReportsDashboardTest.php` | Feature |
 | Super admin can run an adult report with filters | `tests/Feature/Filament/Admin/Reports/AdultReportsTest.php` | Feature |
 | Warrant expiry report returns only members within the threshold window | `tests/Feature/Filament/Admin/Reports/AdultReportsTest.php` | Feature |
-| Group leader can only view reports scoped to their own group | `tests/Feature/Filament/General/Reports/GroupReportsTest.php` | Feature |
-| Group leader cannot access another group's report data | `tests/Feature/Filament/General/Reports/GroupReportsTest.php` | Feature |
+| Group leader can only view reports scoped to their own group | `tests/Feature/Filament/Member/Reports/GroupReportsTest.php` | Feature |
+| Group leader cannot access another group's report data | `tests/Feature/Filament/Member/Reports/GroupReportsTest.php` | Feature |
 | Census window can be opened and closed by national admin | `tests/Feature/Filament/Admin/Reports/CensusManagementTest.php` | Feature |
-| Group leader can submit census data while window is open | `tests/Feature/Filament/General/Census/CensusSubmissionTest.php` | Feature |
-| Group leader cannot submit census data when window is closed | `tests/Feature/Filament/General/Census/CensusSubmissionTest.php` | Feature |
-| Census submission creates a CensusDocument record | `tests/Feature/Filament/General/Census/CensusSubmissionTest.php` | Feature |
-| Census submission status shows correct state for own group | `tests/Feature/Filament/General/Census/CensusSubmissionTest.php` | Feature |
+| Group leader can submit census data while window is open | `tests/Feature/Filament/Member/Census/CensusSubmissionTest.php` | Feature |
+| Group leader cannot submit census data when window is closed | `tests/Feature/Filament/Member/Census/CensusSubmissionTest.php` | Feature |
+| Census submission creates a CensusDocument record | `tests/Feature/Filament/Member/Census/CensusSubmissionTest.php` | Feature |
+| Census submission status shows correct state for own group | `tests/Feature/Filament/Member/Census/CensusSubmissionTest.php` | Feature |
 | Census rollup report aggregates district totals correctly | `tests/Feature/Filament/Admin/Reports/CensusRollupTest.php` | Feature |
 | Excel export generates a valid xlsx file for a report | `tests/Feature/Filament/Admin/Reports/ExportTest.php` | Feature |
 | PDF export generates a valid PDF file for a report | `tests/Feature/Filament/Admin/Reports/ExportTest.php` | Feature |

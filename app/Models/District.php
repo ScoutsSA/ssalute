@@ -108,6 +108,11 @@ class District extends BaseModel
         return $this->hasMany(GroupCommittee::class, 'assocToDistrict', 'id');
     }
 
+    public function roleAttachments(): HasMany
+    {
+        return $this->hasMany(SystemUsersOtherRole::class, 'districtID');
+    }
+
     public function youthCharges(): HasMany
     {
         return $this->hasMany(GroupYouthCharge::class, 'assocToDistrict', 'id');

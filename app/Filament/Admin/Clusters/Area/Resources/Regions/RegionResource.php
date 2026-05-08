@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Clusters\Area\Resources\Regions;
 
 use App\Filament\Admin\Clusters\Area\AreaCluster;
+use App\Filament\Admin\Clusters\Area\RelationManagers\RoleAttachmentsRelationManager;
 use App\Filament\Admin\Clusters\Area\Resources\Regions\Pages\CreateRegion;
 use App\Filament\Admin\Clusters\Area\Resources\Regions\Pages\EditRegion;
 use App\Filament\Admin\Clusters\Area\Resources\Regions\Pages\ListRegions;
@@ -49,6 +50,7 @@ class RegionResource extends Resource
         return [
             RegionDistrictsRelationManager::make(),
             RegionGroupsRelationManager::make(),
+            RoleAttachmentsRelationManager::make(),
         ];
     }
 

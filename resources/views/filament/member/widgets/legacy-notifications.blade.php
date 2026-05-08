@@ -39,7 +39,7 @@
 
             <x-slot name="footerActions">
                 <x-filament::link
-                    :href="\App\Filament\General\Pages\Notifications::getUrl()"
+                    :href="\App\Filament\Member\Pages\Notifications::getUrl()"
                     icon="heroicon-m-arrow-right"
                     icon-position="after"
                 >

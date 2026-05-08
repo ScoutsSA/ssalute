@@ -1,8 +1,15 @@
 # Feature Spec: Group Operations
 
+> Module: Group Operations
+> Panel(s): Admin (backoffice), Member
+> Status: PLANNED
+> Phase: 8 — Group Operations
+
+---
+
 ## Overview
 
-Day-to-day group management including weekly program planning, committee and council management, attendance recording, equipment and property tracking, and group communications. The backoffice panel provides cross-group visibility and admin configuration, while the general panel gives group leaders self-service tools for their own group.
+Day-to-day group management including weekly program planning, committee and council management, attendance recording, equipment and property tracking, and group communications. The backoffice panel provides cross-group visibility and admin configuration, while the member panel gives group leaders self-service tools for their own group.
 
 ---
 
@@ -121,11 +128,11 @@ Existing `GroupOperations` cluster under `app/Filament/Admin/Clusters/GroupOpera
 
 ---
 
-## General Panel (Group Leader / Group Admin)
+## Member Panel (Group Leader / Group Admin)
 
 ### Resource Location
 
-`app/Filament/General/` — Group Operations section scoped to the authenticated user's group.
+`app/Filament/Member/` — Group Operations section scoped to the authenticated user's group.
 
 ### 1. Create & Manage Programs
 
@@ -191,27 +198,29 @@ Existing `GroupOperations` cluster under `app/Filament/Admin/Clusters/GroupOpera
 
 ## Tests Required
 
-### Feature Tests (`tests/Feature/GroupOperations/`)
+### Admin Feature Tests (`tests/Feature/Filament/Admin/GroupOperations/`)
 
 1. **Super admin can view programs and operations resources**
    - Assert admin can access the programs list, committee list, attendance list, equipment list, and property list.
    - _(Partially covered by existing `GroupOperationsClusterTest` — extend rather than replace.)_
 
-2. **Group leader can create programs for their group**
+### Member Feature Tests (`tests/Feature/Filament/Member/GroupOperations/`)
+
+1. **Group leader can create programs for their group**
    - Assert group leader can submit the create program form and a `GroupProgram` record is persisted.
    - Assert the program is associated with the correct group.
 
-3. **Group leader cannot access another group's programs**
+2. **Group leader cannot access another group's programs**
    - Assert group leader receives 403/404 when attempting to view or edit a `GroupProgram` belonging to a different group.
 
-4. **Committee management workflow**
+3. **Committee management workflow**
    - Assert a committee member can be added with a valid role and start date.
    - Assert an inactive committee member does not appear in the active committee list.
 
-5. **Attendance recording and viewing**
+4. **Attendance recording and viewing**
    - Assert that submitting an attendance record creates the correct `GroupAttendance` entry.
    - Assert attendance history is viewable and filterable by date range.
 
-6. **Equipment inventory CRUD**
+5. **Equipment inventory CRUD**
    - Assert group leader can create, update, and view equipment records for their group.
    - Assert group leader cannot modify equipment records belonging to another group.

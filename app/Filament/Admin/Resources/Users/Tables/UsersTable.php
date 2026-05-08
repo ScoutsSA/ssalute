@@ -297,8 +297,6 @@ class UsersTable
                         ->sortable(),
                 ]),
             ])
-            ->deferFilters(false)
-            ->deferColumnManager(false)
             ->filters([
                 TernaryFilter::make('active'),
             ])

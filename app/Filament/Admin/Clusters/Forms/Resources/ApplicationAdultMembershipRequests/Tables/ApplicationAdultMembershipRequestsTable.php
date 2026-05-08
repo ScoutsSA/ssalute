@@ -19,7 +19,6 @@ class ApplicationAdultMembershipRequestsTable
         return $table
             ->reorderableColumns()
             ->recordUrl(fn ($record) => route('forms.aam.action', ['aamRequest' => $record->action_slug]), shouldOpenInNewTab: true)
-            ->deferColumnManager(false)
             ->defaultSort('updated_at', 'desc')
             ->columns([
                 TextColumn::make('id')->label('ID')->sortable()->toggleable(isToggledHiddenByDefault: true),

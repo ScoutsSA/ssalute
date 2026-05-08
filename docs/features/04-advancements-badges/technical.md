@@ -1,7 +1,7 @@
 # Feature Spec: Advancements & Badges
 
 > Module: Advancements & Badges
-> Panel(s): Admin (backoffice), General
+> Panel(s): Admin (backoffice), Member
 > Status: PLANNED (Lookup pages scaffolded under Advancements cluster)
 > Phase: 4 — Advancements
 
@@ -167,20 +167,20 @@ Already scaffolded as lookup pages in the Advancements cluster. Each section has
 
 ---
 
-## General Panel Requirements
+## Member Panel Requirements
 
-All general panel advancement pages are scoped to the leader's own group. Youth from other groups are never accessible.
+All member panel advancement pages are scoped to the leader's own group. Youth from other groups are never accessible.
 
 ### 1. View Youth Advancement Progress (By Section)
 
-- **Class:** `app/Filament/General/Resources/AdvancementResource/Pages/ListAdvancements.php`
+- **Class:** `app/Filament/Member/Resources/AdvancementResource/Pages/ListAdvancements.php`
 - **Scope:** Own group only, filtered to the leader's active section role
 - **Display:** Youth list with current level, progress bar (tasks completed / total), last activity date
 - **Actions:** View individual advancement, Open edit/record page
 
 ### 2. Mark Advancement Tasks as Complete
 
-- **Class:** `app/Filament/General/Resources/AdvancementResource/Pages/RecordAdvancement.php`
+- **Class:** `app/Filament/Member/Resources/AdvancementResource/Pages/RecordAdvancement.php`
 - **Form:** Checklist of tasks for the youth's current level; each task can be marked complete with a date and optional note
 - **On save:** Updates the relevant advancement record (`AdvancementMeerkat`, `AdvancementCub`, etc.)
 - **Level completion:** When all tasks for a level are marked complete, the system automatically flags the record as level-complete and prompts the leader to confirm and set an official completion date
@@ -204,7 +204,7 @@ All general panel advancement pages are scoped to the leader's own group. Youth 
 
 ### 5. View and Add Star Awards
 
-- **Class:** `app/Filament/General/Resources/StarAwardResource/Pages/ListStarAwards.php`
+- **Class:** `app/Filament/Member/Resources/StarAwardResource/Pages/ListStarAwards.php`
 - **Scope:** Own group only
 - **Leaders can:** View all star awards for their group's youth; submit a new star award (sets status to pending for admin approval); view approval status
 - **Leaders cannot:** Approve star awards (admin/regional only)
@@ -213,7 +213,7 @@ All general panel advancement pages are scoped to the leader's own group. Youth 
 
 - **Type:** Custom action on the youth advancement view page
 - **Output:** Generates a printable view (Blade view rendered to browser print dialog or downloadable PDF) showing the youth's name, section, current level, completed tasks with dates, badges held, and star awards
-- **Class:** `app/Filament/General/Resources/AdvancementResource/Actions/PrintAdvancementAction.php`
+- **Class:** `app/Filament/Member/Resources/AdvancementResource/Actions/PrintAdvancementAction.php`
 
 ---
 
@@ -226,14 +226,14 @@ All general panel advancement pages are scoped to the leader's own group. Youth 
 | Super admin can manage badge definitions | `tests/Feature/Filament/Admin/Advancements/BadgeDefinitionTest.php` | Feature |
 | Super admin can approve a star award | `tests/Feature/Filament/Admin/Advancements/StarAwardTest.php` | Feature |
 | Advancement level lookup pages load correctly | `tests/Feature/Filament/Admin/Advancements/AdvancementsClusterTest.php` | Feature |
-| Group leader can view their group's advancements in the general panel | `tests/Feature/Filament/General/Advancements/AdvancementAccessTest.php` | Feature |
-| Group leader can mark advancement tasks as complete | `tests/Feature/Filament/General/Advancements/AdvancementAccessTest.php` | Feature |
-| Group leader cannot view or edit another group's advancements | `tests/Feature/Filament/General/Advancements/AdvancementAccessTest.php` | Feature |
-| Badge award is created for the correct section only | `tests/Feature/Filament/General/Advancements/BadgeAwardTest.php` | Feature |
-| Badge award for wrong section is rejected | `tests/Feature/Filament/General/Advancements/BadgeAwardTest.php` | Feature |
-| Star award submit sets status to pending | `tests/Feature/Filament/General/Advancements/StarAwardTest.php` | Feature |
+| Group leader can view their group's advancements in the member panel | `tests/Feature/Filament/Member/Advancements/AdvancementAccessTest.php` | Feature |
+| Group leader can mark advancement tasks as complete | `tests/Feature/Filament/Member/Advancements/AdvancementAccessTest.php` | Feature |
+| Group leader cannot view or edit another group's advancements | `tests/Feature/Filament/Member/Advancements/AdvancementAccessTest.php` | Feature |
+| Badge award is created for the correct section only | `tests/Feature/Filament/Member/Advancements/BadgeAwardTest.php` | Feature |
+| Badge award for wrong section is rejected | `tests/Feature/Filament/Member/Advancements/BadgeAwardTest.php` | Feature |
+| Star award submit sets status to pending | `tests/Feature/Filament/Member/Advancements/StarAwardTest.php` | Feature |
 | Star award approval by admin changes status and records approver | `tests/Feature/Filament/Admin/Advancements/StarAwardTest.php` | Feature |
-| Supporting evidence (photo, document, note) can be added to an advancement | `tests/Feature/Filament/General/Advancements/AdvancementEvidenceTest.php` | Feature |
+| Supporting evidence (photo, document, note) can be added to an advancement | `tests/Feature/Filament/Member/Advancements/AdvancementEvidenceTest.php` | Feature |
 
 ---
 

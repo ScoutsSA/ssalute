@@ -102,6 +102,11 @@ class Region extends BaseModel
         return $this->hasMany(GroupYouthCharge::class, 'assocToRegion', 'id');
     }
 
+    public function roleAttachments(): HasMany
+    {
+        return $this->hasMany(SystemUsersOtherRole::class, 'regionID');
+    }
+
     public function ownedAccount(): BelongsTo
     {
         return $this->belongsTo(GroupAccount::class, 'accountID');

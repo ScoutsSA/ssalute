@@ -12,7 +12,7 @@ The Adult Member System manages the lifecycle of all adult Scouters within Scout
 
 The legacy equivalent is spread across `ams-adult-*.php` files and `user-*.php` profile files. All data lives in the `sd-core` database and must be accessed through the Eloquent models described below.
 
-A user can hold **multiple simultaneous roles** at different levels. The Filament general panel uses `SystemUsersOtherRole` as the tenant, so the user's active context is always a specific role attachment.
+A user can hold **multiple simultaneous roles** at different levels. The Filament member panel uses `SystemUsersOtherRole` as the tenant, so the user's active context is always a specific role attachment.
 
 ---
 
@@ -38,7 +38,7 @@ Defines a role type (e.g., "Group Scout Leader", "District Commissioner"). Has b
 Key permission flags: `nationalRole`, `regionalRole`, `districtRole`, `groupRole`, `warrantedRole`, `canAdminGroup`, `canAdminDistrict`, `canAdminRegion`, `canAdminNational`, `canSignWarrants`, `canAdminPoliceClearance`, `requiresCriminalClearance`.
 
 ### `SystemUsersOtherRole` — `system_users_other_roles`
-The pivot between a user and a role type, scoped to a geographic level. This is the Filament tenant model for the general panel.
+The pivot between a user and a role type, scoped to a geographic level. This is the Filament tenant model for the member panel.
 
 Key fields: `userID`, `roleID`, `regionID`, `districtID`, `groupID`, `defaultRole`, `active`, `retired`, `resigned`, `suspended`, `creationNotes`.
 
@@ -187,7 +187,7 @@ All fields from the view page are editable. Key form sections:
 
 **Trigger:** Table row action or view page header action (modal confirmation)
 **Implementation:** Sets `active = 1` or `active = 0` on the relevant `SystemUsersOtherRole` record(s). Does not delete the user.
-**Modal confirmation:** "Are you sure you want to deactivate [name]? This will remove their access to the general panel."
+**Modal confirmation:** "Are you sure you want to deactivate [name]? This will remove their access to the member panel."
 
 ---
 
@@ -266,16 +266,16 @@ Each action follows the same pattern:
 
 ---
 
-## 4. General Panel Requirements
+## 4. Member Panel Requirements
 
-The general panel is tenant-aware. All pages operate in the context of the authenticated user's currently active `SystemUsersOtherRole` tenant. Route prefix: `/general/{tenant}`.
+The member panel is tenant-aware. All pages operate in the context of the authenticated user's currently active `SystemUsersOtherRole` tenant. Route prefix: `/member/{tenant}`.
 
 ---
 
 ### 4.1 View Own Profile
 
-**Page:** `App\Filament\General\Pages\ViewProfile` (already scaffolded)
-**Route:** `/general/{tenant}/profile`
+**Page:** `App\Filament\Member\Pages\ViewProfile` (already scaffolded)
+**Route:** `/member/{tenant}/profile`
 
 Displays the authenticated user's own `SystemUser` record using a tabbed infolist. All fields are read-only. Already implemented tabs:
 
@@ -293,8 +293,8 @@ Displays the authenticated user's own `SystemUser` record using a tabbed infolis
 
 ### 4.2 Edit Own Profile
 
-**Page:** `App\Filament\General\Pages\EditProfile` (already scaffolded)
-**Route:** `/general/{tenant}/profile/edit`
+**Page:** `App\Filament\Member\Pages\EditProfile` (already scaffolded)
+**Route:** `/member/{tenant}/profile/edit`
 
 Allows the user to edit only the fields they are permitted to self-manage. Fields that require admin intervention (e.g., ID number, start date, roles) are not shown on this form.
 
@@ -334,7 +334,7 @@ Allows the user to edit only the fields they are permitted to self-manage. Field
 
 ## 5. Tests Required
 
-All tests must extend `Tests\Support\SdCoreTestCase` and use PHPUnit v11 attributes (`#[Test]`, `#[DataProvider]`).
+All tests must extend `Tests\Support\SdCoreTestCase` and use PHPUnit v13 attributes (`#[Test]`, `#[DataProvider]`).
 
 ---
 
@@ -405,8 +405,8 @@ All tests must extend `Tests\Support\SdCoreTestCase` and use PHPUnit v11 attribu
 | `super_admin_can_view_documents_for_user` | Police clearance list page loads with user's documents |
 | `super_admin_can_upload_document` | `AmsDocument` record created after form submit |
 | `regular_user_cannot_manage_documents_in_admin` | `assertForbidden()` |
-| `user_can_view_own_documents_in_general_panel` | Document list visible in ViewProfile |
-| `user_cannot_see_other_users_documents_in_general_panel` | Documents filtered to `auth()->id()` |
+| `user_can_view_own_documents_in_member_panel` | Document list visible in ViewProfile |
+| `user_cannot_see_other_users_documents_in_member_panel` | Documents filtered to `auth()->id()` |
 
 ---
 
@@ -428,17 +428,17 @@ All tests must extend `Tests\Support\SdCoreTestCase` and use PHPUnit v11 attribu
 | `super_admin_can_view_past_service_list` | `PastServiceResource::getUrl('index')` → `assertOk()` |
 | `super_admin_can_create_past_service_record` | `AmsPastServiceInfo` record created |
 | `regular_user_is_forbidden_from_past_service_admin` | `assertForbidden()` |
-| `user_can_view_own_past_service_in_general_panel` | Past service visible in profile page |
+| `user_can_view_own_past_service_in_member_panel` | Past service visible in profile page |
 
 ---
 
-### `Tests\Feature\Filament\GeneralPanelProfileTest`
+### `Tests\Feature\Filament\MemberPanelProfileTest`
 
 | Method | Asserts |
 |--------|---------|
 | `authenticated_user_with_role_can_view_own_profile` | ViewProfile page returns `assertOk()` |
 | `authenticated_user_with_role_can_access_edit_profile` | EditProfile page returns `assertOk()` |
-| `user_cannot_view_another_users_profile_in_general_panel` | Attempt to access another user's profile returns `assertForbidden()` or redirects |
-| `guest_is_redirected_from_general_panel_profile` | `assertRedirect()` |
+| `user_cannot_view_another_users_profile_in_member_panel` | Attempt to access another user's profile returns `assertForbidden()` or redirects |
+| `guest_is_redirected_from_member_panel_profile` | `assertRedirect()` |
 | `edit_profile_saves_allowed_fields` | Known name, cell, language updated correctly |
 | `edit_profile_does_not_expose_admin_only_fields` | Form does not contain `idNumber`, `startDate`, `username` fields |

@@ -203,6 +203,11 @@ class Group extends BaseModel
         return $this->hasMany(GroupEquipmentStore::class, 'assocToGroup', 'id');
     }
 
+    public function roleAttachments(): HasMany
+    {
+        return $this->hasMany(SystemUsersOtherRole::class, 'groupID');
+    }
+
     public function region(): BelongsTo
     {
         return $this->belongsTo(Region::class, 'assoc_to_region', 'id');

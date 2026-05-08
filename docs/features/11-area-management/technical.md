@@ -1,7 +1,7 @@
 # Feature Spec: Area Management
 
 > Module: Area Management
-> Panel(s): Admin (backoffice), General
+> Panel(s): Admin (backoffice), Member
 > Status: WIP (scaffolded)
 > Phase: 1 — Foundation
 
@@ -9,7 +9,7 @@
 
 ## Overview
 
-The geographic hierarchy in Scouts South Africa is: National → Region → District → Group → Sections (Meerkat Den, Cub Pack, Scout Troop, Rover Crew). All member activity — roles, warrants, youth records, finances, census submissions — is scoped within this hierarchy. The Area cluster in the Admin panel provides CRUD for every level of the hierarchy, while the General panel gives group leaders read access to their own area.
+The geographic hierarchy in Scouts South Africa is: National → Region → District → Group → Sections (Meerkat Den, Cub Pack, Scout Troop, Rover Crew). All member activity — roles, warrants, youth records, finances, census submissions — is scoped within this hierarchy. The Area cluster in the Admin panel provides CRUD for every level of the hierarchy, while the Member panel gives group leaders read access to their own area.
 
 ---
 
@@ -208,18 +208,18 @@ Managed as relation managers on `ViewGroup` and inline repeater on `EditGroup` (
 
 ---
 
-## General Panel Requirements
+## Member Panel Requirements
 
 ### Role Gating
 
-All general panel area pages enforce:
+All member panel area pages enforce:
 - User must have an active role scoped to a specific group, district, or region.
 - Queries are scoped to the user's active tenant role's area — data from outside that scope is never returned.
 
 ### 1. View Own Group Details
 
-- **Type:** Read-only page in the General panel
-- **Class:** `app/Filament/General/Pages/ViewMyGroup.php`
+- **Type:** Read-only page in the Member panel
+- **Class:** `app/Filament/Member/Pages/ViewMyGroup.php`
 - **Displays:** Group name, type, district, region, contact details, social media links, section units (names and leaders)
 - **Does not display:** Banking details, system flags, internal notes
 - **Edit access:** Limited editing (contact details, social media links) for Group Scout Leader role; full edit requires backoffice access
@@ -227,14 +227,14 @@ All general panel area pages enforce:
 ### 2. View District Hierarchy
 
 - **Type:** Read-only page
-- **Class:** `app/Filament/General/Pages/ViewMyDistrict.php`
+- **Class:** `app/Filament/Member/Pages/ViewMyDistrict.php`
 - **Scope:** District of the user's active role
 - **Displays:** District name, contact details, list of groups in the district (name, type, active status — no financial or personal member data)
 
 ### 3. View Regional Information
 
 - **Type:** Read-only page
-- **Class:** `app/Filament/General/Pages/ViewMyRegion.php`
+- **Class:** `app/Filament/Member/Pages/ViewMyRegion.php`
 - **Scope:** Region of the user's active role
 - **Displays:** Region name, contact details, list of districts, regional leadership contacts
 
@@ -260,8 +260,8 @@ All general panel area pages enforce:
 | Region deletion is blocked when districts exist | `tests/Feature/Filament/Admin/Area/RegionDeletionTest.php` | Feature | Planned |
 | District deletion is blocked when groups exist | `tests/Feature/Filament/Admin/Area/DistrictDeletionTest.php` | Feature | Planned |
 | Group active toggle changes active status | `tests/Feature/Filament/Admin/Area/GroupToggleTest.php` | Feature | Planned |
-| Group leader can view their own group details in the general panel | `tests/Feature/Filament/General/Area/ViewMyGroupTest.php` | Feature | Planned |
-| Group leader cannot view another group's details | `tests/Feature/Filament/General/Area/ViewMyGroupTest.php` | Feature | Planned |
+| Group leader can view their own group details in the member panel | `tests/Feature/Filament/Member/Area/ViewMyGroupTest.php` | Feature | Planned |
+| Group leader cannot view another group's details | `tests/Feature/Filament/Member/Area/ViewMyGroupTest.php` | Feature | Planned |
 
 ---
 
@@ -272,4 +272,4 @@ All general panel area pages enforce:
 - **usingAMS flag:** This flag indicates whether a group/region is participating in the automated membership system. Its precise behaviour should be defined when AMS integration is scoped.
 - **DistrictsSuper:** Super districts are purely administrative groupings used for reporting and email routing in some regions. They do not affect the primary foreign-key hierarchy (groups belong to districts, not super-districts).
 - **Physical address fields:** Standardise the address schema (line1, line2, city, province, postal code) across Region, District, and Group so that export and reporting are consistent.
-- **Filament tenancy:** The General panel uses role-based tenancy. When a user switches their active role (tenant), all area-scoped queries must re-scope accordingly. Ensure no caching of scoped queries across role switches.
+- **Filament tenancy:** The Member panel uses role-based tenancy. When a user switches their active role (tenant), all area-scoped queries must re-scope accordingly. Ensure no caching of scoped queries across role switches.

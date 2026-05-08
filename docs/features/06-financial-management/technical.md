@@ -1,8 +1,15 @@
 # Feature Spec: Financial Management
 
+> Module: Financial Management
+> Panel(s): Admin (backoffice), Member
+> Status: PLANNED
+> Phase: 6 — Financial Management
+
+---
+
 ## Overview
 
-Each Scout group maintains one or more financial accounts. Financial years are defined per group, fees are charged to members, invoices are issued, and payments are recorded. Credit notes handle adjustments. The backoffice panel (admin) provides full financial oversight across all groups, while the general panel (group leaders/admins) provides self-service access to their own group's finances.
+Each Scout group maintains one or more financial accounts. Financial years are defined per group, fees are charged to members, invoices are issued, and payments are recorded. Credit notes handle adjustments. The backoffice panel (admin) provides full financial oversight across all groups, while the member panel (group leaders/admins) provides self-service access to their own group's finances.
 
 ---
 
@@ -120,11 +127,11 @@ Each Scout group maintains one or more financial accounts. Financial years are d
 
 ---
 
-## General Panel (Group Leader / Group Admin)
+## Member Panel (Group Leader / Group Admin)
 
 ### Resource Location
 
-`app/Filament/General/` — dedicated pages under a Financial section, scoped to the authenticated user's group.
+`app/Filament/Member/` — dedicated pages under a Financial section, scoped to the authenticated user's group.
 
 ### 1. Account Balance & Statement
 
@@ -160,30 +167,32 @@ Each Scout group maintains one or more financial accounts. Financial years are d
 
 ## Tests Required
 
-### Feature Tests (`tests/Feature/Financial/`)
+### Admin Feature Tests (`tests/Feature/Filament/Admin/Financial/`)
 
 1. **Super admin can access financial management pages**
    - Assert admin can view account list, statement, invoice list, credit note list, transfer list.
 
-2. **Group leader can only view their own group's finances**
-   - Assert group leader sees their own account balance and invoices.
-   - Assert group leader cannot access another group's account or invoices (403/404).
-
-3. **Invoice creation validation**
+2. **Invoice creation validation**
    - Assert invoice cannot be saved without a financial year.
    - Assert invoice cannot be saved without at least one line item.
    - Assert draft invoice can be saved and then edited.
 
-4. **Annual bulk invoice generation workflow**
+3. **Annual bulk invoice generation workflow**
    - Assert bulk generation dispatches the correct queued job.
    - Assert job creates `GroupFinancialInvoice` records for all targeted groups.
    - Assert annual discounts are applied where configured.
 
-5. **Account transfer approval workflow**
+4. **Account transfer approval workflow**
    - Assert transfer is created in "Requested" stage.
    - Assert only an authorised admin can advance to "Approved".
    - Assert completing the transfer updates both account balances correctly.
 
-6. **Payment recording updates account balance**
+5. **Payment recording updates account balance**
    - Assert that recording a `GroupFinancialPaymentsMade` against an invoice updates the `GroupAccount` running balance.
    - Assert marking invoice as paid reflects correctly in account statement.
+
+### Member Feature Tests (`tests/Feature/Filament/Member/Financial/`)
+
+1. **Group leader can only view their own group's finances**
+   - Assert group leader sees their own account balance and invoices.
+   - Assert group leader cannot access another group's account or invoices (403/404).

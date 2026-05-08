@@ -1,7 +1,7 @@
 # Feature Spec: Training
 
 > Module: Training
-> Panel(s): Admin (backoffice — regional level), General (adult users)
+> Panel(s): Admin (backoffice — regional level), Member (adult users)
 > Status: PLANNED
 > Phase: 5 — Training
 
@@ -145,13 +145,13 @@ The Training cluster lives under the Admin panel, scoped to users with regional 
 
 ---
 
-## General Panel (Adult User) Requirements
+## Member Panel (Adult User) Requirements
 
-All general panel training pages are accessible to any user with an active adult role.
+All member panel training pages are accessible to any user with an active adult role.
 
 ### 1. View Upcoming Training Courses
 
-- **Class:** `app/Filament/General/Resources/TrainingResource/Pages/ListUpcomingCourses.php`
+- **Class:** `app/Filament/Member/Resources/TrainingResource/Pages/ListUpcomingCourses.php`
 - **Scope:** Annual course instances that are open for booking, filtered by the user's region by default (with an option to view other regions)
 - **Display:** Course name, type, location, dates, capacity available, booking status (not booked / booked / waitlisted)
 - **Filters:** Region, course type, date range
@@ -160,7 +160,7 @@ All general panel training pages are accessible to any user with an active adult
 ### 2. Book onto a Course
 
 - **Type:** Action on the upcoming courses list and the course detail view
-- **Class:** `app/Filament/General/Resources/TrainingResource/Actions/BookCourseAction.php`
+- **Class:** `app/Filament/Member/Resources/TrainingResource/Actions/BookCourseAction.php`
 - **Behaviour:**
   - Checks capacity: if full, offers waitlist placement (with user confirmation)
   - Creates `AmsTrainingCoursesAnnualBooking` with status `pending` (or `waitlisted` if full)
@@ -173,7 +173,7 @@ All general panel training pages are accessible to any user with an active adult
 
 ### 3. View Own Bookings (Active and Historical)
 
-- **Class:** `app/Filament/General/Resources/TrainingResource/Pages/MyBookings.php`
+- **Class:** `app/Filament/Member/Resources/TrainingResource/Pages/MyBookings.php`
 - **Tabs:** Active bookings (upcoming/in-progress), Historical bookings (completed/cancelled)
 - **Table columns:** Course name, dates, location, booking status, attendance (for completed), certificate status (eligible / not eligible / pending)
 - **Row actions:** View booking detail, Cancel booking (active only), Upload POP
@@ -181,24 +181,24 @@ All general panel training pages are accessible to any user with an active adult
 ### 4. Upload Proof of Participation (POP)
 
 - **Type:** Action on the booking detail view or `MyBookings` table
-- **Class:** `app/Filament/General/Resources/TrainingResource/Actions/UploadPopAction.php`
+- **Class:** `app/Filament/Member/Resources/TrainingResource/Actions/UploadPopAction.php`
 - **Fields:** File upload (PDF or image), description/notes, date of the training event referenced
 - **On save:** Stores file via Laravel storage; attaches to the booking record; notifies the training administrator that a POP has been uploaded for review
 - **Use case:** Primarily for historical/external courses not in the system that the user attended independently, or for courses recorded via `AmsTrainingPast`
 
 ### 5. View Own Training History (Including Legacy Records)
 
-- **Class:** `app/Filament/General/Resources/TrainingResource/Pages/MyTrainingHistory.php`
+- **Class:** `app/Filament/Member/Resources/TrainingResource/Pages/MyTrainingHistory.php`
 - **Sources combined:**
   - Completed bookings from `AmsTrainingCoursesAnnualBooking` (current system)
   - Legacy records from `AmsTrainingPast` (imported from scouts-digital)
 - **Display:** Course/training name, type, date completed, source (current system / legacy import), certificate status, POP link (if uploaded)
-- **Note:** Legacy records are read-only; they cannot be edited through the general panel
+- **Note:** Legacy records are read-only; they cannot be edited through the member panel
 
 ### 6. Cancel Booking
 
 - **Type:** Action on the booking detail view and `MyBookings` table
-- **Class:** `app/Filament/General/Resources/TrainingResource/Actions/CancelBookingAction.php`
+- **Class:** `app/Filament/Member/Resources/TrainingResource/Actions/CancelBookingAction.php`
 - **Behaviour:**
   - Confirmation modal with a required cancellation reason
   - Creates a `AmsTrainingCoursesAnnualBookingsTracking` entry
@@ -217,17 +217,17 @@ All general panel training pages are accessible to any user with an active adult
 | Super admin can create and edit a training course definition | `tests/Feature/Filament/Admin/Training/TrainingCourseTest.php` | Feature |
 | Regional admin can manage annual course instances for their region | `tests/Feature/Filament/Admin/Training/AnnualCourseTest.php` | Feature |
 | Regional admin cannot manage annual courses for another region | `tests/Feature/Filament/Admin/Training/AnnualCourseTest.php` | Feature |
-| Adult user can view upcoming courses in the general panel | `tests/Feature/Filament/General/Training/UpcomingCoursesTest.php` | Feature |
-| Adult user can book onto an available course | `tests/Feature/Filament/General/Training/BookingTest.php` | Feature |
-| Booking is placed on waitlist when course is at capacity | `tests/Feature/Filament/General/Training/BookingTest.php` | Feature |
-| User cannot book a course they are already booked on | `tests/Feature/Filament/General/Training/BookingTest.php` | Feature |
-| User cannot book a course that has already started | `tests/Feature/Filament/General/Training/BookingTest.php` | Feature |
+| Adult user can view upcoming courses in the member panel | `tests/Feature/Filament/Member/Training/UpcomingCoursesTest.php` | Feature |
+| Adult user can book onto an available course | `tests/Feature/Filament/Member/Training/BookingTest.php` | Feature |
+| Booking is placed on waitlist when course is at capacity | `tests/Feature/Filament/Member/Training/BookingTest.php` | Feature |
+| User cannot book a course they are already booked on | `tests/Feature/Filament/Member/Training/BookingTest.php` | Feature |
+| User cannot book a course that has already started | `tests/Feature/Filament/Member/Training/BookingTest.php` | Feature |
 | Attendance can be recorded per session by admin | `tests/Feature/Filament/Admin/Training/AttendanceTest.php` | Feature |
 | Attendance recording creates AmsTrainingCoursesAnnualAttendance records | `tests/Feature/Filament/Admin/Training/AttendanceTest.php` | Feature |
 | Mark course completion flags eligible participants correctly | `tests/Feature/Filament/Admin/Training/CourseCompletionTest.php` | Feature |
-| User can cancel own booking (status change and tracking record created) | `tests/Feature/Filament/General/Training/CancelBookingTest.php` | Feature |
-| Cancelling a booking from a full course triggers waitlist promotion | `tests/Feature/Filament/General/Training/CancelBookingTest.php` | Feature |
-| Own training history includes both current bookings and legacy records | `tests/Feature/Filament/General/Training/TrainingHistoryTest.php` | Feature |
+| User can cancel own booking (status change and tracking record created) | `tests/Feature/Filament/Member/Training/CancelBookingTest.php` | Feature |
+| Cancelling a booking from a full course triggers waitlist promotion | `tests/Feature/Filament/Member/Training/CancelBookingTest.php` | Feature |
+| Own training history includes both current bookings and legacy records | `tests/Feature/Filament/Member/Training/TrainingHistoryTest.php` | Feature |
 
 ---
 

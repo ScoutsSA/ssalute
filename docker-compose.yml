@@ -32,12 +32,16 @@ services:
       # Global Claude rules + auth from your host machine
       - ~/.claude:/home/claude/.claude
       - ~/.claude.json:/home/claude/.claude.json
+      # GitHub CLI auth from your host machine
+      - ~/.config/gh:/home/claude/.config/gh
       # Stable machine identity so Claude auth persists across container runs
       - /etc/machine-id:/etc/machine-id:ro
     working_dir: /app
     environment:
       - DB_HOST=host.docker.internal
       - REDIS_HOST=host.docker.internal
+      # GitHub CLI token (set GH_TOKEN on your host machine)
+      - GH_TOKEN=${GH_TOKEN:-}
     # Allows the container to reach your host machine's MySQL/Redis via
     # the hostname "host.docker.internal" (works on Linux, Mac, and Windows)
     hostname: ssalute-claude

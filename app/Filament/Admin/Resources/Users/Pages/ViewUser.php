@@ -17,6 +17,9 @@ use App\Models\Group;
 use App\Models\SystemUser;
 use App\Models\SystemUsersOtherRole;
 use App\Models\SystemUserType;
+use App\Services\UserServices\MergeUsersService;
+use App\Services\UserServices\UserDataAuditService;
+use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\EditAction;
@@ -24,13 +27,18 @@ use Filament\Facades\Filament;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Pages\Dashboard;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use STS\FilamentImpersonate\Actions\Impersonate;
+use Throwable;
 
 class ViewUser extends ViewRecord
 {
@@ -82,6 +90,165 @@ class ViewUser extends ViewRecord
                         ->success()
                         ->send();
                 }),
+
+            ActionGroup::make([
+                Action::make('dataAudit')
+                    ->label('Data Audit')
+                    ->icon(Heroicon::MagnifyingGlass)
+                    ->color('gray')
+                    ->modalHeading(fn (): string => "Data audit for {$record->name}")
+                    ->modalDescription('Scans every legacy table that may reference this user and reports counts plus sample row IDs.')
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Close')
+                    ->modalWidth('5xl')
+                    ->schema(fn (): array => app(UserDataAuditService::class)->getAuditAsFilamentInfoList($record->id)),
+
+                Action::make('mergeInto')
+                    ->label('Merge Into…')
+                    ->icon(Heroicon::ArrowsPointingIn)
+                    ->color('danger')
+                    ->modalHeading("Merge {$record->name} into another user")
+                    ->modalDescription('All references to this user across the database will be rewritten to point at the target user. The source user record will then be DELETED. This is irreversible — recovery only via the pre-merge snapshot file.')
+                    ->modalSubmitActionLabel('Confirm Merge')
+                    ->modalWidth('5xl')
+                    ->schema([
+                        Select::make('targetUserId')
+                            ->label('Merge into user')
+                            ->helperText('Search by username, name, or ID. The chosen user will receive all of this user\'s data.')
+                            ->required()
+                            ->live()
+                            ->searchable()
+                            ->columnSpanFull()
+                            ->getSearchResultsUsing(fn (string $search): array => SystemUser::query()
+                                ->where('id', '!=', $record->id)
+                                ->where(function ($query) use ($search): void {
+                                    $query->where('username', 'like', "%{$search}%")
+                                        ->orWhere('first_name', 'like', "%{$search}%")
+                                        ->orWhere('surname', 'like', "%{$search}%")
+                                        ->orWhere('id', '=', $search);
+                                })
+                                ->limit(25)
+                                ->get()
+                                ->mapWithKeys(fn (SystemUser $user) => [
+                                    $user->id => "{$user->name} ({$user->username}) #{$user->id}",
+                                ])
+                                ->all())
+                            ->getOptionLabelUsing(function ($value) use ($record): ?string {
+                                $user = SystemUser::find($value);
+                                if (! $user || $user->id === $record->id) {
+                                    return null;
+                                }
+
+                                return "{$user->name} ({$user->username}) #{$user->id}";
+                            }),
+                        Section::make('Preview')
+                            ->columnSpanFull()
+                            ->schema(function (Get $get) use ($record): array {
+                                $targetId = (int) $get('targetUserId');
+                                if ($targetId === 0 || $targetId === $record->id) {
+                                    return [
+                                        TextEntry::make('hint')
+                                            ->hiddenLabel()
+                                            ->state('Choose a target user to preview the merge.')
+                                            ->color('gray'),
+                                    ];
+                                }
+
+                                $target = SystemUser::find($targetId);
+                                if (! $target) {
+                                    return [
+                                        TextEntry::make('hint')
+                                            ->hiddenLabel()
+                                            ->state('Target user not found.')
+                                            ->color('danger'),
+                                    ];
+                                }
+
+                                try {
+                                    return app(MergeUsersService::class)
+                                        ->getMergePreviewAsFilamentInfoList($record->id, $targetId, $record, $target);
+                                } catch (Throwable $exception) {
+                                    return [
+                                        TextEntry::make('hint')
+                                            ->hiddenLabel()
+                                            ->state('Could not generate preview: ' . $exception->getMessage())
+                                            ->color('danger'),
+                                    ];
+                                }
+                            }),
+                        TextInput::make('confirmation')
+                            ->label('Type to confirm')
+                            ->helperText("This action permanently DELETES the source user. Type their username exactly: {$record->username}")
+                            ->placeholder($record->username)
+                            ->required()
+                            ->autocomplete('off')
+                            ->columnSpanFull()
+                            ->rule(static function () use ($record) {
+                                return static function (string $attribute, mixed $value, Closure $fail) use ($record): void {
+                                    if ($value !== $record->username) {
+                                        $fail("Confirmation must match the source user's username exactly ({$record->username}).");
+                                    }
+                                };
+                            }),
+                    ])
+                    ->action(function (array $data) use ($record): void {
+                        $targetId = (int) ($data['targetUserId'] ?? 0);
+                        if ($targetId === 0 || $targetId === $record->id) {
+                            Notification::make()->title('Invalid target user.')->danger()->send();
+
+                            return;
+                        }
+
+                        if (($data['confirmation'] ?? null) !== $record->username) {
+                            Notification::make()->title('Confirmation mismatch — merge cancelled.')->danger()->send();
+
+                            return;
+                        }
+
+                        try {
+                            $result = app(MergeUsersService::class)->merge($record->id, $targetId, auth()->id());
+                        } catch (Throwable $exception) {
+                            Notification::make()
+                                ->title('Merge failed and was rolled back')
+                                ->body($exception->getMessage())
+                                ->danger()
+                                ->persistent()
+                                ->send();
+
+                            return;
+                        }
+
+                        $body = "Merged {$result['rows_merged']} rows across " . count($result['tables_touched']) . ' tables.';
+                        if ($result['rows_skipped'] > 0) {
+                            $body .= " Skipped {$result['rows_skipped']} rows in " . count($result['conflicts']) . ' tables due to unique conflicts.';
+                        }
+                        if (count($result['columns_filled']) > 0) {
+                            $body .= ' Filled ' . count($result['columns_filled']) . ' empty target columns: ' . implode(', ', array_keys($result['columns_filled'])) . '.';
+                        }
+                        if (count($result['failed_updates']) > 0) {
+                            $failedSummary = collect($result['failed_updates'])
+                                ->map(fn (array $f): string => "{$f['table']}.{$f['column']}")
+                                ->implode(', ');
+                            $body .= ' ⚠ ' . count($result['failed_updates']) . ' update(s) failed (likely dirty legacy data): ' . $failedSummary . '. See logs.';
+                        }
+                        if (count($result['demoted_role_ids']) > 0) {
+                            $body .= ' Demoted ' . count($result['demoted_role_ids']) . ' duplicate primary-role row(s) (kept the most recent).';
+                        }
+                        $body .= " Pre-merge snapshot saved to {$result['snapshot_path']}.";
+
+                        Notification::make()
+                            ->title("{$record->name} merged into user #{$targetId}")
+                            ->body($body)
+                            ->success()
+                            ->persistent()
+                            ->send();
+
+                        $this->redirect(UserResource::getUrl('view', ['record' => $targetId]));
+                    }),
+            ])
+                ->label('User Tools')
+                ->icon(Heroicon::Wrench)
+                ->color('gray'),
 
             ActionGroup::make([
                 Action::make('move')
