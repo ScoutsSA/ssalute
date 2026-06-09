@@ -421,3 +421,17 @@ livewire(ListUsers::class)
 - Duster wraps Laravel Pint and other formatters, so never run Pint directly. Always prefer Duster for formatting tasks.
 
 </laravel-boost-guidelines>
+
+## Project Notes
+
+### Settings
+
+- Application settings use `spatie/laravel-settings`. Each settings group is a class in `app/Settings` (e.g. `GeneralSettings`, `FeatureSettings`, `DataFixesSettings`) with a corresponding migration in `database/settings`.
+- Settings are edited only in the BackOffice Filament panel (panel id `admin`, path `/backoffice`). That panel is restricted to a small number of super-users via `SystemUser::isSuperAdmin()` (the `general.super_user_admin_list` setting plus `ssalute.superuser_email`). The Member and Holding Zone panels never expose settings.
+- Settings pages live under `app/Filament/Admin/Clusters/Settings/Pages` in the `SettingsCluster` and use the `AuditsSettings` concern so changes are recorded in the audit log.
+- When adding or changing a setting, activate the `adding-a-setting` skill.
+
+### Data Fixes
+
+- Nightly data-integrity fixes run through the `app:system-fixes` command (`App\Console\Commands\RunSystemFixes`), scheduled in `routes/console.php`. Each fix implements `App\Services\SystemFixes\SystemFix`, is registered in the command's `$fixes` array, and is individually toggleable (run and notify) via `DataFixesSettings`.
+- When adding a new data fix or changing the system-fixes flow, activate the `adding-a-data-fix` skill.

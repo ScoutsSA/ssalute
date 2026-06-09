@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Filament;
 
+use App\Filament\Admin\Clusters\Settings\Pages\ManageDataFixesSettings;
 use App\Filament\Admin\Clusters\Settings\Pages\ManageFormSettings;
 use App\Filament\Admin\Clusters\Settings\Pages\ManageGeneralSettings;
 use App\Models\SystemUser;
@@ -62,5 +63,23 @@ class SettingsPagesTest extends SdCoreTestCase
     {
         $this->get(ManageGeneralSettings::getUrl())
             ->assertRedirect();
+    }
+
+    #[Test]
+    public function super_admin_can_access_data_fixes_settings(): void
+    {
+        $this->actingAs($this->superAdmin)
+            ->get(ManageDataFixesSettings::getUrl())
+            ->assertOk();
+    }
+
+    #[Test]
+    public function regular_user_is_forbidden_from_data_fixes_settings(): void
+    {
+        $user = SystemUser::factory()->withRole()->create();
+
+        $this->actingAs($user)
+            ->get(ManageDataFixesSettings::getUrl())
+            ->assertForbidden();
     }
 }

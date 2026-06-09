@@ -57,6 +57,12 @@ abstract class SdCoreTestCase extends TestCase
                 'next_in_line_role_regional' => 'null',
                 'next_in_line_role_national' => 'null',
             ],
+            'data_fixes' => [
+                'ensure_each_user_has_only_one_primary_role_enabled' => 'true',
+                'ensure_each_user_has_only_one_primary_role_notifications' => 'true',
+                'notifications_enabled' => 'true',
+                'slack_webhook_url' => 'null',
+            ],
             'feature' => [
                 'users_can_edit_profiles' => 'false',
                 'users_can_browse_areas' => 'false',
