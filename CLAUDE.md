@@ -435,3 +435,9 @@ livewire(ListUsers::class)
 
 - Nightly data-integrity fixes run through the `app:system-fixes` command (`App\Console\Commands\RunSystemFixes`), scheduled in `routes/console.php`. Each fix implements `App\Services\SystemFixes\SystemFix`, is registered in the command's `$fixes` array, and is individually toggleable (run and notify) via `DataFixesSettings`.
 - When adding a new data fix or changing the system-fixes flow, activate the `adding-a-data-fix` skill.
+
+### Displaying identifiers
+
+- Always show human-friendly names for referenced records (region, district, group, role, user, etc.) rather than raw foreign-key IDs.
+- In the BackOffice admin panel (panel id `admin`, path `/backoffice`), also include the record's ID alongside the name, formatted as `Name (#123)`. Admins reconcile data against IDs, so the ID must always be visible there. The Member and Holding Zone panels show names only.
+- This applies to table columns, infolist entries, and select field labels wherever a related record is shown.

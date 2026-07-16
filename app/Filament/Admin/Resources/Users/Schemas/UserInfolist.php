@@ -399,17 +399,23 @@ class UserInfolist
                                 Section::make('Associations')
                                     ->columns(['sm' => 2, 'md' => 3, 'lg' => 4])
                                     ->schema([
-                                        TextEntry::make('assoc_to_region')
-                                            ->label('Region ID')
-                                            ->numeric()
+                                        TextEntry::make('homeRegion.name')
+                                            ->label('Home Region')
+                                            ->state(fn ($record): ?string => $record->homeRegion === null
+                                                ? null
+                                                : "{$record->homeRegion->name} (#{$record->assoc_to_region})")
                                             ->placeholder('-'),
-                                        TextEntry::make('assoc_to_district')
-                                            ->label('District ID')
-                                            ->numeric()
+                                        TextEntry::make('homeDistrict.name')
+                                            ->label('Home District')
+                                            ->state(fn ($record): ?string => $record->homeDistrict === null
+                                                ? null
+                                                : "{$record->homeDistrict->name} (#{$record->assoc_to_district})")
                                             ->placeholder('-'),
-                                        TextEntry::make('assoc_to_group')
-                                            ->label('Group ID')
-                                            ->numeric()
+                                        TextEntry::make('homeGroup.name')
+                                            ->label('Home Group')
+                                            ->state(fn ($record): ?string => $record->homeGroup === null
+                                                ? null
+                                                : "{$record->homeGroup->name} (#{$record->assoc_to_group})")
                                             ->placeholder('-'),
                                         TextEntry::make('assoc_to_account')
                                             ->label('Account ID')

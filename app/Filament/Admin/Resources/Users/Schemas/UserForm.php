@@ -10,6 +10,10 @@ use App\Enums\UserTitle;
 use App\Models\AmsHighestEducation;
 use App\Models\AmsLanguage;
 use App\Models\AmsMaritalStatus;
+use App\Models\District;
+use App\Models\Group;
+use App\Models\Region;
+use App\Models\SystemUser;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
@@ -19,8 +23,12 @@ use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 
 class UserForm
 {
@@ -328,15 +336,34 @@ class UserForm
                                 Section::make('Associations')
                                     ->columns(['sm' => 2, 'md' => 3, 'lg' => 4])
                                     ->schema([
-                                        TextInput::make('assoc_to_region')
-                                            ->label('Region ID')
-                                            ->numeric(),
-                                        TextInput::make('assoc_to_district')
-                                            ->label('District ID')
-                                            ->numeric(),
-                                        TextInput::make('assoc_to_group')
-                                            ->label('Group ID')
-                                            ->numeric(),
+                                        Select::make('assoc_to_region')
+                                            ->label('Home Region')
+                                            ->options(fn () => Region::orderBy('name')->pluck('name', 'id'))
+                                            ->searchable()
+                                            ->placeholder('None')
+                                            ->live()
+                                            ->afterStateUpdated(function (Set $set): void {
+                                                $set('assoc_to_district', null);
+                                                $set('assoc_to_group', null);
+                                            }),
+                                        Select::make('assoc_to_district')
+                                            ->label('Home District')
+                                            ->options(fn (Get $get, ?SystemUser $record) => self::homeDistrictOptions(
+                                                $get('assoc_to_region') !== null ? (int) $get('assoc_to_region') : null,
+                                                $record?->assoc_to_district,
+                                            ))
+                                            ->searchable()
+                                            ->placeholder('None')
+                                            ->live()
+                                            ->afterStateUpdated(fn (Set $set) => $set('assoc_to_group', null)),
+                                        Select::make('assoc_to_group')
+                                            ->label('Home Group')
+                                            ->options(fn (Get $get, ?SystemUser $record) => self::homeGroupOptions(
+                                                $get('assoc_to_district') !== null ? (int) $get('assoc_to_district') : null,
+                                                $record?->assoc_to_group,
+                                            ))
+                                            ->searchable()
+                                            ->placeholder('None'),
                                         TextInput::make('assoc_to_account')
                                             ->label('Account ID')
                                             ->numeric(),
@@ -488,5 +515,53 @@ class UserForm
                             ]),
                     ]),
             ]);
+    }
+
+    /**
+     * Home-district options scoped to the selected home region. The user's currently stored district is
+     * always included so an existing (possibly mismatched) value is never hidden or dropped on save.
+     *
+     * @return Collection<int, string>
+     */
+    public static function homeDistrictOptions(?int $regionId, ?int $currentDistrictId): Collection
+    {
+        $query = District::query()->orderBy('name');
+
+        if ($regionId) {
+            $query->where(function (Builder $scoped) use ($regionId, $currentDistrictId): void {
+                $scoped->where('regionID', $regionId);
+
+                if ($currentDistrictId) {
+                    $scoped->orWhere('id', $currentDistrictId);
+                }
+            });
+        }
+
+        return $query->pluck('name', 'id');
+    }
+
+    /**
+     * Home-group options scoped to the selected home district (active groups only). As with districts, the
+     * user's currently stored group is always included so it is never hidden or dropped on save.
+     *
+     * @return Collection<int, string>
+     */
+    public static function homeGroupOptions(?int $districtId, ?int $currentGroupId): Collection
+    {
+        $query = Group::query()->orderBy('name');
+
+        if ($districtId) {
+            $query->where(function (Builder $scoped) use ($districtId, $currentGroupId): void {
+                $scoped->where(fn (Builder $active) => $active->where('active', 1)->where('assoc_to_district', $districtId));
+
+                if ($currentGroupId) {
+                    $scoped->orWhere('id', $currentGroupId);
+                }
+            });
+
+            return $query->pluck('name', 'id');
+        }
+
+        return $query->where('active', 1)->pluck('name', 'id');
     }
 }

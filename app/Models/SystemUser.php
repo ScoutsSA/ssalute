@@ -465,6 +465,21 @@ class SystemUser extends User implements Auditable, FilamentUser, HasDefaultTena
         return $this->belongsTo(GroupScoutsPatrolName::class, 'scoutPatrolID');
     }
 
+    public function homeRegion(): BelongsTo
+    {
+        return $this->belongsTo(Region::class, 'assoc_to_region');
+    }
+
+    public function homeDistrict(): BelongsTo
+    {
+        return $this->belongsTo(District::class, 'assoc_to_district');
+    }
+
+    public function homeGroup(): BelongsTo
+    {
+        return $this->belongsTo(Group::class, 'assoc_to_group');
+    }
+
     /*******************
      * Scopes
      *******************/

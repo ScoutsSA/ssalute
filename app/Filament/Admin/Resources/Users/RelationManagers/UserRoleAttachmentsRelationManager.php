@@ -102,19 +102,32 @@ class UserRoleAttachmentsRelationManager extends RelationManager
                     ->columns(2)
                     ->schema([
                         TextEntry::make('role.name')
-                            ->label('Role Type'),
+                            ->label('Role Type')
+                            ->state(fn ($record): ?string => $record->role === null
+                                ? null
+                                : "{$record->role->name} (#{$record->roleID})")
+                            ->placeholder('-'),
                         TextEntry::make('roleTypeName')
                             ->label('Level')
                             ->badge()
                             ->color('primary'),
                         TextEntry::make('region.name')
                             ->label('Region')
+                            ->state(fn ($record): ?string => $record->region === null
+                                ? null
+                                : "{$record->region->name} (#{$record->regionID})")
                             ->placeholder('-'),
                         TextEntry::make('district.name')
                             ->label('District')
+                            ->state(fn ($record): ?string => $record->district === null
+                                ? null
+                                : "{$record->district->name} (#{$record->districtID})")
                             ->placeholder('-'),
                         TextEntry::make('group.name')
                             ->label('Group')
+                            ->state(fn ($record): ?string => $record->group === null
+                                ? null
+                                : "{$record->group->name} (#{$record->groupID})")
                             ->placeholder('-'),
                         IconEntry::make('defaultRole')
                             ->label('Default Role')

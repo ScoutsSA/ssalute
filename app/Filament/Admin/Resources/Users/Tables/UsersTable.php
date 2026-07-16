@@ -142,21 +142,21 @@ class UsersTable
                 ]),
 
                 ColumnGroup::make('Association', [
-                    TextColumn::make('assoc_to_region')
+                    TextColumn::make('homeRegion.name')
                         ->label('Region')
                         ->toggleable(isToggledHiddenByDefault: true)
-                        ->numeric()
-                        ->sortable(),
-                    TextColumn::make('assoc_to_district')
+                        ->placeholder('-')
+                        ->searchable(),
+                    TextColumn::make('homeDistrict.name')
                         ->label('District')
                         ->toggleable(isToggledHiddenByDefault: true)
-                        ->numeric()
-                        ->sortable(),
-                    TextColumn::make('assoc_to_group')
+                        ->placeholder('-')
+                        ->searchable(),
+                    TextColumn::make('homeGroup.name')
                         ->label('Group')
                         ->toggleable(isToggledHiddenByDefault: true)
-                        ->numeric()
-                        ->sortable(),
+                        ->placeholder('-')
+                        ->searchable(),
                     TextColumn::make('branch')
                         ->label('Branch')
                         ->toggleable(isToggledHiddenByDefault: true)
