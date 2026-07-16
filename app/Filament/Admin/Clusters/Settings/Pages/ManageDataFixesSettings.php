@@ -64,6 +64,18 @@ class ManageDataFixesSettings extends SettingsPage
                                     ->disabled(fn (Get $get): bool => ! $get('notifications_enabled'))
                                     ->dehydrated(),
                             ]),
+                        Tab::make('Home Location Roles')
+                            ->icon(Heroicon::MapPin)
+                            ->schema([
+                                Toggle::make('flag_users_without_role_in_home_location_enabled')
+                                    ->label('Run this fix')
+                                    ->helperText('Flags active users who hold area-scoped roles but none in their home group/district/region (assoc_to_*), usually a member who moved while their role stayed behind. Reports only; it never changes data.'),
+                                Toggle::make('flag_users_without_role_in_home_location_notifications')
+                                    ->label('Notify on findings')
+                                    ->helperText('Only applies while the master notifications switch is on.')
+                                    ->disabled(fn (Get $get): bool => ! $get('notifications_enabled'))
+                                    ->dehydrated(),
+                            ]),
                     ]),
             ]);
     }
