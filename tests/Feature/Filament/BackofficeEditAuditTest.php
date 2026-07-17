@@ -106,4 +106,30 @@ class BackofficeEditAuditTest extends SdCoreTestCase
             ->set('activeTab', 'active')
             ->assertCanSeeTableRecords([$attachment]);
     }
+
+    #[Test]
+    public function role_attachments_can_be_edited_and_deleted_from_the_view_page(): void
+    {
+        $user = SystemUser::factory()->create(['assoc_to_group' => 100]);
+        $attachment = SystemUsersOtherRole::factory()
+            ->forUser($user)
+            ->ofType(SystemUserType::factory()->group()->create())
+            ->create(['groupID' => 200]);
+
+        $component = Livewire::actingAs($this->superAdmin)
+            ->test(UserRoleAttachmentsRelationManager::class, [
+                'ownerRecord' => $user,
+                'pageClass' => ViewUser::class,
+            ])
+            ->set('activeTab', 'active');
+
+        $this->assertFalse(
+            $component->instance()->isReadOnly(),
+            'The role-attachments relation manager should be editable on the View page.'
+        );
+
+        $component
+            ->assertTableActionVisible('edit', $attachment)
+            ->assertTableActionVisible('delete', $attachment);
+    }
 }

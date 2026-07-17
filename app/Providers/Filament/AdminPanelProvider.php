@@ -36,6 +36,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->favicon(asset('images/logo.png'))
             ->sidebarCollapsibleOnDesktop()
+            ->readOnlyRelationManagersOnResourceViewPagesByDefault(false)
             ->colors([
                 'primary' => '#5C2D91',
             ])
