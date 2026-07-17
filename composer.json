@@ -39,6 +39,7 @@
         "nunomaduro/collision": "^8.9.1",
         "phpunit/phpunit": "^13.0.5",
         "roave/security-advisories": "dev-latest",
+        "rouxtaccess/laravel-sync": "^2.0",
         "spatie/boost-spatie-guidelines": "^1.1",
         "tightenco/duster": "^3.4.0"
     },

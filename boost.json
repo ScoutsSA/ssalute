@@ -10,7 +10,8 @@
     "packages": [
         "filament/filament",
         "tightenco/duster",
-        "spatie/boost-spatie-guidelines"
+        "spatie/boost-spatie-guidelines",
+        "rouxtaccess/laravel-sync"
     ],
     "sail": false,
     "skills": [
@@ -18,6 +19,7 @@
         "pulse-development",
         "fluxui-development",
         "tailwindcss-development",
+        "laravel-sync",
         "spatie-laravel-php-standards"
     ]
 }

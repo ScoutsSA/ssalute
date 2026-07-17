@@ -76,6 +76,18 @@ class ManageDataFixesSettings extends SettingsPage
                                     ->disabled(fn (Get $get): bool => ! $get('notifications_enabled'))
                                     ->dehydrated(),
                             ]),
+                        Tab::make('Youth Member Ids')
+                            ->icon(Heroicon::Identification)
+                            ->schema([
+                                Toggle::make('ensure_youth_member_ids_are_in_sync_enabled')
+                                    ->label('Run this fix')
+                                    ->helperText('Keeps the userID and section member column (scoutID/cubID/roverID/meerkatID) on youth badge and advancement records in sync, so a record never drops out of a report that joins on the column that was left blank. Backfills a blank column from its counterpart; where the two columns are both set but disagree, it leaves them untouched and flags them for review.'),
+                                Toggle::make('ensure_youth_member_ids_are_in_sync_notifications')
+                                    ->label('Notify on changes')
+                                    ->helperText('Only applies while the master notifications switch is on.')
+                                    ->disabled(fn (Get $get): bool => ! $get('notifications_enabled'))
+                                    ->dehydrated(),
+                            ]),
                     ]),
             ]);
     }

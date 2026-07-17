@@ -14,6 +14,10 @@ class DataFixesSettings extends Settings
 
     public bool $flag_users_without_role_in_home_location_notifications = true;
 
+    public bool $ensure_youth_member_ids_are_in_sync_enabled = false;
+
+    public bool $ensure_youth_member_ids_are_in_sync_notifications = true;
+
     public bool $notifications_enabled = true;
 
     public ?string $slack_webhook_url = null;

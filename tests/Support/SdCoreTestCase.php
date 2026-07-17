@@ -62,6 +62,8 @@ abstract class SdCoreTestCase extends TestCase
                 'ensure_each_user_has_only_one_primary_role_notifications' => 'true',
                 'flag_users_without_role_in_home_location_enabled' => 'true',
                 'flag_users_without_role_in_home_location_notifications' => 'true',
+                'ensure_youth_member_ids_are_in_sync_enabled' => 'false',
+                'ensure_youth_member_ids_are_in_sync_notifications' => 'true',
                 'notifications_enabled' => 'true',
                 'slack_webhook_url' => 'null',
             ],

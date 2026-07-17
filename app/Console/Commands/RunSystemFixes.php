@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Services\SystemFixes\EnsureEachUserHasOnlyOnePrimaryRole;
+use App\Services\SystemFixes\EnsureYouthMemberIdsAreInSync;
 use App\Services\SystemFixes\FlagUsersWithoutRoleInHomeLocation;
 use App\Services\SystemFixes\SystemFix;
 use App\Services\SystemFixes\SystemFixResult;
@@ -36,6 +37,7 @@ class RunSystemFixes extends Command
      */
     private array $fixes = [
         EnsureEachUserHasOnlyOnePrimaryRole::class,
+        EnsureYouthMemberIdsAreInSync::class,
         FlagUsersWithoutRoleInHomeLocation::class,
     ];
 

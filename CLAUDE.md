@@ -9,7 +9,7 @@ The Laravel Boost guidelines are specifically curated by Laravel maintainers for
 
 This application is a Laravel application and its main Laravel ecosystems package & versions are below. You are an expert with them all. Ensure you abide by these specific packages & versions.
 
-- php - 8.4.19
+- php - 8.4.20
 - filament/filament (FILAMENT) - v5
 - laravel/framework (LARAVEL) - v12
 - laravel/horizon (HORIZON) - v5
@@ -33,6 +33,7 @@ This project has domain-specific skills available. You MUST activate the relevan
 - `pulse-development` — Handles Laravel Pulse setup, configuration, and custom card development. Activates when installing Pulse; configuring the dashboard or authorization gate; setting up recorders and filtering; building custom Livewire cards; optimizing with Redis ingest or sampling; or when the user mentions /pulse, pulse:check, pulse:work, Pulse::record(), or application monitoring.
 - `fluxui-development` — Use this skill for Flux UI development in Livewire applications only. Trigger when working with <flux:*> components, building or customizing Livewire component UIs, creating forms, modals, tables, or other interactive elements. Covers: flux: components (buttons, inputs, modals, forms, tables, date-pickers, kanban, badges, tooltips, etc.), component composition, Tailwind CSS styling, Heroicons/Lucide icon integration, validation patterns, responsive design, and theming. Do not use for non-Livewire frameworks or non-component styling.
 - `tailwindcss-development` — Styles applications using Tailwind CSS v4 utilities. Activates when adding styles, restyling components, working with gradients, spacing, layout, flex, grid, responsive design, dark mode, colors, typography, or borders; or when the user mentions CSS, styling, classes, Tailwind, restyle, hero section, cards, buttons, or any visual/UI changes.
+- `laravel-sync` — Configure, run, and extend the rouxtaccess/laravel-sync package, which pulls production data (databases, files, S3) down to a local environment. Activate when the user runs `rouxt:sync`, edits `config/sync.php` or `sync-jobs.json`, defines sync groups or jobs, or writes a custom sync type, database driver, after-hook, or anonymizer.
 - `spatie-laravel-php-standards` — Apply Spatie's Laravel and PHP coding standards for any task that creates, edits, reviews, refactors, or formats Laravel/PHP code or Blade templates; use for controllers, Eloquent models, routes, config, validation, migrations, tests, and related files to align with Laravel conventions and PSR-12.
 
 ## Conventions
@@ -405,6 +406,18 @@ livewire(ListUsers::class)
 
 - **Never assume public file visibility.** File visibility is `private` by default. Always use `->visibility('public')` when public access is needed.
 - **Never assume full-width layout.** `Grid`, `Section`, and `Fieldset` do not span all columns by default. Explicitly set column spans when needed.
+
+=== rouxtaccess/laravel-sync rules ===
+
+# Laravel Sync
+
+- Laravel Sync pulls production data (databases, files, S3) down to a local environment. It is a development-only tool; never run it in production.
+- Run a sync with `php artisan rouxt:sync {group?}` (`--yes` skips prompts, `--force` bypasses the environment guard).
+- Groups and jobs live in the gitignored `sync-jobs.json`. IMPORTANT: it holds plaintext secrets; never commit or print its contents.
+- Extend it by registering a class in `config/sync.php` under `types`, `database_drivers`, `after_hooks`, or `anonymizers`. Never edit the package to change behaviour.
+- IMPORTANT: a sync only ever creates a new local `<prefix>_<date>` database and copies downward. Never add or run anything that writes to the upstream source.
+- If you lack the SSH keys or AWS credentials to run a sync, do not fake its output. Ask the user to run it; they have the access.
+- IMPORTANT: activate the `laravel-sync` skill when configuring, running, or extending Laravel Sync.
 
 === spatie/boost-spatie-guidelines rules ===
 
