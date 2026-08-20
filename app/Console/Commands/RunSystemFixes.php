@@ -3,13 +3,16 @@
 namespace App\Console\Commands;
 
 use App\Services\SystemFixes\EnsureEachUserHasOnlyOnePrimaryRole;
+use App\Services\SystemFixes\EnsureLegacyValuesAreCanonical;
 use App\Services\SystemFixes\EnsureYouthMemberIdsAreInSync;
 use App\Services\SystemFixes\FlagUsersWithoutRoleInHomeLocation;
+use App\Services\SystemFixes\ReportsFindings;
 use App\Services\SystemFixes\SystemFix;
 use App\Services\SystemFixes\SystemFixResult;
 use App\Settings\DataFixesSettings;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Spatie\SlackAlerts\Facades\SlackAlert;
 
 class RunSystemFixes extends Command
@@ -38,6 +41,7 @@ class RunSystemFixes extends Command
     private array $fixes = [
         EnsureEachUserHasOnlyOnePrimaryRole::class,
         EnsureYouthMemberIdsAreInSync::class,
+        EnsureLegacyValuesAreCanonical::class,
         FlagUsersWithoutRoleInHomeLocation::class,
     ];
 
@@ -104,11 +108,35 @@ class RunSystemFixes extends Command
         SlackAlert::to(self::SLACK_WEBHOOK_NAME)
             ->withUsername(self::SLACK_USERNAME)
             ->withIconEmoji(self::SLACK_ICON_EMOJI)
-            ->message($this->buildAlertMessage($result));
+            ->message($this->buildAlertMessage($result, $fix));
     }
 
-    private function buildAlertMessage(SystemFixResult $result): string
+    private function buildAlertMessage(SystemFixResult $result, ?SystemFix $fix = null): string
     {
+        // A fix with its own page in the Data Fixes cluster sends a ping, not a dump: how many
+        // items are outstanding and where to action them. Listing them in Slack gives an admin
+        // something to read and nothing to click, and the same lines recur every night until
+        // somebody acts.
+        if ($fix instanceof ReportsFindings && filled($url = $fix->findingsUrl())) {
+            $lines = [sprintf('*%s — %s*', config('app.name'), $result->fix)];
+
+            if ($result->hasChanges()) {
+                $lines[] = '';
+                $lines[] = sprintf('Fixed automatically: %d %s.', count($result->changes), Str::plural('change', count($result->changes)));
+            }
+
+            if ($result->needsAttention()) {
+                $count = count($result->attentions);
+                $lines[] = '';
+                $lines[] = sprintf('%d %s outstanding.', $count, Str::plural('item', $count));
+            }
+
+            $lines[] = '';
+            $lines[] = sprintf('<%s|Review and fix →>', $url);
+
+            return implode("\n", $lines);
+        }
+
         $lines = [sprintf('*%s — %s*', config('app.name'), $result->fix)];
 
         if ($result->hasChanges()) {

@@ -44,9 +44,9 @@ class RunSystemFixesTest extends SdCoreTestCase
         $this->assertSame(1, $this->primaryFlag($newerPrimaryId));
         $this->assertSame(1, $this->activePrimaryCount($user));
 
-        SlackAlert::expectMessageSentContaining("User #{$user->id}");
-        SlackAlert::expectMessageSentContaining($user->name);
-        SlackAlert::expectMessageSentContaining($roleType->name);
+        // Slack carries a count and a link; the per-member detail lives on the Data Fixes page.
+        SlackAlert::expectMessageSentContaining('Fixed automatically: 1 change.');
+        SlackAlert::expectMessageSentContaining('Review and fix');
     }
 
     #[Test]
@@ -65,7 +65,7 @@ class RunSystemFixesTest extends SdCoreTestCase
         $this->assertSame(1, $this->primaryFlag($activePrimaryId));
         $this->assertSame(0, $this->primaryFlag($inactivePrimaryId));
 
-        SlackAlert::expectMessageSentContaining("User #{$user->id}");
+        SlackAlert::expectMessageSentContaining('Fixed automatically:');
     }
 
     #[Test]
@@ -84,7 +84,7 @@ class RunSystemFixesTest extends SdCoreTestCase
         $this->assertSame(1, $this->primaryFlag($activeNonPrimaryId));
         $this->assertSame(0, $this->primaryFlag($inactivePrimaryId));
 
-        SlackAlert::expectMessageSentContaining("User #{$user->id}");
+        SlackAlert::expectMessageSentContaining('Fixed automatically:');
     }
 
     #[Test]
@@ -103,7 +103,7 @@ class RunSystemFixesTest extends SdCoreTestCase
         $this->assertSame(0, $this->primaryFlag($olderId));
         $this->assertSame(1, $this->primaryFlag($newerId));
 
-        SlackAlert::expectMessageSentContaining("User #{$user->id}");
+        SlackAlert::expectMessageSentContaining('Fixed automatically:');
     }
 
     #[Test]
@@ -123,7 +123,7 @@ class RunSystemFixesTest extends SdCoreTestCase
         $this->assertSame(0, $this->primaryFlag($otherId));
         $this->assertSame(0, $this->activePrimaryCount($user));
 
-        SlackAlert::expectMessageSentContaining("User #{$user->id}");
+        SlackAlert::expectMessageSentContaining('Fixed automatically:');
     }
 
     #[Test]

@@ -88,6 +88,18 @@ class ManageDataFixesSettings extends SettingsPage
                                     ->disabled(fn (Get $get): bool => ! $get('notifications_enabled'))
                                     ->dehydrated(),
                             ]),
+                        Tab::make('Legacy Values')
+                            ->icon(Heroicon::Sparkles)
+                            ->schema([
+                                Toggle::make('ensure_legacy_values_are_canonical_enabled')
+                                    ->label('Run this fix')
+                                    ->helperText('Strips surrounding whitespace from legacy text fields (member names, SSA number, race, group coordinates and programme titles), which legacy screens saved without trimming. It then checks every field backed by a fixed list of options and reports any value that is not one of them, for an admin to correct.'),
+                                Toggle::make('ensure_legacy_values_are_canonical_notifications')
+                                    ->label('Notify on changes')
+                                    ->helperText('Only applies while the master notifications switch is on.')
+                                    ->disabled(fn (Get $get): bool => ! $get('notifications_enabled'))
+                                    ->dehydrated(),
+                            ]),
                     ]),
             ]);
     }

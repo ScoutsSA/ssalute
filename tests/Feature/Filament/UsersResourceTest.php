@@ -8,7 +8,9 @@ use App\Models\District;
 use App\Models\Group;
 use App\Models\Region;
 use App\Models\SystemUser;
+use App\Providers\AppServiceProvider;
 use App\Settings\GeneralSettings;
+use Illuminate\Support\Facades\DB;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\Support\SdCoreTestCase;
 
@@ -55,6 +57,24 @@ class UsersResourceTest extends SdCoreTestCase
     //         ->get(UserResource::getUrl('edit', ['record' => $user]))
     //         ->assertOk();
     // }
+
+    #[Test]
+    public function super_admin_can_view_a_user_whose_stored_race_carries_trailing_whitespace(): void
+    {
+        $user = SystemUser::factory()->create();
+
+        // Legacy sd-core stores this race with a trailing space, which a plain enum cast
+        // turns into a ValueError before the page renders anything at all.
+        DB::connection(AppServiceProvider::DB_SD_CORE)
+            ->table('system_users')
+            ->where('id', $user->id)
+            ->update(['race' => 'African ']);
+
+        $this->actingAs($this->superAdmin)
+            ->get(UserResource::getUrl('view', ['record' => $user]))
+            ->assertOk()
+            ->assertSee('African');
+    }
 
     #[Test]
     public function home_location_relations_resolve_to_the_assoc_columns(): void

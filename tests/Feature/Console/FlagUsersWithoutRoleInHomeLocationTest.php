@@ -6,8 +6,10 @@ use App\Models\SystemUser;
 use App\Models\SystemUsersOtherRole;
 use App\Models\SystemUserType;
 use App\Providers\AppServiceProvider;
+use App\Services\SystemFixes\FlagUsersWithoutRoleInHomeLocation;
 use App\Settings\DataFixesSettings;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use PHPUnit\Framework\Attributes\Test;
 use Spatie\SlackAlerts\Facades\SlackAlert;
 use Tests\Support\SdCoreTestCase;
@@ -39,8 +41,23 @@ class FlagUsersWithoutRoleInHomeLocationTest extends SdCoreTestCase
 
         $this->artisan('app:system-fixes')->assertSuccessful();
 
-        SlackAlert::expectMessageSentContaining("User #{$user->id}");
-        SlackAlert::expectMessageSentContaining('none at home');
+        // Slack carries a count and a link; the member detail lives on the Data Fixes page.
+        SlackAlert::expectMessageSentContaining('1 item outstanding.');
+        SlackAlert::expectMessageSentContaining('Review and fix');
+        $this->assertFindingFor($user, 'are elsewhere');
+    }
+
+    #[Test]
+    public function each_flagged_member_links_to_their_edit_page(): void
+    {
+        $user = SystemUser::factory()->create(['assoc_to_group' => 100]);
+        $this->groupRole($user, groupId: 200);
+
+        $finding = app(FlagUsersWithoutRoleInHomeLocation::class)->findings()->sole();
+
+        $this->assertStringContainsString((string) $user->id, (string) $finding->title);
+        $this->assertNotNull($finding->url, 'The finding must link somewhere an admin can act.');
+        $this->assertStringContainsString("/backoffice/users/{$user->id}/edit", $finding->url);
     }
 
     #[Test]
@@ -54,7 +71,8 @@ class FlagUsersWithoutRoleInHomeLocationTest extends SdCoreTestCase
 
         $this->artisan('app:system-fixes')->assertSuccessful();
 
-        SlackAlert::expectMessageSentContaining("User #{$user->id}");
+        SlackAlert::expectMessageSentContaining('1 item outstanding.');
+        $this->assertFindingFor($user, 'active area role(s) are elsewhere');
     }
 
     #[Test]
@@ -202,6 +220,62 @@ class FlagUsersWithoutRoleInHomeLocationTest extends SdCoreTestCase
         SlackAlert::expectNoMessagesSent();
     }
 
+    #[Test]
+    public function a_member_whose_home_group_is_a_rover_crew_is_not_flagged(): void
+    {
+        // A Rover's home is their crew while their scouting role sits at an ordinary group.
+        // That mismatch is their normal state, not a defect.
+        $crew = $this->group(id: 400, sections: ['hasRovers' => 1]);
+        $user = SystemUser::factory()->create(['assoc_to_group' => $crew]);
+        $this->groupRole($user, groupId: 200);
+
+        $this->assertCount(0, app(FlagUsersWithoutRoleInHomeLocation::class)->findings());
+    }
+
+    #[Test]
+    public function a_member_whose_home_group_is_an_ordinary_group_is_still_flagged(): void
+    {
+        // The control: without this, the exclusion above could be passing because nothing is
+        // ever flagged rather than because crews specifically are skipped.
+        $group = $this->group(id: 401, sections: ['hasScouts' => 1]);
+        $user = SystemUser::factory()->create(['assoc_to_group' => $group]);
+        $this->groupRole($user, groupId: 200);
+
+        $this->assertCount(1, app(FlagUsersWithoutRoleInHomeLocation::class)->findings());
+    }
+
+    #[Test]
+    public function a_member_whose_home_group_runs_rovers_alongside_another_section_is_still_flagged(): void
+    {
+        // The boundary. Only a crew — rovers and nothing else — is exempt. A group that happens
+        // to run a crew as well as a troop is an ordinary group, and a member with no role there
+        // is the case this fix exists to find.
+        $group = $this->group(id: 402, sections: ['hasRovers' => 1, 'hasScouts' => 1]);
+        $user = SystemUser::factory()->create(['assoc_to_group' => $group]);
+        $this->groupRole($user, groupId: 200);
+
+        $this->assertCount(1, app(FlagUsersWithoutRoleInHomeLocation::class)->findings());
+    }
+
+    #[Test]
+    public function listing_findings_writes_nothing_to_the_log(): void
+    {
+        // The Data Fixes page calls findings() on every load. A log line per finding would put a
+        // warning in the log for every flagged member each time somebody looked at the list.
+        $group = $this->group(id: 403, sections: ['hasScouts' => 1]);
+        $user = SystemUser::factory()->create(['assoc_to_group' => $group]);
+        $this->groupRole($user, groupId: 200);
+
+        Log::spy();
+
+        $findings = app(FlagUsersWithoutRoleInHomeLocation::class)->findings();
+
+        $this->assertCount(1, $findings, 'The fixture must produce a finding, or this proves nothing.');
+        Log::shouldNotHaveReceived('warning');
+        Log::shouldNotHaveReceived('info');
+        Log::shouldNotHaveReceived('error');
+    }
+
     private function groupRole(SystemUser $user, int $groupId): int
     {
         return SystemUsersOtherRole::factory()->create([
@@ -215,5 +289,47 @@ class FlagUsersWithoutRoleInHomeLocationTest extends SdCoreTestCase
     private function connection()
     {
         return DB::connection(AppServiceProvider::DB_SD_CORE);
+    }
+
+    /**
+     * @param  array<string, int>  $sections
+     */
+    private function group(int $id, array $sections): int
+    {
+        $required = DB::connection(AppServiceProvider::DB_SD_CORE)->select(
+            "select COLUMN_NAME n, DATA_TYPE t from information_schema.COLUMNS
+             where TABLE_SCHEMA = DATABASE() and TABLE_NAME = 'groups'
+               and IS_NULLABLE = 'NO' and COLUMN_DEFAULT is null
+               and EXTRA not like '%auto_increment%'",
+        );
+
+        $row = [];
+
+        foreach ($required as $column) {
+            $row[$column->n] = match ($column->t) {
+                'int', 'bigint', 'mediumint', 'smallint', 'tinyint', 'decimal', 'double', 'float' => 0,
+                'date' => '2020-01-01',
+                'datetime', 'timestamp' => '2020-01-01 00:00:00',
+                default => '',
+            };
+        }
+
+        DB::connection(AppServiceProvider::DB_SD_CORE)->table('groups')->insert(array_merge(
+            $row,
+            ['hasMeerkats' => 0, 'hasCubs' => 0, 'hasScouts' => 0, 'hasRovers' => 0],
+            $sections,
+            ['id' => $id, 'name' => "Group {$id}"],
+        ));
+
+        return $id;
+    }
+
+    private function assertFindingFor(SystemUser $user, string $needle): void
+    {
+        $findings = app(FlagUsersWithoutRoleInHomeLocation::class)->findings();
+        $match = $findings->first(fn ($f) => str_contains($f->title, "#{$user->id}"));
+
+        $this->assertNotNull($match, 'Expected a finding for the flagged member.');
+        $this->assertStringContainsString($needle, $match->detail);
     }
 }

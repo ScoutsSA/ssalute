@@ -447,6 +447,7 @@ livewire(ListUsers::class)
 ### Data Fixes
 
 - Nightly data-integrity fixes run through the `app:system-fixes` command (`App\Console\Commands\RunSystemFixes`), scheduled in `routes/console.php`. Each fix implements `App\Services\SystemFixes\SystemFix`, is registered in the command's `$fixes` array, and is individually toggleable (run and notify) via `DataFixesSettings`.
+- A fix that can leave something for a human also implements `App\Services\SystemFixes\ReportsFindings` and gets a page in the `DataFixes` Filament cluster (`app/Filament/Admin/Clusters/DataFixes`). `findings()` is a read path called on every page load, so it must not write and must not log. Slack carries a count and a link to that page, never the records themselves.
 - When adding a new data fix or changing the system-fixes flow, activate the `adding-a-data-fix` skill.
 
 ### Displaying identifiers

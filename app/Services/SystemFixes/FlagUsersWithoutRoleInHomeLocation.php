@@ -2,6 +2,10 @@
 
 namespace App\Services\SystemFixes;
 
+use App\Filament\Admin\Clusters\DataFixes\Pages\HomeLocationRoles;
+use App\Filament\Admin\Resources\Users\UserResource;
+use App\Models\District;
+use App\Models\Group;
 use App\Models\SystemUser;
 use App\Models\SystemUsersOtherRole;
 use App\Models\SystemUserType;
@@ -29,15 +33,18 @@ use Illuminate\Support\Str;
  *
  * This fix only reports: whether to move a stale role or correct the user's location is a judgement call,
  * so every finding is raised for admin attention and no data is changed.
+ *
+ * Members whose home group is a ROVER CREW are excluded by design. A Rover's home is their crew
+ * while the scouting role they hold sits at an ordinary group, so the mismatch this fix looks for
+ * is that member's normal state, not a defect — moving their home would be the wrong correction.
+ * A crew is identified by the group's own section flags (hasRovers with no other section) rather
+ * than by its name: measured against the live data, the flags and a /rover|crew/i name match agree
+ * on 102 of 103 groups, and the flags additionally catch "1st Sidlamafa", a crew whose name does
+ * not say so. `roverAssocToGroup` is set on only 12 of them, so it is not a usable signal.
+ * The exclusion removes 103 of 179 findings.
  */
-class FlagUsersWithoutRoleInHomeLocation implements SystemFix
+class FlagUsersWithoutRoleInHomeLocation implements ReportsFindings, SystemFix
 {
-    /**
-     * Cap on the number of findings rendered into the Slack alert. Every finding is logged individually
-     * regardless, so the full set is always recoverable; this only keeps the alert body readable.
-     */
-    private const ALERT_SAMPLE_LIMIT = 25;
-
     /** @var array<string, array<int, ?string>> */
     private array $areaNameCache = [];
 
@@ -56,6 +63,96 @@ class FlagUsersWithoutRoleInHomeLocation implements SystemFix
         return 'flag_users_without_role_in_home_location_notifications';
     }
 
+    /**
+     * @return Collection<int, SystemFixFinding>
+     */
+    public function findings(): Collection
+    {
+        $userIds = $this->usersNeedingAttention();
+
+        return $userIds->isEmpty() ? collect() : $this->describe($userIds)->values();
+    }
+
+    public function findingsUrl(): ?string
+    {
+        return HomeLocationRoles::getUrl(panel: 'admin');
+    }
+
+    /**
+     * The distinct locations a member's active area roles sit at, as options for setting their
+     * home to one of them.
+     *
+     * Keyed "tier:id" so one select can offer groups, districts and regions together — most
+     * members here hold a single role at a single place, so the list is usually one obvious pick.
+     *
+     * @return array<string, string>
+     */
+    public function homeCandidates(int $userId): array
+    {
+        $roles = SystemUsersOtherRole::query()
+            ->with(['role', 'region', 'district', 'group'])
+            ->where('userID', $userId)
+            ->where('active', 1)
+            ->where('retired', 0)
+            ->where('resigned', 0)
+            ->where('suspended', 0)
+            ->get();
+
+        $options = [];
+
+        foreach ($roles as $role) {
+            $tier = $this->tierOf($role->role);
+
+            [$id, $name] = match ($tier) {
+                'group' => [(int) $role->group?->id, $role->group?->name],
+                'district' => [(int) $role->district?->id, $role->district?->name],
+                'region' => [(int) $role->region?->id, $role->region?->name],
+                default => [0, null],
+            };
+
+            if ($tier === null || $id === 0 || $name === null) {
+                continue;
+            }
+
+            $options["{$tier}:{$id}"] = sprintf('%s: %s (%s)', Str::ucfirst($tier), $name, $role->role?->name ?? 'role');
+        }
+
+        return $options;
+    }
+
+    /**
+     * Move a member's home to one of the candidate locations, keeping the hierarchy consistent:
+     * a group implies its district and region, a district implies its region.
+     *
+     * The member's roles are not touched — this resolves the mismatch by correcting the home,
+     * which is the direction that matches how these arose (a member moved, the role stayed).
+     */
+    public function setHome(int $userId, string $candidate): void
+    {
+        [$tier, $id] = explode(':', $candidate, 2);
+        $id = (int) $id;
+
+        $home = match ($tier) {
+            'group' => $this->homeFromGroup($id),
+            'district' => $this->homeFromDistrict($id),
+            'region' => ['assoc_to_group' => 0, 'assoc_to_district' => 0, 'assoc_to_region' => $id],
+            default => null,
+        };
+
+        if ($home === null) {
+            return;
+        }
+
+        SystemUser::query()->whereKey($userId)->update($home);
+
+        Log::info('system_fix.role_in_home_location.home_set', [
+            'fix' => static::class,
+            'user_id' => $userId,
+            'candidate' => $candidate,
+            'home' => $home,
+        ]);
+    }
+
     public function run(): SystemFixResult
     {
         $userIds = $this->usersNeedingAttention();
@@ -67,15 +164,56 @@ class FlagUsersWithoutRoleInHomeLocation implements SystemFix
             );
         }
 
-        $descriptions = $this->describe($userIds);
+        $findings = $this->describe($userIds);
 
         $summary = sprintf(
             'Flagged %d %s with no active role in their home location.',
-            $descriptions->count(),
-            Str::plural('user', $descriptions->count()),
+            $findings->count(),
+            Str::plural('user', $findings->count()),
         );
 
-        return new SystemFixResult($this->label(), $summary, [], $this->sampleForAlert($descriptions));
+        return new SystemFixResult(
+            $this->label(),
+            $summary,
+            [],
+            $findings->map(fn (SystemFixFinding $f): string => $f->toLine())->all(),
+        );
+    }
+
+    /**
+     * @return array{assoc_to_group: int, assoc_to_district: int, assoc_to_region: int}|null
+     */
+    private function homeFromGroup(int $groupId): ?array
+    {
+        $group = Group::query()->find($groupId);
+
+        if ($group === null) {
+            return null;
+        }
+
+        return [
+            'assoc_to_group' => $groupId,
+            'assoc_to_district' => (int) $group->assoc_to_district,
+            'assoc_to_region' => (int) $group->assoc_to_region,
+        ];
+    }
+
+    /**
+     * @return array{assoc_to_group: int, assoc_to_district: int, assoc_to_region: int}|null
+     */
+    private function homeFromDistrict(int $districtId): ?array
+    {
+        $district = District::query()->find($districtId);
+
+        if ($district === null) {
+            return null;
+        }
+
+        return [
+            'assoc_to_group' => 0,
+            'assoc_to_district' => $districtId,
+            'assoc_to_region' => (int) $district->regionID,
+        ];
     }
 
     /**
@@ -101,6 +239,14 @@ class FlagUsersWithoutRoleInHomeLocation implements SystemFix
             ->from('system_users_other_roles as r')
             ->join('system_user_types as t', 't.id', '=', 'r.roleID')
             ->join('system_users as u', 'u.id', '=', 'r.userID')
+            ->whereNotExists(fn ($query) => $query
+                ->selectRaw('1')
+                ->from('groups as hg')
+                ->whereColumn('hg.id', 'u.assoc_to_group')
+                ->where('hg.hasRovers', 1)
+                ->where('hg.hasMeerkats', 0)
+                ->where('hg.hasCubs', 0)
+                ->where('hg.hasScouts', 0))
             ->where('u.active', 1)
             ->where('r.active', 1)
             ->where('r.retired', 0)
@@ -126,7 +272,7 @@ class FlagUsersWithoutRoleInHomeLocation implements SystemFix
      * Build one human-readable line per flagged user (and log each with structured context).
      *
      * @param  Collection<int, int>  $userIds
-     * @return Collection<int, string>
+     * @return Collection<int, SystemFixFinding>
      */
     private function describe(Collection $userIds): Collection
     {
@@ -144,7 +290,7 @@ class FlagUsersWithoutRoleInHomeLocation implements SystemFix
             ->groupBy('userID');
 
         return $userIds
-            ->map(function (int $userId) use ($users, $rolesByUser): ?string {
+            ->map(function (int $userId) use ($users, $rolesByUser): ?SystemFixFinding {
                 $user = $users->get($userId);
 
                 if ($user === null) {
@@ -163,32 +309,21 @@ class FlagUsersWithoutRoleInHomeLocation implements SystemFix
                     ->map(fn (SystemUsersOtherRole $role): string => $this->roleLabel($role))
                     ->all();
 
-                Log::warning('system_fix.role_in_home_location.flagged', [
-                    'fix' => static::class,
-                    'user_id' => $userId,
-                    'user_name' => trim((string) $user->name),
-                    'home' => [
-                        'group_id' => (int) $user->assoc_to_group,
-                        'district_id' => (int) $user->assoc_to_district,
-                        'region_id' => (int) $user->assoc_to_region,
-                    ],
-                    'active_area_roles' => $areaRoles
-                        ->map(fn (SystemUsersOtherRole $role): array => [
-                            'id' => (int) $role->id,
-                            'role' => $role->role?->name,
-                        ])
-                        ->all(),
-                ]);
-
                 $name = trim((string) $user->name);
-                $userLabel = $name !== '' ? sprintf('#%d %s', $userId, $name) : "#{$userId}";
 
-                return sprintf(
-                    'User %s — home %s — holds %d active area role(s), none at home: %s.',
-                    $userLabel,
-                    $this->homeLabel($user),
-                    $areaRoles->count(),
-                    implode(', ', $roleLabels),
+                return new SystemFixFinding(
+                    title: $name !== '' ? sprintf('#%d %s', $userId, $name) : "#{$userId}",
+                    detail: sprintf(
+                        'Home is %s, but all %d active area role(s) are elsewhere: %s.',
+                        $this->homeLabel($user),
+                        $areaRoles->count(),
+                        implode(', ', $roleLabels),
+                    ),
+                    url: UserResource::getUrl('edit', ['record' => $userId], panel: 'admin'),
+                    linkLabel: 'Open member',
+                    group: $this->homeLabel($user),
+                    recordId: $userId,
+                    badge: sprintf('%d role%s away', $areaRoles->count(), $areaRoles->count() === 1 ? '' : 's'),
                 );
             })
             ->filter()
@@ -263,25 +398,5 @@ class FlagUsersWithoutRoleInHomeLocation implements SystemFix
             ->value('name');
 
         return $this->areaNameCache[$table][$id] = $value !== null ? (string) $value : null;
-    }
-
-    /**
-     * The alert body is capped for readability; when there are more, a final line points at the logs.
-     *
-     * @param  Collection<int, string>  $descriptions
-     * @return list<string>
-     */
-    private function sampleForAlert(Collection $descriptions): array
-    {
-        if ($descriptions->count() <= self::ALERT_SAMPLE_LIMIT) {
-            return $descriptions->all();
-        }
-
-        $remaining = $descriptions->count() - self::ALERT_SAMPLE_LIMIT;
-
-        return $descriptions
-            ->take(self::ALERT_SAMPLE_LIMIT)
-            ->push(sprintf('…and %d more — see the logs (system_fix.role_in_home_location.flagged).', $remaining))
-            ->all();
     }
 }

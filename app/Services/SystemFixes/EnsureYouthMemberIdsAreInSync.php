@@ -2,6 +2,8 @@
 
 namespace App\Services\SystemFixes;
 
+use App\Filament\Admin\Clusters\DataFixes\Pages\YouthMemberIds;
+use App\Filament\Admin\Resources\Users\UserResource;
 use App\Models\AdvancementCub;
 use App\Models\AdvancementMeerkat;
 use App\Models\AdvancementRover;
@@ -11,10 +13,8 @@ use App\Models\BadgesMeerkat;
 use App\Models\BadgesRover;
 use App\Models\BadgesScout;
 use App\Providers\AppServiceProvider;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 /**
@@ -36,20 +36,8 @@ use Illuminate\Support\Str;
  * two id columns across hundreds of thousands of historical rows, so it must not stamp `modified` or
  * emit an audit row per record.
  */
-class EnsureYouthMemberIdsAreInSync implements SystemFix
+class EnsureYouthMemberIdsAreInSync implements ReportsFindings, SystemFix
 {
-    /**
-     * Cap on the number of conflicts rendered into the Slack alert. Every conflict is logged
-     * individually regardless, so the full set is always recoverable; this only keeps the body readable.
-     */
-    private const ALERT_SAMPLE_LIMIT = 25;
-
-    /**
-     * Youth record models mapped to their section-specific member column. The generic `userID`
-     * column is the counterpart on every one of them.
-     *
-     * @var array<class-string<Model>, string>
-     */
     private const TABLES = [
         BadgesMeerkat::class => 'meerkatID',
         AdvancementMeerkat::class => 'meerkatID',
@@ -74,6 +62,26 @@ class EnsureYouthMemberIdsAreInSync implements SystemFix
     public function notificationSettingKey(): string
     {
         return 'ensure_youth_member_ids_are_in_sync_notifications';
+    }
+
+    /**
+     * @return Collection<int, SystemFixFinding>
+     */
+    public function findings(): Collection
+    {
+        /** @var Collection<int, SystemFixFinding> $findings */
+        $findings = collect();
+
+        foreach (self::TABLES as $modelClass => $youthColumn) {
+            $findings = $findings->merge($this->conflicts((new $modelClass)->getTable(), $youthColumn));
+        }
+
+        return $findings->values();
+    }
+
+    public function findingsUrl(): ?string
+    {
+        return YouthMemberIds::getUrl(panel: 'admin');
     }
 
     public function run(): SystemFixResult
@@ -106,7 +114,7 @@ class EnsureYouthMemberIdsAreInSync implements SystemFix
             $this->label(),
             $this->summarise($rowsSynced, $conflicts->count()),
             $changes,
-            $this->sampleForAlert($conflicts),
+            $conflicts->map(fn (SystemFixFinding $f): string => $f->toLine())->all(),
         );
     }
 
@@ -127,7 +135,7 @@ class EnsureYouthMemberIdsAreInSync implements SystemFix
      * Rows where both columns are set but disagree: two different member ids on one record, which the
      * fix cannot safely resolve on its own. Each is logged and turned into an admin-attention line.
      *
-     * @return Collection<int, string>
+     * @return Collection<int, SystemFixFinding>
      */
     private function conflicts(string $table, string $youthColumn): Collection
     {
@@ -138,22 +146,20 @@ class EnsureYouthMemberIdsAreInSync implements SystemFix
             ->whereColumn('userID', '!=', $youthColumn)
             ->orderBy('id')
             ->get(['id', 'userID', $youthColumn])
-            ->map(function (object $row) use ($table, $youthColumn): string {
-                Log::warning('system_fix.youth_member_ids.conflict', [
-                    'fix' => static::class,
-                    'table' => $table,
-                    'row_id' => (int) $row->id,
-                    'user_id' => (int) $row->userID,
-                    $youthColumn => (int) $row->{$youthColumn},
-                ]);
-
-                return sprintf(
-                    '%s #%d: userID %d and %s %d disagree; left unchanged for review.',
-                    $table,
-                    (int) $row->id,
-                    (int) $row->userID,
-                    $youthColumn,
-                    (int) $row->{$youthColumn},
+            ->map(function (object $row) use ($table, $youthColumn): SystemFixFinding {
+                // The record itself has no admin surface, so the link goes to the member named
+                // by userID — which is where somebody would go to work out which id is right.
+                return new SystemFixFinding(
+                    title: sprintf('%s #%d', $table, (int) $row->id),
+                    detail: sprintf(
+                        'userID %d and %s %d disagree; left unchanged because the fix cannot tell which is correct.',
+                        (int) $row->userID,
+                        $youthColumn,
+                        (int) $row->{$youthColumn},
+                    ),
+                    url: UserResource::getUrl('edit', ['record' => (int) $row->userID], panel: 'admin'),
+                    linkLabel: 'Open member #' . (int) $row->userID,
+                    group: $table,
                 );
             });
     }
@@ -175,27 +181,6 @@ class EnsureYouthMemberIdsAreInSync implements SystemFix
         }
 
         return Str::ucfirst(implode('; ', $parts)) . '.';
-    }
-
-    /**
-     * The alert body is capped for readability; when there are more conflicts, a final line points at the logs.
-     *
-     * @param  Collection<int, string>  $conflicts
-     * @return list<string>
-     */
-    private function sampleForAlert(Collection $conflicts): array
-    {
-        if ($conflicts->count() <= self::ALERT_SAMPLE_LIMIT) {
-            return $conflicts->values()->all();
-        }
-
-        $remaining = $conflicts->count() - self::ALERT_SAMPLE_LIMIT;
-
-        return $conflicts
-            ->take(self::ALERT_SAMPLE_LIMIT)
-            ->push(sprintf('…and %d more — see the logs (system_fix.youth_member_ids.conflict).', $remaining))
-            ->values()
-            ->all();
     }
 
     private function rowLabel(int $count): string

@@ -7,12 +7,13 @@ description: "Use this skill whenever you add a new data-integrity fix to the ap
 
 Data fixes keep legacy records in their expected state. They run nightly through one command, `app:system-fixes` (`App\Console\Commands\RunSystemFixes`), scheduled in `routes/console.php` at 04:00 SAST. The command iterates a list of fixes, runs each one if it is enabled, logs the outcome, and sends a Slack alert when the fix changed data or flagged something for an admin.
 
-A new fix has four parts that must stay in sync:
+A new fix has five parts that must stay in sync:
 
 1. A class implementing `App\Services\SystemFixes\SystemFix` in `app/Services/SystemFixes`.
 2. Its registration in `RunSystemFixes::$fixes`.
 3. Two toggles on `DataFixesSettings` (enable, and notify), plus the matching migration, Filament tab, and test seed. See the `adding-a-setting` skill for that half.
-4. A feature test in `tests/Feature/Console`.
+4. `ReportsFindings` and a page in the Data Fixes cluster, whenever the fix can leave anything for a human. See section 3.
+5. A feature test in `tests/Feature/Console`.
 
 ## 1. The fix class
 
@@ -58,19 +59,88 @@ Conventions and expectations:
 - Detect only the records that violate the invariant (an aggregate query with `HAVING`, a targeted `where`, etc.) rather than scanning every row. See `EnsureEachUserHasOnlyOnePrimaryRole::usersNeedingReconciliation()`.
 - Write only rows that actually change, so re-runs stay quiet and the audit trail is not noisy.
 - Use Eloquent (models here use the `AppServiceProvider::DB_SD_CORE` connection). Eager-load relations you read while building change descriptions to avoid N+1.
-- Log a structured `Log::warning('system_fix.<name>.<event>', [...])` for each change with useful context (ids and human names), in addition to the result lines.
+- Log a structured `Log::warning('system_fix.<name>.<event>', [...])` for each change with useful context (ids and human names), in addition to the result lines. **Log only from a write path.** See the warning in section 3: a log call in the method that builds findings fires on every page view, not once a night.
 
 ## 2. SystemFixResult and the changes vs attentions split
 
 `SystemFixResult($fix, $summary, $changes = [], $attentions = [])` is a readonly value object. The distinction drives the alert:
 
 - **`summary`**: a single line describing the run ("Reconciled 3 users ..." or "Nothing to do"). It is logged via `system_fix.completed`. It is never sent to Slack.
-- **`changes`**: data the fix changed on its own. Rendered under "Changes made" in the alert.
-- **`attentions`**: problems the fix could not safely resolve and that need a human. Rendered under "Needs admin attention" in the alert.
+- **`changes`**: data the fix changed on its own.
+- **`attentions`**: problems the fix could not safely resolve and that need a human.
+
+**The alert carries counts and a link, not the records.** For a fix implementing `ReportsFindings`
+with a `findingsUrl()`, `RunSystemFixes` renders "Fixed automatically: N changes.", "N items
+outstanding." and a link to the page. Dumping 179 flagged members into a Slack body is a wall of
+text nobody can act on; the alert's job is to say there is something to do and where to do it.
 
 `shouldNotify()` returns true when either `changes` or `attentions` is non-empty. If a fix only ever auto-resolves, it never populates `attentions`; reserve `attentions` for problems the fix cannot safely resolve on its own and that a human must decide on (for example two records that both look authoritative and cannot be merged automatically).
 
-## 3. Registering the fix
+## 3. Reporting findings (ReportsFindings)
+
+A fix that can leave something for a human to resolve should also implement
+`App\Services\SystemFixes\ReportsFindings`:
+
+```php
+public function findings(): Collection;   // Collection<int, SystemFixFinding>
+public function findingsUrl(): ?string;   // the page where they can be actioned
+```
+
+`SystemFixFinding` is a readonly value object (`title`, `detail`, `url`, `linkLabel`, `group`,
+`recordId`, `badge`). It is deliberately record shaped rather than summary shaped: an admin cannot
+act on "204 rows", only on a member they can open. Set `url` to the record's admin surface where one
+exists, and `recordId` when a page action should be able to resolve it in place.
+
+Three rules hold the contract together:
+
+1. **`findings()` must not write.** Its page calls it on every load.
+2. **`run()` may call `findings()`. `findings()` must never call `run()`.**
+3. **⚠ `findings()` must not log either, and this is the rule that has already been broken once.**
+   Three fixes originally emitted a `Log::warning` per record inside the method that built their
+   findings. That was correct while only the nightly command called it. Once a Filament page called
+   the same method, opening one page wrote 76 warning lines to the log **on every view**, and filled
+   the log with a nightly run signal that no longer meant a nightly run. The lines were redundant as
+   well: `RunSystemFixes` already logs every attention line under `system_fix.completed`. Keep
+   `Log::` calls in `run()` and in explicit write methods, never in a finding builder.
+
+   Pin it with a test. Each fix that reports findings carries one:
+
+   ```php
+   #[Test]
+   public function listing_findings_writes_nothing_to_the_log(): void
+   {
+       // ... seed at least one offender ...
+       Log::spy();
+
+       $findings = app(TheFix::class)->findings();
+
+       $this->assertCount(1, $findings, 'The fixture must produce a finding, or this proves nothing.');
+       Log::shouldNotHaveReceived('warning');
+   }
+   ```
+
+   The `assertCount` is not decoration. Against an empty list a per record log never fires, so the
+   guard passes while proving nothing.
+
+**No silent caps.** If a fix bounds how many records it reports, the bound must be visible in the
+output. `EnsureLegacyValuesAreCanonical` caps each column at 500 and, when a column exceeds it,
+counts the remainder and states it as its own finding. A truncated list that looks complete
+understates the problem on both the page and the alert, with nothing to indicate it.
+
+### The page
+
+Add a page to `app/Filament/Admin/Clusters/DataFixes/Pages`, extending `FindingsPage` and returning
+the fix class from `fix()`. The base class renders `findings()` directly, so an admin sees what is
+true now rather than what the last run stored, and a finding somebody has already fixed disappears
+on refresh.
+
+A page may override `solveAction(): ?Action` to resolve a finding in place. When it does, **the whole
+row becomes that action**; when it does not, the row is inert and the finding's own link is the way
+out. `HomeLocationRoles` is the worked example: a modal offering the member's own role locations as
+radio options. A solve action that cannot apply to a given row should be hidden with `->visible()`
+rather than failing when invoked.
+
+## 4. Registering the fix
 
 Add the class to the ordered `$fixes` list on `RunSystemFixes`:
 
@@ -83,7 +153,7 @@ private array $fixes = [
 
 The command handles the rest per fix: it skips the fix when `settingKey()` is off (logging `system_fix.skipped`), runs it, logs `system_fix.started` and `system_fix.completed`, then calls `notify()` when `shouldNotify()` is true. You do not write scheduling or notification code per fix.
 
-## 4. The toggles (DataFixesSettings)
+## 5. The toggles (DataFixesSettings)
 
 Every fix gets two booleans on `DataFixesSettings`, both defaulting to `true`:
 
@@ -101,7 +171,7 @@ The notification gate (already implemented in `RunSystemFixes::notify()`, do not
 
 Slack alerts are posted to a runtime-registered `data_fixes` webhook (it does not clobber the global error webhook) as "Data Fixes Bot".
 
-## 5. Tests
+## 6. Tests
 
 Add a feature test under `tests/Feature/Console` (see `RunSystemFixesTest`). Cover:
 
@@ -115,9 +185,12 @@ Use `SlackAlert::fake()` with `expectMessageSentContaining(...)` / `expectNoMess
 
 - [ ] Fix class implements `SystemFix` in `app/Services/SystemFixes`, idempotent, writes only changed rows.
 - [ ] `settingKey()` / `notificationSettingKey()` follow the `_enabled` / `_notifications` convention.
-- [ ] Structured `Log` context added for each change.
+- [ ] Structured `Log` context added for each change, **from a write path only**.
 - [ ] Class registered in `RunSystemFixes::$fixes`.
 - [ ] Two toggles added to `DataFixesSettings` (+ migration, Filament tab, test seed) per the `adding-a-setting` skill.
+- [ ] `ReportsFindings` implemented and a `FindingsPage` added, if the fix can leave anything for a human.
+- [ ] `listing_findings_writes_nothing_to_the_log` test added, asserting the fixture produced a finding first.
+- [ ] Any cap on reported records is surfaced as a finding rather than truncating silently.
 - [ ] Feature test covers behaviour, the disabled fix, and all three notification-suppression paths.
 - [ ] `php artisan test --compact tests/Feature/Console/RunSystemFixesTest.php` passes.
 - [ ] `vendor/bin/duster fix --dirty` run.

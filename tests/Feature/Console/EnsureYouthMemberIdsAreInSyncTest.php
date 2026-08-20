@@ -3,8 +3,10 @@
 namespace Tests\Feature\Console;
 
 use App\Providers\AppServiceProvider;
+use App\Services\SystemFixes\EnsureYouthMemberIdsAreInSync;
 use App\Settings\DataFixesSettings;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use PHPUnit\Framework\Attributes\Test;
 use Spatie\SlackAlerts\Facades\SlackAlert;
 use Tests\Support\SdCoreTestCase;
@@ -38,7 +40,9 @@ class EnsureYouthMemberIdsAreInSyncTest extends SdCoreTestCase
 
         $this->assertSame(555, $this->column('badges_scouts', $id, 'userID'));
 
-        SlackAlert::expectMessageSentContaining('badges_scouts: set userID from scoutID');
+        // Slack carries a count and a link; the per-record detail lives on the Data Fixes page.
+        SlackAlert::expectMessageSentContaining('Fixed automatically: 1 change.');
+        SlackAlert::expectMessageSentContaining('Review and fix');
     }
 
     #[Test]
@@ -52,7 +56,7 @@ class EnsureYouthMemberIdsAreInSyncTest extends SdCoreTestCase
 
         $this->assertSame(777, $this->column('badges_meerkats', $id, 'meerkatID'));
 
-        SlackAlert::expectMessageSentContaining('badges_meerkats: set meerkatID from userID');
+        SlackAlert::expectMessageSentContaining('Fixed automatically: 1 change.');
     }
 
     #[Test]
@@ -68,8 +72,12 @@ class EnsureYouthMemberIdsAreInSyncTest extends SdCoreTestCase
         $this->assertSame(111, $this->column('badges_scouts', $id, 'scoutID'));
         $this->assertSame(222, $this->column('badges_scouts', $id, 'userID'));
 
-        SlackAlert::expectMessageSentContaining("badges_scouts #{$id}");
-        SlackAlert::expectMessageSentContaining('disagree');
+        SlackAlert::expectMessageSentContaining('1 item outstanding.');
+
+        $finding = app(EnsureYouthMemberIdsAreInSync::class)->findings()->sole();
+        $this->assertSame("badges_scouts #{$id}", $finding->title);
+        $this->assertStringContainsString('disagree', $finding->detail);
+        $this->assertStringContainsString('/backoffice/users/222/edit', $finding->url);
     }
 
     #[Test]
@@ -145,6 +153,22 @@ class EnsureYouthMemberIdsAreInSyncTest extends SdCoreTestCase
         $this->artisan('app:system-fixes')->assertSuccessful();
 
         SlackAlert::expectNoMessagesSent();
+    }
+
+    #[Test]
+    public function listing_findings_writes_nothing_to_the_log(): void
+    {
+        // The Data Fixes page calls findings() on every load, so the read path must stay silent.
+        $this->insertScoutBadge(scoutID: 555, userID: 777);
+
+        Log::spy();
+
+        $findings = app(EnsureYouthMemberIdsAreInSync::class)->findings();
+
+        $this->assertCount(1, $findings, 'The fixture must produce a conflict, or this proves nothing.');
+        Log::shouldNotHaveReceived('warning');
+        Log::shouldNotHaveReceived('info');
+        Log::shouldNotHaveReceived('error');
     }
 
     private function insertScoutBadge(int $scoutID, ?int $userID): int

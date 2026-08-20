@@ -2,6 +2,8 @@
 
 namespace App\Services\SystemFixes;
 
+use App\Filament\Admin\Clusters\DataFixes\Pages\PrimaryRoles;
+use App\Filament\Admin\Resources\Users\UserResource;
 use App\Models\SystemUser;
 use App\Models\SystemUsersOtherRole;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
@@ -23,7 +25,7 @@ use Illuminate\Support\Str;
  * (highest `created`, then highest `id` as a tiebreaker), mirroring the
  * reconciliation used during user merges.
  */
-class EnsureEachUserHasOnlyOnePrimaryRole implements SystemFix
+class EnsureEachUserHasOnlyOnePrimaryRole implements ReportsFindings, SystemFix
 {
     public function label(): string
     {
@@ -38,6 +40,45 @@ class EnsureEachUserHasOnlyOnePrimaryRole implements SystemFix
     public function notificationSettingKey(): string
     {
         return 'ensure_each_user_has_only_one_primary_role_notifications';
+    }
+
+    /**
+     * Members whose roles break the single-primary invariant right now.
+     *
+     * This fix repairs everything it finds, so between nightly runs this page is where a pending
+     * violation shows up, and after a run it is empty. Nothing here is left for an admin to fix by
+     * hand — it is a view of what the next run will correct.
+     *
+     * @return Collection<int, SystemFixFinding>
+     */
+    public function findings(): Collection
+    {
+        $userIds = $this->usersNeedingReconciliation();
+
+        if ($userIds->isEmpty()) {
+            return collect();
+        }
+
+        $users = SystemUser::query()->whereIn('id', $userIds)->get()->keyBy('id');
+
+        return $userIds
+            ->map(function (int $userId) use ($users): SystemFixFinding {
+                $name = trim((string) $users->get($userId)?->name);
+
+                return new SystemFixFinding(
+                    title: $name !== '' ? sprintf('#%d %s', $userId, $name) : "#{$userId}",
+                    detail: 'Roles break the single-primary rule: either a deactivated role is marked primary, or the member does not have exactly one active primary. The next nightly run will correct this.',
+                    url: UserResource::getUrl('edit', ['record' => $userId], panel: 'admin'),
+                    linkLabel: 'Edit member',
+                    group: 'Pending correction',
+                );
+            })
+            ->values();
+    }
+
+    public function findingsUrl(): ?string
+    {
+        return PrimaryRoles::getUrl(panel: 'admin');
     }
 
     public function run(): SystemFixResult

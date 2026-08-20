@@ -29,6 +29,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 use OwenIt\Auditing\Contracts\Auditable;
 
 class SystemUser extends User implements Auditable, FilamentUser, HasDefaultTenant, HasTenants
@@ -75,7 +76,6 @@ class SystemUser extends User implements Auditable, FilamentUser, HasDefaultTena
         'passportCountry' => 'int',
         'partnersFullName' => 'string',
         'sex' => UserSex::class,
-        'race' => UserRace::class,
         'dob' => 'date',
         'dateInvested' => 'date',
         'multiID' => 'int',
@@ -640,6 +640,39 @@ class SystemUser extends User implements Auditable, FilamentUser, HasDefaultTena
         return Attribute::make(
             get: fn (mixed $value) => filled($value) ? UserTitle::tryFrom($value) : null,
             set: fn (mixed $value) => $value instanceof UserTitle ? $value->value : $value,
+        );
+    }
+
+    /**
+     * Race is read leniently and written strictly.
+     *
+     * Legacy sd-core rows are not written against UserRace and carry surrounding whitespace, so a
+     * plain enum cast throws a ValueError on read and takes the whole page down with it. Reads go
+     * through UserRace::fromLegacyValue(), which normalises the value and yields null for anything
+     * it cannot resolve. Writes still refuse a value outside the enum, so Ssalute never adds to the
+     * dirt it tolerates.
+     */
+    protected function race(): Attribute
+    {
+        return Attribute::make(
+            get: fn (mixed $value): ?UserRace => UserRace::fromLegacyValue($value),
+            set: function (mixed $value): ?string {
+                if ($value instanceof UserRace) {
+                    return $value->value;
+                }
+
+                if (blank($value)) {
+                    return null;
+                }
+
+                $race = UserRace::fromLegacyValue($value);
+
+                if (! $race instanceof UserRace) {
+                    throw new InvalidArgumentException("\"{$value}\" is not a valid race.");
+                }
+
+                return $race->value;
+            },
         );
     }
 }

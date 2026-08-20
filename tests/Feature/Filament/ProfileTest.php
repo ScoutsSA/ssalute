@@ -4,8 +4,10 @@ namespace Tests\Feature\Filament;
 
 use App\Filament\Member\Resources\Profile\Pages\EditProfile;
 use App\Models\SystemUser;
+use App\Providers\AppServiceProvider;
 use App\Settings\FeatureSettings;
 use Filament\Facades\Filament;
+use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\Support\SdCoreTestCase;
@@ -91,6 +93,28 @@ class ProfileTest extends SdCoreTestCase
     public function user_with_active_role_can_view_edit_profile_page(): void
     {
         $user = SystemUser::factory()->withRole()->create();
+
+        $this->actingAs($user)
+            ->get($this->editProfileUrl($user))
+            ->assertOk();
+    }
+
+    #[Test]
+    public function user_can_open_their_profile_when_their_stored_race_carries_trailing_whitespace(): void
+    {
+        $user = SystemUser::factory()->withRole()->create();
+
+        // EditProfile hydrates its form from $user->race directly, so it is a second surface
+        // the enum cast used to fatal on, independent of the admin resource.
+        DB::connection(AppServiceProvider::DB_SD_CORE)
+            ->table('system_users')
+            ->where('id', $user->id)
+            ->update(['race' => 'African ']);
+
+        $this->actingAs($user)
+            ->get($this->viewProfileUrl($user))
+            ->assertOk()
+            ->assertSee('African');
 
         $this->actingAs($user)
             ->get($this->editProfileUrl($user))

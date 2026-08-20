@@ -64,6 +64,8 @@ abstract class SdCoreTestCase extends TestCase
                 'flag_users_without_role_in_home_location_notifications' => 'true',
                 'ensure_youth_member_ids_are_in_sync_enabled' => 'false',
                 'ensure_youth_member_ids_are_in_sync_notifications' => 'true',
+                'ensure_legacy_values_are_canonical_enabled' => 'true',
+                'ensure_legacy_values_are_canonical_notifications' => 'true',
                 'notifications_enabled' => 'true',
                 'slack_webhook_url' => 'null',
             ],
