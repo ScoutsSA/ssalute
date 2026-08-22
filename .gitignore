@@ -22,6 +22,7 @@
 /storage/legacy-storage
 /storage/pail
 /vendor
+docker-compose.override.yml
 Homestead.json
 Homestead.yaml
 Thumbs.db

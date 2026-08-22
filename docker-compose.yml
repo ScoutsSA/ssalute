@@ -27,8 +27,6 @@ services:
     volumes:
       # Project files — Claude can read/write here
       - ./:/app
-      # Legacy Scouts Digital files (photos, documents, etc.)
-      - ../scouts-digital:/app/storage/legacy-storage
       # Global Claude rules + auth from your host machine
       - ~/.claude:/home/claude/.claude
       - ~/.claude.json:/home/claude/.claude.json
@@ -36,6 +34,8 @@ services:
       - ~/.config/gh:/home/claude/.config/gh
       # Stable machine identity so Claude auth persists across container runs
       - /etc/machine-id:/etc/machine-id:ro
+    # Machine-local mounts (e.g. additional data directories) belong in
+    # docker-compose.override.yml, which is not committed.
     working_dir: /app
     environment:
       - DB_HOST=host.docker.internal
