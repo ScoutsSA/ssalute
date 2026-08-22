@@ -53,6 +53,7 @@ abstract class FindingsPage extends Page implements HasTable
     public function table(Table $table): Table
     {
         $solve = $this->solveAction();
+        $open = $this->openAction();
 
         return $table
             ->records(fn (): Collection => $this->findings())
@@ -79,10 +80,13 @@ abstract class FindingsPage extends Page implements HasTable
             ])
             ->striped()
             // Where a fix can be resolved in place, the whole row opens that action — these are
-            // worklists, and the row IS the thing you act on. Where a fix has no in-place
-            // resolution yet, the row is inert rather than carrying a button that only navigates.
-            ->recordActions($solve instanceof Action ? [$solve] : [])
-            ->recordAction($solve?->getName())
+            // worklists, and the row IS the thing you act on. The link to the record is always
+            // offered alongside it, because an in-place action that cannot apply to a given row
+            // would otherwise leave that row with nothing to click and no way to reach the record.
+            ->recordActions(array_values(array_filter([$solve, $open])))
+            ->recordAction(fn (array $record): ?string => ($solve instanceof Action && $solve->getClone()->record($record)->isVisible())
+                ? $solve->getName()
+                : null)
             ->emptyStateHeading('Nothing outstanding')
             ->emptyStateDescription('No ' . static::subject() . ' need attention right now.')
             ->emptyStateIcon(Heroicon::CheckCircle)
@@ -92,13 +96,29 @@ abstract class FindingsPage extends Page implements HasTable
     /**
      * The action that resolves one of this fix's findings in place, if there is one.
      *
-     * Returning an action makes the entire row trigger it. Returning null leaves the rows inert:
-     * a button that only navigates away is not worth a column, and the finding's detail already
-     * names the record.
+     * Returning an action makes the entire row trigger it. Returning null leaves the row click
+     * inert, and openAction() remains as the way through to the record.
      */
     protected function solveAction(): ?Action
     {
         return null;
+    }
+
+    /**
+     * The link through to the record a finding is about.
+     *
+     * This is the floor every row is held to: a finding an admin cannot open is one they cannot
+     * act on. It is shown even where solveAction() exists, since that action can be hidden for
+     * an individual row and the admin still needs a way in.
+     */
+    protected function openAction(): ?Action
+    {
+        return Action::make('open')
+            ->label(fn (array $record): string => $record['linkLabel'] ?? 'Open record')
+            ->icon(Heroicon::ArrowTopRightOnSquare)
+            ->link()
+            ->url(fn (array $record): ?string => $record['url'])
+            ->visible(fn (array $record): bool => filled($record['url']));
     }
 
     /**

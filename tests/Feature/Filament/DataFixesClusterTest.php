@@ -17,6 +17,7 @@ use App\Services\SystemFixes\EnsureLegacyValuesAreCanonical;
 use App\Services\SystemFixes\FlagUsersWithoutRoleInHomeLocation;
 use App\Services\SystemFixes\ReportsFindings;
 use App\Settings\GeneralSettings;
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -181,6 +182,58 @@ class DataFixesClusterTest extends SdCoreTestCase
     {
         // A member flagged with no resolvable role location cannot be fixed from the modal.
         $this->assertSame([], app(FlagUsersWithoutRoleInHomeLocation::class)->homeCandidates(0));
+    }
+
+    #[Test]
+    public function a_finding_that_cannot_be_solved_in_place_still_links_through_to_the_record(): void
+    {
+        // A role pointing at a group that no longer exists is flagged, but resolves to no
+        // candidate home — so the modal cannot help. Without the link this row would be a dead
+        // end: flagged for attention with no way to reach the member it is about.
+        $user = SystemUser::factory()->create(['assoc_to_group' => 100]);
+        $this->groupRole($user, groupId: 999);
+
+        $fix = app(FlagUsersWithoutRoleInHomeLocation::class);
+        $this->assertCount(1, $fix->findings(), 'Expected the member to be flagged.');
+        $this->assertSame([], $fix->homeCandidates($user->id), 'Expected nothing to choose from.');
+
+        $this->actingAs($this->superAdmin);
+
+        $component = Livewire::test(HomeLocationRoles::class)
+            ->assertActionHidden(TestAction::make('setHome')->table(0))
+            ->assertActionVisible(TestAction::make('open')->table(0));
+
+        // recordAction() takes an action name, and Filament does not check that action's
+        // visibility before wiring the row click. Left as a bare name the whole row would render
+        // as a button on every row, including this one, and clicking it would silently do
+        // nothing. It has to resolve per record so the row stops offering a click it cannot honour.
+        $table = $component->instance()->getTable();
+        $record = $component->instance()->getTableRecords()->first();
+
+        $this->assertNull(
+            $table->getRecordAction($record),
+            'Expected a row with no in-place action to be inert rather than a button that does nothing.',
+        );
+    }
+
+    #[Test]
+    public function a_finding_that_is_not_about_a_record_offers_no_link(): void
+    {
+        // The "N more not listed" overflow row is a summary, not a record, so it carries no url.
+        // It still renders as a row, and must not offer an "Open record" link that goes nowhere.
+        $this->actingAs($this->superAdmin);
+
+        $open = Livewire::test(LegacyValues::class)->instance()->getTable()->getAction('open');
+
+        $this->assertFalse(
+            $open->getClone()->record(['url' => null, 'linkLabel' => null])->isVisible(),
+            'Expected a finding with no record behind it to offer no link.',
+        );
+
+        $this->assertTrue(
+            $open->getClone()->record(['url' => '/backoffice/users/1/edit', 'linkLabel' => 'Edit member'])->isVisible(),
+            'Expected a finding that names a record to offer the link through to it.',
+        );
     }
 
     private function groupAt(int $id, int $district, int $region): Group
