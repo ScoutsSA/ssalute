@@ -4,6 +4,7 @@ use App\Sync\Anonymizers\AnonymizeLoginHistory;
 use App\Sync\Anonymizers\AnonymizeOrganisationContacts;
 use App\Sync\Anonymizers\AnonymizeSystemUserEmailVerifications;
 use App\Sync\Anonymizers\AnonymizeSystemUsers;
+use App\Sync\Types\LogsOverSshSyncType;
 use Rouxtaccess\Sync\Database\Drivers\MysqlDriver;
 use Rouxtaccess\Sync\Database\Drivers\PostgresDriver;
 use Rouxtaccess\Sync\Database\Drivers\SqliteDriver;
@@ -48,6 +49,7 @@ return [
         DbFromS3SyncType::class,
         FilesOverSshSyncType::class,
         S3SyncType::class,
+        LogsOverSshSyncType::class,
     ],
 
     /*
