@@ -28,7 +28,7 @@ class SupportChatTypeResource extends Resource
 
     protected static ?string $cluster = LookupTablesCluster::class;
 
-    protected static ?int $navigationSort = 133;
+    protected static ?int $navigationSort = 135;
 
     protected static string|UnitEnum|null $navigationGroup = 'Content & Support';
 

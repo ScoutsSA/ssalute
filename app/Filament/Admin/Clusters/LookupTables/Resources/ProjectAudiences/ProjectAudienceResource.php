@@ -28,7 +28,7 @@ class ProjectAudienceResource extends Resource
 
     protected static ?string $cluster = LookupTablesCluster::class;
 
-    protected static ?int $navigationSort = 136;
+    protected static ?int $navigationSort = 138;
 
     protected static string|UnitEnum|null $navigationGroup = 'Content & Support';
 

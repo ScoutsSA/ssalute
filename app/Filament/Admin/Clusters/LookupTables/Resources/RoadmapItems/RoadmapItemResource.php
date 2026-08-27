@@ -9,7 +9,7 @@ use BackedEnum;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
@@ -30,7 +30,7 @@ class RoadmapItemResource extends Resource
 
     protected static ?string $cluster = LookupTablesCluster::class;
 
-    protected static ?int $navigationSort = 132;
+    protected static ?int $navigationSort = 134;
 
     protected static string|UnitEnum|null $navigationGroup = 'Content & Support';
 
@@ -38,7 +38,7 @@ class RoadmapItemResource extends Resource
     {
         return $schema->components([
             TextInput::make('area')->label('Area')->required(),
-            Textarea::make('text')->label('Text')->required()->columnSpanFull(),
+            RichEditor::make('text')->label('Text')->required()->columnSpanFull()->toolbarButtons([['bold', 'italic', 'underline'], ['bulletList', 'orderedList'], ['undo', 'redo']])->helperText('Stored as HTML. The legacy pages strip all but basic tags (bold, underline, italic as i, lists, paragraphs, line breaks) when displaying.'),
             DatePicker::make('releaseDate')->label('Release Date')->required(),
             Toggle::make('active')->label('Active')->default(true)->inline(false),
         ]);

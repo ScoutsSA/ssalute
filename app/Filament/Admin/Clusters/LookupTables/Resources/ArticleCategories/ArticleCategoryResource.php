@@ -26,7 +26,7 @@ class ArticleCategoryResource extends Resource
 
     protected static ?string $cluster = LookupTablesCluster::class;
 
-    protected static ?int $navigationSort = 131;
+    protected static ?int $navigationSort = 132;
 
     protected static string|UnitEnum|null $navigationGroup = 'Content & Support';
 

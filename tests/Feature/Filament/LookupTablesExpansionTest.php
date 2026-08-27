@@ -4,6 +4,8 @@ namespace Tests\Feature\Filament;
 
 use App\Filament\Admin\Clusters\LookupTables\Resources\ArticleCategories\ArticleCategoryResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\ArticleCategories\Pages\ManageArticleCategories;
+use App\Filament\Admin\Clusters\LookupTables\Resources\Articles\ArticleResource;
+use App\Filament\Admin\Clusters\LookupTables\Resources\Articles\Pages\ManageArticles;
 use App\Filament\Admin\Clusters\LookupTables\Resources\Cities\CityResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\Cities\Pages\ManageCities;
 use App\Filament\Admin\Clusters\LookupTables\Resources\CompetitionJudgeTypes\CompetitionJudgeTypeResource;
@@ -16,6 +18,8 @@ use App\Filament\Admin\Clusters\LookupTables\Resources\DisciplinaryOffences\Disc
 use App\Filament\Admin\Clusters\LookupTables\Resources\DisciplinaryOffences\Pages\ManageDisciplinaryOffences;
 use App\Filament\Admin\Clusters\LookupTables\Resources\FaqCategories\FaqCategoryResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\FaqCategories\Pages\ManageFaqCategories;
+use App\Filament\Admin\Clusters\LookupTables\Resources\FaqEntries\FaqEntryResource;
+use App\Filament\Admin\Clusters\LookupTables\Resources\FaqEntries\Pages\ManageFaqEntries;
 use App\Filament\Admin\Clusters\LookupTables\Resources\GroupTypes\GroupTypeResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\GroupTypes\Pages\ManageGroupTypes;
 use App\Filament\Admin\Clusters\LookupTables\Resources\InfoSharingTypes\InfoSharingTypeResource;
@@ -52,12 +56,14 @@ use App\Models\GroupsType;
 use App\Models\InfoSharingType;
 use App\Models\ProjectsFor;
 use App\Models\Region;
+use App\Models\SdArticle;
 use App\Models\SdArticleCat;
 use App\Models\SupportChatsStandardAnswer;
 use App\Models\SupportChatsType;
 use App\Models\SystemCity;
 use App\Models\SystemCountryName;
 use App\Models\SystemDocumentType;
+use App\Models\SystemFaq;
 use App\Models\SystemFaqCat;
 use App\Models\SystemProgramTypesCub;
 use App\Models\SystemProgramTypesMeerkat;
@@ -101,6 +107,8 @@ class LookupTablesExpansionTest extends SdCoreTestCase
             'training locations' => [TrainingLocationResource::class],
             'training courses' => [TrainingCourseResource::class],
             'faq categories' => [FaqCategoryResource::class],
+            'faq entries' => [FaqEntryResource::class],
+            'articles' => [ArticleResource::class],
             'article categories' => [ArticleCategoryResource::class],
             'roadmap items' => [RoadmapItemResource::class],
             'support chat types' => [SupportChatTypeResource::class],
@@ -243,6 +251,37 @@ class LookupTablesExpansionTest extends SdCoreTestCase
                 ['name' => 'Census Questions', 'position' => 3, 'forGroupAdults' => 1],
                 ['name' => 'Renamed FAQ Category'],
                 ['name' => 'Renamed FAQ Category'],
+            ],
+            'faq entries' => [
+                ManageFaqEntries::class,
+                SystemFaq::class,
+                'system_faq',
+                fn (): array => [
+                    'catID' => SystemFaqCat::factory()->create()->id,
+                    'q' => 'How Do I Test This?',
+                    'a' => '<p>Like this.</p>',
+                    'position' => 1,
+                    'active' => true,
+                ],
+                ['q' => 'How Do I Test This?', 'position' => 1],
+                ['q' => 'How Do I Test This Again?'],
+                ['q' => 'How Do I Test This Again?'],
+            ],
+            'articles' => [
+                ManageArticles::class,
+                SdArticle::class,
+                'sd_articles',
+                fn (): array => [
+                    'catID' => SdArticleCat::factory()->create()->id,
+                    'title' => 'A Test Article',
+                    'slug' => 'a-test-article',
+                    'intro' => 'A teaser paragraph.',
+                    'article' => '<p>The body.</p>',
+                    'active' => true,
+                ],
+                ['title' => 'A Test Article', 'slug' => 'a-test-article'],
+                ['title' => 'A Renamed Article'],
+                ['title' => 'A Renamed Article'],
             ],
             'article categories' => [
                 ManageArticleCategories::class,
@@ -534,6 +573,23 @@ class LookupTablesExpansionTest extends SdCoreTestCase
             ->assertCanSeeTableRecords($records);
 
         $this->assertSame('audience', $component->instance()->getTable()->getDefaultGroup()?->getId());
+    }
+
+    #[Test]
+    public function faq_categories_can_be_filtered_by_audience(): void
+    {
+        $region = SystemFaqCat::factory()->create(['forRegion' => 1]);
+        $national = SystemFaqCat::factory()->create(['forNational' => 1]);
+        $none = SystemFaqCat::factory()->create();
+
+        Livewire::actingAs($this->superAdmin)
+            ->test(ManageFaqCategories::class)
+            ->filterTable('audience', 'forRegion')
+            ->assertCanSeeTableRecords([$region])
+            ->assertCanNotSeeTableRecords([$national, $none])
+            ->filterTable('audience', 'none')
+            ->assertCanSeeTableRecords([$none])
+            ->assertCanNotSeeTableRecords([$region, $national]);
     }
 
     #[Test]

@@ -28,7 +28,7 @@ class InfoSharingTypeResource extends Resource
 
     protected static ?string $cluster = LookupTablesCluster::class;
 
-    protected static ?int $navigationSort = 135;
+    protected static ?int $navigationSort = 137;
 
     protected static string|UnitEnum|null $navigationGroup = 'Content & Support';
 

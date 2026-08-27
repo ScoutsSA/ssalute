@@ -16,6 +16,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -61,6 +62,28 @@ class FaqCategoryResource extends Resource
             ->defaultPaginationPageOption(25)
             ->recordActions([EditAction::make(), DeleteAction::make()])
             ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: categories for the FAQ module. They drive the FAQ navigation, search and admin screens, and the audience flags control which roles see each category. The legacy pages only show rows with FAQ group 0 and exactly one audience flag; rows without a flag belong to the retired FAQ group mechanism and are not displayed anywhere.')
+            ->filters([
+                SelectFilter::make('audience')
+                    ->label('Displayed To')
+                    ->options(SystemFaqCat::AUDIENCE_FLAGS + ['none' => 'Not Displayed'])
+                    ->query(function (Builder $query, array $data): Builder {
+                        $value = $data['value'] ?? null;
+
+                        if (blank($value)) {
+                            return $query;
+                        }
+
+                        if ($value === 'none') {
+                            foreach (array_keys(SystemFaqCat::AUDIENCE_FLAGS) as $column) {
+                                $query->where($column, 0);
+                            }
+
+                            return $query;
+                        }
+
+                        return $query->where($value, 1);
+                    }),
+            ])
             ->groups([static::audienceGroup()])
             ->defaultGroup(static::audienceGroup())
             ->columns([
