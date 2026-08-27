@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class SdArticleCat extends BaseModel
 {
@@ -18,4 +19,8 @@ class SdArticleCat extends BaseModel
         'slug' => 'string',
     ];
 
+    public function articles(): HasMany
+    {
+        return $this->hasMany(SdArticle::class, 'catID');
+    }
 }
