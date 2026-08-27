@@ -46,7 +46,7 @@ class FaqEntryResource extends Resource
                 ->options(fn (): array => SystemFaqCat::query()->orderBy('name')->get()->mapWithKeys(fn (SystemFaqCat $category): array => [$category->id => "{$category->name} ({$category->audience}) (#{$category->id})"])->all())
                 ->required()
                 ->searchable(),
-            TextInput::make('q')->label('Question')->required(),
+            TextInput::make('q')->label('Question')->required()->formatStateUsing(fn (?string $state): ?string => LegacyHtmlService::decode($state)),
             RichEditor::make('a')
                 ->label('Answer')
                 ->required()
@@ -71,7 +71,7 @@ class FaqEntryResource extends Resource
             ->modifyQueryUsing(fn (Builder $query) => $query->with('category'))
             ->columns([
                 TextColumn::make('id')->label('ID')->sortable()->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('q')->label('Question')->searchable()->sortable()->toggleable(),
+                TextColumn::make('q')->label('Question')->formatStateUsing(fn (?string $state): ?string => LegacyHtmlService::decode($state))->searchable()->sortable()->toggleable(),
                 TextColumn::make('catID')->label('Category')->state(fn (SystemFaq $record): string => $record->category ? "{$record->category->name} ({$record->category->audience}) (#{$record->catID})" : (string) $record->catID)->sortable()->toggleable(),
                 TextColumn::make('position')->label('Position')->sortable()->toggleable(),
                 TextColumn::make('a')->label('Answer')->formatStateUsing(fn (?string $state): ?string => LegacyHtmlService::preview($state))->limit(80)->toggleable(isToggledHiddenByDefault: true),

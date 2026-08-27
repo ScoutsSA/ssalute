@@ -734,6 +734,21 @@ class LookupTablesExpansionTest extends SdCoreTestCase
     }
 
     #[Test]
+    public function text_normalization_migration_decodes_questions_titles_and_areas(): void
+    {
+        $entry = SystemFaq::factory()->create(['q' => 'I&#039;d Like Some Additional Functionality']);
+        $article = SdArticle::factory()->create(['title' => 'Knots &amp;amp; Lashings']);
+        $roadmap = SystemRoadmapLittle::factory()->create(['area' => 'Events &amp; Programs']);
+
+        $migration = include database_path('migrations/2026_08_27_130000_normalize_legacy_text_entity_encoding.php');
+        $migration->up();
+
+        $this->assertSame("I'd Like Some Additional Functionality", $entry->refresh()->q);
+        $this->assertSame('Knots & Lashings', $article->refresh()->title);
+        $this->assertSame('Events & Programs', $roadmap->refresh()->area);
+    }
+
+    #[Test]
     public function every_lookup_resource_defaults_to_twenty_five_rows_per_page(): void
     {
         $resourceFiles = glob(app_path('Filament/Admin/Clusters/LookupTables/Resources/*/*Resource.php'));

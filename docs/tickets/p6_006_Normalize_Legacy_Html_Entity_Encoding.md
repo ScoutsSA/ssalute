@@ -12,7 +12,7 @@ Measured against the 2026-08-22 sync, decoded content contains non whitelisted t
 
 ## Status
 
-The filtered variant shipped on 2026-08-27 as migration `2026_08_27_120000_normalize_legacy_html_entity_encoding`: it decodes a value only where the decoded content uses whitelisted tags exclusively, so member facing rendering is unchanged. Run against the 2026-08-22 sync it left 13 FAQ answers and 12 articles encoded (the rows with links and other non whitelisted tags). What remains for this ticket is the legacy whitelist patch and a follow up pass for those skipped rows, per the path below. The migration is idempotent and its logic is reusable as a data fixer if the legacy admin screens keep producing encoded rows.
+The filtered variant shipped on 2026-08-27 as migration `2026_08_27_120000_normalize_legacy_html_entity_encoding`: it decodes a value only where the decoded content uses whitelisted tags exclusively, so member facing rendering is unchanged. Run against the 2026-08-22 sync it left 13 FAQ answers and 12 articles encoded (the rows with links and other non whitelisted tags). A companion migration (`2026_08_27_130000_normalize_legacy_text_entity_encoding`) normalized the plain text columns of the same module (FAQ questions, article titles, roadmap areas) the same day. What remains for this ticket is the legacy whitelist patch and a follow up pass for the skipped rows, per the path below. The schema wide version of this problem (196 columns beyond this module) is ticket 007. The migration is idempotent and its logic is reusable as a data fixer if the legacy admin screens keep producing encoded rows.
 
 ## Recommended path
 

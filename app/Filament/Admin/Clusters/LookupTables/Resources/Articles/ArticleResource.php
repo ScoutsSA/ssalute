@@ -47,7 +47,7 @@ class ArticleResource extends Resource
                 ->options(fn (): array => SdArticleCat::query()->orderBy('name')->get()->mapWithKeys(fn (SdArticleCat $category): array => [$category->id => "{$category->name} (#{$category->id})"])->all())
                 ->required()
                 ->searchable(),
-            TextInput::make('title')->label('Title')->required(),
+            TextInput::make('title')->label('Title')->required()->formatStateUsing(fn (?string $state): ?string => LegacyHtmlService::decode($state)),
             TextInput::make('slug')->label('Slug')->required()->helperText('Used in legacy article URLs.'),
             Textarea::make('intro')->label('Intro')->required()->formatStateUsing(fn (?string $state): ?string => LegacyHtmlService::decode($state))->rows(3)->columnSpanFull()->helperText('Teaser shown on the legacy article listings.'),
             RichEditor::make('article')
@@ -71,7 +71,7 @@ class ArticleResource extends Resource
             ->modifyQueryUsing(fn (Builder $query) => $query->with('category'))
             ->columns([
                 TextColumn::make('id')->label('ID')->sortable()->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('title')->label('Title')->searchable()->sortable()->toggleable(),
+                TextColumn::make('title')->label('Title')->formatStateUsing(fn (?string $state): ?string => LegacyHtmlService::decode($state))->searchable()->sortable()->toggleable(),
                 TextColumn::make('catID')->label('Category')->state(fn (SdArticle $record): string => $record->category ? "{$record->category->name} (#{$record->catID})" : (string) $record->catID)->sortable()->toggleable(),
                 TextColumn::make('slug')->label('Slug')->searchable()->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('intro')->label('Intro')->formatStateUsing(fn (?string $state): ?string => LegacyHtmlService::preview($state))->limit(60)->toggleable(isToggledHiddenByDefault: true),

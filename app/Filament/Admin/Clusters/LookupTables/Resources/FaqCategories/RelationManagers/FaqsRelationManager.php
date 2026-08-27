@@ -25,7 +25,7 @@ class FaqsRelationManager extends RelationManager
     public function form(Schema $schema): Schema
     {
         return $schema->components([
-            TextInput::make('q')->label('Question')->required(),
+            TextInput::make('q')->label('Question')->required()->formatStateUsing(fn (?string $state): ?string => LegacyHtmlService::decode($state)),
             RichEditor::make('a')
                 ->label('Answer')
                 ->required()
@@ -55,7 +55,7 @@ class FaqsRelationManager extends RelationManager
             ])
             ->columns([
                 TextColumn::make('id')->label('ID')->sortable()->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('q')->label('Question')->searchable()->sortable()->toggleable(),
+                TextColumn::make('q')->label('Question')->formatStateUsing(fn (?string $state): ?string => LegacyHtmlService::decode($state))->searchable()->sortable()->toggleable(),
                 TextColumn::make('position')->label('Position')->sortable()->toggleable(),
                 TextColumn::make('a')->label('Answer')->formatStateUsing(fn (?string $state): ?string => LegacyHtmlService::preview($state))->limit(80)->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('targetID')->label('Target ID')->sortable()->toggleable(isToggledHiddenByDefault: true),

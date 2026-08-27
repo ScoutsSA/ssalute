@@ -39,7 +39,7 @@ class RoadmapItemResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            TextInput::make('area')->label('Area')->required(),
+            TextInput::make('area')->label('Area')->required()->formatStateUsing(fn (?string $state): ?string => LegacyHtmlService::decode($state)),
             RichEditor::make('text')->label('Text')->required()->formatStateUsing(fn (?string $state): ?string => LegacyHtmlService::decode($state))->columnSpanFull()->toolbarButtons([['bold', 'italic', 'underline'], ['bulletList', 'orderedList'], ['undo', 'redo']])->helperText('Stored as HTML. The legacy pages strip all but basic tags (bold, underline, italic as i, lists, paragraphs, line breaks) when displaying.'),
             DatePicker::make('releaseDate')->label('Release Date')->required(),
             Toggle::make('active')->label('Active')->default(true)->inline(false),
@@ -55,7 +55,7 @@ class RoadmapItemResource extends Resource
             ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: entries for the little roadmap page and the new functionality panel shown on dashboards.')
             ->columns([
                 TextColumn::make('id')->label('ID')->sortable()->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('area')->label('Area')->searchable()->sortable()->toggleable(),
+                TextColumn::make('area')->label('Area')->formatStateUsing(fn (?string $state): ?string => LegacyHtmlService::decode($state))->searchable()->sortable()->toggleable(),
                 TextColumn::make('text')->label('Text')->formatStateUsing(fn (?string $state): ?string => LegacyHtmlService::preview($state))->limit(80)->searchable()->toggleable(),
                 TextColumn::make('releaseDate')->label('Release Date')->date()->sortable()->toggleable(),
                 IconColumn::make('active')->label('Active')->boolean()->toggleable(),
