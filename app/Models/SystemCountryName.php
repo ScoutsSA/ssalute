@@ -9,6 +9,7 @@ class SystemCountryName extends BaseModel
 {
     protected $connection = AppServiceProvider::DB_SD_CORE;
     protected $table = 'system_country_names';
+    protected $primaryKey = 'country_id';
 
     protected $guarded = [];
 
