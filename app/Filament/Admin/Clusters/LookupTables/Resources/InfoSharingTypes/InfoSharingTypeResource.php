@@ -44,6 +44,7 @@ class InfoSharingTypeResource extends Resource
     {
         return $table
             ->recordAction(EditAction::class)
+            ->defaultPaginationPageOption(25)
             ->recordActions([EditAction::make(), DeleteAction::make()])
             ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: categories for the info sharing module, such as hiking and camping locations and friendly suppliers.')
             ->columns([

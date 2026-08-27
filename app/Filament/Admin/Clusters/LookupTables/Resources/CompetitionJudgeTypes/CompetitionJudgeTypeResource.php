@@ -51,6 +51,7 @@ class CompetitionJudgeTypeResource extends Resource
     {
         return $table
             ->recordAction(EditAction::class)
+            ->defaultPaginationPageOption(25)
             ->recordActions([EditAction::make(), DeleteAction::make()])
             ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: judge role types for event competitions. The flags control what a judge may do on the competition dashboards, such as capturing scores or administering judges, finances and teams.')
             ->columns([

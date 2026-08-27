@@ -49,6 +49,7 @@ class TrainingPastTypeResource extends Resource
     {
         return $table
             ->recordAction(EditAction::class)
+            ->defaultPaginationPageOption(25)
             ->recordActions([EditAction::make(), DeleteAction::make()])
             ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: the course options when capturing past training, booking courses and creating bookable courses, and on training views, reports and member past training lists.')
             ->columns([

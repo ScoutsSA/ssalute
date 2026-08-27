@@ -42,6 +42,7 @@ class ArticleCategoryResource extends Resource
     {
         return $table
             ->recordAction(EditAction::class)
+            ->defaultPaginationPageOption(25)
             ->recordActions([EditAction::make(), DeleteAction::make()])
             ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: categories for the articles module. The slug appears in article category URLs and the left navigation.')
             ->columns([

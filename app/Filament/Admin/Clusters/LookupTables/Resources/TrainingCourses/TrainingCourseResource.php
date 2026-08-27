@@ -53,6 +53,7 @@ class TrainingCourseResource extends Resource
     {
         return $table
             ->recordAction(EditAction::class)
+            ->defaultPaginationPageOption(25)
             ->recordActions([EditAction::make(), DeleteAction::make()])
             ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: the standard training course catalogue per region, managed by the regional training admin screens and used when creating bookable courses and training bookings.')
             ->modifyQueryUsing(fn (Builder $query) => $query->with('region'))

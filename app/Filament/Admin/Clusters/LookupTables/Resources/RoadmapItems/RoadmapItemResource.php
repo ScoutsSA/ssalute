@@ -48,6 +48,7 @@ class RoadmapItemResource extends Resource
     {
         return $table
             ->recordAction(EditAction::class)
+            ->defaultPaginationPageOption(25)
             ->recordActions([EditAction::make(), DeleteAction::make()])
             ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: entries for the little roadmap page and the new functionality panel shown on dashboards.')
             ->columns([

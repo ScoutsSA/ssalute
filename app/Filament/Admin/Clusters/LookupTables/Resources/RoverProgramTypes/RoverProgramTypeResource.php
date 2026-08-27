@@ -44,6 +44,7 @@ class RoverProgramTypeResource extends Resource
     {
         return $table
             ->recordAction(EditAction::class)
+            ->defaultPaginationPageOption(25)
             ->recordActions([EditAction::make(), DeleteAction::make()])
             ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: program and meeting types for the Rover branch, used when adding or editing programs and events, on advancement sign off from programs, on the crew dashboard, and on census and group reports.')
             ->columns([

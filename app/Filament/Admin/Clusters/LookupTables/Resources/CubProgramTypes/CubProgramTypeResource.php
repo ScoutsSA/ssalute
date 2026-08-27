@@ -44,6 +44,7 @@ class CubProgramTypeResource extends Resource
     {
         return $table
             ->recordAction(EditAction::class)
+            ->defaultPaginationPageOption(25)
             ->recordActions([EditAction::make(), DeleteAction::make()])
             ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: program and meeting types for the Cub branch, used when adding or editing programs and events, on advancement and badge sign off from programs, on the pack dashboard, and on census and group reports.')
             ->columns([

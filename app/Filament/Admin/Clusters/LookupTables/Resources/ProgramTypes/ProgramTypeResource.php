@@ -45,6 +45,7 @@ class ProgramTypeResource extends Resource
     {
         return $table
             ->recordAction(EditAction::class)
+            ->defaultPaginationPageOption(25)
             ->recordActions([EditAction::make(), DeleteAction::make()])
             ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: generic program types for group programs, used on the program manage and view screens, program sign off for advancement and badges, attendance reports and financial account views. The four branch specific program type tables have their own pages.')
             ->columns([

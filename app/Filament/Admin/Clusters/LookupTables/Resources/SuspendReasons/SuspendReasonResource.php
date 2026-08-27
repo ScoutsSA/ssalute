@@ -45,6 +45,7 @@ class SuspendReasonResource extends Resource
     {
         return $table
             ->recordAction(EditAction::class)
+            ->defaultPaginationPageOption(25)
             ->recordActions([EditAction::make(), DeleteAction::make()])
             ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: the reason options when suspending an adult in AMS, shown on the suspended adults screen.')
             ->columns([

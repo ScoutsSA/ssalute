@@ -48,6 +48,7 @@ class DisciplinaryOffenceResource extends Resource
     {
         return $table
             ->recordAction(EditAction::class)
+            ->defaultPaginationPageOption(25)
             ->recordActions([EditAction::make(), DeleteAction::make()])
             ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: the offence list offered when capturing adult disciplinary records on the AMS disciplinary screens, grouped under the disciplinary headings.')
             ->modifyQueryUsing(fn (Builder $query) => $query->with('heading'))

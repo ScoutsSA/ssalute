@@ -58,6 +58,7 @@ class CubLevelResource extends Resource
     {
         return $table
             ->recordAction(EditAction::class)
+            ->defaultPaginationPageOption(25)
             ->recordActions([EditAction::make(), DeleteAction::make()])
             ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: the Cub advancement levels, used across advancement sign off from programs and events, admin advancement screens, youth advancement reports and dashboards.')
             ->columns([

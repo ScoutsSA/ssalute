@@ -60,6 +60,7 @@ class ScoutLevelResource extends Resource
     {
         return $table
             ->recordAction(EditAction::class)
+            ->defaultPaginationPageOption(25)
             ->recordActions([EditAction::make(), DeleteAction::make()])
             ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: the Scout advancement levels, used across advancement sign off from programs and events, admin advancement screens, youth advancement and badge reports, census group reports and dashboards.')
             ->columns([

@@ -46,6 +46,7 @@ class PropertyOwnershipTypeResource extends Resource
     {
         return $table
             ->recordAction(EditAction::class)
+            ->defaultPaginationPageOption(25)
             ->recordActions([EditAction::make(), DeleteAction::make()])
             ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: ownership types for group property records, the annual census property section and the property reports. The owned and rented flags feed the census property totals.')
             ->columns([

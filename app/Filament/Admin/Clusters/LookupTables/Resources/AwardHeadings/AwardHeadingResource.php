@@ -41,6 +41,7 @@ class AwardHeadingResource extends Resource
     {
         return $table
             ->recordAction(EditAction::class)
+            ->defaultPaginationPageOption(25)
             ->recordActions([EditAction::make(), DeleteAction::make()])
             ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: groups the award types on the AMS award add screen and the individual award view.')
             ->columns([

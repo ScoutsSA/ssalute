@@ -41,6 +41,7 @@ class RoverMeetingTypeResource extends Resource
     {
         return $table
             ->recordAction(EditAction::class)
+            ->defaultPaginationPageOption(25)
             ->recordActions([EditAction::make(), DeleteAction::make()])
             ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: the meeting type options for Rover programs on the program add, edit and manage screens.')
             ->columns([

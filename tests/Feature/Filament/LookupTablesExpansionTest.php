@@ -506,4 +506,25 @@ class LookupTablesExpansionTest extends SdCoreTestCase
             'createdby' => $this->superAdmin->id,
         ]);
     }
+
+    #[Test]
+    public function every_lookup_resource_defaults_to_twenty_five_rows_per_page(): void
+    {
+        $resourceFiles = glob(app_path('Filament/Admin/Clusters/LookupTables/Resources/*/*Resource.php'));
+
+        $this->assertNotEmpty($resourceFiles);
+
+        foreach ($resourceFiles as $file) {
+            $relativePath = substr($file, strlen(app_path()) + 1, -strlen('.php'));
+            $resourceClass = 'App\\' . str_replace('/', '\\', $relativePath);
+            $pageClass = $resourceClass::getPages()['index']->getPage();
+
+            $table = Livewire::actingAs($this->superAdmin)
+                ->test($pageClass)
+                ->instance()
+                ->getTable();
+
+            $this->assertSame(25, $table->getDefaultPaginationPageOption(), "{$resourceClass} does not default to 25 rows per page");
+        }
+    }
 }

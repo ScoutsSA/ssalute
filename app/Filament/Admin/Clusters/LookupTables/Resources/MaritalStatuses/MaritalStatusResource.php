@@ -44,6 +44,7 @@ class MaritalStatusResource extends Resource
     {
         return $table
             ->recordAction(EditAction::class)
+            ->defaultPaginationPageOption(25)
             ->recordActions([EditAction::make(), DeleteAction::make()])
             ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: the marital status options on the AMS adult add and edit forms.')
             ->columns([

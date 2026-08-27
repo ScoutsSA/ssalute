@@ -44,6 +44,7 @@ class SupportChatTypeResource extends Resource
     {
         return $table
             ->recordAction(EditAction::class)
+            ->defaultPaginationPageOption(25)
             ->recordActions([EditAction::make(), DeleteAction::make()])
             ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: the categories a member chooses when starting a support chat, also shown on the support log admin screen.')
             ->columns([

@@ -57,6 +57,7 @@ class TrainingLocationResource extends Resource
     {
         return $table
             ->recordAction(EditAction::class)
+            ->defaultPaginationPageOption(25)
             ->recordActions([EditAction::make(), DeleteAction::make()])
             ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: training venues managed by the regional training admin screens, and shown on future training listings, course bookings and training reports.')
             ->modifyQueryUsing(fn (Builder $query) => $query->with('region'))

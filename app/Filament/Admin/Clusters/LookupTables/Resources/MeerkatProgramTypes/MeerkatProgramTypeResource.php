@@ -44,6 +44,7 @@ class MeerkatProgramTypeResource extends Resource
     {
         return $table
             ->recordAction(EditAction::class)
+            ->defaultPaginationPageOption(25)
             ->recordActions([EditAction::make(), DeleteAction::make()])
             ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: program and meeting types for the Meerkat branch, used when adding or editing programs and events, on advancement and badge sign off from programs, and on census and group reports.')
             ->columns([

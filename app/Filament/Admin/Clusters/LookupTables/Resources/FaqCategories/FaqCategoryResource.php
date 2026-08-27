@@ -56,6 +56,7 @@ class FaqCategoryResource extends Resource
     {
         return $table
             ->recordAction(EditAction::class)
+            ->defaultPaginationPageOption(25)
             ->recordActions([EditAction::make(), DeleteAction::make()])
             ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: categories for the FAQ module. They drive the FAQ navigation, search and admin screens, and the audience flags control which roles see each category.')
             ->columns([

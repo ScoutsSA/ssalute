@@ -45,6 +45,7 @@ class SupportChatStandardAnswerResource extends Resource
     {
         return $table
             ->recordAction(EditAction::class)
+            ->defaultPaginationPageOption(25)
             ->recordActions([EditAction::make(), DeleteAction::make()])
             ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: canned replies available to support staff inside the support chat.')
             ->columns([

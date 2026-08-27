@@ -66,6 +66,7 @@ class WarrantTypeResource extends Resource
     {
         return $table
             ->recordAction(EditAction::class)
+            ->defaultPaginationPageOption(25)
             ->recordActions([EditAction::make(), DeleteAction::make()])
             ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: the warrant options when adding or extending a warrant in AMS, and when creating bookable training courses that award a warrant.')
             ->columns([

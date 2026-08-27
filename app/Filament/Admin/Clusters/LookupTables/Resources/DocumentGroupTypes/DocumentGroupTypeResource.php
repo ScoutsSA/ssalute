@@ -43,6 +43,7 @@ class DocumentGroupTypeResource extends Resource
     {
         return $table
             ->recordAction(EditAction::class)
+            ->defaultPaginationPageOption(25)
             ->recordActions([EditAction::make(), DeleteAction::make()])
             ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: the type list for group level documents on the AMS group documents screens.')
             ->columns([

@@ -42,6 +42,7 @@ class PastServiceTypeResource extends Resource
     {
         return $table
             ->recordAction(EditAction::class)
+            ->defaultPaginationPageOption(25)
             ->recordActions([EditAction::make(), DeleteAction::make()])
             ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: none found; the legacy past service screens do not read this table. Ssalute uses it on the AMS past service form and the member profile past service list.')
             ->columns([

@@ -46,6 +46,7 @@ class YouthDocumentTypeResource extends Resource
     {
         return $table
             ->recordAction(EditAction::class)
+            ->defaultPaginationPageOption(25)
             ->recordActions([EditAction::make(), DeleteAction::make()])
             ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: the document types for the youth and group document store. Rows flagged as youth are offered on the upload picker for youth members; the rest are written with hardcoded ids by other legacy modules and only display on document lists. There is no active column, so deleting is the only way to retire a type and existing documents of that type would then show a blank type name.')
             ->columns([

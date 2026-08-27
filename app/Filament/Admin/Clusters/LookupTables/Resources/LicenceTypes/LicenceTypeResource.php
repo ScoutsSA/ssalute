@@ -58,6 +58,7 @@ class LicenceTypeResource extends Resource
     {
         return $table
             ->recordAction(EditAction::class)
+            ->defaultPaginationPageOption(25)
             ->recordActions([EditAction::make(), DeleteAction::make()])
             ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: water activity licence types (called charges in the legacy schema), used on the charge add, manage and view screens and on member and youth charge listings and profiles.')
             ->columns([

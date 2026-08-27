@@ -41,6 +41,7 @@ class ParentTypeResource extends Resource
     {
         return $table
             ->recordAction(EditAction::class)
+            ->defaultPaginationPageOption(25)
             ->recordActions([EditAction::make(), DeleteAction::make()])
             ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: describes a parent relationship to a youth member, used on the parent add, edit and manage screens, the group directory, emergency contact reports and the green card.')
             ->columns([

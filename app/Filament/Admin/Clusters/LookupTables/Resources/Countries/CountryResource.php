@@ -71,6 +71,7 @@ class CountryResource extends Resource
     {
         return $table
             ->recordAction(EditAction::class)
+            ->defaultPaginationPageOption(25)
             ->recordActions([EditAction::make(), DeleteAction::make()])
             ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: country configuration, including the branch names and age ranges per country. Read across census, role switching, AMS screens and reports.')
             ->columns([
