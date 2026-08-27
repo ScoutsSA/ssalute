@@ -73,6 +73,7 @@ use App\Models\SystemProgramTypesRover;
 use App\Models\SystemProgramTypesScout;
 use App\Models\SystemRoadmapLittle;
 use App\Models\SystemUser;
+use App\Services\LegacyHtmlService;
 use App\Settings\GeneralSettings;
 use Closure;
 use Filament\Actions\Testing\TestAction;
@@ -678,6 +679,34 @@ class LookupTablesExpansionTest extends SdCoreTestCase
             ->assertHasNoFormErrors();
 
         $this->assertDatabaseHas('system_faq', ['q' => 'A New Question?', 'catID' => $category->id]);
+    }
+
+    #[Test]
+    public function legacy_html_service_decodes_multi_encoded_content(): void
+    {
+        $encoded = '&amp;lt;p&amp;gt;Hello &amp;amp;amp; goodbye&amp;lt;/p&amp;gt;';
+
+        $this->assertSame('<p>Hello & goodbye</p>', LegacyHtmlService::decode($encoded));
+        $this->assertSame('Hello & goodbye', LegacyHtmlService::preview($encoded));
+        $this->assertSame('<p>Clean.</p>', LegacyHtmlService::decode('<p>Clean.</p>'));
+        $this->assertNull(LegacyHtmlService::decode(null));
+    }
+
+    #[Test]
+    public function editing_a_legacy_encoded_faq_entry_normalises_the_answer(): void
+    {
+        $entry = SystemFaq::factory()->create(['a' => '&amp;lt;p&amp;gt;Old answer&amp;lt;/p&amp;gt;']);
+
+        Livewire::actingAs($this->superAdmin)
+            ->test(ManageFaqEntries::class)
+            ->callAction(TestAction::make('edit')->table($entry), data: ['q' => 'Updated Question?'])
+            ->assertHasNoFormErrors();
+
+        $entry->refresh();
+        $this->assertStringContainsString('<p>Old answer</p>', $entry->a);
+        $this->assertStringNotContainsString('&amp;', $entry->a);
+        $this->assertStringNotContainsString('&lt;', $entry->a);
+        $this->assertSame('Updated Question?', $entry->q);
     }
 
     #[Test]

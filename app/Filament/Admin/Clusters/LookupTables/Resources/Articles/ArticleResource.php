@@ -6,6 +6,7 @@ use App\Filament\Admin\Clusters\LookupTables\LookupTablesCluster;
 use App\Filament\Admin\Clusters\LookupTables\Resources\Articles\Pages\ManageArticles;
 use App\Models\SdArticle;
 use App\Models\SdArticleCat;
+use App\Services\LegacyHtmlService;
 use BackedEnum;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
@@ -48,10 +49,11 @@ class ArticleResource extends Resource
                 ->searchable(),
             TextInput::make('title')->label('Title')->required(),
             TextInput::make('slug')->label('Slug')->required()->helperText('Used in legacy article URLs.'),
-            Textarea::make('intro')->label('Intro')->required()->rows(3)->columnSpanFull()->helperText('Teaser shown on the legacy article listings.'),
+            Textarea::make('intro')->label('Intro')->required()->formatStateUsing(fn (?string $state): ?string => LegacyHtmlService::decode($state))->rows(3)->columnSpanFull()->helperText('Teaser shown on the legacy article listings.'),
             RichEditor::make('article')
                 ->label('Article')
                 ->required()
+                ->formatStateUsing(fn (?string $state): ?string => LegacyHtmlService::decode($state))
                 ->columnSpanFull()
                 ->toolbarButtons([['bold', 'italic', 'underline'], ['bulletList', 'orderedList'], ['undo', 'redo']])
                 ->helperText('Stored as HTML. The legacy pages strip all but basic tags (bold, underline, italic as i, lists, paragraphs, line breaks) when displaying.'),
@@ -72,7 +74,7 @@ class ArticleResource extends Resource
                 TextColumn::make('title')->label('Title')->searchable()->sortable()->toggleable(),
                 TextColumn::make('catID')->label('Category')->state(fn (SdArticle $record): string => $record->category ? "{$record->category->name} (#{$record->catID})" : (string) $record->catID)->sortable()->toggleable(),
                 TextColumn::make('slug')->label('Slug')->searchable()->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('intro')->label('Intro')->limit(60)->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('intro')->label('Intro')->formatStateUsing(fn (?string $state): ?string => LegacyHtmlService::preview($state))->limit(60)->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('views')->label('Views')->sortable()->toggleable(),
                 TextColumn::make('groupID')->label('Group ID')->sortable()->toggleable(isToggledHiddenByDefault: true),
                 IconColumn::make('active')->label('Active')->boolean()->toggleable(),

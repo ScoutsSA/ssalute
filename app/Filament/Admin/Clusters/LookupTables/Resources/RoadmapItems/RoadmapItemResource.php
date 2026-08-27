@@ -5,6 +5,7 @@ namespace App\Filament\Admin\Clusters\LookupTables\Resources\RoadmapItems;
 use App\Filament\Admin\Clusters\LookupTables\LookupTablesCluster;
 use App\Filament\Admin\Clusters\LookupTables\Resources\RoadmapItems\Pages\ManageRoadmapItems;
 use App\Models\SystemRoadmapLittle;
+use App\Services\LegacyHtmlService;
 use BackedEnum;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
@@ -39,7 +40,7 @@ class RoadmapItemResource extends Resource
     {
         return $schema->components([
             TextInput::make('area')->label('Area')->required(),
-            RichEditor::make('text')->label('Text')->required()->columnSpanFull()->toolbarButtons([['bold', 'italic', 'underline'], ['bulletList', 'orderedList'], ['undo', 'redo']])->helperText('Stored as HTML. The legacy pages strip all but basic tags (bold, underline, italic as i, lists, paragraphs, line breaks) when displaying.'),
+            RichEditor::make('text')->label('Text')->required()->formatStateUsing(fn (?string $state): ?string => LegacyHtmlService::decode($state))->columnSpanFull()->toolbarButtons([['bold', 'italic', 'underline'], ['bulletList', 'orderedList'], ['undo', 'redo']])->helperText('Stored as HTML. The legacy pages strip all but basic tags (bold, underline, italic as i, lists, paragraphs, line breaks) when displaying.'),
             DatePicker::make('releaseDate')->label('Release Date')->required(),
             Toggle::make('active')->label('Active')->default(true)->inline(false),
         ]);
@@ -55,7 +56,7 @@ class RoadmapItemResource extends Resource
             ->columns([
                 TextColumn::make('id')->label('ID')->sortable()->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('area')->label('Area')->searchable()->sortable()->toggleable(),
-                TextColumn::make('text')->label('Text')->limit(80)->searchable()->toggleable(),
+                TextColumn::make('text')->label('Text')->formatStateUsing(fn (?string $state): ?string => LegacyHtmlService::preview($state))->limit(80)->searchable()->toggleable(),
                 TextColumn::make('releaseDate')->label('Release Date')->date()->sortable()->toggleable(),
                 IconColumn::make('active')->label('Active')->boolean()->toggleable(),
                 TextColumn::make('created')->label('Created')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),

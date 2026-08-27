@@ -6,6 +6,7 @@ use App\Filament\Admin\Clusters\LookupTables\LookupTablesCluster;
 use App\Filament\Admin\Clusters\LookupTables\Resources\FaqEntries\Pages\ManageFaqEntries;
 use App\Models\SystemFaq;
 use App\Models\SystemFaqCat;
+use App\Services\LegacyHtmlService;
 use BackedEnum;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
@@ -49,6 +50,7 @@ class FaqEntryResource extends Resource
             RichEditor::make('a')
                 ->label('Answer')
                 ->required()
+                ->formatStateUsing(fn (?string $state): ?string => LegacyHtmlService::decode($state))
                 ->columnSpanFull()
                 ->toolbarButtons([['bold', 'italic', 'underline'], ['bulletList', 'orderedList'], ['undo', 'redo']])
                 ->helperText('Stored as HTML. The legacy pages strip all but basic tags (bold, underline, italic as i, lists, paragraphs, line breaks) when displaying. Older entries may show doubly encoded HTML from the legacy editor; they still render on the legacy pages but need manual cleanup here before rich editing.'),
@@ -72,7 +74,7 @@ class FaqEntryResource extends Resource
                 TextColumn::make('q')->label('Question')->searchable()->sortable()->toggleable(),
                 TextColumn::make('catID')->label('Category')->state(fn (SystemFaq $record): string => $record->category ? "{$record->category->name} ({$record->category->audience}) (#{$record->catID})" : (string) $record->catID)->sortable()->toggleable(),
                 TextColumn::make('position')->label('Position')->sortable()->toggleable(),
-                TextColumn::make('a')->label('Answer')->limit(80)->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('a')->label('Answer')->formatStateUsing(fn (?string $state): ?string => LegacyHtmlService::preview($state))->limit(80)->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('targetID')->label('Target ID')->sortable()->toggleable(isToggledHiddenByDefault: true),
                 IconColumn::make('active')->label('Active')->boolean()->toggleable(),
             ])

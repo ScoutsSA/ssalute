@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Clusters\LookupTables\Resources\FaqCategories\RelationManagers;
 
+use App\Services\LegacyHtmlService;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
@@ -28,6 +29,7 @@ class FaqsRelationManager extends RelationManager
             RichEditor::make('a')
                 ->label('Answer')
                 ->required()
+                ->formatStateUsing(fn (?string $state): ?string => LegacyHtmlService::decode($state))
                 ->columnSpanFull()
                 ->toolbarButtons([['bold', 'italic', 'underline'], ['bulletList', 'orderedList'], ['undo', 'redo']])
                 ->helperText('Stored as HTML. The legacy pages strip all but basic tags (bold, underline, italic as i, lists, paragraphs, line breaks) when displaying.'),
@@ -41,6 +43,7 @@ class FaqsRelationManager extends RelationManager
     {
         return $table
             ->recordTitleAttribute('q')
+            ->recordAction(EditAction::class)
             ->defaultPaginationPageOption(25)
             ->reorderable('position')
             ->headerActions([
@@ -54,7 +57,7 @@ class FaqsRelationManager extends RelationManager
                 TextColumn::make('id')->label('ID')->sortable()->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('q')->label('Question')->searchable()->sortable()->toggleable(),
                 TextColumn::make('position')->label('Position')->sortable()->toggleable(),
-                TextColumn::make('a')->label('Answer')->limit(80)->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('a')->label('Answer')->formatStateUsing(fn (?string $state): ?string => LegacyHtmlService::preview($state))->limit(80)->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('targetID')->label('Target ID')->sortable()->toggleable(isToggledHiddenByDefault: true),
                 IconColumn::make('active')->label('Active')->boolean()->toggleable(),
             ])
