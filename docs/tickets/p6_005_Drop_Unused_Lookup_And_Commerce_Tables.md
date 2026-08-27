@@ -16,12 +16,12 @@ These lookup style tables have zero references anywhere in the legacy codebase. 
 - `system_awards_rovers_levels`
 - `group_accounts_transfers_stages`
 
-## Lookups with a BackOffice resource but no readers
+## Former lookup resources removed on 2026-08-27
 
-Found while writing the legacy usage blurbs on 2026-08-27. These two already have LookupTables resources, but nothing reads them:
+Found while writing the legacy usage blurbs. These two had LookupTables resources although nothing reads their tables, so the resources were removed in the same change. The tables, models and factories remain and belong in the drop list:
 
-- `system_financial_fee_types` has zero readers in both the legacy codebase and Ssalute. The legacy app uses the per group `group_financial_fee_types` table instead. Dropping it means also removing its resource, model and factory.
-- `ams_training_courses_types` has zero readers in the legacy codebase. The nullable `courseType` column on `ams_training_courses` is never written or read by legacy; Ssalute now offers it as an optional select on the Training Courses lookup page. Decide whether the column and this table go together, or whether the linkage is worth keeping.
+- `system_financial_fee_types` has zero readers in the legacy codebase. The legacy app uses the per group `group_financial_fee_types` table instead. In Ssalute the only reference is the `chargeType` relation on the `GroupYouthCharge` model, itself an unused model of a nearly dead legacy feature (only a disable endpoint touches `group_youth_charges`). Remove that relation and model together with the table.
+- `ams_training_courses_types` has zero readers in the legacy codebase. The nullable `courseType` column on `ams_training_courses` is never written or read by legacy either, and the Training Courses lookup page no longer offers it. Drop the column together with the table.
 
 ## Commerce module
 

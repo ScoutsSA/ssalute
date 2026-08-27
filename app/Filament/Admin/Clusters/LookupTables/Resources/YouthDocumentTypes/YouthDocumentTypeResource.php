@@ -38,7 +38,7 @@ class YouthDocumentTypeResource extends Resource
         return $schema->components([
             TextInput::make('name')->label('Name')->required(),
             Textarea::make('description')->label('Description')->default('')->columnSpanFull(),
-            Toggle::make('youth')->label('Youth')->default(true)->inline(false)->helperText('Types flagged as youth appear in the legacy youth document upload list.'),
+            Toggle::make('youth')->label('Youth')->default(true)->inline(false)->helperText('Not an enabled flag. On means the type is offered on the legacy youth document upload picker; off means it is only assigned programmatically by other legacy modules (advancements, badges, warrants, transfers) and still displays on document lists.'),
         ]);
     }
 
@@ -47,7 +47,7 @@ class YouthDocumentTypeResource extends Resource
         return $table
             ->recordAction(EditAction::class)
             ->recordActions([EditAction::make(), DeleteAction::make()])
-            ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: the type list offered when a document is uploaded for a youth member from the group youth screens, and the type names shown on member document lists. Only rows flagged as youth are offered on the youth upload form.')
+            ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: the document types for the youth and group document store. Rows flagged as youth are offered on the upload picker for youth members; the rest are written with hardcoded ids by other legacy modules and only display on document lists. There is no active column, so deleting is the only way to retire a type and existing documents of that type would then show a blank type name.')
             ->columns([
                 TextColumn::make('id')->label('ID')->sortable()->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('name')->label('Name')->searchable()->sortable()->toggleable(),

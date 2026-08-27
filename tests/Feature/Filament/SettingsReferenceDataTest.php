@@ -16,7 +16,6 @@ use App\Filament\Admin\Clusters\LookupTables\Resources\DisciplinaryHeadings\Page
 use App\Filament\Admin\Clusters\LookupTables\Resources\DocumentGroupTypes\DocumentGroupTypeResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\DocumentTypes\DocumentTypeResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\EventTypes\EventTypeResource;
-use App\Filament\Admin\Clusters\LookupTables\Resources\FinancialFeeTypes\FinancialFeeTypeResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\GroupManagementLevels\GroupManagementLevelResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\HighestEducations\HighestEducationResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\Languages\LanguageResource;
@@ -35,7 +34,6 @@ use App\Filament\Admin\Clusters\LookupTables\Resources\StarAwardTypes\StarAwardT
 use App\Filament\Admin\Clusters\LookupTables\Resources\SuspendReasons\SuspendReasonResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\TerminateReasons\TerminateReasonResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\Titles\TitleResource;
-use App\Filament\Admin\Clusters\LookupTables\Resources\TrainingCourseTypes\TrainingCourseTypeResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\TrainingPastTypes\TrainingPastTypeResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\WarrantCancellationTypes\WarrantCancellationTypeResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\WarrantTypes\Pages\ManageWarrantTypes;
@@ -79,7 +77,6 @@ class SettingsReferenceDataTest extends SdCoreTestCase
             'group management levels' => [GroupManagementLevelResource::class],
             'account types' => [AccountTypeResource::class],
             'asset conditions' => [AssetConditionResource::class],
-            'financial fee types' => [FinancialFeeTypeResource::class],
             'star award types' => [StarAwardTypeResource::class],
             'program types' => [ProgramTypeResource::class],
             'rover meeting types' => [RoverMeetingTypeResource::class],
@@ -96,7 +93,6 @@ class SettingsReferenceDataTest extends SdCoreTestCase
             'suspend reasons' => [SuspendReasonResource::class],
             'terminate reasons' => [TerminateReasonResource::class],
             'past service types' => [PastServiceTypeResource::class],
-            'training course types' => [TrainingCourseTypeResource::class],
             'training past types' => [TrainingPastTypeResource::class],
             'cub levels' => [CubLevelResource::class],
             'meerkat levels' => [MeerkatLevelResource::class],

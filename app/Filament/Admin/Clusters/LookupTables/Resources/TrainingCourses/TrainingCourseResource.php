@@ -5,7 +5,6 @@ namespace App\Filament\Admin\Clusters\LookupTables\Resources\TrainingCourses;
 use App\Filament\Admin\Clusters\LookupTables\LookupTablesCluster;
 use App\Filament\Admin\Clusters\LookupTables\Resources\TrainingCourses\Pages\ManageTrainingCourses;
 use App\Models\AmsTrainingCourse;
-use App\Models\AmsTrainingCoursesType;
 use App\Models\Region;
 use BackedEnum;
 use Filament\Actions\DeleteAction;
@@ -40,7 +39,6 @@ class TrainingCourseResource extends Resource
     {
         return $schema->components([
             TextInput::make('name')->label('Name')->required(),
-            Select::make('courseType')->label('Course Type')->options(fn (): array => AmsTrainingCoursesType::query()->orderBy('name')->get()->mapWithKeys(fn (AmsTrainingCoursesType $type): array => [$type->id => "{$type->name} (#{$type->id})"])->all())->searchable(),
             Select::make('assocToRegion')->label('Region')->options(fn (): array => Region::query()->orderBy('name')->get()->mapWithKeys(fn (Region $region): array => [$region->id => "{$region->name} (#{$region->id})"])->all())->required()->searchable(),
             TextInput::make('nrOfDays')->label('Number Of Days')->numeric()->required()->default(1),
             TextInput::make('trainingSeats')->label('Training Seats')->numeric(),
@@ -61,14 +59,6 @@ class TrainingCourseResource extends Resource
             ->columns([
                 TextColumn::make('id')->label('ID')->sortable()->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('name')->label('Name')->searchable()->sortable()->toggleable(),
-                TextColumn::make('courseType')->label('Course Type')->state(function (AmsTrainingCourse $record): ?string {
-                    $courseTypeId = $record->getAttribute('courseType');
-                    if (! $courseTypeId) {
-                        return null;
-                    } $name = AmsTrainingCoursesType::query()->whereKey($courseTypeId)->value('name');
-
-                    return $name ? "{$name} (#{$courseTypeId})" : (string) $courseTypeId;
-                })->sortable()->toggleable(),
                 TextColumn::make('assocToRegion')->label('Region')->state(fn (AmsTrainingCourse $record): ?string => $record->region ? "{$record->region->name} (#{$record->assocToRegion})" : null)->sortable()->toggleable(),
                 TextColumn::make('nrOfDays')->label('Days')->sortable()->toggleable(),
                 TextColumn::make('trainingSeats')->label('Seats')->sortable()->toggleable(isToggledHiddenByDefault: true),
