@@ -4,14 +4,20 @@ namespace App\Filament\Admin\Clusters\LookupTables\Resources\FaqCategories;
 
 use App\Filament\Admin\Clusters\LookupTables\LookupTablesCluster;
 use App\Filament\Admin\Clusters\LookupTables\Resources\FaqCategories\Pages\ManageFaqCategories;
+use App\Filament\Admin\Clusters\LookupTables\Resources\FaqCategories\Pages\ViewFaqCategory;
+use App\Filament\Admin\Clusters\LookupTables\Resources\FaqCategories\RelationManagers\FaqsRelationManager;
 use App\Models\SystemFaqCat;
 use BackedEnum;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
@@ -58,10 +64,10 @@ class FaqCategoryResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->recordAction(EditAction::class)
+            ->recordUrl(fn (SystemFaqCat $record): string => static::getUrl('view', ['record' => $record]))
             ->defaultPaginationPageOption(25)
             ->reorderable('position')
-            ->recordActions([EditAction::make(), DeleteAction::make()])
+            ->recordActions([ViewAction::make(), EditAction::make(), DeleteAction::make()])
             ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: categories for the FAQ module. They drive the FAQ navigation, search and admin screens, and the audience flags control which roles see each category. The legacy pages only show rows with FAQ group 0 and exactly one audience flag; rows without a flag belong to the retired FAQ group mechanism and are not displayed anywhere.')
             ->filters([
                 SelectFilter::make('audience')
@@ -107,10 +113,37 @@ class FaqCategoryResource extends Resource
             ->defaultSort('position');
     }
 
+    public static function infolist(Schema $schema): Schema
+    {
+        return $schema->components([
+            Section::make('Category')
+                ->collapsible()
+                ->columns(3)
+                ->columnSpanFull()
+                ->schema([
+                    TextEntry::make('id')->label('ID'),
+                    TextEntry::make('name')->label('Name'),
+                    TextEntry::make('audience')->label('Displayed To')->state(fn (SystemFaqCat $record): string => $record->audience),
+                    TextEntry::make('faqGroup')->label('FAQ Group'),
+                    TextEntry::make('position')->label('Position'),
+                    IconEntry::make('active')->label('Active')->boolean(),
+                    TextEntry::make('description')->label('Description')->placeholder('No description')->columnSpanFull(),
+                ]),
+        ]);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            FaqsRelationManager::class,
+        ];
+    }
+
     public static function getPages(): array
     {
         return [
             'index' => ManageFaqCategories::route('/'),
+            'view' => ViewFaqCategory::route('/{record}'),
         ];
     }
 

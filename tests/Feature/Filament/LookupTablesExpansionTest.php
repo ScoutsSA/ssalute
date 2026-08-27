@@ -18,6 +18,8 @@ use App\Filament\Admin\Clusters\LookupTables\Resources\DisciplinaryOffences\Disc
 use App\Filament\Admin\Clusters\LookupTables\Resources\DisciplinaryOffences\Pages\ManageDisciplinaryOffences;
 use App\Filament\Admin\Clusters\LookupTables\Resources\FaqCategories\FaqCategoryResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\FaqCategories\Pages\ManageFaqCategories;
+use App\Filament\Admin\Clusters\LookupTables\Resources\FaqCategories\Pages\ViewFaqCategory;
+use App\Filament\Admin\Clusters\LookupTables\Resources\FaqCategories\RelationManagers\FaqsRelationManager;
 use App\Filament\Admin\Clusters\LookupTables\Resources\FaqEntries\FaqEntryResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\FaqEntries\Pages\ManageFaqEntries;
 use App\Filament\Admin\Clusters\LookupTables\Resources\GroupTypes\GroupTypeResource;
@@ -630,6 +632,49 @@ class LookupTablesExpansionTest extends SdCoreTestCase
 
             $this->assertSame(Width::SevenExtraLarge, $page->getAction('create')?->getModalWidth(), "{$pageClass} create modal is not wide");
         }
+    }
+
+    #[Test]
+    public function faq_category_view_page_shows_the_category(): void
+    {
+        $category = SystemFaqCat::factory()->create(['forRegion' => 1, 'name' => 'A Category To View']);
+
+        $this->actingAs($this->superAdmin)
+            ->get(FaqCategoryResource::getUrl('view', ['record' => $category]))
+            ->assertOk();
+
+        Livewire::actingAs($this->superAdmin)
+            ->test(ViewFaqCategory::class, ['record' => $category->getRouteKey()])
+            ->assertOk()
+            ->assertSee('A Category To View')
+            ->assertSee('Region');
+    }
+
+    #[Test]
+    public function faq_category_relation_manager_lists_only_its_own_entries(): void
+    {
+        $category = SystemFaqCat::factory()->create();
+        $entries = SystemFaq::factory()->count(2)->create(['catID' => $category->id]);
+        $otherEntry = SystemFaq::factory()->create();
+
+        Livewire::actingAs($this->superAdmin)
+            ->test(FaqsRelationManager::class, ['ownerRecord' => $category, 'pageClass' => ViewFaqCategory::class])
+            ->assertOk()
+            ->assertCanSeeTableRecords($entries)
+            ->assertCanNotSeeTableRecords([$otherEntry]);
+    }
+
+    #[Test]
+    public function faq_category_relation_manager_can_create_an_entry(): void
+    {
+        $category = SystemFaqCat::factory()->create();
+
+        Livewire::actingAs($this->superAdmin)
+            ->test(FaqsRelationManager::class, ['ownerRecord' => $category, 'pageClass' => ViewFaqCategory::class])
+            ->callAction(TestAction::make('create')->table(), data: ['q' => 'A New Question?', 'a' => '<p>An answer.</p>'])
+            ->assertHasNoFormErrors();
+
+        $this->assertDatabaseHas('system_faq', ['q' => 'A New Question?', 'catID' => $category->id]);
     }
 
     #[Test]

@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class SystemFaqCat extends BaseModel
 {
@@ -40,6 +41,11 @@ class SystemFaqCat extends BaseModel
         'forAlumni' => 'int',
         'active' => 'int',
     ];
+
+    public function faqs(): HasMany
+    {
+        return $this->hasMany(SystemFaq::class, 'catID');
+    }
 
     /**
      * Human readable label for where the legacy FAQ pages display this category.
