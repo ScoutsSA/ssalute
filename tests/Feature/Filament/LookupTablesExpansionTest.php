@@ -596,32 +596,35 @@ class LookupTablesExpansionTest extends SdCoreTestCase
     }
 
     #[Test]
-    public function faq_categories_can_be_reordered_by_dragging(): void
+    public function faq_categories_reorder_renumbers_positions_within_each_audience(): void
     {
-        [$first, $second, $third] = SystemFaqCat::factory()->count(3)->create(['position' => 0])->all();
+        [$regionFirst, $regionSecond] = SystemFaqCat::factory()->count(2)->create(['forRegion' => 1, 'position' => 0])->all();
+        $national = SystemFaqCat::factory()->create(['forNational' => 1, 'position' => 5]);
 
         Livewire::actingAs($this->superAdmin)
             ->test(ManageFaqCategories::class)
-            ->call('reorderTable', [$third->id, $first->id, $second->id]);
+            ->call('reorderTable', [$regionSecond->id, $national->id, $regionFirst->id]);
 
-        $this->assertSame(1, $third->refresh()->position);
-        $this->assertSame(2, $first->refresh()->position);
-        $this->assertSame(3, $second->refresh()->position);
+        $this->assertSame(1, $regionSecond->refresh()->position);
+        $this->assertSame(2, $regionFirst->refresh()->position);
+        $this->assertSame(1, $national->refresh()->position);
     }
 
     #[Test]
-    public function faq_entries_can_be_reordered_by_dragging(): void
+    public function faq_entries_reorder_renumbers_positions_within_each_category(): void
     {
         $category = SystemFaqCat::factory()->create();
-        [$first, $second, $third] = SystemFaq::factory()->count(3)->create(['catID' => $category->id, 'position' => 0])->all();
+        $otherCategory = SystemFaqCat::factory()->create();
+        [$first, $second] = SystemFaq::factory()->count(2)->create(['catID' => $category->id, 'position' => 0])->all();
+        $otherEntry = SystemFaq::factory()->create(['catID' => $otherCategory->id, 'position' => 9]);
 
         Livewire::actingAs($this->superAdmin)
             ->test(ManageFaqEntries::class)
-            ->call('reorderTable', [$third->id, $first->id, $second->id]);
+            ->call('reorderTable', [$second->id, $otherEntry->id, $first->id]);
 
-        $this->assertSame(1, $third->refresh()->position);
+        $this->assertSame(1, $second->refresh()->position);
         $this->assertSame(2, $first->refresh()->position);
-        $this->assertSame(3, $second->refresh()->position);
+        $this->assertSame(1, $otherEntry->refresh()->position);
     }
 
     #[Test]

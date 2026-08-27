@@ -147,6 +147,21 @@ class FaqCategoryResource extends Resource
         ];
     }
 
+    public static function audienceOrderExpression(): string
+    {
+        return 'CASE
+            WHEN forNational = 1 THEN 1
+            WHEN forRegion = 1 THEN 2
+            WHEN forDistrict = 1 THEN 3
+            WHEN forGroupAdults = 1 THEN 4
+            WHEN forGroupParents = 1 THEN 5
+            WHEN forGroupScouts = 1 THEN 6
+            WHEN forGroupRovers = 1 THEN 7
+            WHEN forAlumni = 1 THEN 8
+            ELSE 9
+        END';
+    }
+
     protected static function audienceGroup(): Group
     {
         return Group::make('audience')
@@ -154,17 +169,7 @@ class FaqCategoryResource extends Resource
             ->getTitleFromRecordUsing(fn (SystemFaqCat $record): string => $record->audience)
             ->getKeyFromRecordUsing(fn (SystemFaqCat $record): string => $record->audience)
             ->orderQueryUsing(fn (Builder $query, string $direction) => $query->orderByRaw(
-                'CASE
-                    WHEN forNational = 1 THEN 1
-                    WHEN forRegion = 1 THEN 2
-                    WHEN forDistrict = 1 THEN 3
-                    WHEN forGroupAdults = 1 THEN 4
-                    WHEN forGroupParents = 1 THEN 5
-                    WHEN forGroupScouts = 1 THEN 6
-                    WHEN forGroupRovers = 1 THEN 7
-                    WHEN forAlumni = 1 THEN 8
-                    ELSE 9
-                END ' . ($direction === 'desc' ? 'desc' : 'asc'),
+                static::audienceOrderExpression() . ' ' . ($direction === 'desc' ? 'desc' : 'asc'),
             ));
     }
 }

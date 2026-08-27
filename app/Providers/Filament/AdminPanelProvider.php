@@ -13,6 +13,7 @@ use Filament\Navigation\NavigationItem;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
+use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Filament\View\PanelsRenderHook;
 use Filament\Widgets\AccountWidget;
@@ -36,6 +37,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->favicon(asset('images/logo.png'))
             ->sidebarCollapsibleOnDesktop()
+            ->maxContentWidth(Width::Full)
             ->readOnlyRelationManagersOnResourceViewPagesByDefault(false)
             ->colors([
                 'primary' => '#5C2D91',
