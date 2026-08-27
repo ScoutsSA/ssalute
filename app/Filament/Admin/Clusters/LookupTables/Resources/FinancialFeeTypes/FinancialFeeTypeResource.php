@@ -48,7 +48,7 @@ class FinancialFeeTypeResource extends Resource
         return $table
             ->recordAction(EditAction::class)
             ->recordActions([EditAction::make(), DeleteAction::make()])
-            ->description('Database table: ' . app(static::getModel())->getTable())
+            ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: none found. The legacy app reads the per group group_financial_fee_types table instead, and nothing in Ssalute reads this table either. Removal candidate, see ticket 005.')
             ->columns([
                 TextColumn::make('id')->label('ID')->sortable()->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('name')->searchable()->sortable(),

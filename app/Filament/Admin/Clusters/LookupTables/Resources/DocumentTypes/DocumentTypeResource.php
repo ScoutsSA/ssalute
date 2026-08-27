@@ -59,7 +59,7 @@ class DocumentTypeResource extends Resource
         return $table
             ->recordAction(EditAction::class)
             ->recordActions([EditAction::make(), DeleteAction::make()])
-            ->description('Database table: ' . app(static::getModel())->getTable())
+            ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: the type list for adult documents in AMS, used on the document add, edit, manage and view screens, member document lists, police clearance capture and the warrant process report. Youth uploads use the separate Youth Document Types table.')
             ->columns([
                 TextColumn::make('id')->label('ID')->sortable()->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('name')->label('Name')->searchable()->sortable(),

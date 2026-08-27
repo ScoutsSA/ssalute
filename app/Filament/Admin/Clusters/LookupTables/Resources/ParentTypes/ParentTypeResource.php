@@ -42,7 +42,7 @@ class ParentTypeResource extends Resource
         return $table
             ->recordAction(EditAction::class)
             ->recordActions([EditAction::make(), DeleteAction::make()])
-            ->description('Database table: ' . app(static::getModel())->getTable())
+            ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: describes a parent relationship to a youth member, used on the parent add, edit and manage screens, the group directory, emergency contact reports and the green card.')
             ->columns([
                 TextColumn::make('id')->label('ID')->sortable()->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('name')->searchable()->sortable(),

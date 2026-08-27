@@ -47,7 +47,7 @@ class AssetConditionResource extends Resource
         return $table
             ->recordAction(EditAction::class)
             ->recordActions([EditAction::make(), DeleteAction::make()])
-            ->description('Database table: ' . app(static::getModel())->getTable())
+            ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: the condition options on the group equipment add and edit forms.')
             ->columns([
                 TextColumn::make('id')->label('ID')->sortable()->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('name')->searchable()->sortable(),

@@ -16,6 +16,13 @@ These lookup style tables have zero references anywhere in the legacy codebase. 
 - `system_awards_rovers_levels`
 - `group_accounts_transfers_stages`
 
+## Lookups with a BackOffice resource but no readers
+
+Found while writing the legacy usage blurbs on 2026-08-27. These two already have LookupTables resources, but nothing reads them:
+
+- `system_financial_fee_types` has zero readers in both the legacy codebase and Ssalute. The legacy app uses the per group `group_financial_fee_types` table instead. Dropping it means also removing its resource, model and factory.
+- `ams_training_courses_types` has zero readers in the legacy codebase. The nullable `courseType` column on `ams_training_courses` is never written or read by legacy; Ssalute now offers it as an optional select on the Training Courses lookup page. Decide whether the column and this table go together, or whether the linkage is worth keeping.
+
 ## Commerce module
 
 The whole commerce module (the legacy on platform shop) is marked for removal. The BRD already lists the Shop as out of scope (section 2.2). Note that unlike the dead lookups above, a handful of commerce tables are still referenced by legacy shop pages (for example `commerce_products_cat`), so removing the tables also means retiring those legacy pages. All `commerce_` prefixed tables are included:

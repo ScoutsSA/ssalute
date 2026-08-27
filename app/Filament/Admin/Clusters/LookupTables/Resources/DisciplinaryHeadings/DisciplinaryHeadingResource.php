@@ -46,7 +46,7 @@ class DisciplinaryHeadingResource extends Resource
         return $table
             ->recordAction(EditAction::class)
             ->recordActions([EditAction::make(), DeleteAction::make()])
-            ->description('Database table: ' . app(static::getModel())->getTable())
+            ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: groups the offences on the AMS disciplinary manage screen and the individual disciplinary view. The offences themselves have their own page.')
             ->columns([
                 TextColumn::make('id')->label('ID')->sortable()->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('reason')->label('Reason')->searchable()->sortable(),
