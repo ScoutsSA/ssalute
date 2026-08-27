@@ -16,7 +16,9 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use UnitEnum;
 
 class FaqCategoryResource extends Resource
@@ -58,10 +60,13 @@ class FaqCategoryResource extends Resource
             ->recordAction(EditAction::class)
             ->defaultPaginationPageOption(25)
             ->recordActions([EditAction::make(), DeleteAction::make()])
-            ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: categories for the FAQ module. They drive the FAQ navigation, search and admin screens, and the audience flags control which roles see each category.')
+            ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: categories for the FAQ module. They drive the FAQ navigation, search and admin screens, and the audience flags control which roles see each category. The legacy pages only show rows with FAQ group 0 and exactly one audience flag; rows without a flag belong to the retired FAQ group mechanism and are not displayed anywhere.')
+            ->groups([static::audienceGroup()])
+            ->defaultGroup(static::audienceGroup())
             ->columns([
                 TextColumn::make('id')->label('ID')->sortable()->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('name')->label('Name')->searchable()->sortable()->toggleable(),
+                TextColumn::make('audience')->label('Displayed To')->state(fn (SystemFaqCat $record): string => $record->audience)->toggleable(),
                 TextColumn::make('position')->label('Position')->sortable()->toggleable(),
                 TextColumn::make('faqGroup')->label('FAQ Group')->sortable()->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('description')->label('Description')->limit(60)->toggleable(isToggledHiddenByDefault: true),
@@ -83,5 +88,26 @@ class FaqCategoryResource extends Resource
         return [
             'index' => ManageFaqCategories::route('/'),
         ];
+    }
+
+    protected static function audienceGroup(): Group
+    {
+        return Group::make('audience')
+            ->label('Displayed To')
+            ->getTitleFromRecordUsing(fn (SystemFaqCat $record): string => $record->audience)
+            ->getKeyFromRecordUsing(fn (SystemFaqCat $record): string => $record->audience)
+            ->orderQueryUsing(fn (Builder $query, string $direction) => $query->orderByRaw(
+                'CASE
+                    WHEN forNational = 1 THEN 1
+                    WHEN forRegion = 1 THEN 2
+                    WHEN forDistrict = 1 THEN 3
+                    WHEN forGroupAdults = 1 THEN 4
+                    WHEN forGroupParents = 1 THEN 5
+                    WHEN forGroupScouts = 1 THEN 6
+                    WHEN forGroupRovers = 1 THEN 7
+                    WHEN forAlumni = 1 THEN 8
+                    ELSE 9
+                END ' . ($direction === 'desc' ? 'desc' : 'asc'),
+            ));
     }
 }

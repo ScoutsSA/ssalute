@@ -508,6 +508,35 @@ class LookupTablesExpansionTest extends SdCoreTestCase
     }
 
     #[Test]
+    public function faq_category_audience_label_reflects_the_flags(): void
+    {
+        $region = SystemFaqCat::factory()->create(['forRegion' => 1]);
+        $multi = SystemFaqCat::factory()->create(['forNational' => 1, 'forAlumni' => 1]);
+        $none = SystemFaqCat::factory()->create();
+
+        $this->assertSame('Region', $region->audience);
+        $this->assertSame('National, Alumni', $multi->audience);
+        $this->assertSame('Not Displayed', $none->audience);
+    }
+
+    #[Test]
+    public function faq_categories_are_grouped_by_audience(): void
+    {
+        $records = collect([
+            SystemFaqCat::factory()->create(['forNational' => 1]),
+            SystemFaqCat::factory()->create(['forGroupScouts' => 1]),
+            SystemFaqCat::factory()->create(),
+        ]);
+
+        $component = Livewire::actingAs($this->superAdmin)
+            ->test(ManageFaqCategories::class)
+            ->assertOk()
+            ->assertCanSeeTableRecords($records);
+
+        $this->assertSame('audience', $component->instance()->getTable()->getDefaultGroup()?->getId());
+    }
+
+    #[Test]
     public function every_lookup_resource_defaults_to_twenty_five_rows_per_page(): void
     {
         $resourceFiles = glob(app_path('Filament/Admin/Clusters/LookupTables/Resources/*/*Resource.php'));
