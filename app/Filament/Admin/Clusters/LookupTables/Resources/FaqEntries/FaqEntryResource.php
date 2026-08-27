@@ -46,11 +46,11 @@ class FaqEntryResource extends Resource
                 ->options(fn (): array => SystemFaqCat::query()->orderBy('name')->get()->mapWithKeys(fn (SystemFaqCat $category): array => [$category->id => "{$category->name} ({$category->audience}) (#{$category->id})"])->all())
                 ->required()
                 ->searchable(),
-            TextInput::make('q')->label('Question')->required()->formatStateUsing(fn (?string $state): ?string => LegacyHtmlService::decode($state)),
+            TextInput::make('q')->label('Question')->required()->formatStateUsing(fn (?string $state): ?string => LegacyHtmlService::normalize($state)),
             RichEditor::make('a')
                 ->label('Answer')
                 ->required()
-                ->formatStateUsing(fn (?string $state): ?string => LegacyHtmlService::decode($state))
+                ->formatStateUsing(fn (?string $state): ?string => LegacyHtmlService::normalize($state))
                 ->columnSpanFull()
                 ->toolbarButtons([['bold', 'italic', 'underline'], ['bulletList', 'orderedList'], ['undo', 'redo']])
                 ->helperText('Stored as HTML. The legacy pages strip all but basic tags (bold, underline, italic as i, lists, paragraphs, line breaks) when displaying. Older entries may show doubly encoded HTML from the legacy editor; they still render on the legacy pages but need manual cleanup here before rich editing.'),

@@ -692,9 +692,24 @@ class LookupTablesExpansionTest extends SdCoreTestCase
         $this->assertSame('Hello & goodbye', LegacyHtmlService::preview($encoded));
         $this->assertSame('<p>Clean.</p>', LegacyHtmlService::decode('<p>Clean.</p>'));
         $this->assertNull(LegacyHtmlService::decode(null));
-        $this->assertTrue(LegacyHtmlService::usesOnlyLegacyWhitelistedTags('<p>Hello <b>there</b><br></p>'));
-        $this->assertTrue(LegacyHtmlService::usesOnlyLegacyWhitelistedTags('No tags at all'));
-        $this->assertFalse(LegacyHtmlService::usesOnlyLegacyWhitelistedTags('<p><a href="x">link</a></p>'));
+    }
+
+    #[Test]
+    public function legacy_html_service_normalizes_only_values_the_legacy_pages_render_identically(): void
+    {
+        $this->assertSame('<p>Hello & goodbye</p>', LegacyHtmlService::normalize('&amp;lt;p&amp;gt;Hello &amp;amp;amp; goodbye&amp;lt;/p&amp;gt;'));
+        $this->assertSame("I'd Like Some Additional Functionality", LegacyHtmlService::normalize('I&#039;d Like Some Additional Functionality'));
+        $this->assertSame('<p>Clean.</p>', LegacyHtmlService::normalize('<p>Clean.</p>'));
+        $this->assertNull(LegacyHtmlService::normalize(null));
+
+        $linkEncoded = '&amp;lt;a href=&amp;quot;https://example.test&amp;quot;&amp;gt;A link&amp;lt;/a&amp;gt;';
+        $this->assertSame($linkEncoded, LegacyHtmlService::normalize($linkEncoded), 'non-whitelisted tags must stay encoded so the legacy pages keep rendering them');
+        $this->assertSame('I love this &lt;3', LegacyHtmlService::normalize('I love this &lt;3'), 'decoded tag-like text would be truncated by the legacy strip_tags');
+        $this->assertSame('Are children &lt;11 considered Cubs?', LegacyHtmlService::normalize('Are children &lt;11 considered Cubs?'));
+        $this->assertSame('a\\\\b &amp;amp; soup', LegacyHtmlService::normalize('a\\\\b &amp;amp; soup'), 'the legacy render stripslashes again on output, so backslash content must stay untouched');
+
+        $normalized = LegacyHtmlService::normalize('&amp;lt;p&amp;gt;Twice&amp;lt;/p&amp;gt;');
+        $this->assertSame($normalized, LegacyHtmlService::normalize($normalized), 'normalize must be idempotent');
     }
 
     #[Test]
@@ -715,12 +730,31 @@ class LookupTablesExpansionTest extends SdCoreTestCase
     }
 
     #[Test]
+    public function editing_a_faq_entry_with_an_encoded_link_keeps_the_answer_encoded(): void
+    {
+        $linkEncoded = '&amp;lt;a href=&amp;quot;https://example.test&amp;quot;&amp;gt;A link&amp;lt;/a&amp;gt;';
+        $entry = SystemFaq::factory()->create(['a' => $linkEncoded]);
+
+        Livewire::actingAs($this->superAdmin)
+            ->test(ManageFaqEntries::class)
+            ->callAction(TestAction::make('edit')->table($entry), data: ['q' => 'Updated Question?'])
+            ->assertHasNoFormErrors();
+
+        $entry->refresh();
+        $this->assertStringContainsString('&amp;lt;a href=&amp;quot;https://example.test&amp;quot;&amp;gt;A link&amp;lt;/a&amp;gt;', $entry->a, 'saving an untouched link-bearing answer must keep it encoded; the rich editor may wrap it in a paragraph but must not decode it');
+        $this->assertStringNotContainsString('<a href', $entry->a, 'a decoded link would be destroyed by the legacy strip_tags whitelist');
+        $this->assertSame('Updated Question?', $entry->q);
+    }
+
+    #[Test]
     public function normalization_migration_decodes_safe_rows_and_skips_whitelist_breaking_rows(): void
     {
         $safe = SystemFaq::factory()->create(['a' => '&amp;lt;p&amp;gt;Safe answer&amp;lt;/p&amp;gt;']);
         $linkEncoded = '&amp;lt;a href=&amp;quot;https://example.test&amp;quot;&amp;gt;A link&amp;lt;/a&amp;gt;';
         $link = SystemFaq::factory()->create(['a' => $linkEncoded]);
         $clean = SystemFaq::factory()->create(['a' => '<p>Already clean.</p>']);
+        $tagLike = SystemFaq::factory()->create(['a' => 'Are children &lt;11 considered Cubs? &amp;amp; more']);
+        $backslashes = SystemFaq::factory()->create(['a' => 'a\\\\b &amp;amp; soup']);
         $article = SdArticle::factory()->create(['intro' => 'Plain &amp;amp; encoded intro', 'article' => '&amp;lt;p&amp;gt;Body&amp;lt;/p&amp;gt;']);
         $roadmap = SystemRoadmapLittle::factory()->create(['text' => '&amp;lt;p&amp;gt;Roadmap&amp;lt;/p&amp;gt;']);
 
@@ -730,6 +764,8 @@ class LookupTablesExpansionTest extends SdCoreTestCase
         $this->assertSame('<p>Safe answer</p>', $safe->refresh()->a);
         $this->assertSame($linkEncoded, $link->refresh()->a);
         $this->assertSame('<p>Already clean.</p>', $clean->refresh()->a);
+        $this->assertSame('Are children &lt;11 considered Cubs? &amp;amp; more', $tagLike->refresh()->a, 'decoding would let the legacy strip_tags truncate from the bracket onwards');
+        $this->assertSame('a\\\\b &amp;amp; soup', $backslashes->refresh()->a, 'the legacy render stripslashes again on output');
         $this->assertSame('Plain & encoded intro', $article->refresh()->intro);
         $this->assertSame('<p>Body</p>', $article->article);
         $this->assertSame('<p>Roadmap</p>', $roadmap->refresh()->text);

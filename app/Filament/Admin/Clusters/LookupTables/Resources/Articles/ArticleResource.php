@@ -47,13 +47,13 @@ class ArticleResource extends Resource
                 ->options(fn (): array => SdArticleCat::query()->orderBy('name')->get()->mapWithKeys(fn (SdArticleCat $category): array => [$category->id => "{$category->name} (#{$category->id})"])->all())
                 ->required()
                 ->searchable(),
-            TextInput::make('title')->label('Title')->required()->formatStateUsing(fn (?string $state): ?string => LegacyHtmlService::decode($state)),
+            TextInput::make('title')->label('Title')->required()->formatStateUsing(fn (?string $state): ?string => LegacyHtmlService::normalize($state)),
             TextInput::make('slug')->label('Slug')->required()->helperText('Used in legacy article URLs.'),
-            Textarea::make('intro')->label('Intro')->required()->formatStateUsing(fn (?string $state): ?string => LegacyHtmlService::decode($state))->rows(3)->columnSpanFull()->helperText('Teaser shown on the legacy article listings.'),
+            Textarea::make('intro')->label('Intro')->required()->formatStateUsing(fn (?string $state): ?string => LegacyHtmlService::normalize($state))->rows(3)->columnSpanFull()->helperText('Teaser shown on the legacy article listings.'),
             RichEditor::make('article')
                 ->label('Article')
                 ->required()
-                ->formatStateUsing(fn (?string $state): ?string => LegacyHtmlService::decode($state))
+                ->formatStateUsing(fn (?string $state): ?string => LegacyHtmlService::normalize($state))
                 ->columnSpanFull()
                 ->toolbarButtons([['bold', 'italic', 'underline'], ['bulletList', 'orderedList'], ['undo', 'redo']])
                 ->helperText('Stored as HTML. The legacy pages strip all but basic tags (bold, underline, italic as i, lists, paragraphs, line breaks) when displaying.'),

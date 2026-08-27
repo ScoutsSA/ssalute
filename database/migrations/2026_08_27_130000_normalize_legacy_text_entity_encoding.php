@@ -8,9 +8,10 @@ use Illuminate\Support\Facades\DB;
  * Companion to 2026_08_27_120000_normalize_legacy_html_entity_encoding for
  * the plain text columns the legacy editors also entity encoded: FAQ
  * questions, article titles and roadmap areas (for example &#039; instead
- * of an apostrophe). Same rules: decode to what the legacy display pipeline
- * renders, skip anything whose decoded form would introduce tags outside
- * the legacy display whitelist, idempotent by nature.
+ * of an apostrophe). Same rules: LegacyHtmlService::normalize() decodes to
+ * what the legacy display pipeline renders and skips anything the legacy
+ * pages would render differently once decoded. Idempotent: normalising an
+ * already normalised value is a no-op.
  */
 return new class extends Migration
 {
@@ -28,17 +29,13 @@ return new class extends Migration
                     $updates = [];
 
                     foreach ($columns as $column) {
-                        $decoded = LegacyHtmlService::decode($row->{$column});
+                        $normalized = LegacyHtmlService::normalize($row->{$column});
 
-                        if ($decoded === null || $decoded === $row->{$column}) {
+                        if ($normalized === null || $normalized === $row->{$column}) {
                             continue;
                         }
 
-                        if (! LegacyHtmlService::usesOnlyLegacyWhitelistedTags($decoded)) {
-                            continue;
-                        }
-
-                        $updates[$column] = $decoded;
+                        $updates[$column] = $normalized;
                     }
 
                     if ($updates !== []) {

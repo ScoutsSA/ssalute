@@ -8,12 +8,13 @@ use Illuminate\Support\Facades\DB;
  * The legacy editors re-encoded HTML entities on every save, leaving FAQ
  * answers, articles and roadmap items stored as double and triple encoded
  * entity soup. This decodes each value to the HTML the legacy display
- * pipeline effectively renders, but ONLY where the decoded content uses
- * tags the legacy strip_tags whitelist keeps, so nothing members see
- * changes. Rows using other tags (links among them) stay encoded until the
- * legacy whitelist is widened; re-running this migration's logic later, or
- * a data fixer, can pick those up (see ticket 006). Idempotent by nature:
- * decoding already clean content is a no-op.
+ * pipeline effectively renders, but ONLY where LegacyHtmlService::normalize()
+ * proves the legacy pages render the decoded value identically, so nothing
+ * members see changes. Rows that fail that check (links and other
+ * non-whitelisted tags, tag-like plain text, backslash content) stay encoded
+ * until the legacy whitelist is widened; re-running this migration's logic
+ * later, or a data fixer, can pick those up (see ticket 006). Idempotent:
+ * normalising an already normalised value is a no-op.
  */
 return new class extends Migration
 {
@@ -31,17 +32,13 @@ return new class extends Migration
                     $updates = [];
 
                     foreach ($columns as $column) {
-                        $decoded = LegacyHtmlService::decode($row->{$column});
+                        $normalized = LegacyHtmlService::normalize($row->{$column});
 
-                        if ($decoded === null || $decoded === $row->{$column}) {
+                        if ($normalized === null || $normalized === $row->{$column}) {
                             continue;
                         }
 
-                        if (! LegacyHtmlService::usesOnlyLegacyWhitelistedTags($decoded)) {
-                            continue;
-                        }
-
-                        $updates[$column] = $decoded;
+                        $updates[$column] = $normalized;
                     }
 
                     if ($updates !== []) {

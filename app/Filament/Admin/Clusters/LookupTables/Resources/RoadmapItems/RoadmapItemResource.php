@@ -39,8 +39,8 @@ class RoadmapItemResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            TextInput::make('area')->label('Area')->required()->formatStateUsing(fn (?string $state): ?string => LegacyHtmlService::decode($state)),
-            RichEditor::make('text')->label('Text')->required()->formatStateUsing(fn (?string $state): ?string => LegacyHtmlService::decode($state))->columnSpanFull()->toolbarButtons([['bold', 'italic', 'underline'], ['bulletList', 'orderedList'], ['undo', 'redo']])->helperText('Stored as HTML. The legacy pages strip all but basic tags (bold, underline, italic as i, lists, paragraphs, line breaks) when displaying.'),
+            TextInput::make('area')->label('Area')->required()->formatStateUsing(fn (?string $state): ?string => LegacyHtmlService::normalize($state)),
+            RichEditor::make('text')->label('Text')->required()->formatStateUsing(fn (?string $state): ?string => LegacyHtmlService::normalize($state))->columnSpanFull()->toolbarButtons([['bold', 'italic', 'underline'], ['bulletList', 'orderedList'], ['undo', 'redo']])->helperText('Stored as HTML. The legacy pages strip all but basic tags (bold, underline, italic as i, lists, paragraphs, line breaks) when displaying.'),
             DatePicker::make('releaseDate')->label('Release Date')->required(),
             Toggle::make('active')->label('Active')->default(true)->inline(false),
         ]);
