@@ -16,6 +16,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -63,7 +64,7 @@ class ArticleResource extends Resource
         return $table
             ->recordAction(EditAction::class)
             ->defaultPaginationPageOption(25)
-            ->recordActions([EditAction::make(), DeleteAction::make()])
+            ->recordActions([EditAction::make()->modalWidth(Width::SevenExtraLarge), DeleteAction::make()])
             ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: the articles shown on the legacy articles pages and category listings. The intro is the listing teaser; the article body is stored as HTML and the legacy pages strip all but basic tags when displaying.')
             ->modifyQueryUsing(fn (Builder $query) => $query->with('category'))
             ->columns([

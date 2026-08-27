@@ -15,6 +15,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -62,7 +63,8 @@ class FaqEntryResource extends Resource
         return $table
             ->recordAction(EditAction::class)
             ->defaultPaginationPageOption(25)
-            ->recordActions([EditAction::make(), DeleteAction::make()])
+            ->reorderable('position')
+            ->recordActions([EditAction::make()->modalWidth(Width::SevenExtraLarge), DeleteAction::make()])
             ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: the FAQ entries shown on the FAQ pages and search, per FAQ category. Answers are stored as HTML and the legacy pages strip all but basic tags when displaying.')
             ->modifyQueryUsing(fn (Builder $query) => $query->with('category'))
             ->columns([

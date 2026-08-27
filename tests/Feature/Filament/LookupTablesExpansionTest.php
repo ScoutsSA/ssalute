@@ -74,6 +74,7 @@ use App\Models\SystemUser;
 use App\Settings\GeneralSettings;
 use Closure;
 use Filament\Actions\Testing\TestAction;
+use Filament\Support\Enums\Width;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -590,6 +591,45 @@ class LookupTablesExpansionTest extends SdCoreTestCase
             ->filterTable('audience', 'none')
             ->assertCanSeeTableRecords([$none])
             ->assertCanNotSeeTableRecords([$region, $national]);
+    }
+
+    #[Test]
+    public function faq_categories_can_be_reordered_by_dragging(): void
+    {
+        [$first, $second, $third] = SystemFaqCat::factory()->count(3)->create(['position' => 0])->all();
+
+        Livewire::actingAs($this->superAdmin)
+            ->test(ManageFaqCategories::class)
+            ->call('reorderTable', [$third->id, $first->id, $second->id]);
+
+        $this->assertSame(1, $third->refresh()->position);
+        $this->assertSame(2, $first->refresh()->position);
+        $this->assertSame(3, $second->refresh()->position);
+    }
+
+    #[Test]
+    public function faq_entries_can_be_reordered_by_dragging(): void
+    {
+        $category = SystemFaqCat::factory()->create();
+        [$first, $second, $third] = SystemFaq::factory()->count(3)->create(['catID' => $category->id, 'position' => 0])->all();
+
+        Livewire::actingAs($this->superAdmin)
+            ->test(ManageFaqEntries::class)
+            ->call('reorderTable', [$third->id, $first->id, $second->id]);
+
+        $this->assertSame(1, $third->refresh()->position);
+        $this->assertSame(2, $first->refresh()->position);
+        $this->assertSame(3, $second->refresh()->position);
+    }
+
+    #[Test]
+    public function content_editor_modals_are_wide(): void
+    {
+        foreach ([ManageFaqEntries::class, ManageArticles::class, ManageRoadmapItems::class] as $pageClass) {
+            $page = Livewire::actingAs($this->superAdmin)->test($pageClass)->instance();
+
+            $this->assertSame(Width::SevenExtraLarge, $page->getAction('create')?->getModalWidth(), "{$pageClass} create modal is not wide");
+        }
     }
 
     #[Test]

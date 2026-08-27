@@ -60,6 +60,7 @@ class FaqCategoryResource extends Resource
         return $table
             ->recordAction(EditAction::class)
             ->defaultPaginationPageOption(25)
+            ->reorderable('position')
             ->recordActions([EditAction::make(), DeleteAction::make()])
             ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: categories for the FAQ module. They drive the FAQ navigation, search and admin screens, and the audience flags control which roles see each category. The legacy pages only show rows with FAQ group 0 and exactly one audience flag; rows without a flag belong to the retired FAQ group mechanism and are not displayed anywhere.')
             ->filters([

@@ -5,6 +5,7 @@ namespace App\Filament\Admin\Clusters\LookupTables\Resources\RoadmapItems\Pages;
 use App\Filament\Admin\Clusters\LookupTables\Resources\RoadmapItems\RoadmapItemResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ManageRecords;
+use Filament\Support\Enums\Width;
 
 class ManageRoadmapItems extends ManageRecords
 {
@@ -14,6 +15,7 @@ class ManageRoadmapItems extends ManageRecords
     {
         return [
             CreateAction::make()
+                ->modalWidth(Width::SevenExtraLarge)
                 ->mutateDataUsing(function (array $data): array {
                     $data['created'] = now();
                     $data['createdby'] = auth()->id() ?? 1;

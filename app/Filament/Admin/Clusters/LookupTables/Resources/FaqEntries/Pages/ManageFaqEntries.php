@@ -5,6 +5,7 @@ namespace App\Filament\Admin\Clusters\LookupTables\Resources\FaqEntries\Pages;
 use App\Filament\Admin\Clusters\LookupTables\Resources\FaqEntries\FaqEntryResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ManageRecords;
+use Filament\Support\Enums\Width;
 
 class ManageFaqEntries extends ManageRecords
 {
@@ -13,7 +14,8 @@ class ManageFaqEntries extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            CreateAction::make()
+                ->modalWidth(Width::SevenExtraLarge),
         ];
     }
 }
