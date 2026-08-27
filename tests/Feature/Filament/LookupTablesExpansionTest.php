@@ -4,6 +4,8 @@ namespace Tests\Feature\Filament;
 
 use App\Filament\Admin\Clusters\LookupTables\Resources\ArticleCategories\ArticleCategoryResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\ArticleCategories\Pages\ManageArticleCategories;
+use App\Filament\Admin\Clusters\LookupTables\Resources\ArticleCategories\Pages\ViewArticleCategory;
+use App\Filament\Admin\Clusters\LookupTables\Resources\ArticleCategories\RelationManagers\ArticlesRelationManager;
 use App\Filament\Admin\Clusters\LookupTables\Resources\Articles\ArticleResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\Articles\Pages\ManageArticles;
 use App\Filament\Admin\Clusters\LookupTables\Resources\Cities\CityResource;
@@ -746,6 +748,58 @@ class LookupTablesExpansionTest extends SdCoreTestCase
         $this->assertSame("I'd Like Some Additional Functionality", $entry->refresh()->q);
         $this->assertSame('Knots & Lashings', $article->refresh()->title);
         $this->assertSame('Events & Programs', $roadmap->refresh()->area);
+    }
+
+    #[Test]
+    public function article_category_view_page_shows_the_category(): void
+    {
+        $category = SdArticleCat::factory()->create(['name' => 'A Category To View', 'slug' => 'a-category-to-view']);
+
+        $this->actingAs($this->superAdmin)
+            ->get(ArticleCategoryResource::getUrl('view', ['record' => $category]))
+            ->assertOk();
+
+        Livewire::actingAs($this->superAdmin)
+            ->test(ViewArticleCategory::class, ['record' => $category->getRouteKey()])
+            ->assertOk()
+            ->assertSee('A Category To View')
+            ->assertSee('a-category-to-view');
+    }
+
+    #[Test]
+    public function article_category_relation_manager_lists_only_its_own_articles(): void
+    {
+        $category = SdArticleCat::factory()->create();
+        $articles = SdArticle::factory()->count(2)->create(['catID' => $category->id]);
+        $otherArticle = SdArticle::factory()->create();
+
+        Livewire::actingAs($this->superAdmin)
+            ->test(ArticlesRelationManager::class, ['ownerRecord' => $category, 'pageClass' => ViewArticleCategory::class])
+            ->assertOk()
+            ->assertCanSeeTableRecords($articles)
+            ->assertCanNotSeeTableRecords([$otherArticle]);
+    }
+
+    #[Test]
+    public function article_category_relation_manager_can_create_an_article(): void
+    {
+        $category = SdArticleCat::factory()->create();
+
+        Livewire::actingAs($this->superAdmin)
+            ->test(ArticlesRelationManager::class, ['ownerRecord' => $category, 'pageClass' => ViewArticleCategory::class])
+            ->callAction(TestAction::make('create')->table(), data: [
+                'title' => 'A Related Article',
+                'slug' => 'a-related-article',
+                'intro' => 'A teaser.',
+                'article' => '<p>The body.</p>',
+            ])
+            ->assertHasNoFormErrors();
+
+        $this->assertDatabaseHas('sd_articles', [
+            'title' => 'A Related Article',
+            'catID' => $category->id,
+            'createdby' => (string) $this->superAdmin->id,
+        ]);
     }
 
     #[Test]

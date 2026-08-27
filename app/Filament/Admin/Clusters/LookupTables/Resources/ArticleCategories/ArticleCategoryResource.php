@@ -4,12 +4,17 @@ namespace App\Filament\Admin\Clusters\LookupTables\Resources\ArticleCategories;
 
 use App\Filament\Admin\Clusters\LookupTables\LookupTablesCluster;
 use App\Filament\Admin\Clusters\LookupTables\Resources\ArticleCategories\Pages\ManageArticleCategories;
+use App\Filament\Admin\Clusters\LookupTables\Resources\ArticleCategories\Pages\ViewArticleCategory;
+use App\Filament\Admin\Clusters\LookupTables\Resources\ArticleCategories\RelationManagers\ArticlesRelationManager;
 use App\Models\SdArticleCat;
 use BackedEnum;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\TextInput;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
@@ -41,9 +46,9 @@ class ArticleCategoryResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->recordAction(EditAction::class)
+            ->recordUrl(fn (SdArticleCat $record): string => static::getUrl('view', ['record' => $record]))
             ->defaultPaginationPageOption(25)
-            ->recordActions([EditAction::make(), DeleteAction::make()])
+            ->recordActions([ViewAction::make(), EditAction::make(), DeleteAction::make()])
             ->description('Database table: ' . app(static::getModel())->getTable() . '. Legacy usage: categories for the articles module. The slug appears in article category URLs and the left navigation.')
             ->columns([
                 TextColumn::make('id')->label('ID')->sortable()->toggleable(isToggledHiddenByDefault: true),
@@ -53,10 +58,33 @@ class ArticleCategoryResource extends Resource
             ->defaultSort('name');
     }
 
+    public static function infolist(Schema $schema): Schema
+    {
+        return $schema->components([
+            Section::make('Category')
+                ->collapsible()
+                ->columns(3)
+                ->columnSpanFull()
+                ->schema([
+                    TextEntry::make('id')->label('ID'),
+                    TextEntry::make('name')->label('Name'),
+                    TextEntry::make('slug')->label('Slug'),
+                ]),
+        ]);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            ArticlesRelationManager::class,
+        ];
+    }
+
     public static function getPages(): array
     {
         return [
             'index' => ManageArticleCategories::route('/'),
+            'view' => ViewArticleCategory::route('/{record}'),
         ];
     }
 }
