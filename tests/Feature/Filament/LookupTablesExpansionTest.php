@@ -690,6 +690,9 @@ class LookupTablesExpansionTest extends SdCoreTestCase
         $this->assertSame('Hello & goodbye', LegacyHtmlService::preview($encoded));
         $this->assertSame('<p>Clean.</p>', LegacyHtmlService::decode('<p>Clean.</p>'));
         $this->assertNull(LegacyHtmlService::decode(null));
+        $this->assertTrue(LegacyHtmlService::usesOnlyLegacyWhitelistedTags('<p>Hello <b>there</b><br></p>'));
+        $this->assertTrue(LegacyHtmlService::usesOnlyLegacyWhitelistedTags('No tags at all'));
+        $this->assertFalse(LegacyHtmlService::usesOnlyLegacyWhitelistedTags('<p><a href="x">link</a></p>'));
     }
 
     #[Test]
@@ -707,6 +710,27 @@ class LookupTablesExpansionTest extends SdCoreTestCase
         $this->assertStringNotContainsString('&amp;', $entry->a);
         $this->assertStringNotContainsString('&lt;', $entry->a);
         $this->assertSame('Updated Question?', $entry->q);
+    }
+
+    #[Test]
+    public function normalization_migration_decodes_safe_rows_and_skips_whitelist_breaking_rows(): void
+    {
+        $safe = SystemFaq::factory()->create(['a' => '&amp;lt;p&amp;gt;Safe answer&amp;lt;/p&amp;gt;']);
+        $linkEncoded = '&amp;lt;a href=&amp;quot;https://example.test&amp;quot;&amp;gt;A link&amp;lt;/a&amp;gt;';
+        $link = SystemFaq::factory()->create(['a' => $linkEncoded]);
+        $clean = SystemFaq::factory()->create(['a' => '<p>Already clean.</p>']);
+        $article = SdArticle::factory()->create(['intro' => 'Plain &amp;amp; encoded intro', 'article' => '&amp;lt;p&amp;gt;Body&amp;lt;/p&amp;gt;']);
+        $roadmap = SystemRoadmapLittle::factory()->create(['text' => '&amp;lt;p&amp;gt;Roadmap&amp;lt;/p&amp;gt;']);
+
+        $migration = include database_path('migrations/2026_08_27_120000_normalize_legacy_html_entity_encoding.php');
+        $migration->up();
+
+        $this->assertSame('<p>Safe answer</p>', $safe->refresh()->a);
+        $this->assertSame($linkEncoded, $link->refresh()->a);
+        $this->assertSame('<p>Already clean.</p>', $clean->refresh()->a);
+        $this->assertSame('Plain & encoded intro', $article->refresh()->intro);
+        $this->assertSame('<p>Body</p>', $article->article);
+        $this->assertSame('<p>Roadmap</p>', $roadmap->refresh()->text);
     }
 
     #[Test]

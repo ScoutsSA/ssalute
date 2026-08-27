@@ -10,6 +10,28 @@ namespace App\Services;
  */
 class LegacyHtmlService
 {
+    /**
+     * The tags the legacy display pipeline keeps when it strip_tags content.
+     * Content restricted to these renders identically before and after
+     * normalisation, because the whitelist only bites on decoded values.
+     *
+     * @var list<string>
+     */
+    public const array LEGACY_DISPLAY_TAG_WHITELIST = ['b', 'strong', 'u', 'i', 'br', 'p', 'div', 'ul', 'ol', 'li'];
+
+    public static function usesOnlyLegacyWhitelistedTags(?string $value): bool
+    {
+        if ($value === null || $value === '') {
+            return true;
+        }
+
+        preg_match_all('/<\s*\/?\s*([a-zA-Z][a-zA-Z0-9]*)/', $value, $matches);
+
+        $tags = array_unique(array_map(strtolower(...), $matches[1]));
+
+        return array_diff($tags, self::LEGACY_DISPLAY_TAG_WHITELIST) === [];
+    }
+
     public static function decode(?string $value): ?string
     {
         if ($value === null || $value === '') {

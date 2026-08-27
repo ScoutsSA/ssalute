@@ -10,6 +10,10 @@ Legacy display runs `strip_tags` with a whitelist (`b, strong, u, i, br, p, div,
 
 Measured against the 2026-08-22 sync, decoded content contains non whitelisted tags in 34 of 212 FAQ answers and 20 of 34 articles (none in roadmap items): `span` x55, `a` x40, `blockquote` x8, `o` x4 (Word paste artifacts), `sup` x3, `h3` x3. Blanket normalization would most visibly turn 40 hyperlinks into plain text on the legacy pages.
 
+## Status
+
+The filtered variant shipped on 2026-08-27 as migration `2026_08_27_120000_normalize_legacy_html_entity_encoding`: it decodes a value only where the decoded content uses whitelisted tags exclusively, so member facing rendering is unchanged. Run against the 2026-08-22 sync it left 13 FAQ answers and 12 articles encoded (the rows with links and other non whitelisted tags). What remains for this ticket is the legacy whitelist patch and a follow up pass for those skipped rows, per the path below. The migration is idempotent and its logic is reusable as a data fixer if the legacy admin screens keep producing encoded rows.
+
 ## Recommended path
 
 1. Patch the legacy `cleanDbOutput` whitelist to also allow `a, span, blockquote, sup, h3` (this matches what actually renders today) and deploy that first. The legacy repo is patched directly on master, outside this repository.
