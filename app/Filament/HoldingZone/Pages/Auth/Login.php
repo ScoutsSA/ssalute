@@ -2,10 +2,11 @@
 
 namespace App\Filament\HoldingZone\Pages\Auth;
 
+use App\Auth\MemberLandingUrl;
+use App\Models\SystemUser;
 use Filament\Auth\Http\Responses\Contracts\LoginResponse;
 use Filament\Auth\Pages\Login as BaseLogin;
 use Filament\Facades\Filament;
-use Filament\Pages\Dashboard;
 use Illuminate\Contracts\Support\Htmlable;
 
 class Login extends BaseLogin
@@ -24,17 +25,13 @@ class Login extends BaseLogin
         }
 
         $user = Filament::auth()->user();
-        $panel = Filament::getPanel('member');
-        $tenant = $user?->getDefaultTenant($panel);
 
-        if ($tenant) {
-            $defaultUrl = Dashboard::getUrl(panel: 'member', tenant: $tenant);
-            $intended = session()->pull('url.intended', $defaultUrl);
-            $this->redirect($intended);
-
-            return null;
+        if (! $user instanceof SystemUser) {
+            return $response;
         }
 
-        return $response;
+        $this->redirect(session()->pull('url.intended', MemberLandingUrl::for($user)));
+
+        return null;
     }
 }

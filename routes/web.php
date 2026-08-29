@@ -12,6 +12,10 @@ Route::get('impersonate/sd/{user}', \App\Http\Controllers\ScoutsDigitalImpersona
     ->name('impersonate.scouts-digital')
     ->middleware(['auth', 'signed']);
 
+Route::get('sso/scouts-digital', \App\Http\Controllers\ScoutsDigitalSsoController::class)
+    ->name('sso.scouts-digital')
+    ->middleware('throttle:10,1');
+
 Route::get('member-verification/{uuid}', \App\Http\Controllers\MembershipCertificateController::class)
     ->name('membership-certificate.show')
     ->middleware('throttle:60,1');
