@@ -25,6 +25,24 @@ class HoldingZonePanelTest extends SdCoreTestCase
     }
 
     #[Test]
+    public function login_page_offers_scouts_digital_login_only_when_the_hand_off_is_configured(): void
+    {
+        config()->set('ssalute.scouts_digital_url', 'https://sd.example.test/');
+        config()->set('ssalute.scouts_digital_sso_secret', 'dGVzdC1zZWNyZXQ=');
+
+        $this->get('/holding-zone/login')
+            ->assertOk()
+            ->assertSee('Log in via Scouts.Digital')
+            ->assertSee('https://sd.example.test/sso-handoff.php?app=ssalute');
+
+        config()->set('ssalute.scouts_digital_sso_secret', '');
+
+        $this->get('/holding-zone/login')
+            ->assertOk()
+            ->assertDontSee('Log in via Scouts.Digital');
+    }
+
+    #[Test]
     public function root_login_redirects_to_holding_zone_login(): void
     {
         $this->get('/login')

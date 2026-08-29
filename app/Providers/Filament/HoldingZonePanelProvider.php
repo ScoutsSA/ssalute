@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Auth\SignedSsoToken;
 use App\Filament\HoldingZone\Pages\Auth\Login;
 use App\Filament\HoldingZone\Pages\Dashboard;
 use App\Filament\Member\Pages\ChangePassword;
@@ -38,6 +39,13 @@ class HoldingZonePanelProvider extends PanelProvider
             ->renderHook(
                 PanelsRenderHook::AUTH_LOGIN_FORM_BEFORE,
                 fn (): View => view('filament.member.login-blurb'),
+            )
+            ->renderHook(
+                PanelsRenderHook::AUTH_LOGIN_FORM_AFTER,
+                fn (): View => view('filament.member.scouts-digital-login', [
+                    'enabled' => SignedSsoToken::forScoutsDigital()->isConfigured(),
+                    'url' => rtrim((string) config('ssalute.scouts_digital_url'), '/') . '/sso-handoff.php?app=ssalute',
+                ]),
             )
             ->spa()
             ->viteTheme('resources/css/filament/general/theme.css')
