@@ -23,9 +23,8 @@ return [
     |
     | The shared secret Scouts Digital signs its "Log in via Scouts.Digital"
     | tokens with (GET /sso/scouts-digital?token=...). It must equal
-    | SSO_SSALUTE_SECRET in Scouts Digital's .env, where SSO_SSALUTE_ENABLED=1
-    | switches that side on. Empty keeps the route a 404 and hides the button
-    | on the login page.
+    | SSO_SSALUTE_SECRET in Scouts Digital's .env. Empty keeps the route a
+    | 404 and hides the button on the login page.
     |
     */
 
