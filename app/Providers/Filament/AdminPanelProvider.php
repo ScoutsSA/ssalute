@@ -53,6 +53,15 @@ class AdminPanelProvider extends PanelProvider
                     ->label('Users')
                     ->icon(Heroicon::User),
                 NavigationGroup::make()
+                    ->label('UserData')
+                    ->icon(Heroicon::Identification),
+                NavigationGroup::make()
+                    ->label('Our Programme')
+                    ->icon(Heroicon::AcademicCap),
+                NavigationGroup::make()
+                    ->label('Group Breakdown')
+                    ->icon(Heroicon::GlobeAlt),
+                NavigationGroup::make()
                     ->label('System')
                     ->icon(Heroicon::Lifebuoy),
             ])

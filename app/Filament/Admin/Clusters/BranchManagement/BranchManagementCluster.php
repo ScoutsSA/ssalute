@@ -11,9 +11,9 @@ class BranchManagementCluster extends Cluster
 {
     protected static string|BackedEnum|null $navigationIcon = Heroicon::Squares2x2;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Youth';
+    protected static string|UnitEnum|null $navigationGroup = 'Our Programme';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $navigationLabel = 'Branch Management';
 
