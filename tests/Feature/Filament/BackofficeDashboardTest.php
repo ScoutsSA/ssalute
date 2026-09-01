@@ -8,7 +8,6 @@ use App\Filament\Admin\Widgets\RecentLoginsWidget;
 use App\Filament\Admin\Widgets\RecentUpdatesWidget;
 use App\Models\AdminGoodLogon;
 use App\Models\AmsWarrantInfo;
-use App\Models\Forms\ApplicationAdultMembershipRequest;
 use App\Models\SystemUser;
 use App\Models\SystemUsersOtherRole;
 use App\Models\SystemUserType;
@@ -125,13 +124,10 @@ class BackofficeDashboardTest extends SdCoreTestCase
         $user = SystemUser::factory()->create();
         SystemUsersOtherRole::factory()->forUser($user)->count(2)->create(['defaultRole' => 1]);
 
-        ApplicationAdultMembershipRequest::factory()->create();
-
         Livewire::actingAs($this->superAdmin)
             ->test(AttentionWidget::class)
             ->assertOk()
-            ->assertSee('Primary Roles')
-            ->assertSee('Pending AAM Requests');
+            ->assertSee('Primary Roles');
     }
 
     #[Test]

@@ -16,7 +16,6 @@ use Filament\PanelProvider;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Filament\View\PanelsRenderHook;
-use Filament\Widgets\AccountWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -48,9 +47,7 @@ class AdminPanelProvider extends PanelProvider
                 Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\Filament\Admin\Widgets')
-            ->widgets([
-                AccountWidget::class,
-            ])
+            ->widgets([])
             ->navigationGroups([
                 NavigationGroup::make()
                     ->label('Users')
