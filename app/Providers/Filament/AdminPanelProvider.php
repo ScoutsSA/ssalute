@@ -15,13 +15,11 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
-use Filament\View\PanelsRenderHook;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
-use Illuminate\Support\Facades\Blade;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AdminPanelProvider extends PanelProvider
@@ -68,12 +66,6 @@ class AdminPanelProvider extends PanelProvider
                     ->label('Internals')
                     ->icon(Heroicon::CommandLine),
             ])
-            ->renderHook(
-                PanelsRenderHook::PAGE_START,
-                fn () => request()->is('backoffice/group-operations*', 'backoffice/ams*', 'backoffice/advancements*', 'backoffice/area*', 'backoffice/branch-management*', 'backoffice/admin-reports*')
-                    ? Blade::render('@include("filament.admin.partials.beta-banner")')
-                    : '',
-            )
             ->userMenuItems([
                 'member-panel' => Action::make('member-panel')
                     ->label('Member Panel')
