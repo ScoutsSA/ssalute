@@ -35,19 +35,23 @@ class RunSystemFixes extends Command
 
     /**
      * The fixes to run, in order. Each is individually toggleable via DataFixesSettings.
+     * Also consumed by the dashboard attention widget to surface outstanding findings.
      *
-     * @var list<class-string<SystemFix>>
+     * @return list<class-string<SystemFix>>
      */
-    private array $fixes = [
-        EnsureEachUserHasOnlyOnePrimaryRole::class,
-        EnsureYouthMemberIdsAreInSync::class,
-        EnsureLegacyValuesAreCanonical::class,
-        FlagUsersWithoutRoleInHomeLocation::class,
-    ];
+    public static function fixes(): array
+    {
+        return [
+            EnsureEachUserHasOnlyOnePrimaryRole::class,
+            EnsureYouthMemberIdsAreInSync::class,
+            EnsureLegacyValuesAreCanonical::class,
+            FlagUsersWithoutRoleInHomeLocation::class,
+        ];
+    }
 
     public function handle(DataFixesSettings $settings): int
     {
-        foreach ($this->fixes as $fixClass) {
+        foreach (static::fixes() as $fixClass) {
             $fix = app($fixClass);
 
             if (! ($settings->{$fix->settingKey()} ?? false)) {
