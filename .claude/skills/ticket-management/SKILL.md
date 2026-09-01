@@ -1,6 +1,6 @@
 ---
 name: ticket-management
-description: Manage Ssalute work tickets in docs/tickets. Activate when the user asks to create, list, pick up, work on, complete, split or re-prioritise a ticket, asks what to work on next, or mentions a ticket by number (e.g. "ticket 004"). Covers the pX priority prefix, numbering, how tickets relate to docs/BRD.md, docs/features and docs/wiki, the branch and commit rules, the definition of done, and archiving into docs/tickets/completed.
+description: Manage Ssalute work tickets in docs/tickets. Activate when the user asks to create, list, pick up, work on, complete, split or re-prioritise a ticket, asks what to work on next, or mentions a ticket by number (e.g. "ticket 004"). Covers the pX priority prefix, numbering, how tickets relate to docs/BRD.md, docs/features and docs/wiki, the master-direct commit rules, the definition of done, and archiving into docs/tickets/completed.
 license: MIT
 metadata:
   author: John Roux
@@ -79,7 +79,7 @@ Bands are buckets, not a strict total order: several tickets can share a band, a
 
 A ticket that is too big to be one file becomes a **folder with the same name a file would have had**. That is the whole mechanism: `p8_012_Youth_Roster_V2/` instead of `p8_012_Youth_Roster_V2.md`, same band, same number, same Title_Case.
 
-**Default to a flat file.** Promote to a folder only when the work genuinely splits into pieces that ship on their own branches and PRs, span multiple sessions, and would otherwise turn one file into a moving target that gets rewritten every session. A whole legacy module still to migrate is the obvious candidate. A merely long ticket is still a file.
+**Default to a flat file.** Promote to a folder only when the work genuinely splits into pieces that ship on their own, span multiple sessions, and would otherwise turn one file into a moving target that gets rewritten every session. A whole legacy module still to migrate is the obvious candidate. A merely long ticket is still a file.
 
 Inside the folder:
 
@@ -99,7 +99,7 @@ git mv docs/tickets/p8_012_Youth_Roster_V2.md docs/tickets/p8_012_Youth_Roster_V
 
 Nothing about the ticket's identity changes, it grew a folder. Demoting back is the reverse, and is fair game when the split turned out to be unnecessary and only the README ever had content.
 
-**Working a child** is identical to working a flat ticket: its own branch, its own definition of done, its own completion rewrite, archived into `<epic>/completed/`. A child is not "done" because the epic is progressing.
+**Working a child** is identical to working a flat ticket: its own commits, its own definition of done, its own completion rewrite, archived into `<epic>/completed/`. A child is not "done" because the epic is progressing.
 
 **Completing an epic.** When every child is completed or split out:
 
@@ -145,15 +145,13 @@ This matters more here than in most repositories, because a local database comes
 - Read the whole ticket before starting, then the relevant `docs/features/` spec, then any wiki page it cites for the legacy behaviour.
 - **Note the priority you picked it up at**, so the completion record can state it. It is in the filename you just opened.
 - If scope changes or decisions are made mid-flight, append them to the ticket file as you go so the completion record is easy to write later. A `## Notes` section at the bottom works well.
-- A ticket may be delivered across multiple sessions or PRs. It stays in `docs/tickets/` until the completion criteria below are met.
+- A ticket may be delivered across multiple sessions or commits. It stays in `docs/tickets/` until the completion criteria below are met.
 - **Ticket work is committed work.** Being asked to work a ticket IS the instruction to commit what you deliver. Do not ask "should I commit?", do not end your turn with ticket changes sitting uncommitted, and do not treat any generic "commit only when asked" guidance as applying here; the ticket process asked.
 
-### Branch and merge rules, specific to this repository
+### Branch and push rules, specific to this repository
 
-The commit permission above is scoped to a feature branch. It is NOT permission to merge or deploy.
-
-- **Work on a branch, never on `master` directly.** Cut it from an up to date `master`, using the prefixes the repository already uses (`feature/`, `cc/`).
-- **Merging and deploying are outward facing actions.** Ask before doing either, every time. A completed ticket does NOT mean the change is live.
+- **Work directly on `master`** (decided 2026-09-01, replacing the earlier feature-branch rule). Ticket work, ticket filings and completion moves all commit straight to `master`. Do not cut feature branches unless the user asks for one for a specific piece of work.
+- **Pushing and deploying are outward facing actions.** Ask before doing either, every time. A completed ticket does NOT mean the change is live.
 - **Never mention Claude Code in a PR description, PR comment or issue comment**, and do not add a "Test plan" section to a PR description. Both are standing rules from the user's global instructions.
 - Use the `gh` CLI for anything on GitHub.
 
@@ -161,7 +159,7 @@ The commit permission above is scoped to a feature branch. It is NOT permission 
 
 Close a ticket once the work is finished and a full review is clean (see Definition of done). If any line there is unresolved, the ticket stays open.
 
-**The completion belongs in the work's own final commit or PR, not after it.** Rewrite and `git mv` the ticket BEFORE that commit, so the commit that delivers the work also closes the ticket. Do not hold a ticket open waiting for a merge or a deploy. Those are shipping gates and they are the operator's, not the ticket's.
+**The completion belongs in the work's own final commit, not after it.** Rewrite and `git mv` the ticket BEFORE that commit, so the commit that delivers the work also closes the ticket. Do not hold a ticket open waiting for a push or a deploy. Those are shipping gates and they are the operator's, not the ticket's.
 
 1. **Work out which `completed/` this ticket archives into.** A flat ticket and a whole epic go to `docs/tickets/completed/`. **A child of an epic goes to `<epic>/completed/`**, not the top level one. Create the directory if it does not exist.
 2. If only part of the ticket was delivered, split first: carve the undelivered remainder into a new ticket (next available number), then complete the original, noting the split under `## Decisions`. A child's follow-up normally belongs in the same epic folder, alongside it.
@@ -169,7 +167,7 @@ Close a ticket once the work is finished and a full review is clean (see Definit
    - `# <Ticket title>` heading.
    - `**Priority when actioned:** pX` on its own line directly under the heading, taken from the `pX_` prefix the ticket carried when the work started. If it was re-prioritised mid-flight, record where it ended up and note the move under `## Decisions`. This is the only place a priority is ever written into a ticket body.
    - `## Synopsis`, a short paragraph on what the ticket asked for.
-   - `## Resolution`, how it was actually solved: the approach taken, key files or subsystems touched, the branch name, and relevant commits or PRs if known.
+   - `## Resolution`, how it was actually solved: the approach taken, key files or subsystems touched, and relevant commits or PRs if known.
    - `## Verification`, what was actually run and what was only reasoned about. State the suite result, and say plainly which claims are unverified. If verifying needs a production shell, a synced database, a Slack webhook or a super user login, say that instead of implying it was done. A count measured against a `rouxt:sync` copy is dated evidence, so date it.
    - `## Risk assessment`, what could break, which conventions were bent, what is untested or only heuristically verified, what a future upgrade could silently regress. Legacy tables with no foreign keys and columns written by the legacy system belong here.
    - `## Decisions`, decisions made along the way, especially where the outcome differs from the original request (scope cuts, deferred items, alternative approaches chosen and why). Note anything deliberately left out, and reference a follow-up ticket by number if one was created.
