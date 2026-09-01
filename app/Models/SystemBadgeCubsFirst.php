@@ -27,8 +27,8 @@ class SystemBadgeCubsFirst extends BaseModel
         'modifiedby' => 'int',
     ];
 
-    public function requirements(): HasMany
+    public function tasks(): HasMany
     {
-        return $this->hasMany(SystemBadgeCubsSecond::class, 'firstID');
+        return $this->hasMany(SystemBadgeCubsSecond::class, 'firstID')->orderBy('position');
     }
 }

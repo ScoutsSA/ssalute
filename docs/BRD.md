@@ -176,7 +176,7 @@ The following modules are planned for Ssalute. Each has a dedicated feature fold
 | 1 | Adult Member System (AMS) | Planned | [features/01-adult-member-system/overview.md](features/01-adult-member-system/overview.md) |
 | 2 | Warrants | Scaffolded (list/view) | [features/02-warrants/overview.md](features/02-warrants/overview.md) |
 | 3 | Youth Management | Planned | [features/03-youth-management/overview.md](features/03-youth-management/overview.md) |
-| 4 | Advancements & Badges | Planned | [features/04-advancements-badges/overview.md](features/04-advancements-badges/overview.md) |
+| 4 | Advancements & Badges | WIP (badge catalogue, advancement list/view) | [features/04-advancements-badges/overview.md](features/04-advancements-badges/overview.md) |
 | 5 | Training | Scaffolded (list) | [features/05-training/overview.md](features/05-training/overview.md) |
 | 6 | Financial Management | Planned | [features/06-financial-management/overview.md](features/06-financial-management/overview.md) |
 | 7 | Events & Competitions | Planned | [features/07-events-competitions/overview.md](features/07-events-competitions/overview.md) |

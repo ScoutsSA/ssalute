@@ -2,7 +2,7 @@
 
 > Module: Advancements & Badges
 > Panel(s): Admin (backoffice), Member
-> Status: Planned — Needs Human Review
+> Status: WIP. BackOffice badge catalogue delivered (Branch Management), advancement record list and view scaffolded, remainder planned
 > Phase: 4 — Advancements
 
 ---
@@ -47,6 +47,9 @@ The four sections each have their own advancement structure:
 
 - Administrators can create, edit, view, and deactivate badge definitions across all sections and tiers (first tier and second tier).
 - Each badge definition includes a name, section, tier, description, requirements, and active status.
+- Delivered (ticket 013) as the Branch Management cluster in the BackOffice: per branch (Meerkats, Cubs, Scouts, Rovers) a Badges resource lists the catalogue grouped by badge type, with create and edit forms, a view page, and activate/deactivate actions. Deactivation is a soft toggle on the `active` flag, hard deletes are not offered, and awarded badge records are never touched by catalogue edits.
+- Badge tasks (the second tier) are managed on the badge view page: add, edit, activate/deactivate, and drag reordering of the `position` column. Badges themselves carry no position column; the catalogue is ordered by type and name, matching legacy.
+- Scout badges additionally manage auto sign-off links (`system_badge_scouts_to_badge`): when a Scout badge is fully signed off, the legacy system automatically signs off the linked tasks inside other badges. These links are maintained on the Scout badge view page.
 
 ### Star Awards
 

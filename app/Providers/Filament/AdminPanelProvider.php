@@ -63,7 +63,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->renderHook(
                 PanelsRenderHook::PAGE_START,
-                fn () => request()->is('backoffice/group-operations*', 'backoffice/ams*', 'backoffice/advancements*', 'backoffice/area*')
+                fn () => request()->is('backoffice/group-operations*', 'backoffice/ams*', 'backoffice/advancements*', 'backoffice/area*', 'backoffice/branch-management*')
                     ? Blade::render('@include("filament.admin.partials.beta-banner")')
                     : '',
             )
