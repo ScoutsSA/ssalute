@@ -9,8 +9,6 @@ use App\Filament\Admin\Clusters\LookupTables\Resources\AwardTypes\AwardTypeResou
 use App\Filament\Admin\Clusters\LookupTables\Resources\CommitteeTypes\CommitteeTypeResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\CommitteeTypes\Pages\ManageCommitteeTypes;
 use App\Filament\Admin\Clusters\LookupTables\Resources\CouncilTypes\CouncilTypeResource;
-use App\Filament\Admin\Clusters\LookupTables\Resources\CubLevels\CubLevelResource;
-use App\Filament\Admin\Clusters\LookupTables\Resources\CubLevels\Pages\ManageCubLevels;
 use App\Filament\Admin\Clusters\LookupTables\Resources\DisciplinaryHeadings\DisciplinaryHeadingResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\DisciplinaryHeadings\Pages\ManageDisciplinaryHeadings;
 use App\Filament\Admin\Clusters\LookupTables\Resources\DocumentGroupTypes\DocumentGroupTypeResource;
@@ -21,15 +19,12 @@ use App\Filament\Admin\Clusters\LookupTables\Resources\HighestEducations\Highest
 use App\Filament\Admin\Clusters\LookupTables\Resources\Languages\LanguageResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\LicenceTypes\LicenceTypeResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\MaritalStatuses\MaritalStatusResource;
-use App\Filament\Admin\Clusters\LookupTables\Resources\MeerkatLevels\MeerkatLevelResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\ParentTypes\ParentTypeResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\PastServiceTypes\PastServiceTypeResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\ProgramTypes\ProgramTypeResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\ResignReasons\ResignReasonResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\RetireReasons\RetireReasonResource;
-use App\Filament\Admin\Clusters\LookupTables\Resources\RoverLevels\RoverLevelResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\RoverMeetingTypes\RoverMeetingTypeResource;
-use App\Filament\Admin\Clusters\LookupTables\Resources\ScoutLevels\ScoutLevelResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\StarAwardTypes\StarAwardTypeResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\SuspendReasons\SuspendReasonResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\TerminateReasons\TerminateReasonResource;
@@ -40,7 +35,6 @@ use App\Filament\Admin\Clusters\LookupTables\Resources\WarrantTypes\Pages\Manage
 use App\Filament\Admin\Clusters\LookupTables\Resources\WarrantTypes\WarrantTypeResource;
 use App\Models\AmsDisciplinaryHeading;
 use App\Models\AmsWarrantType;
-use App\Models\SystemAdvancementCubsLevel;
 use App\Models\SystemCommitteeType;
 use App\Models\SystemUser;
 use App\Settings\GeneralSettings;
@@ -94,10 +88,6 @@ class SettingsReferenceDataTest extends SdCoreTestCase
             'terminate reasons' => [TerminateReasonResource::class],
             'past service types' => [PastServiceTypeResource::class],
             'training past types' => [TrainingPastTypeResource::class],
-            'cub levels' => [CubLevelResource::class],
-            'meerkat levels' => [MeerkatLevelResource::class],
-            'scout levels' => [ScoutLevelResource::class],
-            'rover levels' => [RoverLevelResource::class],
         ];
     }
 
@@ -353,69 +343,6 @@ class SettingsReferenceDataTest extends SdCoreTestCase
             ->assertHasNoFormErrors();
 
         $this->assertDatabaseMissing('ams_disciplinary_headings', ['id' => $record->id]);
-    }
-
-    // --- CubLevel representative CRUD tests ---
-
-    #[Test]
-    public function cub_level_table_renders_records(): void
-    {
-        $records = SystemAdvancementCubsLevel::factory()->count(3)->create();
-
-        Livewire::actingAs($this->superAdmin)
-            ->test(ManageCubLevels::class)
-            ->assertOk()
-            ->assertCanSeeTableRecords($records);
-    }
-
-    #[Test]
-    public function cub_level_table_can_search(): void
-    {
-        $alpha = SystemAdvancementCubsLevel::factory()->create(['name' => 'Alpha Cub Level']);
-        $beta = SystemAdvancementCubsLevel::factory()->create(['name' => 'Beta Cub Level']);
-
-        Livewire::actingAs($this->superAdmin)
-            ->test(ManageCubLevels::class)
-            ->searchTable('Alpha')
-            ->assertCanSeeTableRecords([$alpha])
-            ->assertCanNotSeeTableRecords([$beta]);
-    }
-
-    #[Test]
-    public function cub_level_can_be_created(): void
-    {
-        Livewire::actingAs($this->superAdmin)
-            ->test(ManageCubLevels::class)
-            ->callAction('create', data: ['name' => 'New Cub Level', 'description' => 'A cub level description', 'active' => true])
-            ->assertHasNoFormErrors();
-
-        $this->assertDatabaseHas('system_advancement_cubs_levels', ['name' => 'New Cub Level']);
-    }
-
-    #[Test]
-    public function cub_level_can_be_edited(): void
-    {
-        $record = SystemAdvancementCubsLevel::factory()->create(['name' => 'Original Cub Level']);
-
-        Livewire::actingAs($this->superAdmin)
-            ->test(ManageCubLevels::class)
-            ->callAction(TestAction::make('edit')->table($record), data: ['name' => 'Updated Cub Level', 'description' => 'A description'])
-            ->assertHasNoFormErrors();
-
-        $this->assertDatabaseHas('system_advancement_cubs_levels', ['id' => $record->id, 'name' => 'Updated Cub Level']);
-    }
-
-    #[Test]
-    public function cub_level_can_be_deleted(): void
-    {
-        $record = SystemAdvancementCubsLevel::factory()->create();
-
-        Livewire::actingAs($this->superAdmin)
-            ->test(ManageCubLevels::class)
-            ->callAction(TestAction::make('delete')->table($record))
-            ->assertHasNoFormErrors();
-
-        $this->assertDatabaseMissing('system_advancement_cubs_levels', ['id' => $record->id]);
     }
 
     // --- Empty optional fields regression tests ---

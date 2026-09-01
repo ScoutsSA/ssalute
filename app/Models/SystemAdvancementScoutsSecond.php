@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class SystemAdvancementScoutsSecond extends BaseModel
 {
@@ -39,5 +40,15 @@ class SystemAdvancementScoutsSecond extends BaseModel
     public function scoutProgramType(): BelongsTo
     {
         return $this->belongsTo(SystemProgramTypesScout::class, 'scoutProgramTypeID');
+    }
+
+    public function entshaTheme(): BelongsTo
+    {
+        return $this->belongsTo(SystemAdvancementScoutsSecondEntshaTheme::class, 'theme');
+    }
+
+    public function entshaBadges(): HasMany
+    {
+        return $this->hasMany(SystemAdvancementScoutsSecondEntshaBadge::class, 'taskID');
     }
 }

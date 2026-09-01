@@ -42,6 +42,8 @@ The four sections each have their own advancement structure:
 
 - Administrators can manage the level definitions for each section, including level name, description, linked tasks, and ordering.
 - Administrators can manage the task and challenge definitions associated with each level within each section.
+- Delivered (ticket 014) inside the Branch Management cluster, beside each branch's Badges area. Each branch has an Advancement resource on its levels table with drag reordering, create and edit forms, a view page, and activate/deactivate soft toggles. The tier structure differs per branch and the UI follows the data: Meerkats manage tasks directly under a level (`system_advancement_meerkats_second`); Cubs manage areas (`system_advancement_cubs_second`, which has no active flag, so areas cannot be deactivated) and tasks (`system_advancement_cubs_third`, linked to an area and optionally a challenge name from `system_advancement_cubs_challenges`); Scouts manage tasks (`system_advancement_scouts_second`) with an optional Entsha theme; Rovers manage tasks (`system_advancement_rovers_second`).
+- Not managed by the catalogue UI: the empty and unused `system_advancement_meerkats_third` and `system_advancement_meerkats_challenges` tables, the Scout Entsha badge links (`system_advancement_scouts_second_entsha_badges`, the two way auto sign-off between a Scout advancement task and a badge), the Entsha theme lookup itself, and the Rover and Meerkat challenge lookups. The previous bare Advancement Levels editors in the LookupTables cluster were removed in favour of this single edit path.
 
 ### Badge Definitions
 
