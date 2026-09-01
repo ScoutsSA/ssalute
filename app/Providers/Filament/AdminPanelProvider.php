@@ -2,6 +2,8 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Admin\Pages\Dashboard;
+use App\Filament\Member\Pages\Dashboard as MemberDashboard;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
@@ -10,7 +12,6 @@ use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
-use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Enums\Width;
@@ -74,7 +75,7 @@ class AdminPanelProvider extends PanelProvider
                         $user = auth()->user();
                         $tenant = $user?->getDefaultTenant(Filament::getPanel('member'));
 
-                        return $tenant ? Dashboard::getUrl(panel: 'member', tenant: $tenant) : '/member';
+                        return $tenant ? MemberDashboard::getUrl(panel: 'member', tenant: $tenant) : '/member';
                     }),
             ])
             ->navigationItems([

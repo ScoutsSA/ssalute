@@ -2,6 +2,7 @@
 
 namespace App\Filament\Shared\Navigation;
 
+use App\Filament\Admin\Pages\Dashboard;
 use App\Filament\Member\Pages\ChangePassword;
 use App\Filament\Member\Resources\Profile\ProfileResource;
 use App\Mail\ReportSystemIssueEmail;
@@ -11,7 +12,6 @@ use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
-use Filament\Pages\Dashboard;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Mail;
 

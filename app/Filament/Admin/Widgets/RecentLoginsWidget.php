@@ -21,7 +21,7 @@ class RecentLoginsWidget extends TableWidget
 {
     protected static ?int $sort = 2;
 
-    protected int|string|array $columnSpan = 1;
+    protected int|string|array $columnSpan = ['lg' => 3];
 
     public function table(Table $table): Table
     {

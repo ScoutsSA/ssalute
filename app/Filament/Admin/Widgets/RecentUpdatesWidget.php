@@ -20,7 +20,7 @@ class RecentUpdatesWidget extends TableWidget
 
     protected static ?int $sort = 3;
 
-    protected int|string|array $columnSpan = 1;
+    protected int|string|array $columnSpan = ['lg' => 3];
 
     public function table(Table $table): Table
     {

@@ -5,6 +5,7 @@ namespace App\Filament\Admin\Widgets;
 use App\Filament\Admin\Clusters\DataFixes\DataFixesCluster;
 use App\Filament\Admin\Clusters\DataFixes\Pages\FindingsPage;
 use App\Services\SystemFixes\ReportsFindings;
+use BackedEnum;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\Cache;
 
@@ -19,15 +20,14 @@ use Illuminate\Support\Facades\Cache;
  */
 class AttentionWidget extends Widget
 {
+    protected static ?int $sort = 1;
     public const string CACHE_KEY = 'backoffice.dashboard.attention';
 
     public const int CACHE_SECONDS = 600;
 
-    protected static ?int $sort = 1;
-
     protected string $view = 'filament.admin.widgets.attention';
 
-    protected int|string|array $columnSpan = 1;
+    protected int|string|array $columnSpan = ['lg' => 2];
 
     /** @return array<int, array{label: string, description: string, icon: string, count: int, url: string}> */
     public function queues(): array
@@ -47,7 +47,7 @@ class AttentionWidget extends Widget
                 $rows[] = [
                     'label' => $pageClass::getNavigationLabel(),
                     'description' => $fix->label(),
-                    'icon' => $icon instanceof \BackedEnum ? "heroicon-o-{$icon->value}" : (string) $icon,
+                    'icon' => $icon instanceof BackedEnum ? "heroicon-o-{$icon->value}" : (string) $icon,
                     'count' => $fix->findings()->count(),
                     'url' => $pageClass::getUrl(),
                 ];

@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\Filament;
 
+use App\Filament\Admin\Clusters\AdminReports\Pages\MostActiveUsers;
+use App\Filament\Admin\Clusters\AMS\Resources\Warrants\WarrantResource;
 use App\Filament\Admin\Widgets\AttentionWidget;
 use App\Filament\Admin\Widgets\PlatformKpisWidget;
 use App\Filament\Admin\Widgets\RecentLoginsWidget;
@@ -115,7 +117,9 @@ class BackofficeDashboardTest extends SdCoreTestCase
             ->assertOk()
             ->assertSee('Invested Youth')
             ->assertSee('Active Warrants')
-            ->assertSee('Recently Active');
+            ->assertSee('Recently Active')
+            ->assertSeeHtml(WarrantResource::getUrl(panel: 'admin'))
+            ->assertSeeHtml(MostActiveUsers::getUrl(panel: 'admin'));
     }
 
     #[Test]
