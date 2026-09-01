@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class SystemAdvancementRoversLevel extends BaseModel
 {
@@ -25,4 +26,8 @@ class SystemAdvancementRoversLevel extends BaseModel
         'active' => 'int',
     ];
 
+    public function tasks(): HasMany
+    {
+        return $this->hasMany(SystemAdvancementRoversSecond::class, 'advancmentID')->orderBy('position');
+    }
 }

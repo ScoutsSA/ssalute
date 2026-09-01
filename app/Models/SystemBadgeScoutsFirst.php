@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class SystemBadgeScoutsFirst extends BaseModel
 {
@@ -26,4 +27,13 @@ class SystemBadgeScoutsFirst extends BaseModel
         'modifiedby' => 'int',
     ];
 
+    public function tasks(): HasMany
+    {
+        return $this->hasMany(SystemBadgeScoutsSecond::class, 'firstID')->orderBy('position');
+    }
+
+    public function toBadgeLinks(): HasMany
+    {
+        return $this->hasMany(SystemBadgeScoutsToBadge::class, 'badgeID');
+    }
 }

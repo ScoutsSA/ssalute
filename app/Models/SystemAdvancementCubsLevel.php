@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BaseModel;
 use App\Providers\AppServiceProvider;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class SystemAdvancementCubsLevel extends BaseModel
 {
@@ -25,4 +26,13 @@ class SystemAdvancementCubsLevel extends BaseModel
         'active' => 'int',
     ];
 
+    public function areas(): HasMany
+    {
+        return $this->hasMany(SystemAdvancementCubsSecond::class, 'advancmentID')->orderBy('position');
+    }
+
+    public function tasks(): HasMany
+    {
+        return $this->hasMany(SystemAdvancementCubsThird::class, 'advancmentID')->orderBy('position');
+    }
 }
