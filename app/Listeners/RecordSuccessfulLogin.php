@@ -13,7 +13,8 @@ use Throwable;
  * Records every successful Ssalute login into the legacy login history tables,
  * mirroring what the legacy logon handling writes for Scouts Digital sessions:
  * a row in admin_good_logons (the BackOffice Logins report) and a
- * '/logon-action' row in system_user_logging (the Most Active Users report).
+ * '/logon-action' row in system_user_logging (the Most Active Users report),
+ * and system_users.lastLoginDate (the dashboard's recently active count).
  * Without this the reports would only ever show legacy activity.
  */
 class RecordSuccessfulLogin
@@ -79,6 +80,11 @@ class RecordSuccessfulLogin
             'IP' => (string) request()->ip(),
             'userAgent' => $userAgent,
         ]);
+
+        $user->newQueryWithoutScopes()
+            ->whereKey($user->id)
+            ->toBase()
+            ->update(['lastLoginDate' => now()]);
     }
 
     private function isMobileUserAgent(string $userAgent): bool

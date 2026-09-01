@@ -22,7 +22,6 @@ use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use ReflectionClass;
 use Tests\Support\SdCoreTestCase;
 
 class DataFixesClusterTest extends SdCoreTestCase
@@ -73,10 +72,7 @@ class DataFixesClusterTest extends SdCoreTestCase
     {
         // The alert links to findingsUrl(), so a fix reporting findings with no page would send
         // admins to a dead link. This pins the two lists together.
-        $fixes = (new ReflectionClass(RunSystemFixes::class))
-            ->getProperty('fixes');
-        $fixes->setAccessible(true);
-        $registered = $fixes->getValue(app(RunSystemFixes::class));
+        $registered = RunSystemFixes::fixes();
 
         $pagesByFix = collect(self::pages())
             ->map(fn (array $row): string => $row[0])
