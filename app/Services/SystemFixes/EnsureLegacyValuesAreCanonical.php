@@ -11,7 +11,6 @@ use App\Enums\UserSex;
 use App\Enums\UserTitle;
 use App\Filament\Admin\Clusters\Area\Resources\Groups\GroupResource;
 use App\Filament\Admin\Clusters\DataFixes\Pages\LegacyValues;
-use App\Filament\Admin\Clusters\Forms\Resources\ApplicationAdultMembershipRequests\ApplicationAdultMembershipRequestResource;
 use App\Filament\Admin\Clusters\GroupOperations\Resources\Events\EventResource;
 use App\Filament\Admin\Resources\Users\UserResource;
 use App\Providers\AppServiceProvider;
@@ -74,7 +73,6 @@ class EnsureLegacyValuesAreCanonical implements ReportsFindings, SystemFix
         'system_users' => [UserResource::class, ['edit', 'view']],
         'groups' => [GroupResource::class, ['edit', 'view']],
         'group_events' => [EventResource::class, ['view']],
-        'forms_aam_requests' => [ApplicationAdultMembershipRequestResource::class, ['edit']],
     ];
 
     /**
