@@ -59,11 +59,14 @@ class AdminPanelProvider extends PanelProvider
                     ->label('Our Programme')
                     ->icon(Heroicon::AcademicCap),
                 NavigationGroup::make()
-                    ->label('Group Breakdown')
-                    ->icon(Heroicon::GlobeAlt),
-                NavigationGroup::make()
                     ->label('System')
                     ->icon(Heroicon::Lifebuoy),
+                NavigationGroup::make()
+                    ->label('Reports')
+                    ->icon(Heroicon::ChartBar),
+                NavigationGroup::make()
+                    ->label('Internals')
+                    ->icon(Heroicon::CommandLine),
             ])
             ->renderHook(
                 PanelsRenderHook::PAGE_START,
@@ -85,14 +88,14 @@ class AdminPanelProvider extends PanelProvider
             ->navigationItems([
                 NavigationItem::make('Horizon')
                     ->url('/horizon', shouldOpenInNewTab: true)
-                    ->sort(3)
+                    ->sort(2)
                     ->icon(Heroicon::QueueList)
-                    ->group('System'),
+                    ->group('Internals'),
                 NavigationItem::make('Pulse')
                     ->url('/pulse', shouldOpenInNewTab: true)
-                    ->sort(4)
+                    ->sort(3)
                     ->icon(Heroicon::Heart)
-                    ->group('System'),
+                    ->group('Internals'),
             ])
             ->middleware([
                 EncryptCookies::class,

@@ -11,9 +11,9 @@ class AreaCluster extends Cluster
 {
     protected static string|BackedEnum|null $navigationIcon = Heroicon::MapPin;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Group Breakdown';
+    protected static string|UnitEnum|null $navigationGroup = 'System';
 
     protected static ?int $navigationSort = 1;
 
-    protected static ?string $navigationLabel = 'Overview';
+    protected static ?string $navigationLabel = 'Areas';
 }

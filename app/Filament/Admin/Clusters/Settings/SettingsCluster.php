@@ -11,7 +11,7 @@ class SettingsCluster extends Cluster
 {
     protected static string|null|BackedEnum $navigationIcon = Heroicon::Cog6Tooth;
 
-    protected static string|UnitEnum|null $navigationGroup = 'System';
+    protected static string|UnitEnum|null $navigationGroup = 'Internals';
     protected static ?int $navigationSort = 1;
 
 }
