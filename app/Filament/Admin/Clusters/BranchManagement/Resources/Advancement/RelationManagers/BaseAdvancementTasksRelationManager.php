@@ -54,7 +54,7 @@ abstract class BaseAdvancementTasksRelationManager extends RelationManager
                 ...$this->taskTableColumns(),
                 ...(static::$hasActiveFlag ? [IconColumn::make('active')->boolean()->sortable()->toggleable()] : []),
             ])
-            ->filters(static::$hasActiveFlag ? [TernaryFilter::make('active')] : []);
+            ->filters(static::$hasActiveFlag ? [TernaryFilter::make('active')->default(true)] : []);
     }
 
     /** @return array<int, \Filament\Schemas\Components\Component> */

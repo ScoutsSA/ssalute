@@ -174,6 +174,22 @@ class BranchManagementClusterTest extends SdCoreTestCase
     }
 
     #[Test]
+    public function task_list_hides_inactive_tasks_by_default(): void
+    {
+        $badge = SystemBadgeMeerkatsFirst::factory()->create();
+        $active = SystemBadgeMeerkatsSecond::factory()->for($badge, 'badgeFirst')->create();
+        $inactive = SystemBadgeMeerkatsSecond::factory()->for($badge, 'badgeFirst')->create(['active' => 0]);
+
+        Livewire::actingAs($this->superAdmin)
+            ->test(BadgeTasksRelationManager::class, [
+                'ownerRecord' => $badge,
+                'pageClass' => ViewMeerkatBadge::class,
+            ])
+            ->assertCanSeeTableRecords([$active])
+            ->assertCanNotSeeTableRecords([$inactive]);
+    }
+
+    #[Test]
     public function view_page_renders_the_tasks_relation_manager(): void
     {
         $badge = SystemBadgeMeerkatsFirst::factory()->create();

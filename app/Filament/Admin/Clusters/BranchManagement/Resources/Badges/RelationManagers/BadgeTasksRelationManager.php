@@ -81,7 +81,7 @@ class BadgeTasksRelationManager extends RelationManager
                 IconColumn::make('active')->boolean()->sortable()->toggleable(),
             ])
             ->filters([
-                TernaryFilter::make('active'),
+                TernaryFilter::make('active')->default(true),
             ]);
     }
 }

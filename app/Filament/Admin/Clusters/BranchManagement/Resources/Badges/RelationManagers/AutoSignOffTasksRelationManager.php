@@ -12,6 +12,7 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
@@ -85,6 +86,9 @@ class AutoSignOffTasksRelationManager extends RelationManager
                         : '-')
                     ->wrap(),
                 IconColumn::make('active')->boolean()->sortable()->toggleable(),
+            ])
+            ->filters([
+                TernaryFilter::make('active')->default(true),
             ]);
     }
 }

@@ -44,7 +44,7 @@ class AdvancementLevelsTable
                 TextColumn::make('countryID')->label('Country ID')->sortable()->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                TernaryFilter::make('active'),
+                TernaryFilter::make('active')->default(true),
             ])
             ->recordActions([
                 ViewAction::make(),

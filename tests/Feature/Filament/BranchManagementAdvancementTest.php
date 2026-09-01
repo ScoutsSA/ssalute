@@ -173,12 +173,41 @@ class BranchManagementAdvancementTest extends SdCoreTestCase
 
         Livewire::actingAs($this->superAdmin)
             ->test(ListRoverAdvancementLevels::class)
+            ->filterTable('active', false)
             ->callAction(TestAction::make('activate')->table($level->refresh()));
 
         $this->assertDatabaseHas(SystemAdvancementRoversLevel::class, [
             'id' => $level->id,
             'active' => 1,
         ]);
+    }
+
+    #[Test]
+    public function level_list_hides_inactive_levels_by_default(): void
+    {
+        $active = SystemAdvancementMeerkatsLevel::factory()->create();
+        $inactive = SystemAdvancementMeerkatsLevel::factory()->create(['active' => 0]);
+
+        Livewire::actingAs($this->superAdmin)
+            ->test(ListMeerkatAdvancementLevels::class)
+            ->assertCanSeeTableRecords([$active])
+            ->assertCanNotSeeTableRecords([$inactive]);
+    }
+
+    #[Test]
+    public function task_lists_hide_inactive_tasks_by_default(): void
+    {
+        $level = SystemAdvancementMeerkatsLevel::factory()->create();
+        $active = SystemAdvancementMeerkatsSecond::factory()->for($level, 'advancement')->create();
+        $inactive = SystemAdvancementMeerkatsSecond::factory()->for($level, 'advancement')->create(['active' => 0]);
+
+        Livewire::actingAs($this->superAdmin)
+            ->test(MeerkatTasksRelationManager::class, [
+                'ownerRecord' => $level,
+                'pageClass' => ViewMeerkatAdvancementLevel::class,
+            ])
+            ->assertCanSeeTableRecords([$active])
+            ->assertCanNotSeeTableRecords([$inactive]);
     }
 
     #[Test]
