@@ -28,7 +28,7 @@ class DisciplinaryHeadingResource extends Resource
 
     protected static ?int $navigationSort = 81;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Charges & Disciplinary';
+    protected static string|UnitEnum|null $navigationGroup = 'Licences & Disciplinary';
 
     public static function form(Schema $schema): Schema
     {

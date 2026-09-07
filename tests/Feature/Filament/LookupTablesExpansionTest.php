@@ -16,6 +16,7 @@ use App\Filament\Admin\Clusters\LookupTables\Resources\Countries\CountryResource
 use App\Filament\Admin\Clusters\LookupTables\Resources\Countries\Pages\ManageCountries;
 use App\Filament\Admin\Clusters\LookupTables\Resources\CubProgramTypes\CubProgramTypeResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\CubProgramTypes\Pages\ManageCubProgramTypes;
+use App\Filament\Admin\Clusters\LookupTables\Resources\DisciplinaryHeadings\DisciplinaryHeadingResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\DisciplinaryOffences\DisciplinaryOffenceResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\DisciplinaryOffences\Pages\ManageDisciplinaryOffences;
 use App\Filament\Admin\Clusters\LookupTables\Resources\FaqCategories\FaqCategoryResource;
@@ -28,6 +29,7 @@ use App\Filament\Admin\Clusters\LookupTables\Resources\GroupTypes\GroupTypeResou
 use App\Filament\Admin\Clusters\LookupTables\Resources\GroupTypes\Pages\ManageGroupTypes;
 use App\Filament\Admin\Clusters\LookupTables\Resources\InfoSharingTypes\InfoSharingTypeResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\InfoSharingTypes\Pages\ManageInfoSharingTypes;
+use App\Filament\Admin\Clusters\LookupTables\Resources\LicenceTypes\LicenceTypeResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\MeerkatProgramTypes\MeerkatProgramTypeResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\MeerkatProgramTypes\Pages\ManageMeerkatProgramTypes;
 use App\Filament\Admin\Clusters\LookupTables\Resources\ProjectAudiences\Pages\ManageProjectAudiences;
@@ -399,6 +401,14 @@ class LookupTablesExpansionTest extends SdCoreTestCase
 
         $this->get($url)
             ->assertRedirect();
+    }
+
+    #[Test]
+    public function licence_and_disciplinary_lookups_share_one_navigation_group(): void
+    {
+        $this->assertSame('Licences & Disciplinary', LicenceTypeResource::getNavigationGroup());
+        $this->assertSame('Licences & Disciplinary', DisciplinaryHeadingResource::getNavigationGroup());
+        $this->assertSame('Licences & Disciplinary', DisciplinaryOffenceResource::getNavigationGroup());
     }
 
     #[Test]
