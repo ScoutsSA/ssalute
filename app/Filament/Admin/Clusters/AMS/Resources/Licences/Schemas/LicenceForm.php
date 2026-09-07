@@ -12,6 +12,8 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 
 class LicenceForm
@@ -30,14 +32,19 @@ class LicenceForm
                             ->required(),
                         Select::make('chargeTypeID')
                             ->label('Licence Type')
-                            ->options(fn () => AmsLicenceType::query()->orderBy('name')->pluck('name', 'id'))
-                            ->searchable(),
+                            ->options(fn () => AmsLicenceType::query()->orderBy('name')->get()->mapWithKeys(fn (AmsLicenceType $type) => [$type->id => "{$type->name} (#{$type->id})"]))
+                            ->searchable()
+                            ->live()
+                            ->afterStateUpdated(fn (Get $get, Set $set) => self::fillExpiryDate($get, $set)),
                         TextInput::make('chargeNr')
                             ->label('Licence Number'),
                         DatePicker::make('issueDate')
-                            ->label('Issue Date'),
+                            ->label('Issue Date')
+                            ->live()
+                            ->afterStateUpdated(fn (Get $get, Set $set) => self::fillExpiryDate($get, $set)),
                         DatePicker::make('expireDate')
-                            ->label('Expiry Date'),
+                            ->label('Expiry Date')
+                            ->helperText('Filled in from the licence type validity when you pick a type and issue date. You can override it.'),
                         Toggle::make('active')
                             ->label('Active')
                             ->default(true)
@@ -60,5 +67,17 @@ class LicenceForm
                             ->searchable(),
                     ]),
             ]);
+    }
+
+    private static function fillExpiryDate(Get $get, Set $set): void
+    {
+        $issueDate = $get('issueDate');
+        $licenceType = AmsLicenceType::find($get('chargeTypeID'));
+
+        if (blank($issueDate) || $licenceType === null) {
+            return;
+        }
+
+        $set('expireDate', $licenceType->expiryDateFor($issueDate)->toDateString());
     }
 }

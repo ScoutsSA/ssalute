@@ -4,6 +4,7 @@ namespace Tests\Feature\Filament;
 
 use App\Filament\Admin\Clusters\AMS\Resources\Awards\Pages\ViewAward;
 use App\Filament\Admin\Clusters\AMS\Resources\Disciplinary\Pages\ViewDisciplinaryRecord;
+use App\Filament\Admin\Clusters\AMS\Resources\Licences\Pages\ListLicences;
 use App\Filament\Admin\Clusters\AMS\Resources\Licences\Pages\ViewLicence;
 use App\Filament\Admin\Clusters\AMS\Resources\PastService\Pages\ViewPastServiceRecord;
 use App\Filament\Admin\Clusters\AMS\Resources\PoliceClearances\Pages\ViewPoliceClearance;
@@ -154,6 +155,46 @@ class AmsClusterCrudTest extends SdCoreTestCase
             'id' => $record->id,
             'chargeNr' => 'C-UPDATED',
         ]);
+    }
+
+    #[Test]
+    public function licence_expiry_is_filled_from_the_type_validity_when_creating(): void
+    {
+        $type = AmsLicenceType::factory()->create(['expiryYears' => 3]);
+
+        Livewire::actingAs($this->superAdmin)
+            ->test(ListLicences::class)
+            ->mountAction('create')
+            ->fillForm(['chargeTypeID' => $type->id, 'issueDate' => '2025-01-15'])
+            ->assertSchemaStateSet(['expireDate' => '2028-01-15']);
+    }
+
+    #[Test]
+    public function licence_expiry_is_refilled_when_the_type_changes(): void
+    {
+        $threeYearType = AmsLicenceType::factory()->create(['expiryYears' => 3]);
+        $fiveYearType = AmsLicenceType::factory()->create(['expiryYears' => 5]);
+        $record = $this->createLicence(['chargeTypeID' => $threeYearType->id, 'issueDate' => '2024-02-29']);
+
+        Livewire::actingAs($this->superAdmin)
+            ->test(ViewLicence::class, ['record' => $record->id])
+            ->mountAction(EditAction::class)
+            ->fillForm(['chargeTypeID' => $fiveYearType->id])
+            ->assertSchemaStateSet(['expireDate' => '2029-03-01']);
+    }
+
+    #[Test]
+    public function licence_expiry_stays_editable_after_being_filled(): void
+    {
+        $type = AmsLicenceType::factory()->create(['expiryYears' => 3]);
+        $record = $this->createLicence(['chargeTypeID' => $type->id]);
+
+        Livewire::actingAs($this->superAdmin)
+            ->test(ViewLicence::class, ['record' => $record->id])
+            ->callAction(EditAction::class, data: ['issueDate' => '2025-01-15', 'expireDate' => '2026-06-30'])
+            ->assertHasNoFormErrors();
+
+        $this->assertDatabaseHas(AmsLicenceInfo::class, ['id' => $record->id, 'expireDate' => '2026-06-30']);
     }
 
     // --- Disciplinary ---

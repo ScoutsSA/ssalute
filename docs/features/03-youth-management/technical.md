@@ -35,7 +35,7 @@ Youth members are stored as `SystemUser` records, distinguished from adults by t
 | `GroupRoverCrew` | `group_rover_crews` | Rover Crew section record within a group |
 | `GroupsEntshaMove` | `groups_entsha_moves` | Youth section transitions (Entsha moves) |
 | `GroupUserPictureChange` | `group_user_picture_changes` | Profile picture change records |
-| `GroupYouthCharge` | `group_youth_charges` | Youth charge/complaint records |
+| `GroupYouthCharge` | `group_youth_charges` | Dormant legacy table (a single 2018 row). Youth activity licences are stored in `ams_charge_info` alongside adult ones, see `AmsLicenceInfo` |
 | `SystemParentType` | `system_parent_types` | Parent/guardian relationship type definitions |
 
 ---

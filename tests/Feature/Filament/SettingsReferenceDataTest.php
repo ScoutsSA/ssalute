@@ -18,6 +18,7 @@ use App\Filament\Admin\Clusters\LookupTables\Resources\GroupManagementLevels\Gro
 use App\Filament\Admin\Clusters\LookupTables\Resources\HighestEducations\HighestEducationResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\Languages\LanguageResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\LicenceTypes\LicenceTypeResource;
+use App\Filament\Admin\Clusters\LookupTables\Resources\LicenceTypes\Pages\ManageLicenceTypes;
 use App\Filament\Admin\Clusters\LookupTables\Resources\MaritalStatuses\MaritalStatusResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\ParentTypes\ParentTypeResource;
 use App\Filament\Admin\Clusters\LookupTables\Resources\PastServiceTypes\PastServiceTypeResource;
@@ -34,6 +35,7 @@ use App\Filament\Admin\Clusters\LookupTables\Resources\WarrantCancellationTypes\
 use App\Filament\Admin\Clusters\LookupTables\Resources\WarrantTypes\Pages\ManageWarrantTypes;
 use App\Filament\Admin\Clusters\LookupTables\Resources\WarrantTypes\WarrantTypeResource;
 use App\Models\AmsDisciplinaryHeading;
+use App\Models\AmsLicenceType;
 use App\Models\AmsWarrantType;
 use App\Models\SystemCommitteeType;
 use App\Models\SystemUser;
@@ -121,6 +123,54 @@ class SettingsReferenceDataTest extends SdCoreTestCase
 
         $this->get($url)
             ->assertRedirect();
+    }
+
+    // --- LicenceType validity (expiryYears) ---
+
+    #[Test]
+    public function licence_type_can_be_created_with_a_validity_in_years(): void
+    {
+        Livewire::actingAs($this->superAdmin)
+            ->test(ManageLicenceTypes::class)
+            ->callAction('create', data: ['name' => 'First Aid - Level 1', 'expiryYears' => 3, 'active' => true])
+            ->assertHasNoFormErrors();
+
+        $this->assertDatabaseHas('ams_charge_types', ['name' => 'First Aid - Level 1', 'expiryYears' => 3]);
+    }
+
+    #[Test]
+    public function licence_type_validity_defaults_to_five_years(): void
+    {
+        Livewire::actingAs($this->superAdmin)
+            ->test(ManageLicenceTypes::class)
+            ->mountAction('create')
+            ->assertSchemaStateSet(['expiryYears' => 5]);
+    }
+
+    #[Test]
+    public function licence_type_validity_can_be_edited(): void
+    {
+        $record = AmsLicenceType::factory()->create(['expiryYears' => 5]);
+
+        Livewire::actingAs($this->superAdmin)
+            ->test(ManageLicenceTypes::class)
+            ->callAction(TestAction::make('edit')->table($record), data: ['name' => $record->name, 'expiryYears' => 3])
+            ->assertHasNoFormErrors();
+
+        $this->assertDatabaseHas('ams_charge_types', ['id' => $record->id, 'expiryYears' => 3]);
+    }
+
+    #[Test]
+    public function licence_type_validity_must_be_at_least_one_year(): void
+    {
+        $record = AmsLicenceType::factory()->create();
+
+        Livewire::actingAs($this->superAdmin)
+            ->test(ManageLicenceTypes::class)
+            ->callAction(TestAction::make('edit')->table($record), data: ['name' => $record->name, 'expiryYears' => 0])
+            ->assertHasFormErrors(['expiryYears']);
+
+        $this->assertDatabaseHas('ams_charge_types', ['id' => $record->id, 'expiryYears' => 5]);
     }
 
     // --- CommitteeType representative CRUD tests ---

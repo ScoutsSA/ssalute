@@ -76,6 +76,14 @@ Key fields: `userID`, `documentTypeID`, `description`, `PDFLocation`, `assocToRe
 ### `AmsDocumentType` — `ams_document_types`
 Lookup for document categories (e.g., "ID Copy", "Medical Certificate", "Proof of Address").
 
+### `AmsLicenceInfo` (`ams_charge_info`)
+An activity licence (called a charge in the legacy schema) held by a member: first aid, water, air, camping and honourable licences. Adult and youth licences share this table.
+
+Key fields: `userID`, `chargeTypeID`, `chargeNr`, `issueDate`, `expireDate`, `PDFLocation`, `assocToRegion`, `assocToDistrict`, `assocToGroup`, `active`.
+
+### `AmsLicenceType` (`ams_charge_types`)
+Lookup for licence types, managed in BackOffice > LookupTables > Licence Types. Carries `expiryYears`, the validity of the type in years (default 5). A licence expires exactly `issueDate + expiryYears`, with no day shaved off and no month end rounding; `AmsLicenceType::expiryDateFor()` is the single implementation and the AMS licence form fills the expiry date from it. Scouts Digital reads the same column when it captures a licence, so a change here applies to both systems.
+
 ### `SystemUsersEmergencyContact` — `system_users_emergency_contacts`
 Up to two emergency contacts per user.
 

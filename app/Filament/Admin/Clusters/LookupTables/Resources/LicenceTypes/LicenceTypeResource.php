@@ -43,6 +43,14 @@ class LicenceTypeResource extends Resource
                 TextInput::make('shortName')
                     ->label('Short Name')
                     ->default(''),
+                TextInput::make('expiryYears')
+                    ->label('Validity (years)')
+                    ->integer()
+                    ->minValue(1)
+                    ->maxValue(50)
+                    ->required()
+                    ->default(5)
+                    ->helperText('Licences of this type expire this many years after their issue date. Used by both Ssalute and Scouts Digital when a licence is captured.'),
                 Textarea::make('description')
                     ->label('Description')
                     ->default('')
@@ -65,6 +73,7 @@ class LicenceTypeResource extends Resource
                 TextColumn::make('id')->label('ID')->sortable()->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('name')->label('Name')->searchable()->sortable(),
                 TextColumn::make('shortName')->label('Short Name')->searchable(),
+                TextColumn::make('expiryYears')->label('Validity (years)')->sortable()->toggleable(),
                 IconColumn::make('active')->label('Active')->boolean(),
                 TextColumn::make('countryID')->label('Country ID')->sortable()->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('position')->sortable()->toggleable(isToggledHiddenByDefault: true),

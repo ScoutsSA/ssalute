@@ -17,6 +17,7 @@ class AmsLicenceTypeFactory extends Factory
             'name' => fake()->unique()->words(2, true),
             'shortName' => fake()->lexify('???'),
             'description' => fake()->sentence(),
+            'expiryYears' => 5,
             'active' => 1,
             'created' => now(),
             'createdby' => 1,
