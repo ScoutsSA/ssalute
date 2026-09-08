@@ -42,6 +42,8 @@ The pivot between a user and a role type, scoped to a geographic level. This is 
 
 Key fields: `userID`, `roleID`, `regionID`, `districtID`, `groupID`, `defaultRole`, `active`, `retired`, `resigned`, `suspended`, `creationNotes`.
 
+Scope convention: the legacy table declares `regionID`, `districtID`, `groupID` and the `action*` twins as `NOT NULL DEFAULT 0`, and "no scope at this level" is stored as `0`, never null. The model's `saving` hook coerces a null in any of those columns to the legacy default (country defaults to `SystemUsersOtherRole::DEFAULT_COUNTRY_ID`) and, on create, mirrors each scope column into its `action*` twin the way Scouts Digital does, because the warrant lookup reads the `action*` side. Forms that offer a "None" choice must hydrate `0` as null so the placeholder shows (see `UserRoleAttachmentsRelationManager`).
+
 Relationships: `user()`, `role()`, `region()`, `district()`, `group()`, `superDistrict()`.
 Computed attributes: `roleTypeName`, `roleScopedModel`, `roleScopedFullLabel`, `getFilamentName()`.
 

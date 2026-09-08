@@ -33,6 +33,19 @@ class UserRoleAttachmentsRelationManager extends RelationManager
 {
     protected static string $relationship = 'roleAttachments';
 
+    /**
+     * The legacy schema stores "no scope at this level" as 0, which is not an option in the selects,
+     * so it hydrates as the "None" placeholder instead of an invalid value.
+     */
+    private static function scopeIdOrNull(mixed $state): ?int
+    {
+        if ($state === null || (int) $state === 0) {
+            return null;
+        }
+
+        return (int) $state;
+    }
+
     public function form(Schema $schema): Schema
     {
         return $schema
@@ -49,16 +62,19 @@ class UserRoleAttachmentsRelationManager extends RelationManager
                             ->columnSpanFull(),
                         Select::make('regionID')
                             ->label('Region')
+                            ->formatStateUsing(fn ($state): ?int => self::scopeIdOrNull($state))
                             ->options(fn () => Region::orderBy('name')->pluck('name', 'id'))
                             ->searchable()
                             ->placeholder('None'),
                         Select::make('districtID')
                             ->label('District')
+                            ->formatStateUsing(fn ($state): ?int => self::scopeIdOrNull($state))
                             ->options(fn () => District::orderBy('name')->pluck('name', 'id'))
                             ->searchable()
                             ->placeholder('None'),
                         Select::make('groupID')
                             ->label('Group')
+                            ->formatStateUsing(fn ($state): ?int => self::scopeIdOrNull($state))
                             ->options(fn () => Group::where('active', 1)->orderBy('name')->pluck('name', 'id'))
                             ->searchable()
                             ->placeholder('None'),

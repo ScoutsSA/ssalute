@@ -25,6 +25,47 @@ class SystemUsersOtherRole extends Pivot implements Auditable, HasAvatar, HasCur
     const ?string CREATED_AT = 'created';
     const ?string UPDATED_AT = 'modified';
 
+    public const int DEFAULT_COUNTRY_ID = 196;
+
+    /**
+     * Legacy `NOT NULL` columns and the value Scouts Digital writes when the level is "not set".
+     * The legacy schema has no nulls in these columns: an unscoped level is 0, and the country
+     * defaults to South Africa.
+     *
+     * @var array<string, int>
+     */
+    private const LEGACY_NOT_NULL_DEFAULTS = [
+        'countryID' => self::DEFAULT_COUNTRY_ID,
+        'regionID' => 0,
+        'districtID' => 0,
+        'groupID' => 0,
+        'roleID' => 0,
+        'defaultRole' => 0,
+        'actionCountryID' => 0,
+        'actionRegionID' => 0,
+        'actionSuperDistrictID' => 0,
+        'actionDistrictID' => 0,
+        'actionGroupID' => 0,
+        'retired' => 0,
+        'resigned' => 0,
+        'suspended' => 0,
+        'multiID' => 0,
+    ];
+
+    /**
+     * The legacy system writes each scope column into its `action*` twin when a role is attached,
+     * and the warrant lookup reads the `action*` side, so a new attachment mirrors them.
+     *
+     * @var array<string, string>
+     */
+    private const ACTION_SCOPE_COLUMNS = [
+        'countryID' => 'actionCountryID',
+        'regionID' => 'actionRegionID',
+        'superDistrictID' => 'actionSuperDistrictID',
+        'districtID' => 'actionDistrictID',
+        'groupID' => 'actionGroupID',
+    ];
+
     public $incrementing = true;
 
     protected $connection = AppServiceProvider::DB_SD_CORE;
@@ -59,6 +100,17 @@ class SystemUsersOtherRole extends Pivot implements Auditable, HasAvatar, HasCur
         'modified' => 'datetime',
         'modifiedby' => 'int',
     ];
+
+    protected static function booted(): void
+    {
+        static::saving(static function (self $roleAttachment): void {
+            if (! $roleAttachment->exists) {
+                $roleAttachment->mirrorScopeIntoActionScope();
+            }
+
+            $roleAttachment->coerceNullLegacyColumnsToDefaults();
+        });
+    }
 
     public function user(): BelongsTo
     {
@@ -235,5 +287,31 @@ class SystemUsersOtherRole extends Pivot implements Auditable, HasAvatar, HasCur
             SVG;
 
         return 'data:image/svg+xml;base64,' . base64_encode($svg);
+    }
+
+    /**
+     * Filament posts null for a scope select left as "None"; the legacy schema rejects that, so
+     * every null in a legacy NOT NULL column becomes the value Scouts Digital itself would write.
+     */
+    protected function coerceNullLegacyColumnsToDefaults(): void
+    {
+        foreach (self::LEGACY_NOT_NULL_DEFAULTS as $column => $default) {
+            if (array_key_exists($column, $this->attributes) && $this->attributes[$column] === null) {
+                $this->setAttribute($column, $default);
+            }
+        }
+    }
+
+    protected function mirrorScopeIntoActionScope(): void
+    {
+        foreach (self::ACTION_SCOPE_COLUMNS as $scopeColumn => $actionColumn) {
+            if (($this->attributes[$actionColumn] ?? null) !== null) {
+                continue;
+            }
+
+            $scope = $this->attributes[$scopeColumn] ?? null;
+
+            $this->setAttribute($actionColumn, $scope ?? self::LEGACY_NOT_NULL_DEFAULTS[$scopeColumn] ?? 0);
+        }
     }
 }
