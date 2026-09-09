@@ -146,7 +146,7 @@ The admin panel provides system-wide management of all adult members without geo
 - Edit (icon button → EditRecord)
 - Impersonate (stechstudio/filament-impersonate; super admin only)
 
-**Global search:** `first_name`, `surname`, `username`, `idNumber`
+**Global search:** `first_name`, `surname`, `knownName`, `username`, `idNumber`. The query is split into words and every word must match one of these columns, so "John Roux" finds the member. Results show `Name (#id)` with the username and home region and group underneath (`UserResource::getGlobalSearchResultDetails()`).
 
 ---
 

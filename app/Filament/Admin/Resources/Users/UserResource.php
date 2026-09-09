@@ -28,6 +28,9 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use UnitEnum;
 
 class UserResource extends Resource
@@ -54,6 +57,42 @@ class UserResource extends Resource
     public static function table(Table $table): Table
     {
         return UsersTable::configure($table);
+    }
+
+    /**
+     * Global search matches each word of the query against any of these, so "John Roux" finds a
+     * member whose first name is John and surname is Roux. `name` is an accessor and cannot be
+     * searched directly. The ID number is included because admins reconcile members by it.
+     *
+     * @return array<string>
+     */
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['first_name', 'surname', 'knownName', 'username', 'idNumber'];
+    }
+
+    public static function getGlobalSearchResultTitle(Model $record): string|Htmlable
+    {
+        /** @var SystemUser $record */
+        return "{$record->name} (#{$record->id})";
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function getGlobalSearchResultDetails(Model $record): array
+    {
+        /** @var SystemUser $record */
+        return array_filter([
+            'Username' => $record->username,
+            'Region' => $record->homeRegion ? "{$record->homeRegion->name} (#{$record->assoc_to_region})" : null,
+            'Group' => $record->homeGroup ? "{$record->homeGroup->name} (#{$record->assoc_to_group})" : null,
+        ]);
+    }
+
+    public static function getGlobalSearchEloquentQuery(): Builder
+    {
+        return parent::getGlobalSearchEloquentQuery()->with(['homeRegion', 'homeGroup']);
     }
 
     public static function getRelations(): array
