@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Clusters\AMS\Resources\Training\Tables;
 
 use App\Filament\Admin\Clusters\AMS\Resources\Training\TrainingResource;
+use App\Models\PastTraining;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -17,8 +18,10 @@ class TrainingTable
                 TextColumn::make('user.name')
                     ->label('Member')
                     ->searchable(['first_name', 'surname']),
-                TextColumn::make('trainingType.typeName')
-                    ->label('Training Type'),
+                TextColumn::make('trainingType.name')
+                    ->label('Training Type')
+                    ->state(fn (PastTraining $record): ?string => $record->trainingType ? "{$record->trainingType->name} (#{$record->trainingTypeID})" : null)
+                    ->placeholder('-'),
                 TextColumn::make('courseName')
                     ->label('Course Name')
                     ->searchable(),

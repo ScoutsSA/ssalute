@@ -2,6 +2,9 @@
 
 namespace App\Filament\Admin\Resources\Users\RelationManagers;
 
+use App\Filament\Admin\Resources\Users\RelationManagers\Concerns\FillsOwnerScopeOnCreate;
+use App\Models\AmsTrainingPastType;
+use App\Models\PastTraining;
 use App\Services\FileUrlService;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
@@ -25,6 +28,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 class UserTrainingHistoryRelationManager extends RelationManager
 {
+    use FillsOwnerScopeOnCreate;
+
     protected static string $relationship = 'trainingHistory';
 
     public function form(Schema $schema): Schema
@@ -40,9 +45,13 @@ class UserTrainingHistoryRelationManager extends RelationManager
                     ->maxLength(255),
                 Select::make('trainingTypeID')
                     ->label('Training Type')
-                    ->relationship('trainingType', 'typeName'),
+                    ->relationship('trainingType', 'name')
+                    ->getOptionLabelFromRecordUsing(fn (AmsTrainingPastType $record): string => "{$record->name} (#{$record->id})")
+                    ->searchable()
+                    ->preload(),
                 DatePicker::make('completionDate')
-                    ->label('Completion Date'),
+                    ->label('Completion Date')
+                    ->required(),
                 FileUpload::make('PDFLocation')
                     ->label('Certificate / Document')
                     ->disk('legacy')
@@ -60,8 +69,10 @@ class UserTrainingHistoryRelationManager extends RelationManager
                     ->label('Course Name'),
                 TextEntry::make('courseNumber')
                     ->label('Course Number'),
-                TextEntry::make('trainingType.typeName')
-                    ->label('Training Type'),
+                TextEntry::make('trainingType.name')
+                    ->label('Training Type')
+                    ->state(fn (PastTraining $record): ?string => $record->trainingType ? "{$record->trainingType->name} (#{$record->trainingTypeID})" : null)
+                    ->placeholder('-'),
                 TextEntry::make('completionDate')
                     ->label('Completion Date')
                     ->date(),
@@ -103,8 +114,10 @@ class UserTrainingHistoryRelationManager extends RelationManager
                     ->label('Course #')
                     ->searchable()
                     ->toggleable(),
-                TextColumn::make('trainingType.typeName')
+                TextColumn::make('trainingType.name')
                     ->label('Type')
+                    ->state(fn (PastTraining $record): ?string => $record->trainingType ? "{$record->trainingType->name} (#{$record->trainingTypeID})" : null)
+                    ->placeholder('-')
                     ->toggleable(),
                 TextColumn::make('completionDate')
                     ->label('Completed')
@@ -122,7 +135,8 @@ class UserTrainingHistoryRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                CreateAction::make(),
+                CreateAction::make()
+                    ->mutateFormDataUsing(fn (array $data): array => $this->withOwnerScope($data)),
             ])
             ->recordActions([
                 ViewAction::make(),

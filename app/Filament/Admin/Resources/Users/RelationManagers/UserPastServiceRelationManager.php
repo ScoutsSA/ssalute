@@ -2,6 +2,9 @@
 
 namespace App\Filament\Admin\Resources\Users\RelationManagers;
 
+use App\Filament\Admin\Resources\Users\RelationManagers\Concerns\FillsOwnerScopeOnCreate;
+use App\Models\AmsPastServiceType;
+use App\Models\PastService;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -22,6 +25,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 class UserPastServiceRelationManager extends RelationManager
 {
+    use FillsOwnerScopeOnCreate;
+
     protected static string $relationship = 'pastService';
 
     public function form(Schema $schema): Schema
@@ -30,11 +35,17 @@ class UserPastServiceRelationManager extends RelationManager
             ->components([
                 Select::make('pastServiceType')
                     ->label('Service Type')
-                    ->relationship('serviceType', 'typeName'),
+                    ->relationship('serviceType', 'name')
+                    ->getOptionLabelFromRecordUsing(fn (AmsPastServiceType $record): string => "{$record->name} (#{$record->id})")
+                    ->searchable()
+                    ->preload()
+                    ->required(),
                 DatePicker::make('startDate')
-                    ->label('Start Date'),
+                    ->label('Start Date')
+                    ->required(),
                 DatePicker::make('endDate')
-                    ->label('End Date'),
+                    ->label('End Date')
+                    ->required(),
                 TextInput::make('otherRegionName')
                     ->label('Other Region')
                     ->maxLength(255),
@@ -51,8 +62,10 @@ class UserPastServiceRelationManager extends RelationManager
     {
         return $schema
             ->components([
-                TextEntry::make('serviceType.typeName')
-                    ->label('Service Type'),
+                TextEntry::make('serviceType.name')
+                    ->label('Service Type')
+                    ->state(fn (PastService $record): ?string => $record->serviceType ? "{$record->serviceType->name} (#{$record->pastServiceType})" : null)
+                    ->placeholder('-'),
                 TextEntry::make('startDate')
                     ->label('Start Date')
                     ->date(),
@@ -84,8 +97,10 @@ class UserPastServiceRelationManager extends RelationManager
             ->recordTitleAttribute('id')
             ->columns([
                 TextColumn::make('id')->label('ID')->sortable()->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('serviceType.typeName')
+                TextColumn::make('serviceType.name')
                     ->label('Service Type')
+                    ->state(fn (PastService $record): ?string => $record->serviceType ? "{$record->serviceType->name} (#{$record->pastServiceType})" : null)
+                    ->placeholder('-')
                     ->searchable(),
                 TextColumn::make('startDate')
                     ->label('Start Date')
@@ -113,7 +128,8 @@ class UserPastServiceRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                CreateAction::make(),
+                CreateAction::make()
+                    ->mutateFormDataUsing(fn (array $data): array => $this->withOwnerScope($data)),
             ])
             ->recordActions([
                 ViewAction::make(),

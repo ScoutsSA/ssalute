@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Clusters\AMS\Resources\Training\Schemas;
 
+use App\Models\PastTraining;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
@@ -18,7 +19,10 @@ class TrainingInfolist
                     ->columnSpanFull()
                     ->schema([
                         TextEntry::make('user.name')->label('Member'),
-                        TextEntry::make('trainingType.typeName')->label('Training Type'),
+                        TextEntry::make('trainingType.name')
+                            ->label('Training Type')
+                            ->state(fn (PastTraining $record): ?string => $record->trainingType ? "{$record->trainingType->name} (#{$record->trainingTypeID})" : null)
+                            ->placeholder('-'),
                         TextEntry::make('courseName')->label('Course Name')->placeholder('-'),
                         TextEntry::make('courseNumber')->label('Course Number')->placeholder('-'),
                         TextEntry::make('completionDate')->label('Completion Date')->date()->placeholder('-'),

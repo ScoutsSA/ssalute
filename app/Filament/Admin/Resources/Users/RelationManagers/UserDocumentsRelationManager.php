@@ -2,6 +2,9 @@
 
 namespace App\Filament\Admin\Resources\Users\RelationManagers;
 
+use App\Filament\Admin\Resources\Users\RelationManagers\Concerns\FillsOwnerScopeOnCreate;
+use App\Models\AmsDocumentType;
+use App\Models\Document;
 use App\Services\FileUrlService;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
@@ -23,6 +26,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 class UserDocumentsRelationManager extends RelationManager
 {
+    use FillsOwnerScopeOnCreate;
+
     protected static string $relationship = 'documents';
 
     public function form(Schema $schema): Schema
@@ -35,13 +40,18 @@ class UserDocumentsRelationManager extends RelationManager
                     ->maxLength(255),
                 Select::make('documentTypeID')
                     ->label('Document Type')
-                    ->relationship('documentType', 'typeName'),
+                    ->relationship('documentType', 'name')
+                    ->getOptionLabelFromRecordUsing(fn (AmsDocumentType $record): string => "{$record->name} (#{$record->id})")
+                    ->searchable()
+                    ->preload()
+                    ->required(),
                 FileUpload::make('PDFLocation')
                     ->label('Document')
                     ->disk('legacy')
                     ->directory('ssalute/documents')
                     ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])
-                    ->maxSize(51200),
+                    ->maxSize(51200)
+                    ->required(),
             ]);
     }
 
@@ -51,8 +61,10 @@ class UserDocumentsRelationManager extends RelationManager
             ->components([
                 TextEntry::make('description')
                     ->label('Description'),
-                TextEntry::make('documentType.typeName')
-                    ->label('Document Type'),
+                TextEntry::make('documentType.name')
+                    ->label('Document Type')
+                    ->state(fn (Document $record): ?string => $record->documentType ? "{$record->documentType->name} (#{$record->documentTypeID})" : null)
+                    ->placeholder('-'),
                 TextEntry::make('PDFLocation')
                     ->label('Document')
                     ->url(fn ($state) => $state ? app(FileUrlService::class)->url($state) : null)
@@ -79,8 +91,10 @@ class UserDocumentsRelationManager extends RelationManager
                 TextColumn::make('description')
                     ->label('Description')
                     ->searchable(),
-                TextColumn::make('documentType.typeName')
+                TextColumn::make('documentType.name')
                     ->label('Type')
+                    ->state(fn (Document $record): ?string => $record->documentType ? "{$record->documentType->name} (#{$record->documentTypeID})" : null)
+                    ->placeholder('-')
                     ->toggleable(),
                 TextColumn::make('PDFLocation')
                     ->label('Document')
@@ -96,7 +110,8 @@ class UserDocumentsRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                CreateAction::make(),
+                CreateAction::make()
+                    ->mutateFormDataUsing(fn (array $data): array => $this->withOwnerScope($data)),
             ])
             ->recordActions([
                 ViewAction::make(),

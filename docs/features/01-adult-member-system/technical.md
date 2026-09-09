@@ -83,6 +83,12 @@ An activity licence (called a charge in the legacy schema) held by a member: fir
 
 Key fields: `userID`, `chargeTypeID`, `chargeNr`, `issueDate`, `expireDate`, `PDFLocation`, `assocToRegion`, `assocToDistrict`, `assocToGroup`, `active`.
 
+Surfaces: BackOffice > AMS > Licences (all members) and a Licences tab on the BackOffice user page (`UserLicencesRelationManager`, view, create, edit, delete). The Member panel profile has a read only Licences tab. Both editable forms fill `expireDate` from the licence type via `LicenceForm::fillExpiryDate()`.
+
+Lookup labels on the user page tabs: the legacy type tables name their label column `name` (award, document, past service, training past, warrant and warrant cancellation types) or `reason` (award headings). None of them has a `typeName` column. The tabs show the related record as `Name (#id)` per the BackOffice identifier rule.
+
+Create from a user page tab: `ams_award_info`, `ams_documents`, `ams_past_service_info`, `ams_training_past`, `ams_warrant_info` and `ams_charge_info` declare the home area columns, `active` and `createdby` as `NOT NULL` with no default, and the forms do not ask for them. The `FillsOwnerScopeOnCreate` concern on the relation managers copies `assoc_to_region`, `assoc_to_district` and `assoc_to_group` from the owning member, sets `countryID` to the default country, `active` to 1 unless the form said otherwise, and `createdby` to the acting admin. Note that `MightHaveCreatedBy` and `MightHaveModifiedBy` only fire for models that list the column in `$fillable`, and these models use `$guarded = []`, so nothing fills `createdby` or `modifiedby` automatically.
+
 ### `AmsLicenceType` (`ams_charge_types`)
 Lookup for licence types, managed in BackOffice > LookupTables > Licence Types. Carries `expiryYears`, the validity of the type in years (default 5). A licence expires exactly `issueDate + expiryYears`, with no day shaved off and no month end rounding; `AmsLicenceType::expiryDateFor()` is the single implementation and the AMS licence form fills the expiry date from it. Scouts Digital reads the same column when it captures a licence, so a change here applies to both systems.
 

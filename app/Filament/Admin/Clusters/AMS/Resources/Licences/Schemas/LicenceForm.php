@@ -69,7 +69,7 @@ class LicenceForm
             ]);
     }
 
-    private static function fillExpiryDate(Get $get, Set $set): void
+    public static function fillExpiryDate(Get $get, Set $set): void
     {
         $issueDate = $get('issueDate');
         $licenceType = AmsLicenceType::find($get('chargeTypeID'));

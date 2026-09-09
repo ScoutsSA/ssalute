@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Clusters\AMS\Resources\Warrants\Tables;
 
 use App\Filament\Admin\Clusters\AMS\Resources\Warrants\WarrantResource;
+use App\Models\AmsWarrantInfo;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -26,8 +27,10 @@ class WarrantsTable
                     ->searchable(['first_name', 'surname']),
                 TextColumn::make('warrantType.name')
                     ->label('Type'),
-                TextColumn::make('role.typeName')
-                    ->label('Role'),
+                TextColumn::make('role.name')
+                    ->label('Role')
+                    ->state(fn (AmsWarrantInfo $record): ?string => $record->role ? "{$record->role->name} (#{$record->roleID})" : null)
+                    ->placeholder('-'),
                 TextColumn::make('issueDate')
                     ->label('Issued')
                     ->date()

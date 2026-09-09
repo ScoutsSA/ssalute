@@ -2,9 +2,10 @@
 
 namespace App\Filament\Admin\Resources\Users\RelationManagers;
 
+use App\Filament\Admin\Clusters\AMS\Resources\Licences\Schemas\LicenceForm;
 use App\Filament\Admin\Resources\Users\RelationManagers\Concerns\FillsOwnerScopeOnCreate;
-use App\Models\AmsWarrantInfo;
-use App\Models\AmsWarrantType;
+use App\Models\AmsLicenceInfo;
+use App\Models\AmsLicenceType;
 use App\Services\FileUrlService;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
@@ -16,50 +17,65 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
-class UserWarrantsRelationManager extends RelationManager
+class UserLicencesRelationManager extends RelationManager
 {
     use FillsOwnerScopeOnCreate;
 
-    protected static string $relationship = 'warrants';
+    protected static string $relationship = 'licenceInfos';
+
+    protected static ?string $title = 'Licences';
+
+    protected static ?string $modelLabel = 'licence';
+
+    protected static ?string $pluralModelLabel = 'licences';
 
     public function form(Schema $schema): Schema
     {
         return $schema
             ->components([
-                TextInput::make('warrantNr')
-                    ->label('Warrant Number')
-                    ->required()
-                    ->maxLength(225),
-                TextInput::make('warrantName')
-                    ->label('Warrant Name')
-                    ->required()
-                    ->maxLength(255),
-                Select::make('warrantTypeID')
-                    ->label('Warrant Type')
-                    ->relationship('warrantType', 'name')
-                    ->getOptionLabelFromRecordUsing(fn (AmsWarrantType $record): string => "{$record->name} (#{$record->id})")
+                Select::make('chargeTypeID')
+                    ->label('Licence Type')
+                    ->relationship('licenceType', 'name')
+                    ->getOptionLabelFromRecordUsing(fn (AmsLicenceType $record): string => "{$record->name} (#{$record->id})")
                     ->searchable()
                     ->preload()
-                    ->required(),
+                    ->required()
+                    ->live()
+                    ->afterStateUpdated(fn (Get $get, Set $set) => LicenceForm::fillExpiryDate($get, $set)),
+                TextInput::make('chargeNr')
+                    ->label('Licence Number')
+                    ->required()
+                    ->maxLength(225),
                 DatePicker::make('issueDate')
                     ->label('Issue Date')
-                    ->required(),
+                    ->required()
+                    ->live()
+                    ->afterStateUpdated(fn (Get $get, Set $set) => LicenceForm::fillExpiryDate($get, $set)),
                 DatePicker::make('expireDate')
                     ->label('Expiry Date')
-                    ->required(),
+                    ->required()
+                    ->helperText('Filled in from the licence type validity when you pick a type and issue date. You can override it.'),
+                Toggle::make('active')
+                    ->label('Active')
+                    ->default(true)
+                    ->inline(false),
                 FileUpload::make('PDFLocation')
                     ->label('Document')
                     ->disk('legacy')
-                    ->directory('ssalute/warrants')
+                    ->directory('ssalute/licences')
                     ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
                     ->maxSize(51200),
             ]);
@@ -69,28 +85,29 @@ class UserWarrantsRelationManager extends RelationManager
     {
         return $schema
             ->components([
-                TextEntry::make('warrantNr')
-                    ->label('Warrant Number'),
-                TextEntry::make('warrantName')
-                    ->label('Warrant Name'),
-                TextEntry::make('warrantType.name')
-                    ->label('Warrant Type')
-                    ->state(fn (AmsWarrantInfo $record): ?string => $record->warrantType ? "{$record->warrantType->name} (#{$record->warrantTypeID})" : null)
+                TextEntry::make('licenceType.name')
+                    ->label('Licence Type')
+                    ->state(fn (AmsLicenceInfo $record): ?string => $record->licenceType ? "{$record->licenceType->name} (#{$record->chargeTypeID})" : null)
+                    ->placeholder('-'),
+                TextEntry::make('chargeNr')
+                    ->label('Licence Number')
                     ->placeholder('-'),
                 TextEntry::make('issueDate')
                     ->label('Issue Date')
-                    ->date(),
+                    ->date()
+                    ->placeholder('-'),
                 TextEntry::make('expireDate')
                     ->label('Expiry Date')
-                    ->date(),
-                TextEntry::make('cancellationType.name')
-                    ->label('Cancellation Type')
-                    ->state(fn (AmsWarrantInfo $record): ?string => $record->cancellationType ? "{$record->cancellationType->name} (#{$record->cancellationTypeID})" : null)
+                    ->date()
                     ->placeholder('-'),
+                IconEntry::make('active')
+                    ->label('Active')
+                    ->boolean(),
                 TextEntry::make('PDFLocation')
                     ->label('Document')
                     ->url(fn ($state) => $state ? app(FileUrlService::class)->url($state) : null)
-                    ->openUrlInNewTab(),
+                    ->openUrlInNewTab()
+                    ->placeholder('-'),
             ]);
     }
 
@@ -107,34 +124,40 @@ class UserWarrantsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->recordTitleAttribute('warrantName')
+            ->recordTitleAttribute('chargeNr')
             ->columns([
                 TextColumn::make('id')->label('ID')->sortable()->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('warrantNr')
-                    ->label('Warrant #')
+                TextColumn::make('licenceType.name')
+                    ->label('Licence Type')
+                    ->state(fn (AmsLicenceInfo $record): ?string => $record->licenceType ? "{$record->licenceType->name} (#{$record->chargeTypeID})" : null)
+                    ->placeholder('-')
                     ->searchable()
                     ->toggleable(),
-                TextColumn::make('warrantName')
-                    ->label('Name')
-                    ->searchable(),
-                TextColumn::make('warrantType.name')
-                    ->label('Type')
-                    ->state(fn (AmsWarrantInfo $record): ?string => $record->warrantType ? "{$record->warrantType->name} (#{$record->warrantTypeID})" : null)
-                    ->placeholder('-')
+                TextColumn::make('chargeNr')
+                    ->label('Licence #')
+                    ->searchable()
                     ->toggleable(),
                 TextColumn::make('issueDate')
                     ->label('Issued')
                     ->date()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
                 TextColumn::make('expireDate')
                     ->label('Expires')
                     ->date()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
                 IconColumn::make('active')
                     ->boolean()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('PDFLocation')
+                    ->label('Document')
+                    ->url(fn ($state) => $state ? app(FileUrlService::class)->url($state) : null)
+                    ->openUrlInNewTab()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->defaultSort('issueDate', 'desc')
             ->filters([
                 //
             ])

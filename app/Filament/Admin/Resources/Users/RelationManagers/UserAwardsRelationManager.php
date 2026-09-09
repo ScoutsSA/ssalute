@@ -2,6 +2,10 @@
 
 namespace App\Filament\Admin\Resources\Users\RelationManagers;
 
+use App\Filament\Admin\Resources\Users\RelationManagers\Concerns\FillsOwnerScopeOnCreate;
+use App\Models\AmsAwardHeading;
+use App\Models\AmsAwardType;
+use App\Models\Award;
 use App\Services\FileUrlService;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
@@ -15,6 +19,7 @@ use Filament\Forms\Components\Select;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -23,6 +28,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 class UserAwardsRelationManager extends RelationManager
 {
+    use FillsOwnerScopeOnCreate;
+
     protected static string $relationship = 'awards';
 
     public function form(Schema $schema): Schema
@@ -31,13 +38,24 @@ class UserAwardsRelationManager extends RelationManager
             ->components([
                 Select::make('awardTypeID')
                     ->label('Award Type')
-                    ->relationship('awardType', 'typeName')
-                    ->required(),
+                    ->relationship('awardType', 'name')
+                    ->getOptionLabelFromRecordUsing(fn (AmsAwardType $record): string => "{$record->name} (#{$record->id})")
+                    ->searchable()
+                    ->preload()
+                    ->required()
+                    ->live()
+                    ->afterStateUpdated(fn (Set $set, ?int $state) => $set('awardHeadingID', AmsAwardType::find($state)?->headingID)),
                 Select::make('awardHeadingID')
                     ->label('Award Heading')
-                    ->relationship('heading', 'heading'),
+                    ->relationship('heading', 'reason')
+                    ->getOptionLabelFromRecordUsing(fn (AmsAwardHeading $record): string => "{$record->reason} (#{$record->id})")
+                    ->searchable()
+                    ->preload()
+                    ->required()
+                    ->helperText('Filled in from the award type. You can override it.'),
                 DatePicker::make('awardDate')
-                    ->label('Award Date'),
+                    ->label('Award Date')
+                    ->required(),
                 FileUpload::make('PDFLocation')
                     ->label('Document')
                     ->disk('legacy')
@@ -51,10 +69,14 @@ class UserAwardsRelationManager extends RelationManager
     {
         return $schema
             ->components([
-                TextEntry::make('awardType.typeName')
-                    ->label('Award Type'),
-                TextEntry::make('heading.heading')
-                    ->label('Heading'),
+                TextEntry::make('awardType.name')
+                    ->label('Award Type')
+                    ->state(fn (Award $record): ?string => $record->awardType ? "{$record->awardType->name} (#{$record->awardTypeID})" : null)
+                    ->placeholder('-'),
+                TextEntry::make('heading.reason')
+                    ->label('Heading')
+                    ->state(fn (Award $record): ?string => $record->heading ? "{$record->heading->reason} (#{$record->awardHeadingID})" : null)
+                    ->placeholder('-'),
                 TextEntry::make('awardDate')
                     ->label('Award Date')
                     ->date(),
@@ -81,11 +103,15 @@ class UserAwardsRelationManager extends RelationManager
             ->recordTitleAttribute('id')
             ->columns([
                 TextColumn::make('id')->label('ID')->sortable()->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('awardType.typeName')
+                TextColumn::make('awardType.name')
                     ->label('Award')
+                    ->state(fn (Award $record): ?string => $record->awardType ? "{$record->awardType->name} (#{$record->awardTypeID})" : null)
+                    ->placeholder('-')
                     ->searchable(),
-                TextColumn::make('heading.heading')
+                TextColumn::make('heading.reason')
                     ->label('Heading')
+                    ->state(fn (Award $record): ?string => $record->heading ? "{$record->heading->reason} (#{$record->awardHeadingID})" : null)
+                    ->placeholder('-')
                     ->toggleable(),
                 TextColumn::make('awardDate')
                     ->label('Date')
@@ -100,7 +126,8 @@ class UserAwardsRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                CreateAction::make(),
+                CreateAction::make()
+                    ->mutateFormDataUsing(fn (array $data): array => $this->withOwnerScope($data)),
             ])
             ->recordActions([
                 ViewAction::make(),

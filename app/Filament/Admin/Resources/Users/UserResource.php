@@ -8,6 +8,7 @@ use App\Filament\Admin\Resources\Users\Pages\ListUsers;
 use App\Filament\Admin\Resources\Users\Pages\ViewUser;
 use App\Filament\Admin\Resources\Users\RelationManagers\UserAwardsRelationManager;
 use App\Filament\Admin\Resources\Users\RelationManagers\UserDocumentsRelationManager;
+use App\Filament\Admin\Resources\Users\RelationManagers\UserLicencesRelationManager;
 use App\Filament\Admin\Resources\Users\RelationManagers\UserMovesRelationManager;
 use App\Filament\Admin\Resources\Users\RelationManagers\UserPastServiceRelationManager;
 use App\Filament\Admin\Resources\Users\RelationManagers\UserPoliceClearancesRelationManager;
@@ -60,6 +61,7 @@ class UserResource extends Resource
         return [
             UserRoleAttachmentsRelationManager::class,
             UserWarrantsRelationManager::class,
+            UserLicencesRelationManager::class,
             UserTrainingHistoryRelationManager::class,
             UserAwardsRelationManager::class,
             UserDocumentsRelationManager::class,

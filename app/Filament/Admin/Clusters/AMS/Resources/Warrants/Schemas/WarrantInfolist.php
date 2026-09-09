@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Clusters\AMS\Resources\Warrants\Schemas;
 
+use App\Models\AmsWarrantInfo;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
@@ -21,7 +22,10 @@ class WarrantInfolist
                         TextEntry::make('warrantName')->label('Name'),
                         TextEntry::make('user.name')->label('Member'),
                         TextEntry::make('warrantType.name')->label('Type'),
-                        TextEntry::make('role.typeName')->label('Role'),
+                        TextEntry::make('role.name')
+                            ->label('Role')
+                            ->state(fn (AmsWarrantInfo $record): ?string => $record->role ? "{$record->role->name} (#{$record->roleID})" : null)
+                            ->placeholder('-'),
                         TextEntry::make('issueDate')->label('Issue Date')->date(),
                         TextEntry::make('expireDate')->label('Expiry Date')->date(),
                         IconEntry::make('active')->label('Active')->boolean(),
