@@ -213,6 +213,28 @@ class DirectoryTest extends SdCoreTestCase
     }
 
     #[Test]
+    public function group_team_can_be_filtered_by_role(): void
+    {
+        $scouter = $this->listedGroupLeader();
+
+        $secondRole = SystemUserType::factory()->group()->create(['name' => 'Pack Scouter', 'adultLeaderRole' => 1]);
+        $packScouter = SystemUser::factory()->create(['first_name' => 'Pack', 'surname' => 'Person']);
+        $packAttachment = SystemUsersOtherRole::factory()->forUser($packScouter)->ofType($secondRole)->create(['groupID' => $this->group->id]);
+
+        [$viewer, $tenant] = $this->viewerWithRole($this->parentRole);
+
+        $this->actingAs($viewer);
+        Filament::setCurrentPanel(Filament::getPanel('member'));
+        Filament::setTenant($tenant);
+
+        Livewire::test(GroupTeam::class)
+            ->assertCanSeeTableRecords([...$scouter->roleAttachments, $packAttachment])
+            ->filterTable('role', [$secondRole->id])
+            ->assertCanSeeTableRecords([$packAttachment])
+            ->assertCanNotSeeTableRecords($scouter->roleAttachments);
+    }
+
+    #[Test]
     public function national_team_lists_national_roles_for_every_member(): void
     {
         $nationalRole = SystemUserType::factory()->national()->create(['name' => 'National Awards Committee', 'adultLeaderRole' => 1]);

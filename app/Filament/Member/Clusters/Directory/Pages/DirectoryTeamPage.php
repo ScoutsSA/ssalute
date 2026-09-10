@@ -6,6 +6,7 @@ use App\Enums\DirectoryLevel;
 use App\Filament\Member\Clusters\Directory\DirectoryCluster;
 use App\Models\SystemUser;
 use App\Models\SystemUsersOtherRole;
+use App\Models\SystemUserType;
 use App\Services\LegacyHtmlService;
 use Filament\Facades\Filament;
 use Filament\Pages\Page;
@@ -14,6 +15,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\BaseFilter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -85,7 +87,10 @@ abstract class DirectoryTeamPage extends Page implements HasTable
                 ...$this->scopeColumns(),
                 ...($contactDetailsVisible ? $this->contactColumns() : []),
             ])
-            ->filters($this->scopeFilters($this->tenant()))
+            ->filters([
+                $this->roleFilter(),
+                ...$this->scopeFilters($this->tenant()),
+            ])
             ->emptyStateHeading('No team members found')
             ->emptyStateDescription('There are no active members holding a role at this level for the selected area.');
     }
@@ -153,6 +158,31 @@ abstract class DirectoryTeamPage extends Page implements HasTable
     protected function scopeRelations(): array
     {
         return [];
+    }
+
+    /**
+     * Role types that can appear on this level, so the options never list roles the team query
+     * would exclude anyway.
+     */
+    private function roleFilter(): SelectFilter
+    {
+        $level = static::level();
+
+        return SelectFilter::make('role')
+            ->label('Role')
+            ->multiple()
+            ->searchable()
+            ->options(fn (): array => SystemUserType::query()
+                ->where($level->roleFlagColumn(), 1)
+                ->when($level === DirectoryLevel::Group, fn (Builder $query): Builder => $query->where('adultLeaderRole', 1))
+                ->orderBy('name')
+                ->pluck('name', 'id')
+                ->map(fn (string $name): string => LegacyHtmlService::decode($name))
+                ->all())
+            ->query(fn (Builder $query, array $data): Builder => $query->when(
+                filled($data['values'] ?? []),
+                fn (Builder $query): Builder => $query->whereIn('system_users_other_roles.roleID', $data['values']),
+            ));
     }
 
     /**
