@@ -72,6 +72,7 @@ abstract class SdCoreTestCase extends TestCase
             'feature' => [
                 'users_can_edit_profiles' => 'false',
                 'users_can_browse_areas' => 'false',
+                'users_can_browse_directory' => 'false',
                 'users_can_upload_profile_photo' => 'false',
                 'users_can_add_documents' => 'false',
                 'users_can_add_past_service' => 'false',

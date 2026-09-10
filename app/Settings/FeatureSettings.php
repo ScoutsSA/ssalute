@@ -10,6 +10,8 @@ class FeatureSettings extends Settings
 
     public bool $users_can_browse_areas = false;
 
+    public bool $users_can_browse_directory = false;
+
     public bool $users_can_upload_profile_photo = false;
 
     public bool $users_can_add_documents = false;

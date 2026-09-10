@@ -90,6 +90,14 @@ The member panel is scoped to the logged-in user's currently active role assignm
 - Members can view their own past service history (service type, organisation, date range) in read-only mode.
 - Past service records are created and managed by administrators only.
 
+### Adult Leader Directory
+
+- Members can browse who holds which role at each level of the organisation: National Team, Regional Team, District Team and Group Team. The Regional, District and Group pages open on the member's own area (resolved from their current role, walking up from group to district to region, and falling back to their home area) and a filter allows lateral browsing into any other region, district or group.
+- A team lists active role assignments of active members whose role type carries the matching level flag (nationalRole, regionalRole, districtRole, groupRole). The Group Team additionally requires the adultLeaderRole flag, so youth members and parents are never listed.
+- Two visibility tiers apply. Every member who can log in, parents included, sees roles and names. Contact details (email and cell number) are only shown to adult leaders, meaning members holding at least one active role whose type carries the adultLeaderRole flag. For any other viewer the contact columns are never queried from the database, not merely hidden.
+- A member whose profile has the infoRedacted flag set shows the word "Redacted" in place of email and cell number, exactly as the legacy system does. A handful of national office holder roles (National Administrator, CEO, Chief Commissioner, Chief Scout) never show a cell number, again matching legacy.
+- The directory is enabled with the "Users can browse the directory" feature toggle in BackOffice settings. Names are shown without record IDs, per the Member panel display rules.
+
 ---
 
 ## Business Rules and Constraints
@@ -101,3 +109,4 @@ The member panel is scoped to the logged-in user's currently active role assignm
 - Moving a member between groups deactivates the old role assignment and creates a new one in the target group.
 - Members are limited in what personal data they can self-edit; identity fields and role assignments are managed exclusively by administrators.
 - Document and past service management is restricted to administrators.
+- Directory contact details are an adult leader privilege. Roles and names are open to every logged-in member; email and cell number are queried only for viewers holding an active adult leader role, and the infoRedacted flag replaces both with "Redacted".

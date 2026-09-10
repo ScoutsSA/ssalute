@@ -184,6 +184,34 @@ class SystemUsersOtherRole extends Pivot implements Auditable, HasAvatar, HasCur
             ->exists();
     }
 
+    /**
+     * The region this attachment sits in, walking up from a district or group scoped role and
+     * falling back to the member's home region for roles with no area scope (national roles).
+     */
+    public function effectiveRegionId(): ?int
+    {
+        return $this->regionID
+            ?: $this->district?->regionID
+            ?: $this->group?->assoc_to_region
+            ?: $this->user?->assoc_to_region
+            ?: null;
+    }
+
+    public function effectiveDistrictId(): ?int
+    {
+        return $this->districtID
+            ?: $this->group?->assoc_to_district
+            ?: $this->user?->assoc_to_district
+            ?: null;
+    }
+
+    public function effectiveGroupId(): ?int
+    {
+        return $this->groupID
+            ?: $this->user?->assoc_to_group
+            ?: null;
+    }
+
     public function roleTypeName(): Attribute
     {
         return Attribute::make(

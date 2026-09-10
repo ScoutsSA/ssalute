@@ -77,6 +77,9 @@ class ManageFeatureSettings extends SettingsPage
                                         Toggle::make('users_can_browse_areas')
                                             ->label('Users can browse areas')
                                             ->helperText('Allow users to browse Regions, Districts, and Groups.'),
+                                        Toggle::make('users_can_browse_directory')
+                                            ->label('Users can browse the directory')
+                                            ->helperText('Allow users to browse the adult leader directory (National, Regional, District, and Group teams). Roles and names are visible to every member; contact details are only shown to adult leaders.'),
                                         Toggle::make('users_can_view_notifications')
                                             ->label('Users can view notifications')
                                             ->helperText('Show legacy notifications on the dashboard and notifications page.'),

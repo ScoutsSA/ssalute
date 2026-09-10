@@ -543,6 +543,18 @@ class SystemUser extends User implements Auditable, FilamentUser, HasDefaultTena
             ->exists();
     }
 
+    /**
+     * Adult leaders are the members who may see other members' contact details, for example in
+     * the directory. Holding any active role whose type carries the adult leader flag qualifies.
+     */
+    public function isAdultLeader(): bool
+    {
+        return $this->roleAttachments()
+            ->where('active', 1)
+            ->whereHas('role', fn ($q) => $q->where('adultLeaderRole', 1))
+            ->exists();
+    }
+
     public function hasAnyActiveRole(): bool
     {
         return $this->roleAttachments()
