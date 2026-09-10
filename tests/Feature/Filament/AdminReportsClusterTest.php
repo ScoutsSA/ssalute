@@ -38,6 +38,7 @@ class AdminReportsClusterTest extends SdCoreTestCase
             'logins' => ['/backoffice/admin-reports/logins'],
             'most active users' => ['/backoffice/admin-reports/most-active-users'],
             'no primary roles' => ['/backoffice/admin-reports/no-primary-roles'],
+            'system contact messages' => ['/backoffice/admin-reports/system-contact-messages'],
         ];
     }
 

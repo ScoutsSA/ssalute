@@ -3,6 +3,7 @@
 namespace Tests\Feature\Filament\Member;
 
 use App\Filament\Member\Clusters\Directory\Pages\GroupTeam;
+use App\Mail\Directory\ContactViaSystemEmail;
 use App\Models\District;
 use App\Models\Group;
 use App\Models\Region;
@@ -10,8 +11,10 @@ use App\Models\SystemUser;
 use App\Models\SystemUsersOtherRole;
 use App\Models\SystemUserType;
 use App\Settings\FeatureSettings;
+use Filament\Actions\Testing\TestAction;
 use Filament\Facades\Filament;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\Support\SdCoreTestCase;
@@ -232,6 +235,137 @@ class DirectoryTest extends SdCoreTestCase
             ->filterTable('role', [$secondRole->id])
             ->assertCanSeeTableRecords([$packAttachment])
             ->assertCanNotSeeTableRecords($scouter->roleAttachments);
+    }
+
+    #[Test]
+    public function adult_leader_can_contact_a_redacted_member_through_the_system(): void
+    {
+        Mail::fake();
+
+        $redacted = $this->listedGroupLeader(['infoRedacted' => 1, 'knownName' => 'Lis']);
+        $attachment = $redacted->roleAttachments()->first();
+
+        [$viewer, $tenant] = $this->viewerWithRole($this->adultLeaderGroupRole);
+        $viewer->update(['username' => 'viewer@directory.test']);
+
+        $this->actingAs($viewer);
+        Filament::setCurrentPanel(Filament::getPanel('member'));
+        Filament::setTenant($tenant);
+
+        Livewire::test(GroupTeam::class)
+            ->assertActionVisible(TestAction::make('contact')->table($attachment))
+            ->mountAction(TestAction::make('contact')->table($attachment))
+            ->assertSchemaStateSet([
+                'subject' => 'Message from Viewing Member via the SCOUTS South Africa directory',
+            ])
+            ->callAction(TestAction::make('contact')->table($attachment), [
+                'subject' => 'Camp planning',
+                'message' => "Hi Lis,\n\nCan we talk about camp?",
+            ])
+            ->assertNotified('Message sent to Lis Leader');
+
+        $this->assertDatabaseHas('system_contact_messages', [
+            'sender_user_id' => $viewer->id,
+            'sender_role_attachment_id' => $tenant->id,
+            'recipient_user_id' => $redacted->id,
+            'recipient_role_attachment_id' => $attachment->id,
+            'directory_level' => 'group',
+            'subject' => 'Camp planning',
+            'message' => "Hi Lis,\n\nCan we talk about camp?",
+        ]);
+
+        Mail::assertQueued(ContactViaSystemEmail::class, function (ContactViaSystemEmail $mail): bool {
+            $mail->assertHasSubject('Camp planning');
+
+            return $mail->hasTo(self::LISTED_EMAIL)
+                && $mail->hasCc('viewer@directory.test')
+                && $mail->hasReplyTo('viewer@directory.test')
+                && $mail->messageBody === "Hi Lis,\n\nCan we talk about camp?";
+        });
+    }
+
+    #[Test]
+    public function contact_via_system_is_offered_for_every_member_with_an_email_address(): void
+    {
+        $visible = $this->listedGroupLeader();
+        $visibleAttachment = $visible->roleAttachments()->first();
+
+        $noEmail = SystemUser::factory()->create(['first_name' => 'Missing', 'surname' => 'Email', 'username' => 'no-address']);
+        $noEmailAttachment = SystemUsersOtherRole::factory()->forUser($noEmail)->ofType($this->adultLeaderGroupRole)->create(['groupID' => $this->group->id]);
+
+        [$viewer, $tenant] = $this->viewerWithRole($this->adultLeaderGroupRole);
+
+        $this->actingAs($viewer);
+        Filament::setCurrentPanel(Filament::getPanel('member'));
+        Filament::setTenant($tenant);
+
+        Livewire::test(GroupTeam::class)
+            ->assertActionVisible(TestAction::make('contact')->table($visibleAttachment))
+            ->assertActionHidden(TestAction::make('contact')->table($noEmailAttachment));
+    }
+
+    #[Test]
+    public function adult_leader_gets_a_whatsapp_link_next_to_the_cell_number(): void
+    {
+        $this->listedGroupLeader();
+        [$viewer, $tenant] = $this->viewerWithRole($this->adultLeaderGroupRole);
+
+        $this->actingAs($viewer)
+            ->get("/member/{$tenant->id}/directory/group-team")
+            ->assertOk()
+            ->assertSee('https://wa.me/27821234567');
+    }
+
+    #[Test]
+    public function whatsapp_link_is_withheld_for_redacted_members_and_parents(): void
+    {
+        $this->listedGroupLeader(['infoRedacted' => 1]);
+        [$leader, $leaderTenant] = $this->viewerWithRole($this->adultLeaderGroupRole);
+
+        $this->actingAs($leader)
+            ->get("/member/{$leaderTenant->id}/directory/group-team")
+            ->assertOk()
+            ->assertDontSee('wa.me');
+
+        $this->listedGroupLeader();
+        [$parent, $parentTenant] = $this->viewerWithRole($this->parentRole);
+
+        $this->actingAs($parent)
+            ->get("/member/{$parentTenant->id}/directory/group-team")
+            ->assertOk()
+            ->assertDontSee('wa.me');
+    }
+
+    #[Test]
+    public function parent_is_not_offered_contact_via_system(): void
+    {
+        $redacted = $this->listedGroupLeader(['infoRedacted' => 1]);
+        $attachment = $redacted->roleAttachments()->first();
+
+        [$viewer, $tenant] = $this->viewerWithRole($this->parentRole);
+
+        $this->actingAs($viewer);
+        Filament::setCurrentPanel(Filament::getPanel('member'));
+        Filament::setTenant($tenant);
+
+        Livewire::test(GroupTeam::class)
+            ->assertActionDoesNotExist(TestAction::make('contact')->table($attachment))
+            ->assertDontSee('Contact via the system');
+    }
+
+    #[Test]
+    public function contact_via_system_email_never_reveals_the_recipients_details(): void
+    {
+        $redacted = $this->listedGroupLeader(['infoRedacted' => 1]);
+        [$viewer] = $this->viewerWithRole($this->adultLeaderGroupRole);
+        $viewer->update(['username' => 'viewer@directory.test']);
+
+        $rendered = (new ContactViaSystemEmail($viewer, $redacted, 'Hello', 'Body text'))->render();
+
+        $this->assertStringContainsString('Body text', $rendered);
+        $this->assertStringContainsString('viewer@directory.test', $rendered);
+        $this->assertStringNotContainsString(self::LISTED_EMAIL, $rendered);
+        $this->assertStringNotContainsString(self::LISTED_CELL, $rendered);
     }
 
     #[Test]
