@@ -77,7 +77,8 @@ class MemberPanelTest extends SdCoreTestCase
             ->get("/member/{$tenant->id}/dashboard")
             ->assertOk()
             ->assertSee('Support Bot')
-            ->assertSee('https://support-bot.scouts.org.za');
+            ->assertSee('https://support-bot.scouts.org.za')
+            ->assertSeeInOrder(['Support Bot', 'New', 'Scouts Digital']);
     }
 
     #[Test]
