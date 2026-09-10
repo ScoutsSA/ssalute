@@ -54,15 +54,20 @@ class NavigationItems
                 ->group('External Links')
                 ->sort(6)
                 ->url('https://support.scouts.org.za/', shouldOpenInNewTab: true),
+            NavigationItem::make('Support Bot')
+                ->icon(Heroicon::ChatBubbleBottomCenterText)
+                ->group('External Links')
+                ->sort(7)
+                ->url('https://support-bot.scouts.org.za', shouldOpenInNewTab: true),
             NavigationItem::make('Donations')
                 ->icon(Heroicon::Heart)
                 ->group('External Links')
-                ->sort(7)
+                ->sort(8)
                 ->url('https://www.scoutfoundation.org.za/donate/#monthly-donation-options', shouldOpenInNewTab: true),
             NavigationItem::make('Slack Group')
                 ->icon(Heroicon::ChatBubbleLeftRight)
                 ->group('External Links')
-                ->sort(8)
+                ->sort(9)
                 ->url('https://join.slack.com/t/scoutssa/shared_invite/zt-3ss7zpgqa-UkqirUjoLRX9jd8R0lpu~w', shouldOpenInNewTab: true),
         ];
     }

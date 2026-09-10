@@ -68,6 +68,19 @@ class MemberPanelTest extends SdCoreTestCase
     }
 
     #[Test]
+    public function dashboard_lists_the_support_bot_external_link(): void
+    {
+        $user = SystemUser::factory()->withRole()->create();
+        $tenant = $user->roleAttachments()->first();
+
+        $this->actingAs($user)
+            ->get("/member/{$tenant->id}/dashboard")
+            ->assertOk()
+            ->assertSee('Support Bot')
+            ->assertSee('https://support-bot.scouts.org.za');
+    }
+
+    #[Test]
     public function user_cannot_access_another_users_tenant(): void
     {
         $roleType = SystemUserType::factory()->group()->create();
