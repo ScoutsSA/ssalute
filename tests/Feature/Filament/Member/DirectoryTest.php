@@ -186,8 +186,35 @@ class DirectoryTest extends SdCoreTestCase
             ->assertTableColumnStateSet('whatsapp', null, $attachment)
             ->assertActionVisible(TestAction::make('contact')->table($attachment))
             ->assertActionHidden(TestAction::make('contactUrgently')->table($attachment))
+            ->assertActionVisible(TestAction::make('informationRedacted')->table($attachment))
+            ->mountAction(TestAction::make('informationRedacted')->table($attachment))
+            ->assertActionMounted(TestAction::make('informationRedacted')->table($attachment))
+            ->tap(function (Testable $component) use ($viewer): void {
+                /** @var GroupTeam $page */
+                $page = $component->instance();
+                $profileLink = collect($page->getMountedAction()->getExtraModalFooterActions())->first();
+
+                $this->assertStringEndsWith("/profile/{$viewer->id}", $profileLink->getUrl());
+            })
             ->assertDontSee(self::LISTED_EMAIL)
             ->assertDontSee(self::LISTED_CELL);
+    }
+
+    #[Test]
+    public function information_redacted_is_not_offered_for_members_who_share_their_details(): void
+    {
+        $visible = $this->listedGroupLeader();
+        $attachment = $visible->roleAttachments()->first();
+
+        [$viewer, $tenant] = $this->viewerWithRole($this->adultLeaderGroupRole);
+
+        $this->actingAs($viewer);
+        Filament::setCurrentPanel(Filament::getPanel('member'));
+        Filament::setTenant($tenant);
+
+        Livewire::test(GroupTeam::class)
+            ->assertActionHidden(TestAction::make('informationRedacted')->table($attachment))
+            ->assertActionVisible(TestAction::make('contactUrgently')->table($attachment));
     }
 
     #[Test]

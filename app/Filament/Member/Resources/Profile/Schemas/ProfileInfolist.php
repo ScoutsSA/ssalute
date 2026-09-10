@@ -6,6 +6,7 @@ use App\Enums\UserEnglishProficiency;
 use App\Enums\UserRace;
 use App\Enums\UserSex;
 use App\Enums\UserTitle;
+use App\Models\SystemUser;
 use App\Services\FileUrlService;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\TextEntry;
@@ -137,6 +138,13 @@ class ProfileInfolist
                                         TextEntry::make('homeNr')
                                             ->label('Home Number')
                                             ->placeholder('-'),
+                                        TextEntry::make('infoRedacted')
+                                            ->label('Directory sharing')
+                                            ->badge()
+                                            ->state(fn (SystemUser $record): string => $record->infoRedacted === 1 ? 'Redacted' : 'Shared with adult leaders')
+                                            ->color(fn (string $state): string => $state === 'Redacted' ? 'warning' : 'success')
+                                            ->helperText('Controls whether other adult volunteers can see your email address and cell number in the adult leader directory. It only affects the directory, and can be changed from the menu at the top of this page.')
+                                            ->columnSpanFull(),
                                     ]),
                             ]),
 

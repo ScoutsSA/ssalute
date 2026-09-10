@@ -3,6 +3,7 @@
 namespace Tests\Feature\Filament;
 
 use App\Filament\Member\Resources\Profile\Pages\EditProfile;
+use App\Filament\Member\Resources\Profile\Pages\ViewProfile;
 use App\Models\SystemUser;
 use App\Providers\AppServiceProvider;
 use App\Settings\FeatureSettings;
@@ -190,6 +191,58 @@ class ProfileTest extends SdCoreTestCase
             'id' => $user->id,
             'username' => 'original@example.com',
         ]);
+    }
+
+    #[Test]
+    public function user_can_redact_their_contact_info_from_the_profile_menu(): void
+    {
+        $user = SystemUser::factory()->withRole()->create(['infoRedacted' => 0]);
+        $tenant = $user->roleAttachments()->first();
+
+        $this->actingAs($user);
+        Filament::setCurrentPanel(Filament::getPanel('member'));
+        Filament::setTenant($tenant);
+
+        Livewire::actingAs($user)
+            ->test(ViewProfile::class, ['record' => $user->id])
+            ->assertActionVisible('redactContactInfo')
+            ->assertActionHidden('allowContactInfoSharing')
+            ->callAction('redactContactInfo')
+            ->assertNotified('Your contact info is now redacted');
+
+        $this->assertSame(1, $user->fresh()->infoRedacted);
+    }
+
+    #[Test]
+    public function user_can_allow_their_contact_info_to_be_shared_again(): void
+    {
+        $user = SystemUser::factory()->withRole()->create(['infoRedacted' => 1]);
+        $tenant = $user->roleAttachments()->first();
+
+        $this->actingAs($user);
+        Filament::setCurrentPanel(Filament::getPanel('member'));
+        Filament::setTenant($tenant);
+
+        Livewire::actingAs($user)
+            ->test(ViewProfile::class, ['record' => $user->id])
+            ->assertActionHidden('redactContactInfo')
+            ->assertActionVisible('allowContactInfoSharing')
+            ->callAction('allowContactInfoSharing')
+            ->assertNotified('Your contact info can now be shared');
+
+        $this->assertSame(0, $user->fresh()->infoRedacted);
+    }
+
+    #[Test]
+    public function profile_shows_the_directory_sharing_status(): void
+    {
+        $user = SystemUser::factory()->withRole()->create(['infoRedacted' => 1]);
+
+        $this->actingAs($user)
+            ->get($this->viewProfileUrl($user))
+            ->assertOk()
+            ->assertSee('Directory sharing')
+            ->assertSee('Redacted');
     }
 
     private function viewProfileUrl(SystemUser $user): string

@@ -4,6 +4,7 @@ namespace App\Filament\Member\Clusters\Directory\Pages;
 
 use App\Enums\DirectoryLevel;
 use App\Filament\Member\Clusters\Directory\DirectoryCluster;
+use App\Filament\Member\Resources\Profile\ProfileResource;
 use App\Mail\Directory\ContactViaSystemEmail;
 use App\Models\SystemContactMessage;
 use App\Models\SystemUser;
@@ -110,6 +111,7 @@ abstract class DirectoryTeamPage extends Page implements HasTable
                 $this->contactViaSystemAction(),
                 ActionGroup::make([
                     $this->contactUrgentlyAction(),
+                    $this->informationRedactedAction(),
                 ]),
             ] : [])
             ->emptyStateHeading('No team members found')
@@ -256,6 +258,31 @@ abstract class DirectoryTeamPage extends Page implements HasTable
                         ->visible(fn (SystemUsersOtherRole $record): bool => $this->whatsAppLinkFor($record) !== null)
                         ->url(fn (SystemUsersOtherRole $record): ?string => $this->whatsAppLinkFor($record))
                         ->openUrlInNewTab()),
+            ]);
+    }
+
+    /**
+     * Takes the place of Contact urgently for a member who redacted their details, and points
+     * the viewer at their own profile page should they want to do the same.
+     */
+    private function informationRedactedAction(): Action
+    {
+        return Action::make('informationRedacted')
+            ->label('Information redacted')
+            ->icon(Heroicon::EyeSlash)
+            ->color('gray')
+            ->visible(fn (SystemUsersOtherRole $record): bool => $record->user->infoRedacted === 1)
+            ->modalHeading(fn (SystemUsersOtherRole $record): string => "{$record->user->name} has redacted their contact info")
+            ->modalDescription('This member has chosen not to share their email address and cell number in the adult leader directory. You can still reach them with the Contact button, which sends your message through the system without revealing their details. If you would like to redact your own contact info in the directory, you can do so on your profile page, found in the menu at the top right of the screen.')
+            ->modalIcon(Heroicon::EyeSlash)
+            ->modalWidth(Width::Medium)
+            ->modalSubmitAction(false)
+            ->modalCancelActionLabel('Close')
+            ->extraModalFooterActions([
+                Action::make('goToProfile')
+                    ->label('Go to my profile')
+                    ->icon(Heroicon::UserCircle)
+                    ->url(fn (): string => ProfileResource::getUrl('view', ['record' => $this->viewer()->id])),
             ]);
     }
 

@@ -98,6 +98,8 @@ class ViewProfile extends ViewRecord
                     ->icon(Heroicon::DocumentCheck)
                     ->url(fn () => ProfileResource::getUrl('membership-certificate', ['record' => $this->getRecord()]))
                     ->visible(fn () => MembershipCertificate::canAccess()),
+                $this->redactContactInfoAction(),
+                $this->allowContactInfoSharingAction(),
             ])
                 ->label('')
                 ->icon(Heroicon::EllipsisVertical)
@@ -105,6 +107,55 @@ class ViewProfile extends ViewRecord
                 ->button()
                 ->visible(),
         ];
+    }
+
+    /**
+     * Sets the legacy infoRedacted flag, which replaces the member's email and cell number with
+     * the word "Redacted" in the adult leader directory. Record views for scouters who manage
+     * the member's area are unaffected.
+     */
+    private function redactContactInfoAction(): Action
+    {
+        return Action::make('redactContactInfo')
+            ->label('Redact my contact info')
+            ->icon(Heroicon::EyeSlash)
+            ->color('warning')
+            ->visible(fn (): bool => $this->getRecord()->infoRedacted !== 1)
+            ->modalHeading('Redact my contact info')
+            ->modalDescription('Your email address and cell number are currently visible to other adult volunteers in the adult leader directory. Redacting them shows the word "Redacted" there instead. This only affects the directory: scouters who manage your group, district or region can still see your details on your record, and other members can still reach you by sending a message through the system, which never reveals your address. You can allow sharing again at any time from this menu.')
+            ->modalIcon(Heroicon::EyeSlash)
+            ->modalSubmitActionLabel('Yes, please redact my contact info')
+            ->action(function (): void {
+                $this->getRecord()->update(['infoRedacted' => 1]);
+
+                Notification::make()
+                    ->title('Your contact info is now redacted')
+                    ->body('Other members will see "Redacted" instead of your email address and cell number.')
+                    ->success()
+                    ->send();
+            });
+    }
+
+    private function allowContactInfoSharingAction(): Action
+    {
+        return Action::make('allowContactInfoSharing')
+            ->label('Allow my contact info to be shared')
+            ->icon(Heroicon::Eye)
+            ->color('success')
+            ->visible(fn (): bool => $this->getRecord()->infoRedacted === 1)
+            ->modalHeading('Allow my contact info to be shared')
+            ->modalDescription('Your email address and cell number are currently redacted in the adult leader directory. Allowing sharing shows them there only to other adult volunteers who hold an active adult leader role. They are never shown to parents or youth members, and never made public. Scouters who manage your group, district or region can see your details on your record either way. You can redact them again at any time from this menu.')
+            ->modalIcon(Heroicon::Eye)
+            ->modalSubmitActionLabel('Yes, share my contact info with adult volunteers')
+            ->action(function (): void {
+                $this->getRecord()->update(['infoRedacted' => 0]);
+
+                Notification::make()
+                    ->title('Your contact info can now be shared')
+                    ->body('Other adult volunteers can see your email address and cell number again.')
+                    ->success()
+                    ->send();
+            });
     }
 
     private function sendReportIssueEmail(string $description, bool $sendToNational, string $successMessage): void
