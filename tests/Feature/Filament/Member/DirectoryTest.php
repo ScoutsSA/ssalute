@@ -3,6 +3,7 @@
 namespace Tests\Feature\Filament\Member;
 
 use App\Filament\Member\Clusters\Directory\Pages\GroupTeam;
+use App\Filament\Member\Clusters\Directory\Pages\NationalTeam;
 use App\Mail\Directory\ContactViaSystemEmail;
 use App\Models\District;
 use App\Models\Group;
@@ -13,8 +14,10 @@ use App\Models\SystemUserType;
 use App\Settings\FeatureSettings;
 use Filament\Actions\Testing\TestAction;
 use Filament\Facades\Filament;
+use Filament\Infolists\Components\TextEntry;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Livewire\Features\SupportTesting\Testable;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\Support\SdCoreTestCase;
@@ -91,18 +94,37 @@ class DirectoryTest extends SdCoreTestCase
     }
 
     #[Test]
-    public function adult_leader_sees_names_roles_and_contact_details(): void
+    public function adult_leader_sees_names_roles_and_can_reveal_contact_details(): void
     {
-        $this->listedGroupLeader();
+        $leader = $this->listedGroupLeader();
+        $attachment = $leader->roleAttachments()->first();
         [$viewer, $tenant] = $this->viewerWithRole($this->adultLeaderGroupRole);
 
         $this->actingAs($viewer)
             ->get("/member/{$tenant->id}/directory/group-team")
             ->assertOk()
             ->assertSee('Listed Leader')
-            ->assertSee('Troop Scouter')
-            ->assertSee(self::LISTED_EMAIL)
-            ->assertSee(self::LISTED_CELL);
+            ->assertSee('Troop Scouter');
+
+        Filament::setCurrentPanel(Filament::getPanel('member'));
+        Filament::setTenant($tenant);
+
+        Livewire::test(GroupTeam::class)
+            ->assertTableColumnExists('email')
+            ->assertTableColumnExists('cell_number')
+            ->assertTableColumnExists('whatsapp')
+            ->assertTableColumnStateSet('email', self::LISTED_EMAIL, $attachment)
+            ->assertTableColumnStateSet('cell_number', self::LISTED_CELL, $attachment)
+            ->assertActionVisible(TestAction::make('contactUrgently')->table($attachment))
+            ->mountAction(TestAction::make('contactUrgently')->table($attachment))
+            ->assertActionMounted(TestAction::make('contactUrgently')->table($attachment))
+            ->tap(function (Testable $component): void {
+                $this->assertSame([
+                    'email' => [self::LISTED_EMAIL, 'mailto:' . self::LISTED_EMAIL],
+                    'cell_number' => [self::LISTED_CELL, 'tel:' . self::LISTED_CELL],
+                    'whatsapp' => 'https://wa.me/27821234567',
+                ], $this->urgentModalContents($component));
+            });
     }
 
     #[Test]
@@ -147,16 +169,23 @@ class DirectoryTest extends SdCoreTestCase
     }
 
     #[Test]
-    public function redacted_members_show_the_word_redacted_to_adult_leaders(): void
+    public function redacted_members_show_the_word_redacted_and_cannot_be_contacted_urgently(): void
     {
-        $this->listedGroupLeader(['infoRedacted' => 1]);
+        $redacted = $this->listedGroupLeader(['infoRedacted' => 1]);
+        $attachment = $redacted->roleAttachments()->first();
         [$viewer, $tenant] = $this->viewerWithRole($this->adultLeaderGroupRole);
 
-        $this->actingAs($viewer)
-            ->get("/member/{$tenant->id}/directory/group-team")
-            ->assertOk()
+        $this->actingAs($viewer);
+        Filament::setCurrentPanel(Filament::getPanel('member'));
+        Filament::setTenant($tenant);
+
+        Livewire::test(GroupTeam::class)
             ->assertSee('Listed Leader')
-            ->assertSee('Redacted')
+            ->assertTableColumnStateSet('email', 'Redacted', $attachment)
+            ->assertTableColumnStateSet('cell_number', 'Redacted', $attachment)
+            ->assertTableColumnStateSet('whatsapp', null, $attachment)
+            ->assertActionVisible(TestAction::make('contact')->table($attachment))
+            ->assertActionHidden(TestAction::make('contactUrgently')->table($attachment))
             ->assertDontSee(self::LISTED_EMAIL)
             ->assertDontSee(self::LISTED_CELL);
     }
@@ -294,10 +323,37 @@ class DirectoryTest extends SdCoreTestCase
             $mail->assertHasSubject('Camp planning');
 
             return $mail->hasTo(self::LISTED_EMAIL)
-                && $mail->hasCc('viewer@directory.test')
+                && ! $mail->hasCc('viewer@directory.test')
                 && $mail->hasReplyTo('viewer@directory.test')
                 && $mail->messageBody === "Hi Lis,\n\nCan we talk about camp?";
         });
+    }
+
+    #[Test]
+    public function sender_is_copied_in_only_when_the_member_has_not_redacted(): void
+    {
+        Mail::fake();
+
+        $visible = $this->listedGroupLeader();
+        $attachment = $visible->roleAttachments()->first();
+
+        [$viewer, $tenant] = $this->viewerWithRole($this->adultLeaderGroupRole);
+        $viewer->update(['username' => 'viewer@directory.test']);
+
+        $this->actingAs($viewer);
+        Filament::setCurrentPanel(Filament::getPanel('member'));
+        Filament::setTenant($tenant);
+
+        Livewire::test(GroupTeam::class)
+            ->callAction(TestAction::make('contact')->table($attachment), [
+                'subject' => 'Hello',
+                'message' => 'A copy should reach me.',
+            ])
+            ->assertNotified();
+
+        Mail::assertQueued(ContactViaSystemEmail::class, fn (ContactViaSystemEmail $mail): bool => $mail->hasTo(self::LISTED_EMAIL)
+            && $mail->hasCc('viewer@directory.test')
+            && $mail->hasReplyTo('viewer@directory.test'));
     }
 
     #[Test]
@@ -321,34 +377,32 @@ class DirectoryTest extends SdCoreTestCase
     }
 
     #[Test]
-    public function adult_leader_gets_a_whatsapp_link_next_to_the_cell_number(): void
+    public function contact_columns_are_hidden_by_default_and_absent_for_parents(): void
     {
-        $this->listedGroupLeader();
+        $leader = $this->listedGroupLeader();
+        $attachment = $leader->roleAttachments()->first();
+
         [$viewer, $tenant] = $this->viewerWithRole($this->adultLeaderGroupRole);
 
         $this->actingAs($viewer)
             ->get("/member/{$tenant->id}/directory/group-team")
             ->assertOk()
-            ->assertSee('https://wa.me/27821234567');
-    }
-
-    #[Test]
-    public function whatsapp_link_is_withheld_for_redacted_members_and_parents(): void
-    {
-        $this->listedGroupLeader(['infoRedacted' => 1]);
-        [$leader, $leaderTenant] = $this->viewerWithRole($this->adultLeaderGroupRole);
-
-        $this->actingAs($leader)
-            ->get("/member/{$leaderTenant->id}/directory/group-team")
-            ->assertOk()
+            ->assertSee('Listed Leader')
+            ->assertDontSee(self::LISTED_EMAIL)
+            ->assertDontSee(self::LISTED_CELL)
             ->assertDontSee('wa.me');
 
-        $this->listedGroupLeader();
         [$parent, $parentTenant] = $this->viewerWithRole($this->parentRole);
 
-        $this->actingAs($parent)
-            ->get("/member/{$parentTenant->id}/directory/group-team")
-            ->assertOk()
+        $this->actingAs($parent);
+        Filament::setCurrentPanel(Filament::getPanel('member'));
+        Filament::setTenant($parentTenant);
+
+        Livewire::test(GroupTeam::class)
+            ->assertTableColumnDoesNotExist('email')
+            ->assertTableColumnDoesNotExist('cell_number')
+            ->assertTableColumnDoesNotExist('whatsapp')
+            ->assertActionDoesNotExist(TestAction::make('contactUrgently')->table($attachment))
             ->assertDontSee('wa.me');
     }
 
@@ -437,16 +491,46 @@ class DirectoryTest extends SdCoreTestCase
     {
         $chiefScoutRole = SystemUserType::factory()->national()->create(['id' => 219, 'name' => 'Chief Scout', 'adultLeaderRole' => 1]);
         $chiefScout = SystemUser::factory()->create(['first_name' => 'Chief', 'surname' => 'Scout', 'username' => 'chief@directory.test', 'cellNr' => '0839876543']);
-        SystemUsersOtherRole::factory()->forUser($chiefScout)->ofType($chiefScoutRole)->create();
+        $chiefAttachment = SystemUsersOtherRole::factory()->forUser($chiefScout)->ofType($chiefScoutRole)->create();
 
         [$viewer, $tenant] = $this->viewerWithRole($this->adultLeaderGroupRole);
 
-        $this->actingAs($viewer)
-            ->get("/member/{$tenant->id}/directory/national-team")
-            ->assertOk()
+        $this->actingAs($viewer);
+        Filament::setCurrentPanel(Filament::getPanel('member'));
+        Filament::setTenant($tenant);
+
+        Livewire::test(NationalTeam::class)
             ->assertSee('Chief Scout')
-            ->assertSee('chief@directory.test')
+            ->assertTableColumnStateSet('email', 'chief@directory.test', $chiefAttachment)
+            ->assertTableColumnStateSet('cell_number', null, $chiefAttachment)
+            ->assertTableColumnStateSet('whatsapp', null, $chiefAttachment)
             ->assertDontSee('0839876543');
+    }
+
+    /**
+     * What the mounted Contact urgently modal shows: each entry's state and link, plus the
+     * WhatsApp action URL. Filament renders action modals as a Livewire partial, so the
+     * component's HTML snapshot never contains them and the schema is inspected directly.
+     *
+     * @return array<string, mixed>
+     */
+    private function urgentModalContents(Testable $component): array
+    {
+        /** @var GroupTeam $page */
+        $page = $component->instance();
+        $schema = $page->getSchema($page->getMountedActionSchemaName());
+
+        /** @var TextEntry $email */
+        $email = $schema->getComponent('email');
+        /** @var TextEntry $cell */
+        $cell = $schema->getComponent('cell_number');
+        $whatsApp = collect($cell->getChildSchema(TextEntry::AFTER_CONTENT_SCHEMA_KEY)?->getComponents() ?? [])->first();
+
+        return [
+            'email' => [$email->getState(), $email->getUrl($email->getState())],
+            'cell_number' => [$cell->getState(), $cell->getUrl($cell->getState())],
+            'whatsapp' => $whatsApp?->getUrl(),
+        ];
     }
 
     /**

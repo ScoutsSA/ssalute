@@ -39,7 +39,7 @@ class RegionalTeam extends DirectoryTeamPage
             TextColumn::make('region.name')
                 ->label('Region')
                 ->placeholder('-')
-                ->toggleable(),
+                ->toggleable(isToggledHiddenByDefault: true),
         ];
     }
 

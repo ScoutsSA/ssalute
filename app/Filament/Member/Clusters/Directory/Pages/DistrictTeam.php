@@ -48,11 +48,11 @@ class DistrictTeam extends DirectoryTeamPage
             TextColumn::make('district.name')
                 ->label('District')
                 ->placeholder('-')
-                ->toggleable(),
+                ->toggleable(isToggledHiddenByDefault: true),
             TextColumn::make('district.region.name')
                 ->label('Region')
                 ->placeholder('-')
-                ->toggleable(),
+                ->toggleable(isToggledHiddenByDefault: true),
         ];
     }
 

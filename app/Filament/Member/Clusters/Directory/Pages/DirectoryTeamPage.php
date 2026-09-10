@@ -12,9 +12,11 @@ use App\Models\SystemUserType;
 use App\Services\LegacyHtmlService;
 use App\Services\WhatsAppLinkService;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Enums\Width;
@@ -104,7 +106,12 @@ abstract class DirectoryTeamPage extends Page implements HasTable
                 $this->roleFilter(),
                 ...$this->scopeFilters($this->tenant()),
             ])
-            ->recordActions($contactDetailsVisible ? [$this->contactViaSystemAction()] : [])
+            ->recordActions($contactDetailsVisible ? [
+                $this->contactViaSystemAction(),
+                ActionGroup::make([
+                    $this->contactUrgentlyAction(),
+                ]),
+            ] : [])
             ->emptyStateHeading('No team members found')
             ->emptyStateDescription('There are no active members holding a role at this level for the selected area.');
     }
@@ -172,22 +179,23 @@ abstract class DirectoryTeamPage extends Page implements HasTable
     }
 
     /**
-     * Lets an adult leader message any listed member through the system, with the leader copied
-     * in and replies going to them. For members who redacted their contact details the system
-     * never reveals the address. Only offered to adult leader viewers, for rows with a usable
+     * Lets an adult leader message any listed member through the system, with replies going to
+     * them. The leader is copied in unless the member redacted their contact details, because a
+     * copy would carry the member's address in its To header. Only offered to adult leader viewers, for rows with a usable
      * email address on file, and every message is recorded in system_contact_messages.
      */
     private function contactViaSystemAction(): Action
     {
         return Action::make('contact')
-            ->label('Contact via the system')
+            ->label('Contact')
             ->icon(Heroicon::Envelope)
-            ->color('gray')
-            ->link()
+            ->color('primary')
+            ->button()
+            ->outlined()
             ->visible(fn (SystemUsersOtherRole $record): bool => $this->isMailable($record->user->username))
             ->modalHeading(fn (SystemUsersOtherRole $record): string => "Contact {$record->user->name}")
             ->modalDescription(fn (SystemUsersOtherRole $record): string => $record->user->infoRedacted === 1
-                ? 'This member has redacted their contact details. Your message is sent through the system without revealing their email address or cell number. You are copied in, and any reply comes straight back to your own email address.'
+                ? 'This member has redacted their contact details. Your message is sent through the system without revealing their email address or cell number, so you will not receive a copy, but any reply comes straight back to your own email address.'
                 : 'Your message is sent through the system. You are copied in, and any reply comes straight back to your own email address.')
             ->modalSubmitActionLabel('Send message')
             ->schema([
@@ -206,6 +214,49 @@ abstract class DirectoryTeamPage extends Page implements HasTable
             ->action(function (SystemUsersOtherRole $record, array $data): void {
                 $this->sendContactViaSystem($record, $data['subject'], $data['message']);
             });
+    }
+
+    /**
+     * The member's real contact details, for when a matter cannot wait for a reply through the
+     * system. Never offered for a member who has redacted their information.
+     */
+    private function contactUrgentlyAction(): Action
+    {
+        return Action::make('contactUrgently')
+            ->label('Contact urgently')
+            ->icon(Heroicon::ExclamationTriangle)
+            ->color('danger')
+            ->visible(fn (SystemUsersOtherRole $record): bool => $record->user->infoRedacted !== 1
+                && ($this->isMailable($record->user->username) || filled($record->user->cellNr)))
+            ->modalHeading(fn (SystemUsersOtherRole $record): string => "Contact {$record->user->name} urgently")
+            ->modalDescription('Direct contact details, for matters that cannot wait for a reply through the system.')
+            ->modalWidth(Width::Medium)
+            ->modalSubmitAction(false)
+            ->modalCancelActionLabel('Close')
+            ->schema([
+                TextEntry::make('email')
+                    ->label('Email')
+                    ->state(fn (SystemUsersOtherRole $record): ?string => $this->emailFor($record))
+                    ->url(fn (?string $state): ?string => $this->isMailable($state) ? "mailto:{$state}" : null)
+                    ->copyable()
+                    ->copyMessage('Email address copied')
+                    ->placeholder('No email address on file'),
+                TextEntry::make('cell_number')
+                    ->label('Cell Number')
+                    ->state(fn (SystemUsersOtherRole $record): ?string => $this->cellNumberFor($record))
+                    ->url(fn (?string $state): ?string => filled($state) ? "tel:{$state}" : null)
+                    ->copyable()
+                    ->copyMessage('Cell number copied')
+                    ->placeholder('No cell number on file')
+                    ->afterContent(Action::make('whatsApp')
+                        ->label('Open a WhatsApp chat')
+                        ->icon(Heroicon::ChatBubbleOvalLeft)
+                        ->color('success')
+                        ->iconButton()
+                        ->visible(fn (SystemUsersOtherRole $record): bool => $this->whatsAppLinkFor($record) !== null)
+                        ->url(fn (SystemUsersOtherRole $record): ?string => $this->whatsAppLinkFor($record))
+                        ->openUrlInNewTab()),
+            ]);
     }
 
     private function sendContactViaSystem(SystemUsersOtherRole $record, string $subject, string $message): void
@@ -237,7 +288,7 @@ abstract class DirectoryTeamPage extends Page implements HasTable
                 ]);
 
                 Mail::to($record->user->username)
-                    ->cc($viewer->username)
+                    ->when($record->user->infoRedacted !== 1, fn ($mail) => $mail->cc($viewer->username))
                     ->send(new ContactViaSystemEmail($viewer, $record->user, $subject, $message));
             },
             decaySeconds: 3600,
@@ -254,7 +305,9 @@ abstract class DirectoryTeamPage extends Page implements HasTable
 
         Notification::make()
             ->title("Message sent to {$record->user->name}")
-            ->body('You are copied in, and any reply will go to your own email address.')
+            ->body($record->user->infoRedacted === 1
+                ? 'Any reply will go to your own email address.'
+                : 'You are copied in, and any reply will go to your own email address.')
             ->success()
             ->send();
     }
@@ -328,13 +381,13 @@ abstract class DirectoryTeamPage extends Page implements HasTable
                 ->state(fn (SystemUsersOtherRole $record): ?string => $this->emailFor($record))
                 ->url(fn (?string $state): ?string => $this->isMailable($state) ? "mailto:{$state}" : null)
                 ->placeholder('-')
-                ->toggleable(),
+                ->toggleable(isToggledHiddenByDefault: true),
             TextColumn::make('cell_number')
                 ->label('Cell Number')
                 ->state(fn (SystemUsersOtherRole $record): ?string => $this->cellNumberFor($record))
                 ->url(fn (?string $state): ?string => filled($state) && $state !== self::REDACTED ? "tel:{$state}" : null)
                 ->placeholder('-')
-                ->toggleable(),
+                ->toggleable(isToggledHiddenByDefault: true),
             IconColumn::make('whatsapp')
                 ->label('WhatsApp')
                 ->state(fn (SystemUsersOtherRole $record): ?string => $this->whatsAppLinkFor($record))
@@ -343,7 +396,7 @@ abstract class DirectoryTeamPage extends Page implements HasTable
                 ->tooltip('Open a WhatsApp chat')
                 ->url(fn (?string $state): ?string => $state)
                 ->openUrlInNewTab()
-                ->toggleable(),
+                ->toggleable(isToggledHiddenByDefault: true),
         ];
     }
 

@@ -52,15 +52,15 @@ class GroupTeam extends DirectoryTeamPage
             TextColumn::make('group.name')
                 ->label('Group')
                 ->placeholder('-')
-                ->toggleable(),
+                ->toggleable(isToggledHiddenByDefault: true),
             TextColumn::make('group.district.name')
                 ->label('District')
                 ->placeholder('-')
-                ->toggleable(),
+                ->toggleable(isToggledHiddenByDefault: true),
             TextColumn::make('group.region.name')
                 ->label('Region')
                 ->placeholder('-')
-                ->toggleable(),
+                ->toggleable(isToggledHiddenByDefault: true),
         ];
     }
 
