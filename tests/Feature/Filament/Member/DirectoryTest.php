@@ -66,6 +66,22 @@ class DirectoryTest extends SdCoreTestCase
     }
 
     #[Test]
+    public function scout_info_navigation_group_sits_below_my_info(): void
+    {
+        $features = resolve(FeatureSettings::class);
+        $features->users_can_browse_areas = true;
+        $features->save();
+
+        [$viewer, $tenant] = $this->viewerWithRole($this->adultLeaderGroupRole);
+
+        $this->actingAs($viewer)
+            ->get("/member/{$tenant->id}/dashboard")
+            ->assertOk()
+            ->assertSeeInOrder(['My Info', 'Scout Info', 'Regions/Districts/Groups', 'Adult Leaders', 'External Links'])
+            ->assertDontSee('Browse Areas');
+    }
+
+    #[Test]
     public function guest_is_redirected_to_login(): void
     {
         [, $tenant] = $this->viewerWithRole($this->adultLeaderGroupRole);

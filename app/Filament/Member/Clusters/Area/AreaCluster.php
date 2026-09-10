@@ -7,6 +7,7 @@ use BackedEnum;
 use Filament\Clusters\Cluster;
 use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Support\Icons\Heroicon;
+use UnitEnum;
 
 class AreaCluster extends Cluster
 {
@@ -16,7 +17,9 @@ class AreaCluster extends Cluster
 
     protected static ?int $navigationSort = 2;
 
-    protected static ?string $navigationLabel = 'Browse Areas';
+    protected static ?string $navigationLabel = 'Regions/Districts/Groups';
+
+    protected static string|UnitEnum|null $navigationGroup = 'Scout Info';
 
     public static function canAccess(): bool
     {

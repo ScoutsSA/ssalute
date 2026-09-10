@@ -41,6 +41,8 @@ class MemberPanelProvider extends PanelProvider
             ->readOnlyRelationManagersOnResourceViewPagesByDefault(false)
             ->tenant(SystemUsersOtherRole::class)
             ->navigationGroups([
+                NavigationGroup::make('My Info'),
+                NavigationGroup::make('Scout Info'),
                 NavigationGroup::make('External Links')
                     ->collapsed(),
             ])
