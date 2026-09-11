@@ -13,7 +13,6 @@ use App\Models\SystemUserType;
 use App\Services\LegacyHtmlService;
 use App\Services\WhatsAppLinkService;
 use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -122,10 +121,8 @@ abstract class DirectoryTeamPage extends Page implements HasTable
             ])
             ->recordActions($contactDetailsVisible ? [
                 $this->contactViaSystemAction(),
-                ActionGroup::make([
-                    $this->contactUrgentlyAction(),
-                    $this->informationRedactedAction(),
-                ]),
+                $this->contactUrgentlyAction(),
+                $this->informationRedactedAction(),
             ] : [])
             ->emptyStateHeading('No team members found')
             ->emptyStateDescription('There are no active members holding a role at this level for the selected area.');
@@ -241,6 +238,8 @@ abstract class DirectoryTeamPage extends Page implements HasTable
             ->label('Contact urgently')
             ->icon(Heroicon::ExclamationTriangle)
             ->color('danger')
+            ->button()
+            ->outlined()
             ->visible(fn (SystemUsersOtherRole $record): bool => $record->user->infoRedacted !== 1
                 && ($this->isMailable($record->user->username) || filled($record->user->cellNr)))
             ->modalHeading(fn (SystemUsersOtherRole $record): string => "Contact {$record->user->name} urgently")
@@ -284,6 +283,8 @@ abstract class DirectoryTeamPage extends Page implements HasTable
             ->label('Information redacted')
             ->icon(Heroicon::EyeSlash)
             ->color('gray')
+            ->button()
+            ->outlined()
             ->visible(fn (SystemUsersOtherRole $record): bool => $record->user->infoRedacted === 1)
             ->modalHeading(fn (SystemUsersOtherRole $record): string => "{$record->user->name} has redacted their contact info")
             ->modalDescription('This member has chosen not to share their email address and cell number in the adult leader directory. You can still reach them with the Contact button, which sends your message through the system without revealing their details. If you would like to redact your own contact info in the directory, you can do so on your profile page, found in the menu at the top right of the screen.')
