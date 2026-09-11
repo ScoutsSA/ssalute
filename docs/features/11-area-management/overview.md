@@ -2,8 +2,8 @@
 
 > Module: Area Management
 > Panel(s): Admin (backoffice), Member
-> Status: Planned — Needs Human Review
-> Phase: 1 — Foundation
+> Status: Backoffice complete (2026-09-11). Member panel read only. Super districts and the active toggle warnings are not built.
+> Phase: 1 (Foundation)
 
 ---
 
@@ -31,44 +31,55 @@ National (1 record)
 
 ## Backoffice (Admin) Requirements
 
+### Common rules for regions, districts and groups
+
+- Every column on the legacy table is editable in the backoffice form. The audit columns (`id`, `created`, `createdby`, `modified`, `modifiedby`, and on groups `groupLastUpdated` and `groupLastUpdatedBy`) are shown read only on the edit page and stamped by the system.
+- Related records (region, district, super district, account, group type, country) are chosen from selects labelled `Name (#id)`.
+- A record cannot be deleted while any row in any table references it. The legacy schema has no foreign keys, so the reference list is derived from the schema dump and covers districts, groups, role attachments, users, sections, committees, finance, advancements, badges, adult membership records, logs and every other referencing table. The admin sees a notification naming the blocking tables and their row counts.
+- Every table that can block a delete is visible as a read only tab on the record's view and edit pages, with a count badge, hidden while empty. The view page also lists the blocking tables in a "Linked records" section.
+- Deleting is a hard delete. In practice only records that were never used can be deleted, because log tables also reference areas.
+
 ### Regions
 
-- List all regions with their name, short code, position, active status, district count, and group count.
+- List all regions with their name, short code, position, active status, district count, and group count. Every column is available as a toggleable column.
 - Filter by active status. Search by name or short code. Sort by name, position, or active status.
 - View a region's full details including its description, physical address, and active status, along with all districts and groups within it.
-- Create and edit regions with name, short code, sort position, active toggle, description, and physical address fields.
-- Name and short code must each be unique. Position must be a positive integer.
-- A region cannot be deleted if it contains any districts.
+- Create and edit regions with name, short code, sort position, country, account, active, using AMS, census done, description, and physical address.
+- Name and short code must each be unique. Position must be zero or a positive integer.
+- A region cannot be deleted while any district, super district, group, role attachment, user or other record references it.
 
 ### Districts
 
-- List all districts with their name, parent region, active status, and group count.
+- List all districts with their name, parent region, active status, and group count. Every column is available as a toggleable column.
 - Filter by region and active status. Search by name. Sort by name, region, or active status.
 - View a district's full details including its parent region, description, physical address, and all groups within it.
-- Create and edit districts with name, parent region, active toggle, description, and physical address fields.
+- Create and edit districts with name, parent region, super district (limited to the chosen region), country, account, active, census done, description, and physical address.
 - Name is required. Region is required. The district name must be unique within its region.
-- A district cannot be deleted if it contains any groups.
+- A district cannot be deleted while any group, role attachment, user or other record references it.
 
 ### Groups
 
-- List all groups with name, group number, district, region, type, and active status.
-- Filter by region (with cascading district filter), group type, and active status. Search by name or group number.
-- View a group's full details including contact and social media information, banking details, and section units (Meerkat Dens, Cub Packs, Scout Troops, Rover Crews) with their leaders.
-- Create and edit groups using a tabbed form covering: details (name, group number, type, district, description, join date, active toggle), sections (add/edit/remove section units), contact and social media, banking information, and system settings.
-- Name, district, and group type are required. Group number must be unique if provided.
-- Toggle a group's active status with a confirmation prompt. Deactivating a group that has active adult warrants or active youth shows a warning but does not block the action. No data is deleted.
+- List all groups with name, registration number, district, region, type, and active status. Every column is available as a toggleable column.
+- Filter by region, district, group type, and active status. Search by name or registration number.
+- View a group's full details including contact and social media information, banking details, and section units (Meerkat Dens, Cub Packs, Scout Troops, Rover Crews).
+- Create and edit groups using a tabbed form covering: details (name, registration number, type, group account, region, district, countries, addresses, description, active, managed regionally, census done), sections (section flags, multi section flags, legacy program types, legacy branch flags), contact and social media (including weather location), banking information, and system settings.
+- The district select only offers districts in the chosen region.
+- Name, region, district, and group type are required. The registration number must be unique if provided.
+- A group cannot be deleted while any role attachment, user, section, committee member, or other record references it.
+- Not built: a dedicated active toggle action with a warning when the group has active adult warrants or active youth. The active flag is edited on the form like any other column.
 
 ### Group Sections
 
 - Each group can have multiple section units: Meerkat Dens, Cub Packs, Scout Troops, and Rover Crews.
 - Sections are managed within the group view and edit pages, with the ability to add, edit, and remove individual section units.
-- Each section shows its name, leader name, and active status.
+- Each section shows its name and active status.
 
 ### Super Districts
 
 - Super districts are optional administrative groupings that span multiple districts within a region.
 - They do not affect the primary hierarchy. Groups belong to districts, not super districts.
 - Used for reporting and administration purposes in some regions.
+- Not built: there is no super district resource. A district's super district is chosen on the district form.
 
 ---
 
@@ -98,8 +109,9 @@ National (1 record)
 
 ## Business Rules and Constraints
 
-- Deactivating a region or district must not automatically cascade to child records. Deactivation must be done deliberately at the group level. A warning is shown when deactivating a parent record that has active children.
-- Group numbers are a legacy concept. They should be unique where provided, but null or empty values are allowed since not all groups may have a number initially.
+- Deactivating a region or district must not automatically cascade to child records. Deactivation must be done deliberately at the group level. The warning shown when deactivating a parent with active children is not built.
+- Deleting a region, district or group is refused while any row anywhere in the database references it. There is no cascade and no soft delete.
+- Group registration numbers are a legacy concept. They must be unique where provided, but empty values are allowed since not all groups have a number.
 - The address format (line 1, line 2, city, province, postal code) should be consistent across regions, districts, and groups for reliable exports and reporting.
 - The member panel uses role based tenancy. When a user switches their active role, all area scoped data must re scope accordingly. Cached data must not persist across role switches.
 - Super districts are purely administrative groupings used for reporting and email routing. They do not affect the primary parent/child hierarchy.

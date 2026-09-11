@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Clusters\Area\Resources\Groups\Schemas;
 
+use App\Filament\Admin\Clusters\Area\Schemas\LinkedRecordsSection;
 use App\Models\Group;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
@@ -28,7 +29,7 @@ class GroupInfolist
                             ->compact()
                             ->collapsible()
                             ->persistCollapsed()
-                            ->id('admin_group_details')
+                            ->id('admin_group_general')
                             ->columnSpan(2)
                             ->columns(['md' => 2, 'lg' => 4, 'xl' => 6])
                             ->schema([
@@ -271,6 +272,8 @@ class GroupInfolist
                                     ->placeholder('-'),
                             ]),
                     ]),
+
+                LinkedRecordsSection::make(),
 
             ]);
     }

@@ -2,10 +2,13 @@
 
 namespace App\Filament\Admin\Clusters\Area\Resources\Regions\Tables;
 
+use App\Filament\Admin\Clusters\Area\Actions\DeleteAreaAction;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 
 class RegionsTable
@@ -14,19 +17,41 @@ class RegionsTable
     {
         return $table
             ->paginated([50])
+            ->defaultSort('position')
             ->columns([
-                TextColumn::make('id')->label('ID')->sortable()->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('id')
                     ->label('ID')
                     ->numeric()
                     ->toggleable()
                     ->sortable(),
+                TextColumn::make('position')
+                    ->numeric()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('name')
                     ->sortable()
+                    ->searchable()
                     ->toggleable(),
                 TextColumn::make('short')
                     ->sortable()
+                    ->searchable()
                     ->toggleable(),
+                TextColumn::make('description')
+                    ->limit(40)
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('phys_address')
+                    ->label('Physical Address')
+                    ->limit(40)
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('countryID')
+                    ->label('Country ID')
+                    ->numeric()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('ownedAccount.accountName')
+                    ->label('Account')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 IconColumn::make('usingAMS')
                     ->label('Using AMS')
                     ->boolean()
@@ -35,7 +60,7 @@ class RegionsTable
                 IconColumn::make('active')
                     ->boolean()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(),
                 IconColumn::make('censusDone')
                     ->boolean()
                     ->sortable()
@@ -77,10 +102,12 @@ class RegionsTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                TernaryFilter::make('active'),
             ])
             ->recordActions([
                 ViewAction::make(),
+                EditAction::make(),
+                DeleteAreaAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([]),

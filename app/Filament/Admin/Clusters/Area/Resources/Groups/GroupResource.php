@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Clusters\Area\Resources\Groups;
 
 use App\Filament\Admin\Clusters\Area\AreaCluster;
+use App\Filament\Admin\Clusters\Area\RelationManagers\Linked\LinkedRelationManagers;
 use App\Filament\Admin\Clusters\Area\RelationManagers\RoleAttachmentsRelationManager;
 use App\Filament\Admin\Clusters\Area\Resources\Groups\Pages\CreateGroup;
 use App\Filament\Admin\Clusters\Area\Resources\Groups\Pages\EditGroup;
@@ -57,6 +58,7 @@ class GroupResource extends Resource
             GroupMeerkatDensRelationManager::class,
             GroupCommitteeRelationManager::class,
             RoleAttachmentsRelationManager::class,
+            ...LinkedRelationManagers::for(Group::class),
         ];
     }
 

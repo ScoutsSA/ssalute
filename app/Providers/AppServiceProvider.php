@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Auth\ScoutsDigitalUserProvider;
 use App\Models\CustomDatabaseNotification;
 use App\Models\SystemUser;
+use App\Services\Areas\AreaDeletionGuard;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Schemas\Schema as FilamentSchema;
@@ -28,6 +29,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(Authenticatable::class, SystemUser::class);
+        $this->app->singleton(AreaDeletionGuard::class);
     }
 
     /**

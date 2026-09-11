@@ -2,8 +2,9 @@
 
 namespace App\Filament\Admin\Clusters\Area\Resources\Districts\Pages;
 
+use App\Filament\Admin\Clusters\Area\Actions\DeleteAreaAction;
 use App\Filament\Admin\Clusters\Area\Resources\Districts\DistrictResource;
-use Filament\Actions\DeleteAction;
+use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditDistrict extends EditRecord
@@ -13,7 +14,8 @@ class EditDistrict extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            DeleteAction::make(),
+            ViewAction::make(),
+            DeleteAreaAction::make(),
         ];
     }
 }

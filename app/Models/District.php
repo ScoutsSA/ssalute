@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\GroupTypes;
 use App\Models\Concerns\BaseModel;
+use App\Models\Concerns\PreventsDeletionWhenReferenced;
 use App\Providers\AppServiceProvider;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,6 +12,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class District extends BaseModel
 {
+    use PreventsDeletionWhenReferenced;
+
     protected $connection = AppServiceProvider::DB_SD_CORE;
     protected $table = 'districts';
     protected $guarded = [];

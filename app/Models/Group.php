@@ -8,6 +8,7 @@ use App\Enums\ProgramTypes\ProgramMeerkatsType;
 use App\Enums\ProgramTypes\ProgramRoversType;
 use App\Enums\ProgramTypes\ProgramScoutsType;
 use App\Models\Concerns\BaseModel;
+use App\Models\Concerns\PreventsDeletionWhenReferenced;
 use App\Providers\AppServiceProvider;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -16,6 +17,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Group extends BaseModel
 {
+    use PreventsDeletionWhenReferenced;
+
     protected $connection = AppServiceProvider::DB_SD_CORE;
     protected $table = 'groups';
     protected $guarded = [];

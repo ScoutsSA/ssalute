@@ -36,7 +36,7 @@ trait MightHaveModifiedBy
      */
     protected static function hasModifiedBy(Model $model): bool
     {
-        return in_array('modifiedby', $model->fillable ?? [], true);
+        return $model->hasCast('modifiedby');
     }
 
     public function modifiedBy(): BelongsTo

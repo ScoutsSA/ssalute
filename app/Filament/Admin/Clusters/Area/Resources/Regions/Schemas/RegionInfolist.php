@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Clusters\Area\Resources\Regions\Schemas;
 
+use App\Filament\Admin\Clusters\Area\Schemas\LinkedRecordsSection;
 use App\Models\Region;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
@@ -60,6 +61,7 @@ class RegionInfolist
                             ->helperText('Not sure if this is used, surely it should be per year, not a single flag')
                             ->boolean(),
                     ]),
+                LinkedRecordsSection::make(),
             ]);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Clusters\Area\Resources\Districts\Pages;
 
 use App\Filament\Admin\Clusters\Area\Resources\Districts\DistrictResource;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
 class ListDistricts extends ListRecords
@@ -11,6 +12,8 @@ class ListDistricts extends ListRecords
 
     protected function getHeaderActions(): array
     {
-        return [];
+        return [
+            CreateAction::make(),
+        ];
     }
 }

@@ -2,12 +2,16 @@
 
 namespace App\Filament\Admin\Clusters\Area\Resources\Districts\Tables;
 
+use App\Filament\Admin\Clusters\Area\Actions\DeleteAreaAction;
 use App\Models\District;
+use App\Models\Region;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 
@@ -32,10 +36,31 @@ class DistrictsTable
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('name')
                     ->label('Name')
-                    ->description(fn (District $record) => $record->region?->name)
+                    ->description(fn (District $record): ?string => $record->region ? "{$record->region->name} (#{$record->region->id})" : null)
                     ->sortable()
                     ->searchable()
                     ->toggleable(),
+                TextColumn::make('region.name')
+                    ->label('Region')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('superDistrict.name')
+                    ->label('Super District')
+                    ->sortable()
+                    ->placeholder('-')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('description')
+                    ->limit(40)
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('phys_address')
+                    ->label('Physical Address')
+                    ->limit(40)
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('countryID')
+                    ->label('Country ID')
+                    ->numeric()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 IconColumn::make('active')
                     ->label('Active')
                     ->boolean()
@@ -88,7 +113,6 @@ class DistrictsTable
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('createdBy.name')
                     ->label('Created By')
-                    ->numeric()
                     ->sortable()
                     ->searchable(['first_name', 'surname'])
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -99,19 +123,25 @@ class DistrictsTable
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('modifiedBy.name')
                     ->label('Updated By')
-                    ->numeric()
                     ->sortable()
                     ->searchable(['first_name', 'surname'])
                     ->toggleable(isToggledHiddenByDefault: true),
-
             ])
             ->filters([
-                SelectFilter::make('region')
-                    ->relationship('region', 'name', fn ($query) => $query->orderBy('position', 'asc')),
-
+                SelectFilter::make('regionID')
+                    ->label('Region')
+                    ->options(fn (): array => Region::query()
+                        ->orderBy('position')
+                        ->get()
+                        ->mapWithKeys(fn (Region $region): array => [$region->id => "{$region->name} (#{$region->id})"])
+                        ->all())
+                    ->searchable(),
+                TernaryFilter::make('active'),
             ])
             ->recordActions([
                 ViewAction::make(),
+                EditAction::make(),
+                DeleteAreaAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([]),

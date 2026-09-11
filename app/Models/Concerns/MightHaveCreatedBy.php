@@ -35,7 +35,7 @@ trait MightHaveCreatedBy
      */
     protected static function hasCreatedBy(Model $model): bool
     {
-        return in_array('createdby', $model->fillable ?? [], true);
+        return $model->hasCast('createdby');
     }
 
     public function createdBy(): BelongsTo

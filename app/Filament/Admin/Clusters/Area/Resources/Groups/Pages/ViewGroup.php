@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Clusters\Area\Resources\Groups\Pages;
 
+use App\Filament\Admin\Clusters\Area\Actions\DeleteAreaAction;
 use App\Filament\Admin\Clusters\Area\Resources\Groups\GroupResource;
 use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
@@ -14,6 +15,7 @@ class ViewGroup extends ViewRecord
     {
         return [
             EditAction::make(),
+            DeleteAreaAction::make(),
         ];
     }
 }

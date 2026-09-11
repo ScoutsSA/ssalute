@@ -2,12 +2,18 @@
 
 namespace App\Filament\Admin\Clusters\Area\Resources\Groups\Tables;
 
+use App\Filament\Admin\Clusters\Area\Actions\DeleteAreaAction;
+use App\Models\District;
 use App\Models\Group;
+use App\Models\GroupsType;
+use App\Models\Region;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 
 class GroupsTable
@@ -23,10 +29,27 @@ class GroupsTable
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('name')
-                    ->description(fn (Group $record) => $record->region?->name . ' - ' . $record->district?->name)
+                    ->description(fn (Group $record): string => "{$record->region?->name} - {$record->district?->name}")
                     ->sortable()
                     ->searchable()
                     ->toggleable(),
+                TextColumn::make('region.name')
+                    ->label('Region')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('district.name')
+                    ->label('District')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('groupRegNr')
+                    ->label('Registration Number')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('groupAccount.accountName')
+                    ->label('Group Account')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 IconColumn::make('active')
                     ->boolean()
                     ->sortable()
@@ -89,6 +112,18 @@ class GroupsTable
                     ->boolean()
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
+                TextColumn::make('meerkatProgramTypeLabel')
+                    ->label('Meerkat Program')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('cubProgramTypeLabel')
+                    ->label('Cub Program')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('scoutProgramTypeLabel')
+                    ->label('Scout Program')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('roverProgramTypeLabel')
+                    ->label('Rover Program')
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('website')
                     ->sortable()
@@ -105,6 +140,15 @@ class GroupsTable
                     ->boolean()
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
+                TextColumn::make('created')
+                    ->label('Created At')
+                    ->dateTime()
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->sortable(),
+                TextColumn::make('createdBy.name')
+                    ->label('Created By')
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->sortable(),
                 TextColumn::make('modified')
                     ->label('Modified At')
                     ->dateTime()
@@ -112,20 +156,44 @@ class GroupsTable
                     ->sortable(),
                 TextColumn::make('modifiedBy.name')
                     ->label('Modified By')
-                    ->numeric()
                     ->toggleable()
+                    ->sortable(),
+                TextColumn::make('groupLastUpdated')
+                    ->label('Group Last Updated')
+                    ->dateTime()
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
             ])
             ->filters([
-                // Group Type Filter
-                // Region Filter
-                // District Filter
-                // Active Filter
-
+                SelectFilter::make('groupTypeID')
+                    ->label('Group Type')
+                    ->options(fn (): array => GroupsType::query()
+                        ->orderBy('name')
+                        ->get()
+                        ->mapWithKeys(fn (GroupsType $type): array => [$type->id => "{$type->name} (#{$type->id})"])
+                        ->all()),
+                SelectFilter::make('assoc_to_region')
+                    ->label('Region')
+                    ->options(fn (): array => Region::query()
+                        ->orderBy('position')
+                        ->get()
+                        ->mapWithKeys(fn (Region $region): array => [$region->id => "{$region->name} (#{$region->id})"])
+                        ->all())
+                    ->searchable(),
+                SelectFilter::make('assoc_to_district')
+                    ->label('District')
+                    ->options(fn (): array => District::query()
+                        ->orderBy('name')
+                        ->get()
+                        ->mapWithKeys(fn (District $district): array => [$district->id => "{$district->name} (#{$district->id})"])
+                        ->all())
+                    ->searchable(),
+                TernaryFilter::make('active'),
             ])
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
+                DeleteAreaAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([]),
