@@ -82,6 +82,11 @@ class DirectoryTest extends SdCoreTestCase
             ->assertOk()
             ->assertSeeInOrder(['My Info', 'Scout Info', 'Regions/Districts/Groups', 'Adult Leaders', 'External Links'])
             ->assertDontSee('Browse Areas');
+
+        $this->actingAs($viewer)
+            ->get("/member/{$tenant->id}/directory/group-team")
+            ->assertOk()
+            ->assertSeeInOrder(['Directory: Adult Leaders', 'Group Team']);
     }
 
     #[Test]

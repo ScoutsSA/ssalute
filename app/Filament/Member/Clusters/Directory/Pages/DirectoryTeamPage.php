@@ -65,6 +65,11 @@ abstract class DirectoryTeamPage extends Page implements HasTable
 
     public function getTitle(): string
     {
+        return 'Directory: Adult Leaders';
+    }
+
+    public function getSubheading(): string
+    {
         return static::level()->label();
     }
 
