@@ -143,7 +143,7 @@ class DistrictCrudTest extends SdCoreTestCase
     }
 
     #[Test]
-    public function deleting_a_district_with_groups_roles_or_users_is_refused(): void
+    public function deleting_a_referenced_district_without_acknowledging_the_consequences_is_refused(): void
     {
         $withGroup = District::factory()->create(['name' => 'Busy']);
         Group::factory()->forDistrict($withGroup)->create();
@@ -157,20 +157,36 @@ class DistrictCrudTest extends SdCoreTestCase
         Livewire::actingAs($this->superAdmin)
             ->test(EditDistrict::class, ['record' => $withGroup->id])
             ->callAction('delete')
-            ->assertNotified("Cannot delete Busy (#{$withGroup->id})");
+            ->assertHasActionErrors(['acknowledged', 'confirmation']);
 
         Livewire::actingAs($this->superAdmin)
             ->test(ViewDistrict::class, ['record' => $withRole->id])
             ->callAction('delete')
-            ->assertNotified();
+            ->assertHasActionErrors(['acknowledged', 'confirmation']);
 
         Livewire::actingAs($this->superAdmin)
             ->test(ListDistricts::class)
             ->callAction(TestAction::make('delete')->table($withUser))
-            ->assertNotified();
+            ->assertHasActionErrors(['acknowledged', 'confirmation']);
 
         $this->assertDatabaseHas('districts', ['id' => $withGroup->id]);
         $this->assertDatabaseHas('districts', ['id' => $withRole->id]);
         $this->assertDatabaseHas('districts', ['id' => $withUser->id]);
+    }
+
+    #[Test]
+    public function a_referenced_district_can_be_force_deleted_and_its_groups_are_left_pointing_at_it(): void
+    {
+        $district = District::factory()->create(['name' => 'Sandton']);
+        $group = Group::factory()->forDistrict($district)->create();
+
+        Livewire::actingAs($this->superAdmin)
+            ->test(EditDistrict::class, ['record' => $district->id])
+            ->callAction('delete', data: ['acknowledged' => true, 'confirmation' => 'Sandton'])
+            ->assertHasNoActionErrors()
+            ->assertNotified("Forced delete of Sandton (#{$district->id})");
+
+        $this->assertDatabaseMissing('districts', ['id' => $district->id]);
+        $this->assertDatabaseHas('groups', ['id' => $group->id, 'assoc_to_district' => $district->id]);
     }
 }

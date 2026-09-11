@@ -91,10 +91,11 @@ The legacy schema has no foreign keys, so nothing in the database stops a region
 - `app/Services/Areas/AreaReferenceMap.php` lists every column that references an area. The `REGION`, `DISTRICT` and `GROUP` constants are generated from `database/schema/sd-core-schema.sql` by matching the column naming conventions (`regionID`, `assocToRegion`, `assoc_to_region` and the district and group equivalents). The `*_EXTRA` constants are hand curated references whose names do not follow the convention (for example `ams_adult_leader_moves.fromGroup`, `system_users.roverGroupID`, `system_users_other_roles.actionRegionID`). `MODELS` maps each referenced table to its Eloquent model; the five `commerce_*` tables have no model and are listed in `TABLES_WITHOUT_MODELS`.
 - `tests/Unit/Services/AreaReferenceMapTest.php` re-derives the canonical maps from the dump and fails when they drift, checks every extra column exists in the dump, and checks every model entry sits on its table. When the schema dump changes, regenerate the constants and let this test confirm them.
 - `app/Services/Areas/AreaDeletionGuard.php` (singleton) runs one `COUNT` per referencing table on the `sd-core` connection, `OR`ing the columns of a table so it counts once, and returns the non zero tables. Results are memoised per record for the request so the view page, its tabs and the delete action share one pass. About 80 (region), 70 (district) or 115 (group) queries run per delete click or per view/edit page load. If production proves slow, a single `UNION ALL` round trip is the escape hatch.
-- `app/Models/Concerns/PreventsDeletionWhenReferenced.php` throws `App\Exceptions\AreaStillReferencedException` from the `deleting` event, so tinker, services and any future bulk path are stopped with a clear message.
-- `app/Filament/Admin/Clusters/Area/Actions/DeleteAreaAction.php` extends `DeleteAction`, checks the guard in `before()`, sends a persistent danger notification naming the blocking tables and counts, and cancels. It keeps the action name `delete`. Used on the edit and view pages and as a row action on all three tables.
+- `app/Models/Concerns/PreventsDeletionWhenReferenced.php` throws `App\Exceptions\AreaStillReferencedException` from the `deleting` event, so tinker, services and any future bulk path are stopped with a clear message. `forceDeleteWhileReferenced()` on the model is the only bypass.
+- `app/Filament/Admin/Clusters/Area/Actions/DeleteAreaAction.php` extends `DeleteAction` and keeps the action name `delete`. With no blockers it is a plain confirmation. With blockers the modal heading is `Delete Name (#id)`, the description states the total rows and tables, a badge list shows each table with its row count, a "What a forced delete does" section spells out the consequences, and a `Checkbox` (`accepted`) plus a `TextInput` that must equal the record name (`in`) gate the submit, labelled "Force delete". `using()` calls `forceDeleteWhileReferenced()` and then sends a persistent warning notification repeating what was left behind. Used on the edit and view pages and as a row action on all three tables.
+- A forced delete removes only the area row. Referencing rows are not deleted and not nullified; they keep the old id. That policy is deliberate: 0 means "no scope" for role attachments, and a cascade would remove member data across roughly a hundred tables.
 
-Log tables (`error_logging`, `admin_good_logons`, `system_user_logging`, `notifications`, `notifications_archive`) carry area ids, so any area that was ever used cannot be deleted. That is intended: the guard treats every referencing row as data.
+Log tables (`error_logging`, `admin_good_logons`, `system_user_logging`, `notifications`, `notifications_archive`) carry area ids, so any area that was ever used goes through the forced path. That is intended: the guard treats every referencing row as data and the admin decides.
 
 ---
 
@@ -142,7 +143,7 @@ Every table that can block a delete is a relation manager tab on the record's vi
 
 #### Delete Region
 
-- **Behaviour:** Refused with a notification while any table references the region. Hard delete otherwise.
+- **Behaviour:** Plain confirmation when nothing references the region. Otherwise the modal lists the referencing tables, explains that a forced delete leaves them untouched and orphaned, and requires an acknowledgement and the name typed back. Hard delete.
 
 ---
 
@@ -170,7 +171,7 @@ Every table that can block a delete is a relation manager tab on the record's vi
 
 #### Delete District
 
-- **Behaviour:** Refused with a notification while any table references the district. Hard delete otherwise.
+- **Behaviour:** As for regions: plain confirmation when unreferenced, otherwise an informed forced delete.
 
 ---
 
@@ -202,7 +203,7 @@ Every table that can block a delete is a relation manager tab on the record's vi
 
 #### Delete Group
 
-- **Behaviour:** Refused with a notification while any table references the group. Hard delete otherwise.
+- **Behaviour:** As for regions: plain confirmation when unreferenced, otherwise an informed forced delete.
 
 Not built: a dedicated "toggle active" action with a warning about active warrants or youth. The active flag is a form toggle.
 
@@ -270,9 +271,9 @@ All member panel area pages enforce:
 | Reference map matches the schema dump, extras exist, models sit on their tables | `tests/Unit/Services/AreaReferenceMapTest.php` | Unit | Covered |
 | Guard blocks on districts, groups, roles, users, sections, model-less tables; model delete throws | `tests/Feature/Services/AreaDeletionGuardTest.php` | Feature | Covered |
 | Audit columns stamped on create and update, explicit values kept | `tests/Feature/Models/AuditColumnStampingTest.php` | Feature | Covered |
-| Region create, edit, uniqueness, delete from edit, view and list, refused delete with notification | `tests/Feature/Filament/Area/RegionCrudTest.php` | Feature | Covered |
-| District create with createdby, unique within region, edit, delete, refused delete | `tests/Feature/Filament/Area/DistrictCrudTest.php` | Feature | Covered |
-| Group create, cascading district select, registration number uniqueness, edit across tabs, delete, refused delete | `tests/Feature/Filament/Area/GroupCrudTest.php` | Feature | Covered |
+| Region create, edit, uniqueness, delete from edit, view and list, modal content, refused without acknowledgement, wrong name refused, forced delete leaves rows | `tests/Feature/Filament/Area/RegionCrudTest.php` | Feature | Covered |
+| District create with createdby, unique within region, edit, delete, refused without acknowledgement, forced delete | `tests/Feature/Filament/Area/DistrictCrudTest.php` | Feature | Covered |
+| Group create, cascading district select, registration number uniqueness, edit across tabs, delete, refused without acknowledgement, forced delete | `tests/Feature/Filament/Area/GroupCrudTest.php` | Feature | Covered |
 | Every referencing column has one relation manager; tabs hide when empty; rows link to their resource | `tests/Feature/Filament/Area/LinkedRecordsRelationManagersTest.php` | Feature | Covered |
 | Group active toggle with warrant warning | none | Feature | Not built |
 | Group leader can view their own group details in the member panel | `tests/Feature/Filament/Member/Area/ViewMyGroupTest.php` | Feature | Planned |

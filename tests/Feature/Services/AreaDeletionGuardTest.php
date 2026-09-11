@@ -185,4 +185,16 @@ class AreaDeletionGuardTest extends SdCoreTestCase
 
         $this->assertSame(['districts' => 1], $this->guard->blockersFor($region));
     }
+
+    #[Test]
+    public function force_delete_while_referenced_bypasses_the_guard_and_leaves_the_rows(): void
+    {
+        $region = Region::factory()->create();
+        $district = District::factory()->forRegion($region)->create();
+
+        $this->assertTrue($region->forceDeleteWhileReferenced());
+
+        $this->assertDatabaseMissing('regions', ['id' => $region->id]);
+        $this->assertDatabaseHas('districts', ['id' => $district->id, 'regionID' => $region->id]);
+    }
 }

@@ -193,7 +193,7 @@ class GroupCrudTest extends SdCoreTestCase
     }
 
     #[Test]
-    public function deleting_a_group_with_roles_users_sections_or_any_other_linked_row_is_refused(): void
+    public function deleting_a_referenced_group_without_acknowledging_the_consequences_is_refused(): void
     {
         $withRole = Group::factory()->create(['name' => '1st Busy']);
         SystemUsersOtherRole::factory()->create(['groupID' => $withRole->id]);
@@ -214,17 +214,33 @@ class GroupCrudTest extends SdCoreTestCase
         Livewire::actingAs($this->superAdmin)
             ->test(EditGroup::class, ['record' => $withRole->id])
             ->callAction('delete')
-            ->assertNotified("Cannot delete 1st Busy (#{$withRole->id})");
+            ->assertHasActionErrors(['acknowledged', 'confirmation']);
 
         foreach ([$withUser, $withPack, $withOther] as $group) {
             Livewire::actingAs($this->superAdmin)
                 ->test(ListGroups::class)
                 ->callAction(TestAction::make('delete')->table($group))
-                ->assertNotified();
+                ->assertHasActionErrors(['acknowledged', 'confirmation']);
         }
 
         foreach ([$withRole, $withUser, $withPack, $withOther] as $group) {
             $this->assertDatabaseHas('groups', ['id' => $group->id]);
         }
+    }
+
+    #[Test]
+    public function a_referenced_group_can_be_force_deleted_from_the_list_and_its_role_attachments_are_left_untouched(): void
+    {
+        $group = Group::factory()->create(['name' => '1st Busy']);
+        $role = SystemUsersOtherRole::factory()->create(['groupID' => $group->id]);
+
+        Livewire::actingAs($this->superAdmin)
+            ->test(ListGroups::class)
+            ->callAction(TestAction::make('delete')->table($group), data: ['acknowledged' => true, 'confirmation' => '1st Busy'])
+            ->assertHasNoActionErrors()
+            ->assertNotified("Forced delete of 1st Busy (#{$group->id})");
+
+        $this->assertDatabaseMissing('groups', ['id' => $group->id]);
+        $this->assertDatabaseHas('system_users_other_roles', ['id' => $role->id, 'groupID' => $group->id]);
     }
 }

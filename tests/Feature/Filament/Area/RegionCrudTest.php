@@ -15,6 +15,7 @@ use App\Models\SystemUser;
 use App\Models\SystemUsersOtherRole;
 use App\Settings\GeneralSettings;
 use Filament\Actions\Testing\TestAction;
+use Filament\Schemas\Schema;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\Support\SdCoreTestCase;
@@ -195,7 +196,7 @@ class RegionCrudTest extends SdCoreTestCase
     }
 
     #[Test]
-    public function deleting_a_region_with_districts_is_refused_with_a_notification(): void
+    public function deleting_a_referenced_region_without_acknowledging_the_consequences_is_refused(): void
     {
         $region = Region::factory()->create(['name' => 'Gauteng']);
         District::factory()->forRegion($region)->create();
@@ -203,14 +204,14 @@ class RegionCrudTest extends SdCoreTestCase
         Livewire::actingAs($this->superAdmin)
             ->test(EditRegion::class, ['record' => $region->id])
             ->callAction('delete')
-            ->assertNotified("Cannot delete Gauteng (#{$region->id})")
+            ->assertHasActionErrors(['acknowledged', 'confirmation'])
             ->assertNoRedirect();
 
         $this->assertDatabaseHas('regions', ['id' => $region->id]);
     }
 
     #[Test]
-    public function deleting_a_region_with_a_role_attachment_or_a_user_is_refused(): void
+    public function deleting_a_region_with_a_role_attachment_or_a_user_is_refused_from_the_view_page_and_the_list(): void
     {
         $withRole = Region::factory()->create();
         SystemUsersOtherRole::factory()->create(['regionID' => $withRole->id]);
@@ -221,15 +222,100 @@ class RegionCrudTest extends SdCoreTestCase
         Livewire::actingAs($this->superAdmin)
             ->test(ViewRegion::class, ['record' => $withRole->id])
             ->callAction('delete')
-            ->assertNotified();
+            ->assertHasActionErrors(['acknowledged', 'confirmation']);
 
         Livewire::actingAs($this->superAdmin)
             ->test(ListRegions::class)
             ->callAction(TestAction::make('delete')->table($withUser))
-            ->assertNotified();
+            ->assertHasActionErrors(['acknowledged', 'confirmation']);
 
         $this->assertDatabaseHas('regions', ['id' => $withRole->id]);
         $this->assertDatabaseHas('regions', ['id' => $withUser->id]);
+    }
+
+    #[Test]
+    public function the_delete_modal_lists_the_referencing_tables_and_explains_a_forced_delete(): void
+    {
+        $region = Region::factory()->create(['name' => 'Gauteng']);
+        District::factory()->count(2)->forRegion($region)->create();
+        SystemUser::factory()->create(['assoc_to_region' => $region->id]);
+
+        $page = Livewire::actingAs($this->superAdmin)
+            ->test(EditRegion::class, ['record' => $region->id])
+            ->mountAction('delete')
+            ->instance();
+
+        $action = $page->getMountedAction();
+        $schema = $page->getSchema($page->getMountedActionSchemaName());
+
+        $this->assertSame("Delete Gauteng (#{$region->id})", $action->getModalHeading());
+        $this->assertStringContainsString('3 rows in 2 tables reference this region', (string) $action->getModalDescription());
+        $this->assertSame('Force delete', $action->getModalSubmitAction()->getLabel());
+
+        $this->assertSame(['Districts: 2 rows', 'Users (home area): 1 row'], $this->componentState($schema, 'blockers'));
+
+        $consequences = strip_tags((string) $this->componentState($schema, 'consequences'));
+        $this->assertStringContainsString('Only this region is deleted.', $consequences);
+        $this->assertStringContainsString('The related rows are not deleted.', $consequences);
+        $this->assertStringContainsString('The related rows are not changed.', $consequences);
+        $this->assertStringContainsString("They keep the value #{$region->id}, which will no longer match any region.", $consequences);
+
+        $this->assertSame('Type Gauteng to confirm', $schema->getComponent('confirmation')->getLabel());
+        $this->assertNotNull($schema->getComponent('acknowledged'));
+    }
+
+    #[Test]
+    public function the_delete_modal_is_a_plain_confirmation_when_nothing_references_the_region(): void
+    {
+        $region = Region::factory()->create();
+
+        $page = Livewire::actingAs($this->superAdmin)
+            ->test(EditRegion::class, ['record' => $region->id])
+            ->mountAction('delete')
+            ->instance();
+
+        $action = $page->getMountedAction();
+        $schema = $page->getSchema($page->getMountedActionSchemaName());
+
+        $this->assertSame('No other records reference this region. It will be permanently deleted.', (string) $action->getModalDescription());
+        $this->assertSame('Delete', $action->getModalSubmitAction()->getLabel());
+        $this->assertTrue($schema === null || $schema->getComponents() === [], 'The plain confirmation must not carry the force fields.');
+    }
+
+    #[Test]
+    public function a_forced_delete_with_the_wrong_name_is_refused(): void
+    {
+        $region = Region::factory()->create(['name' => 'Gauteng']);
+        District::factory()->forRegion($region)->create();
+
+        Livewire::actingAs($this->superAdmin)
+            ->test(EditRegion::class, ['record' => $region->id])
+            ->callAction('delete', data: ['acknowledged' => true, 'confirmation' => 'Gautengg'])
+            ->assertHasActionErrors(['confirmation'])
+            ->assertHasNoActionErrors(['acknowledged']);
+
+        $this->assertDatabaseHas('regions', ['id' => $region->id]);
+    }
+
+    #[Test]
+    public function a_referenced_region_can_be_force_deleted_and_the_related_rows_are_left_untouched(): void
+    {
+        $region = Region::factory()->create(['name' => 'Gauteng']);
+        $district = District::factory()->forRegion($region)->create();
+        $user = SystemUser::factory()->create(['assoc_to_region' => $region->id]);
+        $role = SystemUsersOtherRole::factory()->create(['regionID' => $region->id]);
+
+        Livewire::actingAs($this->superAdmin)
+            ->test(EditRegion::class, ['record' => $region->id])
+            ->callAction('delete', data: ['acknowledged' => true, 'confirmation' => 'Gauteng'])
+            ->assertHasNoActionErrors()
+            ->assertNotified("Forced delete of Gauteng (#{$region->id})")
+            ->assertRedirect(RegionResource::getUrl('index'));
+
+        $this->assertDatabaseMissing('regions', ['id' => $region->id]);
+        $this->assertDatabaseHas('districts', ['id' => $district->id, 'regionID' => $region->id]);
+        $this->assertDatabaseHas('system_users', ['id' => $user->id, 'assoc_to_region' => $region->id]);
+        $this->assertDatabaseHas('system_users_other_roles', ['id' => $role->id, 'regionID' => $region->id]);
     }
 
     #[Test]
@@ -250,5 +336,14 @@ class RegionCrudTest extends SdCoreTestCase
         $this->actingAs(SystemUser::factory()->withRole()->create())
             ->get(RegionResource::getUrl('create'))
             ->assertForbidden();
+    }
+
+    private function componentState(Schema $schema, string $key): mixed
+    {
+        $component = $schema->getComponent($key);
+
+        $this->assertNotNull($component, "{$key} is not in the modal.");
+
+        return $component->getState();
     }
 }
