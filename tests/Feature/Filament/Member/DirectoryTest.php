@@ -86,7 +86,8 @@ class DirectoryTest extends SdCoreTestCase
         $this->actingAs($viewer)
             ->get("/member/{$tenant->id}/directory/group-team")
             ->assertOk()
-            ->assertSeeInOrder(['Directory: Adult Leaders', 'Group Team']);
+            ->assertSeeInOrder(['Directory: Adult Leaders', 'Group Team'])
+            ->assertDontSee('fi-breadcrumbs');
     }
 
     #[Test]

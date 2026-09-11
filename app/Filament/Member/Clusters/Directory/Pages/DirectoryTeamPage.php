@@ -63,6 +63,14 @@ abstract class DirectoryTeamPage extends Page implements HasTable
         return static::level()->label();
     }
 
+    /**
+     * @return array<string>
+     */
+    public function getBreadcrumbs(): array
+    {
+        return [];
+    }
+
     public function getTitle(): string
     {
         return 'Directory: Adult Leaders';
