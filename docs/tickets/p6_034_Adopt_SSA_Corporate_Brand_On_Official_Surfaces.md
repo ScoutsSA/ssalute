@@ -15,7 +15,7 @@ Filed at p6: a clear near term payoff for how the app reads to members and Regio
 - **Auth surfaces.** The three auth layouts (`components/layouts/auth/card`, `simple`, `split`), the member login blurb and the Scouts Digital login view show the SSA logo above the app name, with the membership line in the footer. The purple area behind the white logo must be `#622599`.
 - **Filament panels.** Use `->brandLogo()` and `->darkModeBrandLogo()` on all three panels with a view that renders the SSA logo lockup next to the panel name, sized to `->brandLogoHeight('2.25rem')` or thereabouts. The BackOffice panel keeps its super user styling otherwise.
 - **Emails.** Every mail view under `resources/views/emails/` gets a purple header band with the white logo and a footer carrying the membership line, the National Office contact details (`info@scouts.org.za`, `www.scouts.org.za`) and nothing else. Body text in Verdana per the manual. If the emails move onto Laravel's markdown mail, publish the vendor theme and do it once there instead.
-- **Generated documents.** The membership certificate view already uses the brand purple; add the logo and membership line there too, following the manual's certificate examples (logo in the purple area, "Member of the World Organisation of the Scout Movement" as the standard footer line).
+- **Generated documents.** The membership certificate is its own ticket, 035, because it needs a full rebuild rather than a logo drop. This ticket supplies the `<x-ssa-logo>` component and the membership line component that 035 consumes.
 - **Copy.** Where the app names the organisation it says "SCOUTS South Africa" in full. The skill's naming rules apply.
 
 ## Out of scope, decided deliberately
