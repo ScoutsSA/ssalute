@@ -1,5 +1,5 @@
 # World Scouting Brand Centre page index
-Deep links into https://brand.scout.org (Frontify). Guideline pages are public; master-file downloads need a login. Generated 2026-10-05 from the portal API.
+Deep links into https://brand.scout.org (Frontify). Everything, including the master-file downloads, is public; the licence rules in wosm.md still govern use. Generated 2026-10-05 from the portal API.
 ## Guideline documents (the rules)
 
 ### Scout Brand: https://brand.scout.org/document/53

@@ -18,7 +18,7 @@ The Brand Centre has two halves. The left navigation shows **four guideline docu
 | Assets: International Events | logo library | one collection per upcoming event, JOTA-JOTI, IVY 2026 |
 | Multimedia | media libraries | Photos, Videos, Audio |
 
-The guideline pages are public (no login) and so are the explanatory images on them. Downloading master logo files requires a portal login. Fonts: Scouts GT Planar is served to the portal as woff2 and ttf; Noto Sans is loaded from Google Fonts. Whether an NSO may use Scouts GT Planar is not stated anywhere in the guideline.
+The whole portal is public (Frontify visibility PUBLIC): the guideline pages, their explanatory images, the asset libraries and the "Download Master Files" links on the emblem, logo, shorthand and tagline pages all answer an anonymous request (verified 2026-10-05 with curl; the emblem and logo come down as SVG). Public does not mean licensed: the trademark and licence rules below still apply to every file. Fonts: Scouts GT Planar is served to the portal as woff2 and ttf; Noto Sans is loaded from Google Fonts. Whether an NSO may use Scouts GT Planar is not stated anywhere in the guideline.
 
 API endpoints used (all public, unauthenticated): `/api/document?portal_id=1`, `/api/portal-navigation/1`, `/api/document-page?document_id={53|55|56|87}&language=en`, `/api/document/page/-/{pageId}`, `/api/color/library/1`, `/api/collection?document_id={76|80|78|79}`, `/api/project-font-family?portal_id=1`.
 
