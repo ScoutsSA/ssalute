@@ -213,9 +213,33 @@ class MembershipCertificateTest extends SdCoreTestCase
         $this->get(route('membership-certificate.show', $certificate->uuid))
             ->assertOk()
             ->assertSee('CertificateTestName')
-            ->assertSee('Verified')
-            ->assertSee('Member')
-            ->assertSee('Scouts South Africa');
+            ->assertSee('Verified member')
+            ->assertSee('SCOUTS South Africa')
+            ->assertSee('<title>CertificateTestName CertificateTestSurname, Membership Certificate, SCOUTS South Africa</title>', false)
+            ->assertSee('alt="SCOUTS South Africa"', false)
+            ->assertSee('images/brand/ssa-logo-white-on-purple.svg')
+            ->assertSee('Member of the World Organisation of the Scout Movement')
+            ->assertSee('images/brand/ssa-rope-flag-be-prepared.svg')
+            ->assertSee('QR code to verify this certificate')
+            ->assertSee('info@scouts.org.za')
+            ->assertSee('Issued by')
+            ->assertDontSee('Scouts South Africa');
+    }
+
+    #[Test]
+    public function public_certificate_falls_back_to_the_ssa_logo_as_its_share_image(): void
+    {
+        $user = SystemUser::factory()->withRole()->create();
+
+        $certificate = MembershipCertificateModel::create([
+            'user_id' => $user->id,
+            'visible_fields' => ['name'],
+        ]);
+
+        $this->get(route('membership-certificate.show', $certificate->uuid))
+            ->assertOk()
+            ->assertSee('images/brand/ssa-logo-white-on-purple.png')
+            ->assertDontSee('images/logo_padded.png');
     }
 
     #[Test]
@@ -259,7 +283,7 @@ class MembershipCertificateTest extends SdCoreTestCase
 
         $this->get(route('membership-certificate.show', $certificate->uuid))
             ->assertOk()
-            ->assertSee(now()->format('d M Y'));
+            ->assertSee('confirmed as at ' . now()->format('d F Y'));
     }
 
     #[Test]
@@ -333,8 +357,9 @@ class MembershipCertificateTest extends SdCoreTestCase
 
         $this->get(route('membership-certificate.show', $certificate->uuid))
             ->assertOk()
-            ->assertSee('Inactive')
-            ->assertSee('This member is no longer active');
+            ->assertSee('No longer an active member')
+            ->assertSee('This certificate is not valid as at ' . now()->format('d F Y'))
+            ->assertDontSee('Verified member');
     }
 
     #[Test]
@@ -349,7 +374,8 @@ class MembershipCertificateTest extends SdCoreTestCase
 
         $this->get(route('membership-certificate.show', $certificate->uuid))
             ->assertOk()
-            ->assertSee('Verified');
+            ->assertSee('Verified member')
+            ->assertDontSee('No longer an active member');
     }
 
     private function setupUserAndPanel(): array

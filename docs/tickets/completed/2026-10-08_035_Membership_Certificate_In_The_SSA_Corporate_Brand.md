@@ -1,5 +1,53 @@
 # Membership certificate in the SSA corporate brand
 
+**Priority when actioned:** p5
+
+## Synopsis
+
+The public membership certificate read as a generic app card: mascot labelled as the organisation, gradient bars, green and red dashed stamps, UI font, no sign of World Scouting membership. Rebuild it as an SSA corporate CI document that members can hand to employers, schools and event organisers.
+
+## Resolution
+
+`resources/views/membership-certificate/show.blade.php` was rebuilt; the controller is unchanged.
+
+- **Band.** Flat `#622599` band with the supplied white-on-purple logo at the left via `<x-ssa.logo>` and the title "Membership Certificate" plus the issue date at the right. No gradient, no pattern, no effects.
+- **Identification bar.** A purple-tint strip under the band carrying "Member of the World Organisation of the Scout Movement", mirroring the "NATIONAL OFFICE" bar on the National letterhead.
+- **Body.** White, Verdana (`Verdana, Geneva, Tahoma, sans-serif`), near-black `#1E1E1E` text, 14 px on screen and 10.5 pt in print. "This certifies that {name} is a registered and active member of SCOUTS South Africa", the SSA ID chip, the optional details grid and the roles list with Group · District · Region scope. The `visible_fields` gating, the photo and the eligible-roles check are untouched.
+- **Status.** Active: a purple panel reading "Verified member" with "Active membership of SCOUTS South Africa confirmed as at {date}". Inactive: a grey panel with a dark border reading "No longer an active member" and "This certificate is not valid as at {date}". Red is a section coding colour in this brand and is not used. A short line under either state says the certificate confirms membership only and that status is live.
+- **Footer.** National Office contact block (`info@scouts.org.za`, `www.scouts.org.za`), the certificate reference, the verification QR with "Scan to verify", then the supplied tricolour rope with "be prepared" (`ssa-rope-flag-be-prepared.svg`) across the bottom, mirroring the letterhead. The rope appears nowhere else in the app.
+- **Print.** `@page A4 portrait, margin 0`; the sheet becomes 210 x 297 mm with 16 mm side margins, the logo at the manual's A4 width of 64 mm, `print-color-adjust: exact` so the band and rope print in colour, toolbar and attribution hidden, status and roles blocks kept on one page where possible.
+- **Dark mode.** The sheet is a document and is always white. The ground, toolbar and attribution follow the OS `prefers-color-scheme`. The theme toggle and `cert-theme` storage are gone.
+- **Copy and metadata.** `<title>` is "{name}, Membership Certificate, SCOUTS South Africa"; Open Graph and Twitter text say SCOUTS South Africa; the share image falls back to `ssa-logo-white-on-purple.png` instead of the mascot; em dashes are gone from page copy. The mascot appears once, off print, in "Issued by Ssalute, the SCOUTS South Africa member system".
+- **Tests.** `tests/Feature/Filament/Member/MembershipCertificateTest.php` updated: the public render test asserts the title, logo alt text and file, membership line, rope file, QR alt text, contact block and attribution, and that "Scouts South Africa" (old casing) no longer appears; the inactive and active tests assert the new status copy and each other's absence; a new test covers the share image fallback.
+
+## Verification
+
+- `php artisan test --compact` on 2026-10-08: 845 passed, 3 skipped (the skips predate this work). Re-derive with the same command.
+- `php artisan test --compact tests/Feature/Filament/Member/MembershipCertificateTest.php`: 19 passed.
+- Mutation check: changing the active status copy makes `public_certificate_page_renders` and `public_certificate_shows_verified_when_user_has_active_roles` fail (observed while iterating on the copy); the 034 record covers the footer hook mutation.
+- `vendor/bin/duster fix --dirty` run, `npm run build` run.
+- Visual pass in Chrome on 2026-10-08 against a synced certificate at desktop width: band, logo, identification bar, roles, purple status panel, footer and rope all render; one defect found and fixed (the SSA ID chip doubled the "SSA ID" prefix because the accessor already includes it). The splash page was checked in light and dark; the member panel and a BackOffice table in dark and light.
+- Not verified: the printed PDF from Chrome and Firefox, and the phone-width screen check. The print rules were written against A4 but no PDF was exported in this session. John should print once from each browser before relying on it.
+- The holding zone login page was not viewed in the browser because the session was signed in; its rendering is covered by `BrandingTest::holding_zone_login_carries_the_ssa_logo_and_membership_line`.
+
+## Risk assessment
+
+- Print output is the untested path (see above). `print-color-adjust: exact` is honoured by Chrome and Firefox; Safari needs the `-webkit-` prefix, which is set.
+- The rope SVG is 265 KB. It loads once per certificate view and is cached. Acceptable for a page members open occasionally; swap to the PNG if it ever matters.
+- Status copy changed, so any external reader that scraped "Verified Member" or "Inactive Member" text would break. No such reader is known.
+- The sheet no longer has a dark variant; anyone who preferred the dark certificate loses it. The manual's certificate is a white document and this is deliberate.
+
+## Decisions
+
+- The ground around the sheet follows the OS theme; the sheet never does. Recorded here as the ticket asked.
+- The rope is included (John chose this on 2026-10-08) since the National Office supplied the artwork and the skill permits it in corporate document footers.
+- Verdana was kept for the whole certificate rather than Instrument Sans (John chose this on 2026-10-08): it is a document in the manual's sense and prints identically everywhere.
+- The identification bar carries the membership line rather than "NATIONAL OFFICE", because the certificate is issued by the system on behalf of the organisation, not by the office as a letter would be.
+
+## Original ticket
+
+# Membership certificate in the SSA corporate brand
+
 Module: 01-adult-member-system
 Panel: member (the certificate page itself is a public, unguessable route, `membership-certificate.show`, reached from the member profile)
 Gate: the supplied SSA corporate logo artwork (white on purple and purple on white) is in `public/images/brand/`. Shared gate with ticket 034; whichever lands first adds the files. Nothing here may start from a traced or AI generated fleur-de-lis.
