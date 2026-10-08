@@ -111,7 +111,7 @@ class MembershipCertificate extends Page
                     ->schema([
                         TextEntry::make('notice')
                             ->hiddenLabel()
-                            ->state('This Membership Certificate is purely a confirmation of your active membership with Scouts South Africa. It is NOT a nomination, letter of endorsement, or letter of introduction. It simply verifies that you are a registered and active member.')
+                            ->state('This Membership Certificate is purely a confirmation of your active membership with SCOUTS South Africa. It is NOT a nomination, letter of endorsement, or letter of introduction. It simply verifies that you are a registered and active member.')
                             ->color('warning'),
                     ]),
 

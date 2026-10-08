@@ -1,13 +1,13 @@
 <section
     class="rounded-lg bg-white dark:bg-[#161615] dark:text-[#EDEDEC] shadow-[inset_0px_0px_0px_1px_rgba(26,26,0,0.16)] dark:shadow-[inset_0px_0px_0px_1px_#fffaed2d] p-6 lg:p-12">
     <div class="max-w-3xl">
-        <h1 class="text-2xl lg:text-3xl font-semibold text-center">Ssalute — Scouts Digital Revamped</h1>
+        <h1 class="text-2xl lg:text-3xl font-semibold text-center">Ssalute, Scouts Digital revamped</h1>
         <p class="mt-3 text-[#706f6c] dark:text-[#A1A09A]">
-            Ssalute is the new, modern member management system being built by Scouts South Africa to replace the
+            Ssalute is the new, modern member management system being built by SCOUTS South Africa to replace the
             existing <span class="font-medium text-[#1b1b18] dark:text-[#EDEDEC]">Scouts Digital</span> platform.
         </p>
         <p class="mt-2 text-[#706f6c] dark:text-[#A1A09A]">
-            Ssalute is fully open source (MIT) and owned by <span class="font-medium text-[#1b1b18] dark:text-[#EDEDEC]">Scouts South Africa</span>,
+            Ssalute is fully open source (MIT) and owned by <span class="font-medium text-[#1b1b18] dark:text-[#EDEDEC]">SCOUTS South Africa</span>,
         </p>
         <p class="mt-2 text-[#706f6c] dark:text-[#A1A09A]">
             We will roll out Ssalute in phases over the next three years. During this migration, parts of the
@@ -48,7 +48,7 @@
             <div class="mt-4">
                 <a href="https://www.scoutfoundation.org.za/donate/#monthly-donation-options" target="_blank"
                    class="inline-block px-4 py-2 rounded-sm bg-[#f53003] text-white border border-[#f53003] hover:bg-[#ca2800] dark:bg-[#FF4433] dark:border-[#FF4433]">
-                    Donate to Scouts South Africa
+                    Donate to SCOUTS South Africa
                 </a>
             </div>
         </div>

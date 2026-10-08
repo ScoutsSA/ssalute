@@ -9,7 +9,7 @@
             <div class="flex-1">
                 <h2 class="text-lg font-bold tracking-tight sm:text-xl">Membership Certificate</h2>
                 <p class="mt-1 text-sm leading-relaxed text-purple-200/90">
-                    Generate a verified, shareable certificate that confirms your active membership with Scouts South Africa. Select the personal information you'd like to display, then share the link with anyone.
+                    Generate a verified, shareable certificate that confirms your active membership with SCOUTS South Africa. Select the personal information you'd like to display, then share the link with anyone.
                 </p>
             </div>
         </div>

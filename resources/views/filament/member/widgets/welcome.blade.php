@@ -13,7 +13,7 @@
                         Welcome to Ssalute
                     </h2>
                     <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                        Ssalute is the new, modern member management system being built by Scouts South Africa to replace the existing Scouts Digital platform.
+                        Ssalute is the new, modern member management system being built by SCOUTS South Africa to replace the existing Scouts Digital platform.
                     </p>
 
                     <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">

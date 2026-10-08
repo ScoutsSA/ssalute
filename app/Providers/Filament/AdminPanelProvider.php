@@ -17,6 +17,8 @@ use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Contracts\View\View;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -32,6 +34,13 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('backoffice')
             ->viteTheme('resources/css/filament/admin/theme.css')
+            ->brandName('BackOffice')
+            ->brandLogo(fn (): View => view('filament.shared.brand-logo', ['name' => 'BackOffice']))
+            ->brandLogoHeight('2.5rem')
+            ->renderHook(
+                PanelsRenderHook::FOOTER,
+                fn (): View => view('filament.shared.footer'),
+            )
             ->default()
             ->favicon(asset('images/logo.png'))
             ->sidebarCollapsibleOnDesktop()

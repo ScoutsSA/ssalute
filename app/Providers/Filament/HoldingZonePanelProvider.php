@@ -50,6 +50,13 @@ class HoldingZonePanelProvider extends PanelProvider
             )
             ->spa()
             ->viteTheme('resources/css/filament/general/theme.css')
+            ->brandName('Ssalute')
+            ->brandLogo(fn (): View => view('filament.shared.brand-logo', ['name' => 'Ssalute']))
+            ->brandLogoHeight('2.5rem')
+            ->renderHook(
+                PanelsRenderHook::FOOTER,
+                fn (): View => view('filament.shared.footer'),
+            )
             ->favicon(asset('images/logo.png'))
             ->colors([
                 'primary' => Color::hex('#622599'),

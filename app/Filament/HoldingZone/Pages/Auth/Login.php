@@ -13,7 +13,7 @@ class Login extends BaseLogin
 {
     public function getHeading(): string|Htmlable|null
     {
-        return 'Scouts South Africa';
+        return 'Sign in to Ssalute';
     }
 
     public function authenticate(): ?LoginResponse

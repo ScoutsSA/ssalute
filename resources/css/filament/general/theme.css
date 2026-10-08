@@ -5,3 +5,4 @@
 @source '../../../../resources/views/filament/member/**/*';
 @source '../../../../resources/views/filament/holding-zone/**/*';
 @source '../../../../resources/views/filament/**/*.blade.php';
+@source '../../../../resources/views/components/ssa/**/*';

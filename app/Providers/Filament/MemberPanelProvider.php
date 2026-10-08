@@ -18,6 +18,8 @@ use Filament\Navigation\NavigationGroup;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Contracts\View\View;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -33,6 +35,13 @@ class MemberPanelProvider extends PanelProvider
             ->id('member')
             ->path('member')
             ->viteTheme('resources/css/filament/general/theme.css')
+            ->brandName('Ssalute')
+            ->brandLogo(fn (): View => view('filament.shared.brand-logo', ['name' => 'Ssalute']))
+            ->brandLogoHeight('2.5rem')
+            ->renderHook(
+                PanelsRenderHook::FOOTER,
+                fn (): View => view('filament.shared.footer'),
+            )
             ->favicon(asset('images/logo.png'))
             ->spa()
             ->unsavedChangesAlerts()

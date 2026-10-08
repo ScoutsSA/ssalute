@@ -1,6 +1,6 @@
 <section class="w-full">
     <div class="max-w-xl mx-auto">
-        <h1 class="text-2xl font-semibold mb-4">Scouts South Africa</h1>
+        <h1 class="text-2xl font-semibold mb-4">SCOUTS South Africa</h1>
 
         <p class="text-gray-600 mb-6">
             Have you already got an account on scouts digital?
