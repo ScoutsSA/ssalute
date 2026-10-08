@@ -5,12 +5,12 @@ description: "SCOUTS South Africa (SSA) brand guidelines condensed for product w
 
 # SCOUTS South Africa brand
 
-Condensed from the SSA Brand Manual 2015, the 2020 "How is the SCOUTS SA brand used?" infographic, the SSA Marketing Toolkit wiki page, and the SSA letterhead guideline. Full detail and sources are in `references/`. Read this file first; open a reference only when the question is not answered here.
+Condensed from the SSA Brand Manual 2015, the 2020 "How is the SCOUTS SA brand used?" infographic, the SSA Marketing Toolkit wiki page, and the SSA letterhead guideline. Full detail and sources are in `references/`. Read this file first; open a reference only when the question is not answered here. `references/assets.md` is the inventory of the official artwork we hold (vector logo masters, rope, letterhead, promo pack, fonts) and how the web files were derived from it.
 
 Two things matter more than everything else:
 
 1. **The purple is `#622599`** (Pantone 527 C, CMYK 79/94/0/0, RGB 98/37/153). Not `#5C2D91`, not Tailwind `purple-700`, not "a nice purple". Dark-mode variants are ours to define (see Digital tokens), the base value is not.
-2. **We never draw the World Scout Emblem (fleur-de-lis) or reconstruct the SCOUTS logo.** Both are registered trademarks owned by World Scouting. We only place official artwork that SSA supplied, unaltered, and only where SSA permits it. When in doubt, use the app's own mark and the words "SCOUTS South Africa".
+2. **We never draw the World Scout Emblem (fleur-de-lis) or reconstruct the SCOUTS logo.** Both are registered trademarks owned by World Scouting. We only place official artwork that SSA supplied, unaltered, and only where SSA permits it. When in doubt, use the app's own mark and the words "SCOUTS South Africa". Since 2026-10-08 we hold the National Office's vector masters of the logo and the rope (see `references/assets.md`), so there is never a reason to approximate either.
 
 ## Who we are (for copy and tone)
 
@@ -23,7 +23,7 @@ Two things matter more than everything else:
 - **Tone**: warm, direct, plain English, second person, active voice. Adventurous and energetic without being loud. Respectful of volunteers (they are the audience most of the time). No corporate jargon, no military framing ("troops march", "command"), no hype. Short sentences. Scouting values are shown, not preached.
 - **Sections and their colours** (used for programme categorisation): Meerkats, Cubs (lime `#739600`), Scouts (yellow `#FFB612`), Rovers (orange `#FF5800`), Adults (red `#DE3831`). Meerkats post-date the manual and have no official coding colour yet; do not invent one, use purple.
 - **Section nouns**: Meerkat Den, Cub Pack, Scout Troop, Rover Crew. Adults are "adult leaders" or "volunteers" (uniformed adults hold a "warrant"). The unit is a "Scout Group", the structure is Group, District, Region, National.
-- **Contact and handles** that appear in official material: `info@scouts.org.za`, `pr@scouts.org.za` (brand queries), `ceo@scouts.org.za` (brand consent), `www.scouts.org.za`, `0860 SCOUTS (0860 726887)`, Facebook `SAScout`, Twitter/X `@SAScout`, hashtags `#SCOUTSSA #BeSeen #Skills4Life`.
+- **Contact and handles** that appear in official material: `info@scouts.org.za`, `pr@scouts.org.za` (brand queries), `ceo@scouts.org.za` (brand consent), `www.scouts.org.za`, `0860 SCOUTS (0860 726887)`, Facebook `SAScout`, Twitter/X `@SAScout`, hashtags `#SCOUTSSA #BeSeen #Skills4Life`. The current National Office letterhead (2026) prints `PO Box 2434, Clareinch 7740`, `Tel: +27 (0)68 069 9463`, `info@scouts.org.za`, `https://www.scouts.org.za`; the manual's Newlands address is out of date. Generated letters and email footers use the letterhead block.
 
 ## The two corporate identities (never mixed in one document)
 
@@ -96,14 +96,16 @@ Hard rules (manual 2.1, 2.2, A.1; infographic 2020):
 - Colours: white on purple (standard); purple on white (allowed exception); white on black (mono reproduction only). No other colours, no mixed colours inside the logo.
 - Clear space: the logo sits inside its purple area; the space to the edge of that area is its clear space. Never centre the logo as the only element on a page. Never use a low-contrast placement.
 - Minimum sizes: logo with country name 40 mm wide in print (A6 40, A5 50, A4/A3 64, A2 100 mm); emblem alone 6 mm high. For screens, do not scale an official logo raster below the point where "South Africa" is legible, roughly 120 px wide.
-- Where the logo comes from: SSA sends the badge logo to registered Groups on request (`pr@scouts.org.za`). The clean corporate logo and the bare emblem are not for us to use without written consent through the National Scout Office. Royalties apply to merchandise.
+- Where the logo comes from: the National Office supplied the vector masters on 2026-10-08 (white on purple, purple on white, black positive and reversed) plus the rope artwork; they are kept outside the repos in `~/Documents/scouts-brand-sources/` and the web-ready SVG and PNG files in its `web/` folder are the only files that may be copied into `public/images/brand/`. Inventory and derivation notes in `references/assets.md`. Groups still get the badge logo on request from `pr@scouts.org.za`; the bare emblem stays off limits; royalties apply to merchandise.
+- The masters define the purple as spot colour Pantone 527 U. The web SVGs carry `#622599` as that ink's RGB value per the manual, which is a colour-space mapping, not a recolour. Do not "fix" the fill to the raw CMYK render (`#611F91`) and do not change it to anything else.
 - Partner / co-branding: the SCOUTS logo keeps its fixed-proportion purple rectangle, partner logo gets equal visual weight with 2x clear space, caption "Member of the World Organisation of the Scout Movement" is the standard footer line on official stationery.
 - The old red logo with the Springbok head (Scouting Association of South Africa) may not be used anywhere.
 
 Practical consequence for our apps:
 
 - **These are National Office systems.** The product owner (John Roux) is SSA's National Chair for IT, sits on ManCo and is part of the National Office, so the NSO-level permissions in the manual and the 2016 policy apply directly: the apps may carry the SSA corporate logo (clean version, white on purple or purple on white), the "Member of the World Organisation of the Scout Movement" line, and official SSA stationery conventions in emails and generated documents. Placement decisions are his to make. What stays outside that remit: altering the artwork in any way, putting the marks on merchandise or anything sold (WOSM licence and royalties), using the bare World Scout Emblem or the World Scouting logo on its own (brand-team-controlled at WOSM), and anything the manual reserves for the CEO or PR office (`ceo@scouts.org.za`, `pr@scouts.org.za`).
-- **The apps still use their own marks for app identity** (ssalute's icon, the support bot's campfire) so the SSA logo keeps its meaning as the organisation's signature rather than a product icon. The SSA logo is an unmodified supplied raster/SVG loaded from `public/images/brand/`, never inlined by hand, shown in official spots: login and SSO screens, email headers or footers, PDF letterheads and certificates, "about" pages.
+- **The apps still use their own marks for app identity** (ssalute's icon, the support bot's campfire) so the SSA logo keeps its meaning as the organisation's signature rather than a product icon. The SSA logo is an unmodified supplied SVG (PNG fallback for email) loaded from `public/images/brand/`, never inlined by hand, shown in official spots: login and SSO screens, email headers or footers, PDF letterheads and certificates, "about" pages. Use `ssa-logo-white-on-purple` on purple bands and `ssa-logo-purple-on-white` on white or paper; the black variants are for mono print only.
+- **The rope is allowed in one place:** the footer of generated corporate documents (letters, certificates) where it mirrors the National letterhead, using `ssa-rope-flag-be-prepared`. Never in app chrome, emails or anything promotional.
 - Favicons, Apple touch icons and OG images are the app mark, not the emblem.
 - Impersonation and SSO hand-off screens should say "SCOUTS South Africa" in text and may use the purple area, but still no emblem.
 
@@ -112,8 +114,8 @@ Practical consequence for our apps:
 Official (manual 2.4, wiki):
 
 - **Verdana**: body text of all documents, website and emails. Chosen for on-screen legibility.
-- **Futura / Futura Bold Condensed**: the country name in the logo, headlines and main titles of South African publications. Futura is a licensed font; we do not ship it.
-- **AG Stencil**: promotional-CI graphic headings "stencilled" onto canvas. Print only, never UI text.
+- **Futura / Futura Bold Condensed**: the country name in the logo, headlines and main titles of South African publications. Futura is a licensed font; we hold one weight (Adobe Futura Std Book, in the sources folder) for local document rendering and we do not ship it in any web app.
+- **AG Stencil**: promotional-CI graphic headings "stencilled" onto canvas. Print only, never UI text. A copy is in the sources folder.
 
 Digital stance, agreed across both apps:
 
@@ -165,5 +167,6 @@ The SSA brand is a WOSM-licensed "Country Identity Brand": WOSM owns the emblem 
 - [ ] Copy says "SCOUTS South Africa", uses SA section names and SA English, reads as involving / exciting / empowering.
 - [ ] Section colours only used to categorise sections, never as status colours.
 - [ ] Imagery shows active, diverse, real Scouting; no posed or military imagery.
-- [ ] No rope, textures, badges or AG Stencil in app UI (print-only elements).
+- [ ] No rope, textures, badges or AG Stencil in app UI (print-only elements; the rope only in generated corporate document footers).
+- [ ] Any file under `public/images/brand/` that carries the SSA logo or rope is byte-identical to its copy in `~/Documents/scouts-brand-sources/web/`.
 - [ ] Nothing implies commercial use or sale of branded items.

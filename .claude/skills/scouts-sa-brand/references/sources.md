@@ -17,6 +17,8 @@ All SSA sources sit behind a Cloudflare challenge; fetch them in a real browser,
 | "Scout Groups going purple!" 2020 | https://www.scouts.org.za/2020/02/18/scout-groups-going-purple/ | Apparel rules, Verdana |
 | WordPress Scout Group template guideline | https://scoutwiki.scouts.org.za/wiki/File:SSA_WordPress_Template_Installation_Guidelines_v022024.pdf | Not extracted |
 
+Local artwork (not on the wiki): vector logo and rope masters from the National Office (2026-10-08), the 2026 National letterhead, the promotional pack from the Marketing Toolkit OneDrive (2026-10-05) and the two font files, all in `~/Documents/scouts-brand-sources/`. Inventory in `assets.md`.
+
 Brand contacts: pr@scouts.org.za (brand queries, badge logo requests), ceo@scouts.org.za (consent for merchandise and corporate-brand use), natasha.kayle@scouts.org.za (WordPress template).
 
 WOSM sources are listed in `wosm.md`.
