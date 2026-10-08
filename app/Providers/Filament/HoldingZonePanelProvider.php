@@ -18,6 +18,7 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\NavigationGroup;
 use Filament\Panel;
 use Filament\PanelProvider;
+use Filament\Support\Colors\Color;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Contracts\View\View;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -51,7 +52,7 @@ class HoldingZonePanelProvider extends PanelProvider
             ->viteTheme('resources/css/filament/general/theme.css')
             ->favicon(asset('images/logo.png'))
             ->colors([
-                'primary' => '#5C2D91',
+                'primary' => Color::hex('#622599'),
             ])
             ->navigationGroups([
                 NavigationGroup::make('External Links')
