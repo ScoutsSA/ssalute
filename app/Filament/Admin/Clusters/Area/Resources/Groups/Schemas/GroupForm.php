@@ -87,12 +87,16 @@ class GroupForm
                                             ->afterStateUpdated(fn (Set $set) => $set('assoc_to_district', null)),
                                         Select::make('assoc_to_district')
                                             ->label('District')
-                                            ->options(fn (Get $get): array => District::query()
-                                                ->where('regionID', (int) $get('assoc_to_region'))
-                                                ->orderBy('name')
-                                                ->get()
-                                                ->mapWithKeys(fn (District $district): array => [$district->id => "{$district->name} (#{$district->id})"])
-                                                ->all())
+                                            ->options(fn (Get $get, mixed $state): array => AreaFormComponents::keepingCurrent(
+                                                District::query()
+                                                    ->where('regionID', (int) $get('assoc_to_region'))
+                                                    ->orderBy('name')
+                                                    ->get()
+                                                    ->mapWithKeys(fn (District $district): array => [$district->id => "{$district->name} (#{$district->id})"])
+                                                    ->all(),
+                                                $state,
+                                                fn (int $id): string => AreaFormComponents::strayAreaLabel(District::query()->with('region')->find($id), 'district', $id),
+                                            ))
                                             ->searchable()
                                             ->preload()
                                             ->required(),

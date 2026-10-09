@@ -12,8 +12,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\ServiceProvider;
 
 /**
- * Registers a hasMany relationship on Region, District and Group for every table that references them,
- * driven by AreaReferenceMap, so the linked record tabs and the delete guard share one source of truth.
+ * Registers a hasMany relationship on Region, District and Group for every blocking table that references them,
+ * driven by AreaReferenceMap, so the linked record tabs and the delete guard share one source of truth. The non
+ * blocking log tables get no relationship, matching the tabs.
  */
 class AreaRelationshipsServiceProvider extends ServiceProvider
 {
@@ -49,7 +50,7 @@ class AreaRelationshipsServiceProvider extends ServiceProvider
     {
         $relatedClass = AreaReferenceMap::modelFor($table);
 
-        if ($relatedClass === null) {
+        if ($relatedClass === null || ! AreaReferenceMap::isBlocking($table)) {
             return;
         }
 

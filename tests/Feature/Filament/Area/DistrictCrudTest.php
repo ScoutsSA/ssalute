@@ -7,6 +7,7 @@ use App\Filament\Admin\Clusters\Area\Resources\Districts\Pages\EditDistrict;
 use App\Filament\Admin\Clusters\Area\Resources\Districts\Pages\ListDistricts;
 use App\Filament\Admin\Clusters\Area\Resources\Districts\Pages\ViewDistrict;
 use App\Models\District;
+use App\Models\DistrictsSuper;
 use App\Models\Group;
 use App\Models\GroupAccount;
 use App\Models\Region;
@@ -15,6 +16,7 @@ use App\Models\SystemUser;
 use App\Models\SystemUsersOtherRole;
 use App\Settings\GeneralSettings;
 use Filament\Actions\Testing\TestAction;
+use Filament\Forms\Components\Select;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\Support\SdCoreTestCase;
@@ -188,5 +190,73 @@ class DistrictCrudTest extends SdCoreTestCase
 
         $this->assertDatabaseMissing('districts', ['id' => $district->id]);
         $this->assertDatabaseHas('groups', ['id' => $group->id, 'assoc_to_district' => $district->id]);
+    }
+
+    #[Test]
+    public function a_reference_created_after_the_delete_dialog_opened_stops_the_delete_with_a_notification(): void
+    {
+        $district = District::factory()->create(['name' => 'Quiet']);
+
+        $component = Livewire::actingAs($this->superAdmin)
+            ->test(EditDistrict::class, ['record' => $district->id])
+            ->mountAction('delete');
+
+        Group::factory()->forDistrict($district)->create();
+
+        $component
+            ->callMountedAction()
+            ->assertActionHalted('delete')
+            ->assertNotified("Quiet (#{$district->id}) was not deleted");
+
+        $this->assertDatabaseHas('districts', ['id' => $district->id]);
+    }
+
+    #[Test]
+    public function a_district_whose_super_district_is_in_another_region_can_still_be_edited(): void
+    {
+        $district = District::factory()->create();
+        $strayRegion = Region::factory()->create(['name' => 'Elsewhere']);
+        $straySuperDistrict = DistrictsSuper::query()->create([
+            'regionID' => $strayRegion->id,
+            'name' => 'Stray Super',
+            'description' => '',
+            'created' => now(),
+            'createdby' => 1,
+        ]);
+        District::query()->whereKey($district->id)->update(['superDistrictID' => $straySuperDistrict->id]);
+
+        Livewire::actingAs($this->superAdmin)
+            ->test(EditDistrict::class, ['record' => $district->id])
+            ->assertFormFieldExists('superDistrictID', function (Select $select) use ($straySuperDistrict, $strayRegion): bool {
+                $label = $select->getOptions()[$straySuperDistrict->id] ?? '';
+
+                return str_contains($label, 'Stray Super') && str_contains($label, "Elsewhere (#{$strayRegion->id})") && str_contains($label, 'not this region');
+            })
+            ->fillForm(['name' => 'Renamed Only'])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $this->assertDatabaseHas('districts', ['id' => $district->id, 'name' => 'Renamed Only', 'superDistrictID' => $straySuperDistrict->id]);
+    }
+
+    #[Test]
+    public function an_acknowledged_force_delete_whose_references_were_cleared_meanwhile_is_a_plain_delete(): void
+    {
+        $district = District::factory()->create(['name' => 'Emptied']);
+        $group = Group::factory()->forDistrict($district)->create();
+
+        $component = Livewire::actingAs($this->superAdmin)
+            ->test(EditDistrict::class, ['record' => $district->id])
+            ->mountAction('delete')
+            ->setActionData(['acknowledged' => true, 'confirmation' => 'Emptied']);
+
+        $group->delete();
+
+        $component
+            ->callMountedAction()
+            ->assertHasNoActionErrors()
+            ->assertNotNotified("Forced delete of Emptied (#{$district->id})");
+
+        $this->assertDatabaseMissing('districts', ['id' => $district->id]);
     }
 }

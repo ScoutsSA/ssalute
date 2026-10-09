@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Clusters\Area\Actions;
 
+use App\Exceptions\AreaStillReferencedException;
 use App\Services\Areas\AreaDeletionGuard;
 use App\Services\Areas\AreaReferenceMap;
 use Filament\Actions\DeleteAction;
@@ -72,11 +73,17 @@ class DeleteAreaAction extends DeleteAction
                 ->validationMessages(['in' => 'The name does not match the record.']),
         ]);
 
-        $this->using(function (Model $record): ?bool {
+        $this->using(function (Model $record, array $data): ?bool {
+            if (! ($data['acknowledged'] ?? false)) {
+                return $this->deleteUnreferenced($record);
+            }
+
+            resolve(AreaDeletionGuard::class)->forget($record);
+
             $blockers = $this->blockersFor($record);
 
             if ($blockers === []) {
-                return $record->delete();
+                return $this->deleteUnreferenced($record);
             }
 
             $result = $record->forceDeleteWhileReferenced();
@@ -95,14 +102,38 @@ class DeleteAreaAction extends DeleteAction
     }
 
     /**
+     * The plain path, taken when the modal showed no references so no acknowledgement was asked for. The model's
+     * deleting hook re-checks, so a reference created after the modal opened stops here with a notification
+     * instead of an unhandled exception.
+     */
+    protected function deleteUnreferenced(Model $record): ?bool
+    {
+        try {
+            return $record->delete();
+        } catch (AreaStillReferencedException) {
+            Notification::make()
+                ->title("{$record->getAttribute('name')} (#{$record->getKey()}) was not deleted")
+                ->body("Records started referencing it after this dialog opened: {$this->summary($this->blockersFor($record))}. Reopen the dialog to review them or force the delete.")
+                ->danger()
+                ->persistent()
+                ->send();
+
+            $this->halt();
+        }
+
+        return null;
+    }
+
+    /**
+     * Served from the guard's memo, so the description, submit label, schema and badge share one pass per
+     * request. The memo is cleared only on an acknowledged submit, where the counts decide between the forced
+     * and the plain path and must be current.
+     *
      * @return array<string, int>
      */
     protected function blockersFor(Model $record): array
     {
-        $guard = resolve(AreaDeletionGuard::class);
-        $guard->forget($record);
-
-        return $guard->blockersFor($record);
+        return resolve(AreaDeletionGuard::class)->blockersFor($record);
     }
 
     /**
@@ -137,7 +168,7 @@ class DeleteAreaAction extends DeleteAction
         return new HtmlString(<<<HTML
 <ul class="list-disc space-y-1 ps-5">
     <li><strong>Only this {$type} is deleted.</strong> {$name} (#{$id}) is removed permanently. There is no undo.</li>
-    <li><strong>The related rows are not deleted.</strong> Users, role attachments, sections, records and log entries listed above all stay in the database.</li>
+    <li><strong>The related rows are not deleted.</strong> Users, role attachments, sections and records listed above all stay in the database. Log entries are not counted above and are left in place too.</li>
     <li><strong>The related rows are not changed.</strong> Their {$type} column is not cleared or set to 0. They keep the value #{$id}, which will no longer match any {$type}.</li>
     <li><strong>What that looks like afterwards.</strong> Anywhere those rows are shown, this {$type} appears as missing or unknown. Area scoped queries and reports that join on the {$type} will not find them, and role attachments scoped to it no longer grant access to a real area.</li>
     <li><strong>To avoid orphaned rows</strong>, move or delete them first using the tabs on this record, then delete the {$type} normally.</li>

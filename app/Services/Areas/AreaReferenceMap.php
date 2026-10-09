@@ -26,6 +26,15 @@ final class AreaReferenceMap
 
     public const GROUP_COLUMN_NAMES = ['groupID', 'assocToGroup', 'assoc_to_group'];
 
+    /**
+     * Log tables that reference areas but neither block a delete nor get a linked record tab. Orphaned log rows
+     * are harmless, every area that was ever used has some, and system_user_logging (close to a million rows)
+     * has no index on its area columns.
+     *
+     * @var list<string>
+     */
+    public const NON_BLOCKING_TABLES = ['admin_good_logons', 'error_logging', 'notifications', 'notifications_archive', 'system_user_logging'];
+
     /** @var array<string, list<string>> */
     public const REGION_EXTRA = [
         'group_accounts_transfers' => ['fromRegionID', 'toRegionID'],
@@ -524,6 +533,21 @@ final class AreaReferenceMap
         ksort($map);
 
         return $map;
+    }
+
+    /**
+     * The referencing columns that block a delete and get a linked record tab: for() without NON_BLOCKING_TABLES.
+     *
+     * @return array<string, list<string>>
+     */
+    public static function blockingFor(string $modelClass): array
+    {
+        return array_diff_key(self::for($modelClass), array_flip(self::NON_BLOCKING_TABLES));
+    }
+
+    public static function isBlocking(string $table): bool
+    {
+        return ! in_array($table, self::NON_BLOCKING_TABLES, true);
     }
 
     /**

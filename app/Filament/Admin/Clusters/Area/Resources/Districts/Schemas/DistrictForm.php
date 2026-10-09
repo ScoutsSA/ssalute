@@ -39,12 +39,16 @@ class DistrictForm
                             ->afterStateUpdated(fn (Set $set) => $set('superDistrictID', null)),
                         Select::make('superDistrictID')
                             ->label('Super District')
-                            ->options(fn (Get $get): array => DistrictsSuper::query()
-                                ->where('regionID', (int) $get('regionID'))
-                                ->orderBy('name')
-                                ->get()
-                                ->mapWithKeys(fn (DistrictsSuper $superDistrict): array => [$superDistrict->id => "{$superDistrict->name} (#{$superDistrict->id})"])
-                                ->all())
+                            ->options(fn (Get $get, mixed $state): array => AreaFormComponents::keepingCurrent(
+                                DistrictsSuper::query()
+                                    ->where('regionID', (int) $get('regionID'))
+                                    ->orderBy('name')
+                                    ->get()
+                                    ->mapWithKeys(fn (DistrictsSuper $superDistrict): array => [$superDistrict->id => "{$superDistrict->name} (#{$superDistrict->id})"])
+                                    ->all(),
+                                $state,
+                                fn (int $id): string => AreaFormComponents::strayAreaLabel(DistrictsSuper::query()->with('region')->find($id), 'super district', $id),
+                            ))
                             ->searchable()
                             ->nullable()
                             ->formatStateUsing(fn (mixed $state): ?int => $state ? (int) $state : null)

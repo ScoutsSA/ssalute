@@ -60,7 +60,7 @@ class LinkedRecordsRelationManagersTest extends SdCoreTestCase
 
         $this->assertSame(count($registered), count(array_unique($registered)), 'A relation manager is registered twice.');
 
-        foreach (AreaReferenceMap::for($modelClass) as $table => $columns) {
+        foreach (AreaReferenceMap::blockingFor($modelClass) as $table => $columns) {
             foreach ($columns as $column) {
                 if (in_array($table, AreaReferenceMap::TABLES_WITHOUT_MODELS, true)) {
                     continue;
@@ -151,5 +151,38 @@ class LinkedRecordsRelationManagersTest extends SdCoreTestCase
             ->assertOk()
             ->assertSee('Users (home area)')
             ->assertDontSee('Advancement Cubs');
+    }
+
+    #[Test]
+    public function log_tables_get_no_tab_and_no_relationship(): void
+    {
+        foreach (AreaReferenceMap::NON_BLOCKING_TABLES as $table) {
+            $this->assertFalse(class_exists(LinkedRelationManagers::className($table)), "{$table} should not have a generated tab.");
+        }
+
+        foreach ([Region::class, District::class, Group::class] as $modelClass) {
+            foreach (LinkedRelationManagers::pairsFor($modelClass) as [$table]) {
+                $this->assertNotContains($table, AreaReferenceMap::NON_BLOCKING_TABLES);
+            }
+
+            $this->assertFalse((new $modelClass)->isRelation(LinkedRelationManagers::relationshipName('system_user_logging')), "{$modelClass} still has a relationship for system_user_logging.");
+        }
+    }
+
+    #[Test]
+    public function tabs_read_their_visibility_and_badge_from_the_guard_without_querying(): void
+    {
+        $group = Group::factory()->create();
+        SystemUser::factory()->count(2)->create(['assoc_to_group' => $group->id]);
+        SystemUser::factory()->create(['roverGroupID' => $group->id]);
+
+        resolve(\App\Services\Areas\AreaDeletionGuard::class)->referencesFor($group);
+
+        $this->expectsDatabaseQueryCount(0, \App\Providers\AppServiceProvider::DB_SD_CORE);
+
+        $this->assertTrue(LinkedSystemUsersRelationManager::canViewForRecord($group, ViewGroup::class));
+        $this->assertSame('2', LinkedSystemUsersRelationManager::getBadge($group, ViewGroup::class));
+        $this->assertTrue(LinkedSystemUsersRoverGroupIDRelationManager::canViewForRecord($group, ViewGroup::class));
+        $this->assertSame('1', LinkedSystemUsersRoverGroupIDRelationManager::getBadge($group, ViewGroup::class));
     }
 }

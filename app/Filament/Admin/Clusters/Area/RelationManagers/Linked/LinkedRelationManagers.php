@@ -68,7 +68,7 @@ final class LinkedRelationManagers
 
         foreach (AreaReferenceMap::canonicalFor($modelClass) as $table => $columns) {
             foreach ($columns as $column) {
-                if (self::isBespoke($modelClass, $table, $column) || AreaReferenceMap::modelFor($table) === null) {
+                if (self::isSkipped($modelClass, $table, $column)) {
                     continue;
                 }
 
@@ -78,7 +78,7 @@ final class LinkedRelationManagers
 
         foreach (AreaReferenceMap::extraFor($modelClass) as $table => $columns) {
             foreach ($columns as $column) {
-                if (self::isBespoke($modelClass, $table, $column) || AreaReferenceMap::modelFor($table) === null) {
+                if (self::isSkipped($modelClass, $table, $column)) {
                     continue;
                 }
 
@@ -94,6 +94,16 @@ final class LinkedRelationManagers
     public static function isBespoke(string $modelClass, string $table, string $column): bool
     {
         return in_array($column, self::BESPOKE[$modelClass][$table] ?? [], true);
+    }
+
+    /**
+     * Pairs that get no generated manager: bespoke ones, modelless tables and the non blocking log tables.
+     */
+    public static function isSkipped(string $modelClass, string $table, string $column): bool
+    {
+        return self::isBespoke($modelClass, $table, $column)
+            || AreaReferenceMap::modelFor($table) === null
+            || ! AreaReferenceMap::isBlocking($table);
     }
 
     /**

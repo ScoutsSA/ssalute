@@ -132,4 +132,21 @@ class AreaReferenceMapTest extends TestCase
         $this->assertSame('Role attachments', AreaReferenceMap::label('system_users_other_roles'));
         $this->assertSame('Advancement Cubs', AreaReferenceMap::label('advancement_cubs'));
     }
+
+    #[Test]
+    #[DataProvider('levels')]
+    public function non_blocking_tables_reference_the_area_but_are_left_out_of_the_blocking_map(string $modelClass): void
+    {
+        $all = AreaReferenceMap::for($modelClass);
+        $blocking = AreaReferenceMap::blockingFor($modelClass);
+
+        foreach (AreaReferenceMap::NON_BLOCKING_TABLES as $table) {
+            $this->assertArrayHasKey($table, $all, "{$table} no longer references the area; drop it from NON_BLOCKING_TABLES.");
+            $this->assertArrayNotHasKey($table, $blocking);
+            $this->assertFalse(AreaReferenceMap::isBlocking($table));
+        }
+
+        $this->assertSame(count($all) - count(AreaReferenceMap::NON_BLOCKING_TABLES), count($blocking));
+        $this->assertTrue(AreaReferenceMap::isBlocking('districts'));
+    }
 }

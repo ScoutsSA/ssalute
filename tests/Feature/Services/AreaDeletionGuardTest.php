@@ -125,7 +125,7 @@ class AreaDeletionGuardTest extends SdCoreTestCase
     }
 
     #[Test]
-    public function secondary_reference_columns_count_once_per_table(): void
+    public function secondary_reference_columns_block_on_their_own(): void
     {
         $group = Group::factory()->create();
 
@@ -196,5 +196,60 @@ class AreaDeletionGuardTest extends SdCoreTestCase
 
         $this->assertDatabaseMissing('regions', ['id' => $region->id]);
         $this->assertDatabaseHas('districts', ['id' => $district->id, 'regionID' => $region->id]);
+    }
+
+    #[Test]
+    public function blockers_count_rows_per_table_and_references_count_per_column(): void
+    {
+        $group = Group::factory()->create();
+
+        SystemUser::factory()->count(2)->create(['assoc_to_group' => $group->id]);
+        SystemUser::factory()->create(['roverGroupID' => $group->id]);
+        SystemUser::factory()->create(['assoc_to_group' => $group->id, 'roverGroupID' => $group->id]);
+
+        $this->assertSame(
+            ['assoc_to_group' => 3, 'roverGroupID' => 2],
+            $this->guard->referencesFor($group)['system_users'],
+            'A row that references the group in both columns counts once per column.',
+        );
+        $this->assertSame(4, $this->guard->blockersFor($group)['system_users'], 'The same row is one row in the table total.');
+        $this->assertSame(3, $this->guard->countFor($group, 'system_users', 'assoc_to_group'));
+        $this->assertSame(2, $this->guard->countFor($group, 'system_users', 'roverGroupID'));
+        $this->assertSame(0, $this->guard->countFor($group, 'system_users_other_roles', 'groupID'));
+    }
+
+    #[Test]
+    public function log_tables_never_block_a_delete(): void
+    {
+        $region = Region::factory()->create();
+
+        DB::connection(AppServiceProvider::DB_SD_CORE)->table('system_user_logging')->insert([
+            'regionID' => $region->id,
+            'page' => 'dashboard.php',
+            'IP' => '127.0.0.1',
+            'created' => now(),
+        ]);
+
+        $this->assertSame([], $this->guard->blockersFor($region));
+        $this->assertTrue($this->guard->isDeletable($region));
+
+        $region->delete();
+
+        $this->assertDatabaseMissing('regions', ['id' => $region->id]);
+    }
+
+    #[Test]
+    public function the_memo_serves_every_read_after_the_first_pass(): void
+    {
+        $region = Region::factory()->create();
+        District::factory()->forRegion($region)->create();
+
+        $this->guard->referencesFor($region);
+
+        $this->expectsDatabaseQueryCount(0, AppServiceProvider::DB_SD_CORE);
+
+        $this->assertSame(['districts' => 1], $this->guard->blockersFor($region));
+        $this->assertSame(1, $this->guard->countFor($region, 'districts', 'regionID'));
+        $this->assertFalse($this->guard->isDeletable($region));
     }
 }

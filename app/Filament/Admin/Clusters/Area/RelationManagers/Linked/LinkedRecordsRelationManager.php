@@ -2,6 +2,9 @@
 
 namespace App\Filament\Admin\Clusters\Area\RelationManagers\Linked;
 
+use App\Models\District;
+use App\Models\Group;
+use App\Models\Region;
 use App\Services\Areas\AreaDeletionGuard;
 use Filament\Facades\Filament;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -33,18 +36,24 @@ abstract class LinkedRecordsRelationManager extends RelationManager
 
     public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
     {
-        $blockers = resolve(AreaDeletionGuard::class)->blockersFor($ownerRecord);
-
-        if (($blockers[static::$linkedTable] ?? 0) === 0) {
-            return false;
-        }
-
-        return $ownerRecord->{static::getRelationshipName()}()->exists();
+        return static::linkedRowCount($ownerRecord) > 0;
     }
 
     public static function getBadge(Model $ownerRecord, string $pageClass): ?string
     {
-        return (string) $ownerRecord->{static::getRelationshipName()}()->count();
+        return (string) static::linkedRowCount($ownerRecord);
+    }
+
+    /**
+     * Rows in the linked table whose column points at the owner, read from the guard's memo so the tabs add no
+     * queries of their own on top of the pass the View page already ran.
+     */
+    protected static function linkedRowCount(Model $ownerRecord): int
+    {
+        /** @var Region|District|Group $ownerRecord */
+        $column = $ownerRecord->{static::getRelationshipName()}()->getForeignKeyName();
+
+        return resolve(AreaDeletionGuard::class)->countFor($ownerRecord, static::$linkedTable, $column);
     }
 
     public function isReadOnly(): bool

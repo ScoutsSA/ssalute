@@ -243,4 +243,58 @@ class GroupCrudTest extends SdCoreTestCase
         $this->assertDatabaseMissing('groups', ['id' => $group->id]);
         $this->assertDatabaseHas('system_users_other_roles', ['id' => $role->id, 'groupID' => $group->id]);
     }
+
+    #[Test]
+    public function a_group_whose_district_is_in_another_region_can_still_be_edited(): void
+    {
+        $group = Group::factory()->create();
+        $strayDistrict = District::factory()->create(['name' => 'Stray']);
+        Group::query()->whereKey($group->id)->update(['assoc_to_district' => $strayDistrict->id]);
+
+        Livewire::actingAs($this->superAdmin)
+            ->test(EditGroup::class, ['record' => $group->id])
+            ->assertFormFieldExists('assoc_to_district', function (Select $select) use ($strayDistrict): bool {
+                $label = $select->getOptions()[$strayDistrict->id] ?? '';
+
+                return str_contains($label, "Stray (#{$strayDistrict->id}") && str_contains($label, 'not this region');
+            })
+            ->fillForm(['name' => 'Renamed Only'])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $this->assertDatabaseHas('groups', ['id' => $group->id, 'name' => 'Renamed Only', 'assoc_to_district' => $strayDistrict->id]);
+    }
+
+    #[Test]
+    public function a_group_pointing_at_a_missing_district_and_account_can_still_be_edited(): void
+    {
+        $group = Group::factory()->create();
+        Group::query()->whereKey($group->id)->update(['assoc_to_district' => 999999, 'groupAccountID' => 888888]);
+
+        Livewire::actingAs($this->superAdmin)
+            ->test(EditGroup::class, ['record' => $group->id])
+            ->assertFormFieldExists('assoc_to_district', fn (Select $select): bool => ($select->getOptions()[999999] ?? null) === 'Unknown district (#999999)')
+            ->assertFormFieldExists('groupAccountID', fn (Select $select): bool => ($select->getOptions()[888888] ?? null) === 'Unknown account (#888888)')
+            ->fillForm(['name' => 'Renamed Only'])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $this->assertDatabaseHas('groups', ['id' => $group->id, 'name' => 'Renamed Only', 'assoc_to_district' => 999999, 'groupAccountID' => 888888]);
+    }
+
+    #[Test]
+    public function changing_the_region_drops_the_stray_district_from_the_options(): void
+    {
+        $group = Group::factory()->create();
+        $strayDistrict = District::factory()->create();
+        $newDistrict = District::factory()->create();
+        Group::query()->whereKey($group->id)->update(['assoc_to_district' => $strayDistrict->id]);
+
+        Livewire::actingAs($this->superAdmin)
+            ->test(EditGroup::class, ['record' => $group->id])
+            ->fillForm(['assoc_to_region' => $newDistrict->regionID])
+            ->assertFormFieldExists('assoc_to_district', fn (Select $select): bool => array_keys($select->getOptions()) === [$newDistrict->id])
+            ->call('save')
+            ->assertHasFormErrors(['assoc_to_district' => 'required']);
+    }
 }
