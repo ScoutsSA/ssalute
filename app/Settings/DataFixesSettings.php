@@ -22,6 +22,10 @@ class DataFixesSettings extends Settings
 
     public bool $ensure_legacy_values_are_canonical_notifications = true;
 
+    public bool $repair_legacy_entity_encoding_enabled = true;
+
+    public bool $repair_legacy_entity_encoding_notifications = true;
+
     public bool $notifications_enabled = true;
 
     public ?string $slack_webhook_url = null;

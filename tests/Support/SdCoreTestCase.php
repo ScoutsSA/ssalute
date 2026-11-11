@@ -66,6 +66,8 @@ abstract class SdCoreTestCase extends TestCase
                 'ensure_youth_member_ids_are_in_sync_notifications' => 'true',
                 'ensure_legacy_values_are_canonical_enabled' => 'true',
                 'ensure_legacy_values_are_canonical_notifications' => 'true',
+                'repair_legacy_entity_encoding_enabled' => 'true',
+                'repair_legacy_entity_encoding_notifications' => 'true',
                 'notifications_enabled' => 'true',
                 'slack_webhook_url' => 'null',
             ],

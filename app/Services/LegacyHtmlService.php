@@ -18,6 +18,11 @@ class LegacyHtmlService
     public const array LEGACY_DISPLAY_TAG_WHITELIST = ['b', 'strong', 'u', 'i', 'br', 'p', 'div', 'ul', 'ol', 'li'];
 
     /**
+     * Every save through a legacy form added a layer, and live rows carry sixteen of them.
+     */
+    private const int MAX_DECODE_PASSES = 20;
+
+    /**
      * The decoded value when persisting it leaves the legacy pages showing
      * members exactly what they see today, the original value otherwise.
      *
@@ -60,17 +65,44 @@ class LegacyHtmlService
             return $value;
         }
 
-        for ($pass = 0; $pass < 5; $pass++) {
-            $decoded = html_entity_decode($value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        return stripslashes(self::decodeEntities($value));
+    }
 
-            if ($decoded === $value) {
-                break;
-            }
-
-            $value = $decoded;
+    /**
+     * normalize(), extended to values the legacy pages already show broken.
+     *
+     * A value saved through a legacy form several times displays its leftover layers as visible
+     * junk ("Fires &amp;amp; Cooking"). normalize() keeps such a value because decoding it does
+     * change what members see; here that change is the point. The decoded value is accepted only
+     * when the sole difference is that residue: the text members see today, with its leftover
+     * entities decoded, must equal the text they would see afterwards. Everything else
+     * normalize() guards against (tag-like text, non-whitelisted tags, backslashes, double
+     * quotes the legacy render drops) still keeps the value as it is. Write paths only, like
+     * normalize().
+     */
+    public static function repair(?string $value): ?string
+    {
+        if ($value === null || $value === '') {
+            return $value;
         }
 
-        return stripslashes($value);
+        $normalized = self::normalize($value);
+
+        if ($normalized !== $value) {
+            return $normalized;
+        }
+
+        $decoded = self::decode($value);
+
+        if ($decoded === $value) {
+            return $value;
+        }
+
+        if (self::decodeEntities(self::legacyDisplayText($value)) !== self::legacyDisplayText($decoded)) {
+            return $value;
+        }
+
+        return $decoded;
     }
 
     /**
@@ -100,5 +132,20 @@ class LegacyHtmlService
         $rendered = str_ireplace('"', '', $rendered);
 
         return html_entity_decode($rendered, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    }
+
+    private static function decodeEntities(string $value): string
+    {
+        for ($pass = 0; $pass < self::MAX_DECODE_PASSES; $pass++) {
+            $decoded = html_entity_decode($value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+            if ($decoded === $value) {
+                break;
+            }
+
+            $value = $decoded;
+        }
+
+        return $value;
     }
 }

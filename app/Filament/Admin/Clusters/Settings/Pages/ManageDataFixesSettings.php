@@ -100,6 +100,18 @@ class ManageDataFixesSettings extends SettingsPage
                                     ->disabled(fn (Get $get): bool => ! $get('notifications_enabled'))
                                     ->dehydrated(),
                             ]),
+                        Tab::make('Legacy Encoding')
+                            ->icon(Heroicon::CodeBracketSquare)
+                            ->schema([
+                                Toggle::make('repair_legacy_entity_encoding_enabled')
+                                    ->label('Run this fix')
+                                    ->helperText('Legacy edit forms re-encode text on every save, so an ampersand or apostrophe eventually shows as "&amp;amp;" on the legacy pages. This decodes those values in group, event, programme, training, advancement and member fields, but only where members would see the same text without the leftover encoding. Values it cannot safely repair are listed for an admin.'),
+                                Toggle::make('repair_legacy_entity_encoding_notifications')
+                                    ->label('Notify on changes')
+                                    ->helperText('Only applies while the master notifications switch is on.')
+                                    ->disabled(fn (Get $get): bool => ! $get('notifications_enabled'))
+                                    ->dehydrated(),
+                            ]),
                     ]),
             ]);
     }

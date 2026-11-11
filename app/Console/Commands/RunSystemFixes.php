@@ -6,6 +6,7 @@ use App\Services\SystemFixes\EnsureEachUserHasOnlyOnePrimaryRole;
 use App\Services\SystemFixes\EnsureLegacyValuesAreCanonical;
 use App\Services\SystemFixes\EnsureYouthMemberIdsAreInSync;
 use App\Services\SystemFixes\FlagUsersWithoutRoleInHomeLocation;
+use App\Services\SystemFixes\RepairLegacyEntityEncoding;
 use App\Services\SystemFixes\ReportsFindings;
 use App\Services\SystemFixes\SystemFix;
 use App\Services\SystemFixes\SystemFixResult;
@@ -45,6 +46,7 @@ class RunSystemFixes extends Command
             EnsureEachUserHasOnlyOnePrimaryRole::class,
             EnsureYouthMemberIdsAreInSync::class,
             EnsureLegacyValuesAreCanonical::class,
+            RepairLegacyEntityEncoding::class,
             FlagUsersWithoutRoleInHomeLocation::class,
         ];
     }

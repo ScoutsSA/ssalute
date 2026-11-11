@@ -5,6 +5,7 @@ namespace Tests\Feature\Filament;
 use App\Console\Commands\RunSystemFixes;
 use App\Filament\Admin\Clusters\DataFixes\Pages\FindingsPage;
 use App\Filament\Admin\Clusters\DataFixes\Pages\HomeLocationRoles;
+use App\Filament\Admin\Clusters\DataFixes\Pages\LegacyEntityEncoding;
 use App\Filament\Admin\Clusters\DataFixes\Pages\LegacyValues;
 use App\Filament\Admin\Clusters\DataFixes\Pages\PrimaryRoles;
 use App\Filament\Admin\Clusters\DataFixes\Pages\YouthMemberIds;
@@ -46,6 +47,7 @@ class DataFixesClusterTest extends SdCoreTestCase
             [HomeLocationRoles::class],
             [YouthMemberIds::class],
             [PrimaryRoles::class],
+            [LegacyEntityEncoding::class],
         ];
     }
 
